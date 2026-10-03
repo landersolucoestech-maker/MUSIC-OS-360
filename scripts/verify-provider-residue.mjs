@@ -67,6 +67,14 @@ export const ALLOWLIST = [
 
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', 'coverage', '.turbo', 'graphify-out']);
 const SKIP_FILES = new Set(['pnpm-lock.yaml']);
+// Recorded command evidence (`.claude/ops/evidence/<id>.json`, repo root only, JSON only). It stores the
+// stdout of executed commands verbatim, including this guard's own test titles that name the providers.
+// This is a content-scan exclusion for provider-residue only: file NAMES are still checked, and nothing
+// else under `.claude/` or elsewhere is excluded.
+const EVIDENCE_RECORD = /^\.claude\/ops\/evidence\/[^/]+\.json$/;
+export function isRecordedEvidence(file) {
+  return EVIDENCE_RECORD.test(file);
+}
 const TEXT_EXT = /\.(?:[cm]?[jt]sx?|json|ya?ml|toml|md|mdx|sql|sh|env|example|html|css|txt|conf|dockerfile)$/i;
 
 /** Returns true when the text contains a provider reference (direct, identifier or split). */
@@ -98,6 +106,7 @@ function listFiles(root) {
 function isScannable(file) {
   const base = path.posix.basename(file);
   if (SKIP_FILES.has(base)) return false;
+  if (isRecordedEvidence(file)) return false;
   if (file.split('/').some((part) => SKIP_DIRS.has(part))) return false;
   return TEXT_EXT.test(base) || /^\.env/.test(base) || base === 'Dockerfile' || /^docker-compose/.test(base);
 }

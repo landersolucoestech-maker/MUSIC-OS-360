@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 
-import { ALLOWLIST, hasProviderReference, scan } from './verify-provider-residue.mjs';
+import { ALLOWLIST, hasProviderReference, isRecordedEvidence, scan } from './verify-provider-residue.mjs';
 
 // Provider names are assembled from fragments so this file never contains
 // them literally (it is also allowlisted in the guard).
@@ -84,4 +84,62 @@ test('a provider name in a file name fails', () => {
 
 test('every allowlist entry documents a reason', () => {
   for (const entry of ALLOWLIST) assert.ok(entry.reason.length > 10, entry.label);
+});
+
+// --- recorded evidence exclusion (.claude/ops/evidence/*.json) ---
+
+test('provider code in operational source still fails when evidence records are present', () => {
+  const root = fixture({
+    ...allowlistedBaseline(),
+    '.claude/ops/evidence/evid-1.json': `{"stdout":"a direct ${VERCEL} reference"}\n`,
+    'apps/api/src/a.ts': `import x from '@${CLERK}/backend';\n`,
+  });
+  assert.deepEqual(scan(root).violations, ['apps/api/src/a.ts']);
+});
+
+test('provider reference in operational configuration still fails', () => {
+  for (const [file, body] of [
+    ['apps/api/.env.example', `${REPLIT.toUpperCase()}_DB_URL=x\n`],
+    ['.github/workflows/ci.yml', `env:\n  TOKEN: \${{ secrets.${VERCEL.toUpperCase()}_TOKEN }}\n`],
+    ['package.json', `{"dependencies":{"@${CLERK}/backend":"1"}}\n`],
+  ]) {
+    const root = fixture({ ...allowlistedBaseline(), [file]: body });
+    assert.deepEqual(scan(root).violations, [file], file);
+  }
+});
+
+test('a provider reference inside a recorded evidence record is not a violation', () => {
+  const root = fixture({
+    ...allowlistedBaseline(),
+    '.claude/ops/evidence/evid-1.json': `{"stdout":"a direct ${VERCEL} / ${CLERK} / ${REPLIT} reference"}\n`,
+  });
+  const result = scan(root);
+  assert.deepEqual(result.violations, []);
+  assert.deepEqual(result.staleAllowlist, []);
+});
+
+test('the evidence exclusion cannot be used to hide code or config at other paths', () => {
+  for (const evidence of ['.claude/ops/evidence/x.json']) assert.equal(isRecordedEvidence(evidence), true);
+  for (const file of [
+    '.claude/ops/evidence/nested/x.json',
+    '.claude/ops/evidence/x.ts',
+    '.claude/ops/evidence/x.env',
+    '.claude/ops/evidence.json',
+    '.claude/ops/state.json',
+    '.claude/ops/records/evidence/x.json',
+    '.claude/runtime/evidence/x.json',
+    'apps/api/.claude/ops/evidence/x.json',
+    'apps/api/src/.claude/ops/evidence/x.json',
+    'docs/.claude/ops/evidence/x.json',
+    '.claude/ops/evidence-x/y.json',
+  ]) {
+    assert.equal(isRecordedEvidence(file), false, file);
+    const root = fixture({ ...allowlistedBaseline(), [file]: `// ${CLERK}\n` });
+    assert.deepEqual(scan(root).violations, [file], file);
+  }
+});
+
+test('a provider name in an evidence file name still fails', () => {
+  const root = fixture({ ...allowlistedBaseline(), [`.claude/ops/evidence/${VERCEL}-1.json`]: '{}\n' });
+  assert.deepEqual(scan(root).nameHits, [`.claude/ops/evidence/${VERCEL}-1.json`]);
 });
