@@ -55059,23 +55059,6 @@
       "dependency": null,
       "status": "ACTIVE",
       "coveringTest": "apps/api/src/modules/reports/i18n/field-labels.legacy-keys.spec.ts"
-    },
-    {
-      "item": "release status census document quotes the legacy release status literals (whole document)",
-      "path": "docs/engineering/release-status-census.md",
-      "currentName": "*",
-      "surface": "doc",
-      "layer": "docs",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "The D3 census document must quote the legacy Portuguese release status values and the Portuguese display words it analyses; they are the data under decision, not engineering prose.",
-      "consumer": "the owner deciding BLK-RELEASES-STATUS-CHECK",
-      "owner": "catalog owner (Phase 0 naming)",
-      "removalCondition": "remove once the D3 decision is executed and the census shows no row with a legacy value",
-      "targetState": "document archived or deleted after the decision",
-      "blocker": "owner decision D3",
-      "dependency": null,
-      "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/releases/lib/release-status.legacy-compat.test.tsx"
     }
   ],
   "blockers": [

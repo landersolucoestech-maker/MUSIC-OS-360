@@ -103,5 +103,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-047 | Marketing content post status, target type and content type vocabulary | done | DONE | no |
 | CZ-048 | Transaction category/subcategory slug vocabulary (platform-owned options) | done | DONE | no |
 
-Concepts: 96. Renames: 0. Exceptions: 3146. Blockers: 25.
+Concepts: 96. Renames: 0. Exceptions: 3145. Blockers: 25.
 By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/DONE 80, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

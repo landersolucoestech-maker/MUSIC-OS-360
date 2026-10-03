@@ -85,7 +85,7 @@ A Release is not a Distribution (runbook, same section). In the API they are sep
 - Data-only migration: `UPDATE releases SET status='cancelled', metadata = metadata || jsonb_build_object('legacy_status', status) WHERE status IN (...)`, then `chk_releases_status` with the 10 current values. No change to types, DTOs, workflow or labels; the web alias block and the `rejected`/`takedown` display values can be removed once the census is 0.
 - Loss of distinction: `cancelled` means cancelled before launch (the workflow allows it only from pre-launch states, `releases.workflow.ts:81-90`); a rejected release and a taken-down release (already live) are not cancelled. The `taken_down` case is the more serious one, because the music was live.
 - Reversibility: only through `metadata.legacy_status`, restored only while the row still holds the canonical value and only for whitelisted spellings; anything edited afterwards is not reverted; a non-object `metadata` cannot hold the marker (guard at `20260930000014:59`).
-- Display and reports: the web shows "Em Espera" instead of "Rejeitado"/"Takedown"; the KPI count stays the same (`on_hold` is in the same bucket); reports and the external-data export emit `cancelled`; Distribution and Takedown are not affected.
+- Display and reports: the web shows the on-hold display label instead of the rejected and takedown display labels; the KPI count stays the same (`on_hold` is in the same bucket); reports and the external-data export emit `cancelled`; Distribution and Takedown are not affected.
 - Risks: silent semantic loss; a data rewrite with business meaning (L5); a downstream consumer that treated the row as a takedown loses it.
 - Tests: one migration spec and a verify script; adapt or remove the web legacy tests when the aliases go.
 
@@ -95,7 +95,7 @@ The 4 values stay as unmapped residue with the display fallback and no CHECK; no
 
 ## 7. Non-binding recommendation
 
-Preserve Obra != Fonograma != Música lançada and Projeto != Lançamento != Distribuição.
+Preserve the domain separations: a Work is not a Phonogram, which is not released music; a Project is not a Release, which is not a Distribution.
 
 1. Do not decide before the census: run the section 3 queries (with the `lower(trim(...))` variant) in staging and production and attach the per-tenant result. If every environment returns 0, the question disappears: add `chk_releases_status` with the 10 current values, remove the web aliases and close the blocker.
 2. If rows exist, prefer the middle path: keep `ReleaseStatus` as the release lifecycle only, treat "rejected by the distributor" and "taken down" as facts about Distribution and Takedown (the `takedowns` table already has `rejected`), keep the original value in `metadata.legacy_status`, and decide a per-tenant mapping only after the owner reads the counts. Option B loses the distinction for rows already live, so it is the riskier reading if live rows exist.
