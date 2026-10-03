@@ -15,14 +15,22 @@ const ALGORITHM    = 'aes-256-gcm';
 const IV_LENGTH    = 12;
 const TAG_LENGTH   = 16;
 const PREFIX       = 'enc:v1:';
+const LOCAL_ENVIRONMENTS = new Set(['development', 'local', 'test']);
 
 @Injectable()
 export class EncryptionService {
   private readonly key: Buffer;
 
   constructor(@Inject(ConfigService) private readonly config: ConfigService) {
-    const hexKey = this.config.get<string>('ENCRYPTION_KEY') ??
-      '0000000000000000000000000000000000000000000000000000000000000000';
+    const configured = this.config.get<string>('ENCRYPTION_KEY');
+    if (configured == null || configured === '') {
+      // The all-zero key is a publicly known value: it is only acceptable for an explicitly local or test run.
+      const env = String(this.config.get<string>('NODE_ENV') ?? process.env.NODE_ENV ?? '').toLowerCase();
+      if (!LOCAL_ENVIRONMENTS.has(env)) {
+        throw new Error('ENCRYPTION_KEY is required unless NODE_ENV is development, local or test');
+      }
+    }
+    const hexKey = configured || '0000000000000000000000000000000000000000000000000000000000000000';
     if (!/^[0-9a-fA-F]{64}$/.test(hexKey)) {
       throw new Error('ENCRYPTION_KEY must contain exactly 64 hexadecimal characters');
     }

@@ -68,3 +68,22 @@ describe('EncryptionService', () => {
     expect(service.decrypt('not-valid-base64!!!')).toBe('[encrypted]');
   });
 });
+
+describe('EncryptionService key requirement', () => {
+  const build = (values: Record<string, string | undefined>) =>
+    new EncryptionService({ get: jest.fn((k: string) => values[k]) } as unknown as ConfigService);
+
+  it.each(['production', 'staging', 'preview', ''])('refuses a missing ENCRYPTION_KEY when NODE_ENV is "%s"', (env) => {
+    expect(() => build({ NODE_ENV: env })).toThrow(/ENCRYPTION_KEY is required/);
+  });
+
+  it.each(['development', 'local', 'test'])('allows the zero fallback key only for NODE_ENV %s', (env) => {
+    const svc = build({ NODE_ENV: env });
+    expect(svc.decrypt(svc.encrypt('x'))).toBe('x');
+  });
+
+  it('never needs the fallback when a real key is configured, whatever the environment', () => {
+    const real = 'ab'.repeat(32);
+    expect(() => build({ NODE_ENV: 'production', ENCRYPTION_KEY: real })).not.toThrow();
+  });
+});

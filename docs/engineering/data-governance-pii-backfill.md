@@ -32,7 +32,7 @@ Status: code (additive, dual-read) shipped; the backfill + scrub of EXISTING row
 2. Evidence of a disposable/staging dry run: preflight counts, `up()`, residue audit zero, API read-after-write of a sample through the API (decrypted value equals the archived value), `down()` then `up()` again.
 3. Backup/restore evidence (a restore was actually performed), not backup existence alone.
 4. The API release with the dual-read code live on EVERY instance before running (an old build would read NULL plaintext columns as empty and could write plaintext back).
-5. The archive retention window and who may read/purge the archive tables (they hold plaintext PII; retire them with a separate authorized migration, same pattern as `20260930000052`), plus a maintenance window for the `FOR UPDATE` row locks.
+5. The archive retention window and who may read/purge the archive tables (they hold plaintext PII; retired by the later, separately authorized draft `20260930000052`, which now lists both PII archives), plus a maintenance window for the `FOR UPDATE` row locks.
 6. After success and a retention window: a separate authorized step to drop the plaintext columns (`birth_date`, `rg`, `address`, `bank_*`, `pix_key`, `account_holder`) and remove the `legacyPlaintextColumn` fallback (code and contract) in the same release.
 
 ## Decisions and residual risks (not fixed here, recorded)

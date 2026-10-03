@@ -2,10 +2,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { assertMigrationRoleBypassesRls } from '../migration-guards';
 import { archiveTableOf } from './legacy-column-drop.base';
 import { PLANS as EMPLOYEES_PII } from './20260930000053_DropEmployeesLegacyPiiColumns';
+import { ARTISTS_ARCHIVE, CLIENTS_ARCHIVE } from './20261002000002_EncryptArtistsAndClientsPiiInPlace';
 
 /**
  * DRAFT, GATED, NOT REGISTERED (LC1 D3). Retires the *_legacy_archive_20260930 tables written by the legacy
- * column drop drafts (20260930000040-45, 49, 53). Retention rule and per-tenant erasure SQL:
+ * column drop drafts (20260930000040-45, 49, 53) and the PII backfill archives (20261002000002). Retention rule and per-tenant erasure SQL:
  * docs/engineering/backfill-side-tables-retention.md; order and gates: docs/engineering/legacy-column-drop-plan.md.
  *
  * The archives hold the only copy of the dropped legacy values (some third-party PII), so they are retired only
@@ -26,6 +27,9 @@ export const ARCHIVED_TABLES: readonly string[] = [
 export const ARCHIVE_TABLES: readonly string[] = [
   ...ARCHIVED_TABLES.map(archiveTableOf),
   ...EMPLOYEES_PII.map((p) => p.archiveTable ?? archiveTableOf(p.table)),
+  // Plaintext originals kept by the PII encryption backfill (20261002000002): retired on the same later release.
+  ARTISTS_ARCHIVE,
+  CLIENTS_ARCHIVE,
 ];
 
 function assertConfirmed(migrationName: string): void {

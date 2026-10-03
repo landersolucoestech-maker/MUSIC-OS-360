@@ -31,9 +31,9 @@ describe('RetireLegacyColumnDropArchives draft', () => {
     expect(fs.readdirSync(path.join(__dirname, '..', 'migrations')).some((f) => f.startsWith('20260930000052'))).toBe(false);
   });
 
-  it('retires exactly the archives of every drop plan', () => {
+  it('retires exactly the archives of every drop plan plus the PII backfill archives', () => {
     const planned = [...WORKS, ...PHONOGRAMS, ...TRANSACTIONS, ...CLIENTS, ...SHARES, ...HR, ...INVOICES, ...EMPLOYEES_PII].map(archiveOf);
-    expect([...ARCHIVE_TABLES].sort()).toEqual([...planned].sort());
+    expect([...ARCHIVE_TABLES].sort()).toEqual([...planned, 'artists_pii_archive_20261002', 'clients_pii_archive_20261002'].sort());
   });
 
   it('uses its own confirmation: the drop confirmation does not unlock it', async () => {
