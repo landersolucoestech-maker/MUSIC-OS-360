@@ -1,3 +1,4 @@
+import { creditName, trackArtist, trackTitle } from "@/modules/releases/lib/legacy-reads";
 import { useEffect, useMemo, useState } from "react";
 import { captureError } from "@/shared/lib/error-logger";
 import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
@@ -87,14 +88,6 @@ function LinkField({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
-/** Credit entries may be plain names or objects ({ nome/name, role }). */
-function creditName(value: unknown): string {
-  if (value && typeof value === "object") {
-    const entry = value as Record<string, unknown>;
-    return String(entry["name"] ?? entry["nome"] ?? "").trim();
-  }
-  return String(value ?? "").trim();
-}
 
 /** `legacyKey`: the Portuguese spelling of release.metadata tracks not yet backfilled. */
 function aggregateField(tracks: any[], key: string, legacyKey?: string): string {
@@ -421,9 +414,9 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                       <Mic2 className="h-3.5 w-3.5 text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{f.title || f.titulo || `Faixa ${idx + 1}`}</p>
+                      <p className="truncate text-sm font-medium">{trackTitle(f as Record<string, unknown>, idx + 1)}</p>
                       <p className="truncate text-xs text-muted-foreground">
-                        {[f.artist ?? f.artista, f.isrc].filter(Boolean).join(" • ")}
+                        {[trackArtist(f as Record<string, unknown>), f.isrc].filter(Boolean).join(" • ")}
                       </p>
                     </div>
                     {f.duration_text && (

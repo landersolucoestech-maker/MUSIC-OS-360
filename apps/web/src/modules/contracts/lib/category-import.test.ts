@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parseCategoryImportRow } from "./category-import";
 
 describe("parseCategoryImportRow: spreadsheet input headers of the category import", () => {
-  it("reads the template headers (Nome, Slug, Descrição)", () => {
+  it("reads the template headers", () => {
     expect(parseCategoryImportRow({ Nome: " Cat ", Slug: " cat-1 ", "Descrição": " d " })).toEqual({ label: "Cat", rawSlug: "cat-1", description: "d" });
   });
   it("accepts the lower-case and unaccented spellings users type by hand", () => {

@@ -1,0 +1,103 @@
+{
+  "workflow": "naming-normalization",
+  "planId": "orch-e848167d",
+  "matchId": "work-9395c7c6",
+  "status": "ACTIVE",
+  "adoptedFrom": [],
+  "steps": [
+    {
+      "phase": "census",
+      "taskIds": [
+        "census"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "classify",
+      "taskIds": [
+        "classify",
+        "w1-env-trace",
+        "w2-compat-semantic-groups",
+        "w3-historical-trace",
+        "w4-decisions-trace",
+        "w5-ci-check-exhaustion"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "canonical-model",
+      "taskIds": [
+        "canonical-model"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "schema-plan",
+      "taskIds": [
+        "schema-plan",
+        "w6-destructive-dossier",
+        "w7-pii-key-custody"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "destructive-approval",
+      "taskIds": [
+        "destructive-approval"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "propagate",
+      "taskIds": [
+        "propagate",
+        "w8-env-templates",
+        "w9-web-fixes",
+        "w10-api-tests",
+        "w11-ledger-gate",
+        "w12-dead-generator",
+        "w13-doc-corrections"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "compatibility",
+      "taskIds": [
+        "compatibility",
+        "w14-mutation-proof",
+        "w15-proof-closure"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "verify",
+      "taskIds": [
+        "verify"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "residue",
+      "taskIds": [
+        "residue"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "review",
+      "taskIds": [
+        "review"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "closure",
+      "taskIds": [
+        "closure"
+      ],
+      "adopted": []
+    }
+  ],
+  "id": "work-d7470294",
+  "createdAt": "2026-10-03T15:08:52.623Z"
+}

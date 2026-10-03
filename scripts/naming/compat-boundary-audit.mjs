@@ -28,7 +28,9 @@ export const OUT_DIR = path.join(ROOT, "docs/naming/audit");
 export const MUTATION_FILE = path.join(OUT_DIR, "compat-mutation-proof.json");
 
 export const PROOF_CLASSES = new Set(["TEMPORARY_MIGRATION_COMPATIBILITY", "LEGACY_DATABASE_COMPATIBILITY", "PUBLIC_API_COMPATIBILITY", "EXTERNAL_CONTRACT", "PROVIDER_DEFINED"]);
-export const isTestFile = (f) => /[.-](test|spec|e2e-spec|regression)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(e2e|__tests__|__fixtures__|fixtures|tests)\//.test(f);
+/** Opt-in executable checks of the API (they insert legacy-shape rows into a disposable database or smoke a running API): test code, not runtime. */
+export const isVerificationScript = (f) => /^apps\/api\/scripts\/(verify|smoke|reports-smoke)[-.\w]*\.ts$/.test(f);
+export const isTestFile = (f) => /[.-](test|spec|e2e-spec|regression)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(e2e|__tests__|__fixtures__|fixtures|tests)\//.test(f) || isVerificationScript(f);
 const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 const pathsOf = (e) => String(e.path).split(/\s*,\s*/);
 const testsOf = (e) => (e.coveringTest ? String(e.coveringTest).split(/\s*,\s*/) : []);
@@ -106,7 +108,15 @@ export function bindingOf(e, readFile) {
   const bodies = tests.map((t) => readFile(t));
   if (bodies.some((b) => b == null)) return { tests, bound: false, via: "TEST_MISSING" };
   const body = bodies.join("\n");
-  if (tests.some((t) => paths.includes(t))) return { tests, bound: true, via: "SELF" };
+  if (tests.some((t) => paths.includes(t))) {
+    // an opt-in verification script is the check itself, but only counts when a package script wires it
+    const scripts = paths.filter(isVerificationScript);
+    if (scripts.length) {
+      const wired = scripts.every((s) => ["package.json", "apps/api/package.json"].some((pj) => (readFile(pj) ?? "").includes(path.basename(s))));
+      return { tests, bound: wired, via: wired ? "SELF_SCRIPT" : "SCRIPT_NOT_WIRED" };
+    }
+    return { tests, bound: true, via: "SELF" };
+  }
   if (e.currentName !== "*" && body.includes(e.currentName)) return { tests, bound: true, via: "LITERAL" };
   const module = paths.some((p) => {
     if (p === "*") return false;

@@ -1,0 +1,890 @@
+{
+  "order": "Close the technical foundation: normalization of technical language, naming blockers, compatibility boundaries and legacy aliases, environment contract, historical records, destructive approval packages and product decision packages",
+  "title": "foundation-closure",
+  "workflow": "naming-normalization",
+  "intent": null,
+  "status": "ACTIVE",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-03T15:08:52.633Z",
+  "tasks": [
+    {
+      "id": "census",
+      "title": "census",
+      "objective": "Phase \"census\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: repo-inspector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "repository-census"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "evidence recorded: census-report"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "classify",
+      "title": "classify",
+      "objective": "Phase \"classify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: duplication-detector, dead-code-detector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "duplication-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "w1-env-trace",
+        "w2-compat-semantic-groups",
+        "w3-historical-trace",
+        "w4-decisions-trace",
+        "w5-ci-check-exhaustion"
+      ],
+      "acceptance": [
+        "evidence recorded: classification-record"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "canonical-model",
+      "title": "canonical-model",
+      "objective": "Phase \"canonical-model\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: domain-boundary-guardian.",
+      "agent": "naming-reviewer",
+      "skills": [
+        "canonical-naming"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "classify"
+      ],
+      "acceptance": [
+        "evidence recorded: canonical-map-update"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model"
+    },
+    {
+      "id": "schema-plan",
+      "title": "schema-plan",
+      "objective": "Phase \"schema-plan\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: database-reviewer, rollback-planner.",
+      "agent": "migration-planner",
+      "skills": [
+        "migration-audit",
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model",
+        "w6-destructive-dossier",
+        "w7-pii-key-custody"
+      ],
+      "acceptance": [
+        "evidence recorded: migration-plan",
+        "evidence recorded: rollback-plan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "destructive-approval",
+      "title": "destructive-approval",
+      "objective": "Phase \"destructive-approval\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: approval-router.",
+      "agent": "human-approval-agent",
+      "skills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "schema-plan"
+      ],
+      "acceptance": [
+        "evidence recorded: approval-record",
+        "a recorded human approval of this phase"
+      ],
+      "gates": [],
+      "approvalClass": "human-approval",
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "propagate",
+      "title": "propagate",
+      "objective": "Phase \"propagate\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: refactoring-engineer.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "safe-refactor",
+        "schema-normalization"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model",
+        "schema-plan",
+        "w8-env-templates",
+        "w9-web-fixes",
+        "w10-api-tests",
+        "w11-ledger-gate",
+        "w12-dead-generator",
+        "w13-doc-corrections"
+      ],
+      "acceptance": [
+        "evidence recorded: change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "compatibility",
+      "title": "compatibility",
+      "objective": "Phase \"compatibility\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: contract-test-engineer.",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "propagate",
+        "w14-mutation-proof",
+        "w15-proof-closure"
+      ],
+      "acceptance": [
+        "evidence recorded: compatibility-test-run"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "verify",
+      "title": "verify",
+      "objective": "Phase \"verify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: verification-controller.",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "run-unit-tests",
+        "run-typecheck"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "compatibility"
+      ],
+      "acceptance": [
+        "evidence recorded: after-test-run",
+        "evidence recorded: migration-verification"
+      ],
+      "gates": [
+        "global"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "verify"
+    },
+    {
+      "id": "residue",
+      "title": "residue",
+      "objective": "Phase \"residue\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: orphan-detector.",
+      "agent": "dead-code-detector",
+      "skills": [
+        "residue-search",
+        "orphan-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "verify"
+      ],
+      "acceptance": [
+        "evidence recorded: residue-scan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "residue"
+    },
+    {
+      "id": "review",
+      "title": "review",
+      "objective": "Phase \"review\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: regression-reviewer.",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit",
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "evidence recorded: security-verdict",
+        "evidence recorded: regression-verdict"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "closure",
+      "title": "closure",
+      "objective": "Phase \"closure\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: completion-controller.",
+      "agent": "git-auditor",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "review"
+      ],
+      "acceptance": [
+        "evidence recorded: gate-results",
+        "evidence recorded: final-report"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "closure"
+    },
+    {
+      "id": "w1-env-trace",
+      "title": "w1-env-trace",
+      "objective": "Trace every environment variable of the three environments (consumers, required vs optional, schema, validation, placeholders, docs, loaders) and the 14 protected-template items plus the truncated SUPABASE_ANON_KEY of the root production template, without reading or printing any secret value.",
+      "agent": "config-mapper",
+      "skills": [
+        "config-map",
+        "environment-map"
+      ],
+      "filesInScope": [
+        "scripts/env-contract-census.mjs",
+        ".env.production",
+        "apps/api/.env.staging",
+        "apps/api/.env.production"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "each template item has a consumer trace and a document-or-remove decision",
+        "anon key template classification (A template / B operational / C legacy) with evidence"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "w2-compat-semantic-groups",
+      "title": "w2-compat-semantic-groups",
+      "objective": "Audit every ledger exception row semantically (concept, legacy alias, canonical field, module, producer, consumer, boundary, reason, removal condition) and classify NECESSARY_BOUNDARY, OBSOLETE_BOUNDARY, MISCLASSIFIED_OPERATIONAL_USAGE or HISTORICAL_ONLY.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "canonical-naming"
+      ],
+      "filesInScope": [
+        "scripts/naming/compat-boundary-audit.mjs",
+        "docs/naming/canonical-naming-map.json"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "every row classified with a deterministic rule",
+        "obsolete and misclassified rows listed or proven absent"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "w3-historical-trace",
+      "title": "w3-historical-trace",
+      "objective": "Validate each of the 115 HISTORICAL_RECORD documents individually (header, frozen body, no executable consumer, no unlabelled normative reference) and find active documents that cite a historical record as current.",
+      "agent": "documentation-reviewer",
+      "skills": [
+        "stale-code-analysis",
+        "residue-search"
+      ],
+      "filesInScope": [
+        "scripts/naming/historical-records-audit.mjs",
+        "docs/INDEX_DOCUMENTATION.md",
+        "docs/runbooks/release-baseline-157-80.md"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "per-file result for 115 records",
+        "stale active citations listed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "w4-decisions-trace",
+      "title": "w4-decisions-trace",
+      "objective": "Trace producers, consumers, semantics and data of the five open product decisions (release status, transactions v2 ledger, shares registry, leads internal notes, external-source columns) without inventing a decision.",
+      "agent": "producer-consumer-tracer",
+      "skills": [
+        "producer-consumer-trace",
+        "data-flow-trace",
+        "cross-layer-impact"
+      ],
+      "filesInScope": [
+        "docs/engineering/product-decision-packages.md"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "each decision has producers, consumers, current data and an undeducible question"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "w5-ci-check-exhaustion",
+      "title": "w5-ci-check-exhaustion",
+      "objective": "Exhaust the local sources about the required CI check name (workflows, job names, docs, scripts, rulesets) and state the exact human action for what only an admin can confirm; do not bypass the 403.",
+      "agent": "devops-ci-reviewer",
+      "skills": [
+        "branch-policy-check",
+        "external-action-check"
+      ],
+      "filesInScope": [
+        "docs/engineering/required-ci-check.md",
+        ".github/workflows/ci.yml"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "local sources enumerated",
+        "exact who/where/old name/new name/result"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "w6-destructive-dossier",
+      "title": "w6-destructive-dossier",
+      "objective": "Produce the complete approval dossier of every destructive package (40-46, 49, 53, PII backfill, PII scrub): table, columns, census, divergences, archive and restore plan, PITR, size, lock estimate, rehearsal, retention, key custody, dependencies, READY and typed missing requirements. No destruction.",
+      "agent": "migration-planner",
+      "skills": [
+        "migration-audit",
+        "destructive-change-check",
+        "rollback-analysis"
+      ],
+      "filesInScope": [
+        "scripts/destructive-dossier.mjs",
+        "docs/engineering/destructive-approval-dossier.md"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "every package has all mandatory fields and READY: NO",
+        "missing items typed HUMAN_APPROVAL, HUMAN_DECISION or EXTERNAL_REQUIREMENT"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "w7-pii-key-custody",
+      "title": "w7-pii-key-custody",
+      "objective": "Exhaust the non-destructive PII work (dual read, redaction, export, logs, key validation, rotation contract, archive, retention, controlled decrypt, scrub prerequisites) and state exactly what the owner must provide for key custody and escrow.",
+      "agent": "encryption-reviewer",
+      "skills": [
+        "encryption-audit",
+        "pii-audit",
+        "data-retention-audit"
+      ],
+      "filesInScope": [
+        "docs/engineering/pii-key-custody-request.md",
+        "apps/api/src/core/security/encryption.service.ts"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "rotation contract written",
+        "owner deliverables enumerated"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "w8-env-templates",
+      "title": "w8-env-templates",
+      "objective": "Edit the protected templates under the owner authorization: remove the unread OPENAI_BASE_URL, document 13 optional variables as placeholders, replace the truncated JWT-looking SUPABASE_ANON_KEY with the canonical placeholder, add the guard that rejects credential-looking template values, clear the pending declarations.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "protected-file-check",
+        "config-map"
+      ],
+      "filesInScope": [
+        ".env.production",
+        "apps/api/.env.staging",
+        "apps/api/.env.production",
+        "scripts/env-contract-census.mjs",
+        "scripts/env-contract.config.json"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "env contract gate 0 violations 0 pending",
+        "guard test rejects a truncated JWT-looking value"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w9-web-fixes",
+      "title": "w9-web-fixes",
+      "objective": "Extract and fix the web legacy-read boundaries: canonical-first legacy title, signup consent metadata builders, ViaCEP address mapper, spreadsheet header parser, release canonical-first reads and the stale project-track auto-fill of the release form.",
+      "agent": "frontend-engineer",
+      "skills": [
+        "safe-refactor",
+        "cross-layer-impact"
+      ],
+      "filesInScope": [
+        "apps/web/src/shared/lib",
+        "apps/web/src/modules/releases",
+        "apps/web/src/modules/contracts",
+        "apps/web/src/app/providers/AuthContext.tsx"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "typecheck clean",
+        "unit tests prove canonical-first"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w10-api-tests",
+      "title": "w10-api-tests",
+      "objective": "Add the API behavior tests that prove the compatibility boundaries: provision-workspace consent DTO contract, contract party refs DTO keys, contracts canonical-first payload, financial rule canonical conditions, pinned legacy role slugs.",
+      "agent": "backend-engineer",
+      "skills": [
+        "create-api-tests",
+        "create-contract-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src/modules/auth/dto",
+        "apps/api/src/modules/contracts",
+        "apps/api/src/modules/financial-rules",
+        "apps/api/src/core/rbac"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "each spec fails when its boundary is mutated"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w11-ledger-gate",
+      "title": "w11-ledger-gate",
+      "objective": "Add the stale-ledger-row gate to the census, prune the rows that matched nothing, add rows for new files and keep the census, validator and rendered docs consistent.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "canonical-naming",
+        "scope-lock"
+      ],
+      "filesInScope": [
+        "scripts/naming",
+        "docs/naming/canonical-naming-map.json"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "census check passes",
+        "validator passes",
+        "docs rendered"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w12-dead-generator",
+      "title": "w12-dead-generator",
+      "objective": "Prove with a consumer search that scripts/generate-blueprint-appendices.mjs (a generator that rewrites a frozen historical record) has no consumer, then remove it with its ledger row.",
+      "agent": "dead-code-detector",
+      "skills": [
+        "dead-code-analysis",
+        "residue-search"
+      ],
+      "filesInScope": [
+        "scripts/generate-blueprint-appendices.mjs"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "zero consumers proven",
+        "removal committed with the row"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w13-doc-corrections",
+      "title": "w13-doc-corrections",
+      "objective": "Correct the active documents that presented historical baselines as current and normalize the six variant historical labels.",
+      "agent": "documentation-reviewer",
+      "skills": [
+        "stale-code-analysis",
+        "diff-review"
+      ],
+      "filesInScope": [
+        "docs/INDEX_DOCUMENTATION.md",
+        "docs/runbooks",
+        "docs/CODEBASE_MAP.md"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "no unlabelled citation of a historical record from an active document"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w14-mutation-proof",
+      "title": "w14-mutation-proof",
+      "objective": "Build the mutation proof of the compatibility boundaries (legacy literal removal, canonical-first swap, alias override) bound to source hashes, and the compat-boundary audit with unit tests.",
+      "agent": "test-strategy-engineer",
+      "skills": [
+        "create-regression-tests",
+        "run-unit-tests"
+      ],
+      "filesInScope": [
+        "scripts/naming/compat-mutation-proof.mjs",
+        "scripts/naming/compat-boundary-audit.mjs"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "harness and audit unit tests pass",
+        "COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF = 0 on the final tree"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "w15-proof-closure",
+      "title": "w15-proof-closure",
+      "objective": "Close every survivor and NO_MUTATION_SITE of the mutation proof with a real test or a justified reclassification.",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [
+        "apps/api/src",
+        "apps/web/src"
+      ],
+      "dependsOn": [],
+      "acceptance": [
+        "no survivor without a test or a recorded reason"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "classify",
+        "canonical-model",
+        "schema-plan",
+        "destructive-approval",
+        "propagate",
+        "compatibility",
+        "verify",
+        "residue",
+        "review",
+        "closure",
+        "w1-env-trace",
+        "w2-compat-semantic-groups",
+        "w3-historical-trace",
+        "w4-decisions-trace",
+        "w5-ci-check-exhaustion",
+        "w6-destructive-dossier",
+        "w7-pii-key-custody",
+        "w8-env-templates",
+        "w9-web-fixes",
+        "w10-api-tests",
+        "w11-ledger-gate",
+        "w12-dead-generator",
+        "w13-doc-corrections",
+        "w14-mutation-proof",
+        "w15-proof-closure"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    }
+  ],
+  "missionId": "mission-c83f8d58",
+  "requireWorkflow": true,
+  "id": "orch-e848167d",
+  "createdAt": "2026-10-03T15:08:52.613Z",
+  "workflowInstanceId": "work-d7470294"
+}

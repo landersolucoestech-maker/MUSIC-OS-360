@@ -62,6 +62,8 @@ import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonogra
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { canonicalReleaseMetadata } from "@/modules/releases/lib/release-metadata";
+import { projectLabel as projectLabelOf, projectTracksForRelease } from "@/modules/releases/lib/legacy-reads";
+import type { TrackData } from "@/modules/projects/utils/track-helpers";
 import {
   releaseToFormFields,
   emptyReleaseFormFields,
@@ -501,7 +503,7 @@ export function ReleaseFormModal({
   // project being among the first loaded by unfiltered useProjetos().
   const { entity: selectedProject } = useEntityById<ProjectWithRelations>("projects", formData.projectSeed || undefined);
   const projectLabel: string = selectedProject
-    ? ((selectedProject.title ?? (selectedProject.nome as string | undefined) ?? "") as string)
+    ? projectLabelOf(selectedProject as unknown as Record<string, unknown>)
     : "";
   // Task I: fetches directly by ID (does not depend on the artist being among
   // the first loaded by unfiltered useArtistas()).
@@ -606,39 +608,24 @@ export function ReleaseFormModal({
         ? (projectPhonograms?.isrc ?? "")
         : prev.isrcGlobal,
     }));
-    if (project.description) {
-      try {
-        const projectTracks = JSON.parse(project.description) as Array<{
-          nome?: string;
-          compositores?: string[];
-          produtores?: string[];
-          isrc?: string;
-          letra?: string;
-        }>;
-        if (projectTracks.length > 0) {
-          const artistName = linkedArtist?.stageName ?? "";
-          const resolvedTracks = await Promise.all(
-            projectTracks.map(async (m, i) => {
-              const trackIsrc =
-                m.isrc?.trim() || (m.nome ? (await findPhonogramByTitle(m.nome))?.isrc ?? "" : "");
-              return {
-                ...createReleaseTrack(i + 1),
-                title: m.nome ?? "",
-                artist: artistName,
-                isrc: trackIsrc,
-                composers: m.compositores?.length ? m.compositores : [""],
-                producers: m.produtores?.length
-                  ? m.produtores.map((p) => ({ name: p, role: "Producer" }))
-                  : [],
-                lyrics: m.letra ?? "",
-              };
-            }),
-          );
-          setTracks(resolvedTracks);
-        }
-      } catch {
-        /* invalid JSON */
-      }
+    const projectTracks = projectTracksForRelease(project as { tracks?: TrackData[]; description?: string | null });
+    if (projectTracks.length > 0) {
+      const artistName = linkedArtist?.stageName ?? "";
+      const resolvedTracks = await Promise.all(
+        projectTracks.map(async (m, i) => {
+          const trackIsrc = m.isrc.trim() || (m.title ? (await findPhonogramByTitle(m.title))?.isrc ?? "" : "");
+          return {
+            ...createReleaseTrack(i + 1),
+            title: m.title,
+            artist: artistName,
+            isrc: trackIsrc,
+            composers: m.composers.length ? m.composers : [""],
+            producers: m.producers.map((p) => ({ name: p, role: "Producer" })),
+            lyrics: m.lyrics,
+          };
+        }),
+      );
+      setTracks(resolvedTracks);
     }
     setProjectOpen(false);
     setProjectSearch("");
@@ -1100,7 +1087,7 @@ export function ReleaseFormModal({
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">
-                              {String(p.title ?? p.nome ?? "—")}
+                              {projectLabelOf(p as unknown as Record<string, unknown>) || "—"}
                             </p>
                             {/* ponytail: artist-name subtitle removed — the real API does not
                                 embed the artist in /projects (no join), and resolving it per

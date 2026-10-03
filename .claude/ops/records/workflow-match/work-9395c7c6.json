@@ -1,0 +1,276 @@
+{
+  "order": "Close the technical foundation: normalization of technical language, naming blockers, compatibility boundaries and legacy aliases, environment contract, historical records, destructive approval packages and product decision packages",
+  "intent": null,
+  "threshold": 4,
+  "candidates": [
+    {
+      "workflow": "naming-normalization",
+      "score": 10,
+      "matchedKeywords": [
+        "normalization",
+        "naming",
+        "legacy aliases",
+        "naming blockers",
+        "technical language"
+      ],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.19,
+      "excluded": [],
+      "reasons": [
+        "keywords: normalization, naming, legacy aliases, naming blockers, technical language"
+      ]
+    },
+    {
+      "workflow": "brownfield-change",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.034,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "bug-fix",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "data-integrity-recovery-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.04,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "distribution-rejection-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "greenfield",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "human-approval-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.038,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "import-validation-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "incident",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "operational-recovery-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "phonogram-registration-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "project-operational-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "provider-sync-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "recovery",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "release-readiness-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "release-validation",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "security-review",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "work-registration-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "distribution-flow",
+      "score": -5,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [
+        "normalization"
+      ],
+      "reasons": [
+        "excluded by: normalization"
+      ]
+    },
+    {
+      "workflow": "migration",
+      "score": -5,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [
+        "normalization"
+      ],
+      "reasons": [
+        "excluded by: normalization"
+      ]
+    },
+    {
+      "workflow": "release",
+      "score": -5,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [
+        "normalization"
+      ],
+      "reasons": [
+        "excluded by: normalization"
+      ]
+    },
+    {
+      "workflow": "contract-generation-and-signature-flow",
+      "score": -10,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.042,
+      "excluded": [
+        "naming",
+        "normalization"
+      ],
+      "reasons": [
+        "excluded by: naming, normalization"
+      ]
+    },
+    {
+      "workflow": "database-change",
+      "score": -10,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [
+        "normalization",
+        "naming"
+      ],
+      "reasons": [
+        "excluded by: normalization, naming"
+      ]
+    },
+    {
+      "workflow": "engineering-change",
+      "score": -10,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [
+        "normalization",
+        "naming"
+      ],
+      "reasons": [
+        "excluded by: normalization, naming"
+      ]
+    },
+    {
+      "workflow": "safe-refactor",
+      "score": -10,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [
+        "normalization",
+        "naming"
+      ],
+      "reasons": [
+        "excluded by: normalization, naming"
+      ]
+    }
+  ],
+  "selected": "naming-normalization",
+  "status": "MATCHED",
+  "id": "work-9395c7c6",
+  "createdAt": "2026-10-03T15:08:52.607Z"
+}

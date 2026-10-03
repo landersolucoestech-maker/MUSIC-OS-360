@@ -34,7 +34,9 @@ const require = createRequire(path.join(REPO, "apps/api/package.json"));
 const ts = require("typescript");
 
 export const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
-export const isTestFile = (f) => /[.-](test|spec|e2e-spec)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(e2e|__tests__|__fixtures__|fixtures)\//.test(f);
+/** Opt-in executable checks of the API (they insert legacy-shape rows into a disposable database or smoke a running API): test code, not runtime. */
+export const isVerificationScript = (f) => /^apps\/api\/scripts\/(verify|smoke|reports-smoke)[-.\w]*\.ts$/.test(f);
+export const isTestFile = (f) => /[.-](test|spec|e2e-spec)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(e2e|__tests__|__fixtures__|fixtures)\//.test(f) || isVerificationScript(f);
 export const PROOF_CLASSES = new Set(["TEMPORARY_MIGRATION_COMPATIBILITY", "LEGACY_DATABASE_COMPATIBILITY", "PUBLIC_API_COMPATIBILITY", "EXTERNAL_CONTRACT", "PROVIDER_DEFINED"]);
 
 /** Ledger rows -> [{file, tests[], names:Set, wildcard:boolean}] for runtime files. */
@@ -138,6 +140,34 @@ function runTest(test) {
   return { status: r.status ?? 1, output: `${r.stdout ?? ""}\n${r.stderr ?? ""}` };
 }
 
+/** Test files of the --root tree that exercise `file`: they import it by basename or quote one of its legacy names. */
+let TEST_INDEX = null;
+export function candidateTests(file, names, limit = 5) {
+  if (!TEST_INDEX) {
+    TEST_INDEX = [];
+    const walk = (dir) => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (e.name === "node_modules" || e.name === "dist") continue;
+        const full = path.join(dir, e.name);
+        if (e.isDirectory()) walk(full);
+        else if (/\.(spec|test)\.[cm]?[jt]sx?$/.test(e.name)) TEST_INDEX.push({ rel: path.relative(ROOT, full).split(path.sep).join("/"), text: fs.readFileSync(full, "utf8") });
+      }
+    };
+    for (const d of ["apps/api/src", "apps/web/src", "apps/api/test"]) if (fs.existsSync(path.join(ROOT, d))) walk(path.join(ROOT, d));
+  }
+  const base = path.basename(file).replace(/\.[cm]?[jt]sx?$/, "");
+  const scored = [];
+  for (const { rel, text } of TEST_INDEX) {
+    if (rel.startsWith("apps/api/test/e2e")) continue;
+    let s = 0;
+    if (new RegExp(`from\\s+['"][^'"]*/${base.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}['"]`).test(text)) s += 3;
+    for (const n of names) if (n.length > 2 && (text.includes(`'${n}'`) || text.includes(`"${n}"`) || text.includes(`.${n}`))) s += 1;
+    if (path.dirname(rel) === path.dirname(file)) s += 1;
+    if (s >= 3) scored.push({ rel, s });
+  }
+  return scored.sort((a, b) => b.s - a.s || a.rel.localeCompare(b.rel)).slice(0, limit).map((x) => x.rel);
+}
+
 async function main() {
   const map = JSON.parse(fs.readFileSync(path.join(REPO, "docs/naming/canonical-naming-map.json"), "utf8"));
   const only = arg("--only");
@@ -146,12 +176,34 @@ async function main() {
   const wildcardWords = (n) => /^[A-Za-z_][\w-]*$/.test(n) && n.length > 2 && ptWords(n).length > 0;
   let pairs = pairsFromLedger(map).filter((p) => !only || (p.file + p.test).includes(only));
   const shard = arg("--shard"); // "i/n": this process handles the pairs whose index modulo n equals i (n sandboxes in parallel)
-  if (shard) { const [i, n] = shard.split("/").map(Number); pairs = pairs.filter((_, k) => k % n === i); }
+  if (shard && !arg("--rebind")) { const [i, n] = shard.split("/").map(Number); pairs = pairs.filter((_, k) => k % n === i); }
+  const rebind = arg("--rebind");
+  const declaredFor = new Map();
+  if (rebind) {
+    // second pass: files whose pair was not PROVEN are retried with the declared tests (new operators) and with other tests that exercise them
+    const prev = JSON.parse(fs.readFileSync(path.resolve(rebind), "utf8")).results;
+    const bad = new Set(prev.filter((r) => r.verdict !== "PROVEN").map((r) => r.file));
+    const byFile = new Map();
+    for (const p of pairsFromLedger(map)) {
+      const e = byFile.get(p.file) ?? { file: p.file, names: new Set(), wildcard: false, tests: new Set() };
+      p.names.forEach((n) => e.names.add(n)); e.wildcard ||= p.wildcard; e.tests.add(p.test); byFile.set(p.file, e);
+    }
+    pairs = [];
+    let k = 0;
+    for (const f of [...bad].sort()) {
+      const e = byFile.get(f); if (!e) continue;
+      if (shard) { const [i, n] = shard.split("/").map(Number); if (k++ % n !== i) continue; }
+      declaredFor.set(f, e.tests);
+      for (const t of [...e.tests, ...candidateTests(f, e.names).filter((x) => !e.tests.has(x))]) pairs.push({ file: f, test: t, names: e.names, wildcard: e.wildcard });
+    }
+  }
   if (process.argv.includes("--list")) { for (const p of pairs) console.log(`${p.file} <= ${p.test} [${[...p.names].slice(0, 4).join(",")}${p.wildcard ? ",*" : ""}]`); console.log(pairs.length, "pairs"); return; }
   const prior = fs.existsSync(out) ? JSON.parse(fs.readFileSync(out, "utf8")) : { schemaVersion: 1, results: [] };
   const results = new Map(prior.results.map((r) => [`${r.file}\u0000${r.test}`, r]));
   const baselineCache = new Map();
   for (const [i, pair] of pairs.entries()) {
+    // rebind pass: a candidate test is only tried while no test has proven the file yet
+    if (rebind && !declaredFor.get(pair.file)?.has(pair.test) && [...results.values()].some((r) => r.file === pair.file && r.verdict === "PROVEN" && r.fileSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.file), "utf8")))) continue;
     const abs = path.join(ROOT, pair.file);
     const original = fs.readFileSync(abs, "utf8");
     // the hashes bind to the sources that were actually mutated and tested (the --root copy); the audit compares

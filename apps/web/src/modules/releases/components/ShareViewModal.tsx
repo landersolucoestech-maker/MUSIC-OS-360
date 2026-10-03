@@ -1,3 +1,4 @@
+import { holderPercentage } from "@/modules/releases/lib/legacy-reads";
 import {
   Dialog,
   DialogContent,
@@ -240,8 +241,8 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {(h.percentage ?? h.percentual) != null && (
-                          <span className="text-sm font-sans font-semibold text-primary">{h.percentage ?? h.percentual}%</span>
+                        {holderPercentage(h as unknown as Record<string, unknown>) != null && (
+                          <span className="text-sm font-sans font-semibold text-primary">{String(holderPercentage(h as unknown as Record<string, unknown>))}%</span>
                         )}
                         {h.description && (
                           <span className="text-xs text-muted-foreground">{h.description}</span>

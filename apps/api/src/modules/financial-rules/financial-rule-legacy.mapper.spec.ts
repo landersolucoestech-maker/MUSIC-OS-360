@@ -28,6 +28,18 @@ describe('financial rule legacy compatibility (migration 20260927000001)', () =>
     });
   });
 
+  it('keeps the canonical conditions when both the canonical and the deprecated name are sent, and drops the deprecated key', () => {
+    const out = normalizeFinancialRuleInput({ conditions: { triggers: ['a'] }, condicoes: { triggers: ['b'] } });
+    expect(out).toEqual({ conditions: { triggers: ['a'] } });
+    expect(out).not.toHaveProperty('condicoes');
+  });
+
+  it('a deprecated name alone is moved to the canonical name only when the canonical one is absent (both fields, both directions)', () => {
+    expect(normalizeFinancialRuleInput({ condicoes: { x: 1 } })).toEqual({ conditions: { x: 1 } });
+    expect(normalizeFinancialRuleInput({ calculo: 'fixo' })).toEqual({ calculation_method: 'fixed' });
+    expect(normalizeFinancialRuleInput({ conditions: {}, condicoes: { x: 1 } })['conditions']).toEqual({});
+  });
+
   it('leaves canonical input unchanged', () => {
     const input = { type: 'external_rights_fee', calculation_method: 'tiered', conditions: {} };
     expect(normalizeFinancialRuleInput(input)).toEqual(input);
