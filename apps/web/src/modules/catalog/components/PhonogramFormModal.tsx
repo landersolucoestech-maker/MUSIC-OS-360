@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
+import { parseTracksFromProject, type TrackData } from "@/modules/projects/lib/track-helpers";
 import { MUSICAL_GENRE_LABELS } from "@/constants/musicalGenres";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
@@ -706,20 +707,18 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 let sessionMusicians: PhonogramParticipant[] = [];
                                 if ((fullWork.project_id as string | null | undefined)) {
                                   const project = await storage.findById<ProjetoWithRelations>("projects", fullWork.project_id as string);
-                                  if (project?.description) {
-                                    try {
-                                      const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-                                      const tracks = JSON.parse(project.description as string) as Array<{ nome?: string; produtores?: string[] }>;
-                                      const trackMatch = tracks.find(m =>
-                                        normT(m.nome || "") === normT(fullWork.title || "") ||
-                                        normT(m.nome || "") === normT(work.title || "")
-                                      );
-                                      if (trackMatch?.produtores?.length) {
-                                        sessionMusicians = trackMatch.produtores.map((name: string) => ({
-                                          id: crypto.randomUUID(), name, percentage: "",
-                                        }));
-                                      }
-                                    } catch { /* invalid JSON — leave blank */ }
+                                  if (project) {
+                                    // Producers of the project track with the same name (the API returns the hydrated `tracks` array)
+                                    const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+                                    const trackMatch = parseTracksFromProject(project as { tracks?: TrackData[] }).find((m) =>
+                                      normT(m.name || "") === normT(fullWork.title || "") ||
+                                      normT(m.name || "") === normT(work.title || "")
+                                    );
+                                    if (trackMatch?.producers?.length) {
+                                      sessionMusicians = trackMatch.producers.map((name: string) => ({
+                                        id: crypto.randomUUID(), name, percentage: "",
+                                      }));
+                                    }
                                   }
                                 }
                                 // Resolve the artist for the performer:

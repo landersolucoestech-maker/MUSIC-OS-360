@@ -11,7 +11,7 @@ const raw = (channel: string, metadata: Record<string, unknown>) => ({
   created_at: "2026-08-23T09:00:00.000Z", updated_at: "2026-08-23T10:00:00.000Z",
 });
 
-describe("conversation website-form subject (metadata.assunto) dual-read", () => {
+describe("conversation website-form subject (external metadata.assunto key)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it.each([
@@ -19,9 +19,9 @@ describe("conversation website-form subject (metadata.assunto) dual-read", () =>
     ["custom", { assunto: "" }, undefined],
     ["custom", {}, undefined],
     ["whatsapp", { assunto: "ignored outside the website form" }, undefined],
-  ])("channel %s with %j exposes assunto=%j", async (channel, metadata, expected) => {
+  ])("channel %s with %j exposes formSubject=%j", async (channel, metadata, expected) => {
     apiMock.get.mockResolvedValue([raw(channel, metadata)]);
     const [conversation] = await musicChatConversationsService.list();
-    expect(conversation.assunto).toBe(expected);
+    expect(conversation.formSubject).toBe(expected);
   });
 });

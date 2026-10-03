@@ -1,7 +1,9 @@
 .env*
 # .env.staging/.env.production are placeholder-only templates, safe to
 # version — same exception pattern as the root .gitignore. .env.development
-# stays ignored (real local secrets).
+# stays ignored (real local secrets); its placeholder-only template is .env.development.example
+# (root pattern: `!.env.*.example`).
+!.env.*.example
 !.env.staging
 !.env.production
 scripts/p84-*

@@ -8,7 +8,13 @@
  *
  * Usage:  cd apps/api && npx ts-node --transpile-only seed.ts
  */
-import 'dotenv/config';
+import * as path from 'path';
+import * as dotenv from 'dotenv';
+
+// Same local-env contract as src/main.ts and src/database/datasource.ts: apps/api/.env.development first,
+// then <cwd>/.env.development; variables already in process.env win. (A bare dotenv auto-load would read `.env` instead.)
+dotenv.config({ path: path.resolve(__dirname, '.env.development') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env.development') });
 import { DataSource } from 'typeorm';
 import { ALL_ENTITIES } from './src/database/entities';
 import { assertDatabaseCommandEnv } from './src/core/config/env.schema';

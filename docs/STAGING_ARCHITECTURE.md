@@ -112,7 +112,7 @@ Source: `apps/api/src/core/config/env.schema.ts`, `.env.production`,
 | `ACRCLOUD_HOST/ACCESS_KEY/ACCESS_SECRET` | Optional | ACRCloud | No | **BLOCKED_EXTERNAL** |
 | `AUTENTIQUE_WEBHOOK_SECRET` | Yes (if Autentique is active) | Autentique | No | **BLOCKED_EXTERNAL** |
 | `CORS_ORIGINS` / `APP_URL` | Yes | Depends on the staging domain | No | Depends on Block 9 (Cloudflare DNS) — **BLOCKED_EXTERNAL** |
-| `USE_MOCK` / `MOCK_MODE` / `AUTH_DISABLED` | Yes (all `false`) | Static config | Yes | Add as variables |
+| `USE_MOCK` / `DEV_SOCIAL_METRICS_MOCK` / `AUTH_DISABLED` / `DEV_AUTH_ENDPOINT_ENABLED` | Yes (all `false`, or absent) | Static config | Yes | Add as variables |
 | Deezer, Apple Music | — | — | — | Not in the schema today — no real integration coded yet; nothing to block or configure |
 
 ## External blockers (BLOCKED_EXTERNAL)

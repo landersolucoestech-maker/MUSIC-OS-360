@@ -643,6 +643,33 @@ export const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
 
+  // ── Operational variables read directly by modules ─────────────────────────────
+  // Declared here so a typo or a malformed value fails at boot instead of being ignored by a
+  // bare process.env read (environment-contract census: scripts/env-contract-census.mjs).
+  // Direct (non-pooler) connection string; only its Supabase ref is checked (collectSupabaseEnvErrors).
+  DIRECT_DATABASE_URL: z.string().optional(),
+  // Pool sizing and TLS (database.module.ts, datasource.ts): positive integers; DB_SSL only 'false' disables TLS.
+  DB_POOL_MAX: z.string().regex(/^\d+$/, 'DB_POOL_MAX must be a positive integer').optional(),
+  DB_POOL_MIN: z.string().regex(/^\d+$/, 'DB_POOL_MIN must be a non-negative integer').optional(),
+  DB_POOL_CONNECTION_TIMEOUT_MS: z.string().regex(/^\d+$/, 'DB_POOL_CONNECTION_TIMEOUT_MS must be a positive integer').optional(),
+  DB_SSL: z.enum(['true', 'false']).optional(),
+  // Bull-board basic auth (admin-queues.module.ts): required in staging/production by the module itself.
+  ADMIN_QUEUES_USER: z.string().optional(),
+  ADMIN_QUEUES_PASS: z.string().optional(),
+  // Prometheus scrape token (metrics.controller.ts): required in staging/production by the controller.
+  METRICS_TOKEN: z.string().optional(),
+  // Deploy-platform build identifier shown by /health.
+  BUILD_SHA: z.string().optional(),
+  // 'true' trusts X-Forwarded-For behind a known proxy only (rate-limit.guard.ts).
+  RATE_LIMIT_TRUST_PROXY: z.enum(['true', 'false']).optional(),
+  // 'false' is the kill switch that makes the role writer emit the legacy form (users.service.ts).
+  RBAC_CANONICAL_ROLE_WRITE: z.enum(['true', 'false']).optional(),
+  // Registry adapters stay disabled unless exactly 'true' (never enabled implicitly).
+  REGISTRY_PARTNER_API_ENABLED: z.enum(['true', 'false']).optional(),
+  REGISTRY_PORTAL_RPA_ENABLED: z.enum(['true', 'false']).optional(),
+  // HMAC secret of the external data webhook (external-data.controller.ts).
+  EXTERNAL_DATA_WEBHOOK_SECRET: z.string().optional(),
+
   // LOCAL convenience flags — blocked outside development by the superRefine.
   // DEV_SOCIAL_METRICS_MOCK: dev-only synthetic Instagram/TikTok followers fallback.
   // USE_MOCK is its deprecated alias (still read, still forbidden in prod-like environments).

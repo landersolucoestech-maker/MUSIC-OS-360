@@ -25,8 +25,8 @@ import {
   PROVISIONING_DATA_SOURCE,
 } from './database.tokens';
 // ── Source of truth: TypeORM migrations only ─────────────────────────────────
-// The apps/api/drizzle/ directory contains legacy SQL snapshots that are
-// ARCHIVED and must not be run. TypeORM is the sole migration executor.
+// The archived pre-TypeORM SQL snapshots were removed.
+// TypeORM is the sole migration executor.
 // Run migrations: pnpm --filter api db:migrate
 //
 // ALL_MIGRATIONS is the single shared registry (see ./migrations/index.ts) —

@@ -26,6 +26,8 @@
     "repo:clean:dry": "node scripts/cleanup/local-safe-cleanup.mjs --dry-run",
     "repo:clean": "node scripts/cleanup/local-safe-cleanup.mjs --apply",
     "env:check": "node scripts/env-check.mjs",
+    "env:contract": "node scripts/env-contract-census.mjs --check && node --test scripts/env-contract-census.test.mjs scripts/env-check.test.mjs",
+    "env:contract:report": "node scripts/env-contract-census.mjs --report",
     "cleanup:check": "node scripts/cleanup/cleanup-check.mjs",
     "verify:critical-workflows": "node scripts/verify-critical-workflows.mjs",
     "verify:xlsx-only": "node scripts/verify-xlsx-only.mjs",
@@ -37,7 +39,7 @@
     "naming:validate": "node scripts/naming/validate-canonical-map.mjs",
     "naming:residue-census": "node scripts/naming/residue-census.mjs",
     "naming:audit": "node scripts/naming/normalization-audit.mjs --baseline 02f1ee8a75be16a93f91caae1d8a78702ab2f4fc",
-    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs scripts/naming/schema-naming-census.test.mjs scripts/naming/canonical-map.test.mjs scripts/naming/residue-census.test.mjs scripts/naming/normalization-audit.test.mjs",
+    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs scripts/naming/schema-naming-census.test.mjs scripts/naming/canonical-map.test.mjs scripts/naming/residue-census.test.mjs scripts/naming/normalization-audit.test.mjs scripts/naming/naming-gates-mutation.test.mjs",
     "release:check": "node scripts/release-check.mjs",
     "release:migrate": "node scripts/release-check.mjs --migrate"
   },

@@ -1,0 +1,85 @@
+{
+  "$comment": "Declarations the environment-contract census cannot derive. Every entry carries a reason; an entry without one is rejected by the test. Names only, never values.",
+  "envCheckRequired": [
+    "DATABASE_URL",
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL",
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_API_URL"
+  ],
+  "webRequired": [
+    "VITE_SUPABASE_URL",
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_API_URL"
+  ],
+  "webGuarded": [
+    "VITE_SUPABASE_URL",
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_API_URL",
+    "VITE_AUTH_DISABLED",
+    "VITE_DEV_AUTH_BYPASS"
+  ],
+  "environmentSpecific": {
+    "AUTH_DISABLED": "development-only bypass switch; refused in staging/production",
+    "DEV_SOCIAL_METRICS_MOCK": "development-only synthetic metrics; refused in staging/production",
+    "DEV_AUTH_ENDPOINT_ENABLED": "development-only token helper; refused in staging/production",
+    "DEV_AUTH_EMAIL": "development-only token helper account",
+    "DEV_AUTH_PASSWORD": "development-only token helper account",
+    "DEV_TENANT_ID": "development-only identity override under AUTH_DISABLED",
+    "DEV_ORG_ID": "development-only identity override under AUTH_DISABLED",
+    "STAGING_MAIL_ALLOWLIST_DOMAINS": "staging-only mail allowlist",
+    "ALLOW_RBAC_SHADOW_IN_PRODUCTION": "temporary production/staging escape hatch while RBAC_PERSISTED_AUTHORITY is still SHADOW; development runs in shadow by default and never needs it"
+  },
+  "templatePrefixes": {
+    "STAGING_": "variables of the staging harness and provisioning scripts, documented in the root .env.staging (scripts/ read them; the API does not)",
+    "RBAC_HARNESS_": "RBAC shadow harness inputs (test/rbac-shadow-harness), documented in the root .env.staging",
+    "PROVISION_": "staging provisioning script confirmations",
+    "SEED_": "operational seed inputs read by one-shot seed scripts and documented in the root templates",
+    "TENANT_ZERO_": "one-shot tenant-zero bootstrap CLI inputs"
+  },
+  "templateOnly": {
+    "API_URL": "read by packages/config (server-side helper) and verification scripts, not by the API runtime",
+    "DB_VERIFY_ENABLED": "CI gate variable read by scripts/db-verify-gate.mjs, documented for operators"
+  },
+  "unvalidatedReads": {
+    "SEED_ORG_ID": "one-shot seed input (database/seeds), not API runtime configuration",
+    "SEED_TENANT_ID": "one-shot seed input (database/seeds), not API runtime configuration",
+    "SEED_ADMIN_EMAIL": "one-shot seed input",
+    "SEED_ADMIN_NAME": "one-shot seed input",
+    "SEED_ADMIN_SUB": "one-shot seed input",
+    "SEED_ORG_NAME": "one-shot seed input",
+    "SEED_ORG_SLUG": "one-shot seed input",
+    "TENANT_ZERO_OWNER_EMAIL": "one-shot bootstrap CLI input",
+    "TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK": "one-shot bootstrap CLI acknowledgement flag"
+  },
+  "acceptedSecretDefaults": {
+    "ENCRYPTION_KEY": "documented residual (docs/engineering/security.md): the schema defaults to all-zero and rejects it in staging and production; EncryptionService fails closed outside development, local and test",
+    "ADMIN_QUEUES_PASS": "development-only fallback of the queue dashboard; admin-queues.module.ts refuses to start it in production-like environments without the variable",
+    "ADMIN_QUEUES_USER": "development-only fallback of the queue dashboard (same guard as ADMIN_QUEUES_PASS)"
+  },
+  "buildInjected": {
+    "VITE_COMMIT_SHA": "injected at build time by apps/web/vite.config.mjs (define), never an environment variable"
+  },
+  "pendingTemplateCleanup": {
+    "OPENAI_BASE_URL": "documented in the root .env.production but read by no code; removing the line needs authorization to edit a protected template (the R1 authorization covers comments only)"
+  },
+  "undocumentedOk": {},
+  "documentationOnlyNames": {},
+  "nonEnvTokens": [],
+  "pendingTemplateAdditions": {
+    "BUILD_SHA": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "DOCUSIGN_WEBHOOK_SECRET": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "PLATFORM_CONTACT_RECIPIENT_EMAIL": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "RATE_LIMIT_TRUST_PROXY": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "RBAC_CANONICAL_ROLE_WRITE": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "REDIS_HOST": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "REDIS_PASSWORD": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "REDIS_PORT": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "REGISTRY_PARTNER_API_ENABLED": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "REGISTRY_PORTAL_RPA_ENABLED": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "SOUNDCHARTS_CLIENT_ID": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "SOUNDCHARTS_CLIENT_SECRET": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)",
+    "WHATSAPP_WEBHOOK_VERIFY_TOKEN": "optional variable documented only in the development template: adding it to the protected staging/production templates needs authorization to edit protected files (the R1 authorization covers comments only)"
+  }
+}

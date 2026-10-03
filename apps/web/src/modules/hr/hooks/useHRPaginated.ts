@@ -18,7 +18,7 @@ export interface UseEmployeesPaginatedParams {
 export function useEmployeesPaginated({ page, pageSize, search, status, department: department, enabled = true }: UseEmployeesPaginatedParams) {
   const filters: Record<string, unknown> = {};
   if (status) filters.status = status;
-  if (department) filters.setor = department;
+  if (department) filters.department = department;
 
   const result = usePaginatedDataQuery<Employee>({
     queryKey: [...QUERY_KEYS.EMPLOYEES],

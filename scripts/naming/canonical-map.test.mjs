@@ -76,9 +76,9 @@ test("whole-file rows may list several exact existing files but never a glob; gl
   assert.deepEqual(whole("scripts/naming/canonical-map.mjs, scripts/naming/canonical-map.test.mjs"), []);
   assert.equal(whole("scripts/naming/*.mjs").length, 1);
   assert.equal(whole("scripts/naming/canonical-map.mjs, no/such/file.md").length, 1);
-  assert.ok(globToRegExp("apps/api/drizzle/*.sql").test("apps/api/drizzle/0000_x.sql"));
-  assert.ok(!globToRegExp("apps/api/drizzle/*.sql").test("apps/api/drizzle/meta/0000.sql"));
-  const map = { exceptions: [row({ path: "apps/api/drizzle/*.sql" })] };
-  assert.deepEqual(danglingGlobRows(map, ["apps/api/drizzle/0000_x.sql"]), []);
+  assert.ok(globToRegExp("apps/api/legacy/*.sql").test("apps/api/legacy/0000_x.sql"));
+  assert.ok(!globToRegExp("apps/api/legacy/*.sql").test("apps/api/legacy/meta/0000.sql"));
+  const map = { exceptions: [row({ path: "apps/api/legacy/*.sql" })] };
+  assert.deepEqual(danglingGlobRows(map, ["apps/api/legacy/0000_x.sql"]), []);
   assert.equal(danglingGlobRows(map, ["apps/api/src/a.ts"]).length, 1);
 });

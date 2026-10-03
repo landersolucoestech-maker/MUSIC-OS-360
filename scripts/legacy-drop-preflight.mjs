@@ -103,7 +103,6 @@ export const ALLOWLIST = [
   { prefix: 'apps/api/src/database/events-data-legacy-column.spec.ts', reason: 'pins that the entity declares no `data` column and that the sync trigger exists; its trigger assertions are deleted together with the trigger (plan section 2, events)' },
   { prefix: 'apps/api/src/database/add-events-starts-at.migration.spec.ts', reason: 'spec of the applied migration adding starts_at (historical text, plan section 2: "still true")' },
   { prefix: 'apps/api/src/database/rebuild-events-canonical-form-order.migration.spec.ts', reason: 'spec of the applied events rebuild migration (historical text)' },
-  { prefix: 'apps/api/drizzle/', reason: 'archived drizzle DDL snapshots marked DEPRECATED (apps/api/drizzle/_DEPRECATED.md): "must NOT be applied to any database"' },
   { prefix: 'scripts/legacy-drop-preflight.mjs', reason: 'this tool (column definitions)' },
   { prefix: 'scripts/legacy-drop-preflight.test.mjs', reason: 'this tool (tests)' },
 ];

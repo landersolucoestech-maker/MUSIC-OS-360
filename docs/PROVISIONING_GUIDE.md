@@ -39,9 +39,11 @@ In the Supabase dashboard:
 ### Step 3: Configure environment variables
 
 ```bash
-# Edit with your real credentials (the file already exists at the root, outside Git)
-nano .env.development  # or use your preferred editor
+# The API reads apps/api/.env.development (gitignored), then <cwd>/.env.development; process.env always wins.
+cp apps/api/.env.development.example apps/api/.env.development
+nano apps/api/.env.development  # fill the DEV project values; or use your preferred editor
 ```
+The template lists every variable of the API contract (see `docs/engineering/environment-contract.md`).
 
 Required variables:
 ```
@@ -250,13 +252,13 @@ Runs in sequence: `verify:supabase` → `verify:rls` → `verify:tenant-isolatio
 ### apps/web/.env.development
 
 ```bash
-cp apps/web/.env.production apps/web/.env.development
-# Edit with your real DEV VITE_* variables
+cp apps/web/.env.development.example apps/web/.env.development
+# Edit with your real DEV VITE_* variables (Vite loads this file for `pnpm dev`)
 ```
 
 Required variables for the frontend:
 ```
-VITE_API_URL=http://localhost:3001/api/v1
+VITE_API_URL=http://localhost:3001   # host and port only, no path
 VITE_SUPABASE_URL=https://REF.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJ...
 ```

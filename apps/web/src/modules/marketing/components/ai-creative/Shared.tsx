@@ -91,7 +91,7 @@ type EntityRow = Record<string, unknown> & { id: string };
 
 function bestLabel(item: EntityRow): string {
   return String(
-    item.stage_name || item.title || item.nome || item.name || item.id,
+    item.stage_name || item.title || item.name || item.id,
   );
 }
 

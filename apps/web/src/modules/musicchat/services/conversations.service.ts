@@ -77,7 +77,8 @@ export interface SupportConversation {
   deadlineState: DeadlineState;
   tags: string[];
   /** Subject of the website form (origin "Site"). */
-  assunto?: string;
+  /** Subject typed in the public website contact form (channel "custom"): read from the external `metadata.assunto` key. */
+  formSubject?: string;
   lastMessage: string;
   lastMessageAt: string;
   createdAt: string;
@@ -216,7 +217,7 @@ function mapConversation(raw: RawConversation): SupportConversation {
     remainingTimeLabel: "",
     deadlineState: "on_track",
     tags,
-    assunto: raw.channel === "custom" ? str(meta["assunto"]) || undefined : undefined,
+    formSubject: raw.channel === "custom" ? str(meta["assunto"]) || undefined : undefined,
     lastMessage: "",
     lastMessageAt: formatTime(raw.last_message_at),
     createdAt: formatTime(raw.created_at),

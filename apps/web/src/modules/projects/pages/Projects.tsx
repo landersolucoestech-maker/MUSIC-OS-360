@@ -375,7 +375,7 @@ export default function Projects() {
                         <TableCell>
                           <div className="flex items-center gap-3">
                             {(() => {
-                              const cover = (project.capa_url ?? project.photoUrl ?? project.cover_url) as string | undefined;
+                              const cover = (project.photoUrl ?? project.cover_url) as string | undefined;
                               return (
                                 <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted flex items-center justify-center">
                                   {cover ? (

@@ -423,7 +423,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{f.title || f.titulo || `Faixa ${idx + 1}`}</p>
                       <p className="truncate text-xs text-muted-foreground">
-                        {[f.artista, f.isrc].filter(Boolean).join(" • ")}
+                        {[f.artist ?? f.artista, f.isrc].filter(Boolean).join(" • ")}
                       </p>
                     </div>
                     {f.duration_text && (

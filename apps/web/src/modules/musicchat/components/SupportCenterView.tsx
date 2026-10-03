@@ -1346,10 +1346,10 @@ export function SupportCenterView({
                     <p className="text-muted-foreground">Canal de origem</p>
                     <p className="font-medium text-foreground">{selectedConversation.originLabel}</p>
                   </div>
-                  {selectedConversation.assunto && (
+                  {selectedConversation.formSubject && (
                     <div className="col-span-2">
                       <p className="text-muted-foreground">Assunto</p>
-                      <p className="font-medium text-foreground">{selectedConversation.assunto}</p>
+                      <p className="font-medium text-foreground">{selectedConversation.formSubject}</p>
                     </div>
                   )}
                 </div>

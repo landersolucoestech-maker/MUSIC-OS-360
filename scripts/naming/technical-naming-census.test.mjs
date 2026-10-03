@@ -515,12 +515,10 @@ test("every census exemption table has a ledger row (id, owner, removal conditio
   for (const e of exceptions.filter((x) => x.id?.startsWith("EXM-"))) assert.ok(declared.has(e.currentName), `${e.id} has no exemption table`);
 });
 
-test("ledger rows for the deprecated Drizzle SQL and the frozen audit docs exist and are accepted by the structure validator", async () => {
+test("ledger rows for the frozen audit docs exist and are accepted by the structure validator", async () => {
   const { validateStructure } = await import("./canonical-map.mjs");
   const map = loadAuthority();
   assert.deepEqual(validateStructure(map), []);
-  const drizzle = map.exceptions.find((e) => e.path === "apps/api/drizzle/*.sql");
-  assert.ok(drizzle && drizzle.owner && drizzle.removalCondition && drizzle.targetState === "removed");
   const baseline = JSON.parse(fs.readFileSync(path.join(here, "technical-naming-baseline.json"), "utf8"));
   const records = map.exceptions.filter((e) => e.census === "baselined");
   assert.ok(records.length >= 3 && records.every((e) => e.owner && e.removalCondition && e.targetState && e.reason));
@@ -559,7 +557,7 @@ test("dataFile: YAML and TOML keys are scanned", async () => {
 test("dataFile: lockfiles are not data files, migrations are skipped by the census loop", async () => {
   const { isDataFile } = await import("./technical-naming-census.mjs");
   assert.equal(isDataFile("pnpm-lock.yaml"), false);
-  assert.equal(isDataFile("apps/api/drizzle/meta/_journal.json"), true);
+  assert.equal(isDataFile("docs/archive/meta/_journal.json"), true);
   assert.equal(isDataFile("apps/api/seed.sql"), true);
   assert.equal(isDataFile("apps/web/index.html"), false);
 });
@@ -591,4 +589,19 @@ test("toolMessage: every Portuguese tooling message is a documented exception (n
   const c = census();
   assert.deepEqual(Object.keys(c.debt).filter((k) => k.startsWith("toolMessage::")), []);
   assert.ok(Object.keys(c.excepted).some((k) => k.startsWith("toolMessage::")));
+});
+
+// ---- member reads: `row.titulo`, `row['nome']` are technical uses of a Portuguese name ----
+
+test("property-read: dotted and bracket member reads of a Portuguese name are found, English reads are not", () => {
+  const src = "export const t = (row: Record<string, unknown>) => row.titulo ?? row['nome'] ?? row.title ?? row['name'];\n";
+  const hits = scanSource("apps/web/src/m.ts", src).filter((h) => h.kind === "property-read");
+  assert.deepEqual(hits.map((h) => h.name).sort(), ["nome", "titulo"]);
+  assert.ok(hits.every((h) => h.surface === "identifier"));
+});
+
+test("property-read: process.env member reads stay on the envVar surface, not on the identifier surface", () => {
+  const hits = scanSource("apps/api/src/m.ts", "export const v = process.env.SENHA_PADRAO;\n");
+  assert.equal(hits.filter((h) => h.kind === "property-read").length, 0);
+  assert.equal(hits.filter((h) => h.surface === "envVar").length, 1);
 });

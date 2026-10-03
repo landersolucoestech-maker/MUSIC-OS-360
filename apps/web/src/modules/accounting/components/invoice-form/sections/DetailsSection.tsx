@@ -37,6 +37,24 @@ const stateOptions = [
   "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
 ];
 
+/** Fields of the English flat shape returned by `useCompanySettings` (the only shape this section receives). */
+export interface CompanyProfileSummary {
+  street?: string; number?: string; city?: string; state?: string; zipCode?: string;
+  bankName?: string; agency?: string; account?: string;
+}
+
+/** "street, number, city, state, zip code": the company address line of the provider card. */
+export function formatCompanyAddress(settings: CompanyProfileSummary): string {
+  return [settings.street, settings.number, settings.city, settings.state, settings.zipCode && formatCEP(settings.zipCode)]
+    .filter(Boolean)
+    .join(", ") || "—";
+}
+
+/** "bank • Ag agency • CC account", or a dash without a bank. */
+export function formatCompanyBank(settings: CompanyProfileSummary): string {
+  return settings.bankName ? `${settings.bankName} • Ag ${settings.agency || "—"} • CC ${settings.account || "—"}` : "—";
+}
+
 interface DetailsSectionProps {
   formData: InvoiceFormData;
   rules: InvoiceFormRules;
@@ -85,23 +103,13 @@ export function DetailsSection({
               <div className="md:col-span-2">
                 <p className="text-xs text-muted-foreground">Endereço</p>
                 <p className="font-medium">
-                  {[
-                    companySettings.logradouro,
-                    companySettings.invoice_number,
-                    companySettings.cidade,
-                    companySettings.estado,
-                    companySettings.cep && formatCEP(companySettings.cep),
-                  ]
-                    .filter(Boolean)
-                    .join(", ") || "—"}
+                  {formatCompanyAddress(companySettings)}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Banco</p>
                 <p className="font-medium">
-                  {companySettings.banco
-                    ? `${companySettings.banco} • Ag ${companySettings.agencia || "—"} • CC ${companySettings.conta || "—"}`
-                    : "—"}
+                  {formatCompanyBank(companySettings)}
                 </p>
               </div>
             </CardContent>

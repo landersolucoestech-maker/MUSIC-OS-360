@@ -67,7 +67,7 @@ export function UserViewModal({ open, onOpenChange, user: member }: UserViewModa
               <p className="text-sm text-muted-foreground">Setor</p>
               <div className="flex items-center gap-1.5">
                 <Building2 className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-foreground">{member.setor || "-"}</span>
+                <span className="font-medium text-foreground">{member.department || "-"}</span>
               </div>
             </div>
             <div>

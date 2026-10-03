@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { captureError } from "@/shared/lib/error-logger";
+import { parseTracksFromProject, type TrackData } from "@/modules/projects/lib/track-helpers";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { MUSICAL_GENRE_LABELS } from "@/constants/musicalGenres";
@@ -272,7 +272,7 @@ export function WorkFormModal({
     if (linkedProject) {
       setSelectedProject({
         id: linkedProject.id,
-        name: linkedProject.title ?? (linkedProject.nome as string) ?? "",
+        name: linkedProject.title ?? "",
         artistName: (linkedProject.artist?.stage_name ?? null) as string | null,
       });
     } else {
@@ -602,14 +602,14 @@ export function WorkFormModal({
                               : undefined;
                             const artistFound = artistFoundWire ? wireToArtist(artistFoundWire) : undefined;
                             const artistNameResolved = artistFound?.stageName || pArtistNameDisplay;
-                            // Parse descricao JSON for composers/producers from project songs
+                            // Composers from the project tracks (the API returns the hydrated `tracks` array)
                             let autoParticipants: Participant[] = [];
-                            try {
-                              const tracks = JSON.parse(p.descricao as string || "[]");
-                              if (Array.isArray(tracks) && tracks.length > 0) {
+                            {
+                              const tracks = parseTracksFromProject(p as { tracks?: TrackData[] });
+                              if (tracks.length > 0) {
                                 const seen = new Set<string>();
                                 const composersArr: string[] = tracks
-                                  .flatMap((m: any) => m.compositores || [])
+                                  .flatMap((m) => m.composers ?? [])
                                   .filter((name: string) => { const k = name.trim(); return k && !seen.has(k) && seen.add(k); });
                                 autoParticipants = composersArr.map((name: string) => ({
                                   id: crypto.randomUUID(),
@@ -619,8 +619,6 @@ export function WorkFormModal({
                                   percentage: "",
                                 }));
                               }
-                            } catch (err) {
-                              captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "WorkFormModal.parseProjectSongParticipants" } });
                             }
                             // Fallback: use resolved artista name as single compositor
                             if (autoParticipants.length === 0 && artistNameResolved) {

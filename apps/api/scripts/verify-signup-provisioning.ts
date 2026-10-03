@@ -4,8 +4,14 @@ import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
 import { assertDatabaseCommandEnv } from '../src/core/config/env.schema';
 
+// Same local-env contract as src/main.ts and src/database/datasource.ts: apps/api/.env.development first,
+// then <cwd>/.env.development; variables already in process.env win. (A bare `.config()` would read `.env`.)
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-require('dotenv').config();
+const dotenv = require('dotenv');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const nodePath = require('path');
+dotenv.config({ path: nodePath.resolve(__dirname, '../.env.development') });
+dotenv.config({ path: nodePath.resolve(process.cwd(), '.env.development') });
 
 function env(name: string): string {
   const value = process.env[name];

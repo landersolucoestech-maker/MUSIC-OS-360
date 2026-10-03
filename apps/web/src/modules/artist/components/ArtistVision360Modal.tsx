@@ -1,3 +1,4 @@
+import { parseTracksFromProject, type TrackData } from "@/modules/projects/lib/track-helpers";
 import { useMemo, useState } from "react";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
@@ -2073,15 +2074,18 @@ export function ArtistVision360Modal({
                                   <p className="text-sm font-medium truncate">
                                     {project.title}
                                   </p>
-                                  {Array.isArray(project.produtores) &&
-                                    (project.produtores as string[]).length >
-                                      0 && (
+                                  {(() => {
+                                    const producers = [
+                                      ...new Set(
+                                        parseTracksFromProject(project as { tracks?: TrackData[] }).flatMap((t) => t.producers ?? []),
+                                      ),
+                                    ];
+                                    return producers.length > 0 ? (
                                       <p className="text-xs text-muted-foreground truncate">
-                                        {(project.produtores as string[]).join(
-                                          ", ",
-                                        )}
+                                        {producers.join(", ")}
                                       </p>
-                                    )}
+                                    ) : null;
+                                  })()}
                                 </div>
                                 <Badge
                                   className={`text-xs shrink-0 ${getProjectStatusBadgeClass(project.status)}`}

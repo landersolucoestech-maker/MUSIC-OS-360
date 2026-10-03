@@ -10,7 +10,8 @@
  * Enforced surfaces (every one ratchets against the baseline; see
  * docs/NAMING_NORMALIZATION_CANONICAL_MAP.md):
  *   identifier     functions, classes, interfaces, types, enums and members, methods,
- *                  properties, variables, parameters, destructured bindings
+ *                  properties, variables, parameters, destructured bindings, and member reads
+ *                  (`row.titulo`, `row['nome']`)
  *   objectKey      object-literal keys and destructured property names (wire/DB field names)
  *   value          technical string values: enum initializers, string-literal types, and any
  *                  lowercase/camelCase token literal (status values, option values, form field
@@ -78,6 +79,7 @@ export const DETECTOR_FIXTURES = new Set([
   "scripts/naming/technical-naming-census.mjs",
   "scripts/naming/technical-naming-census.test.mjs",
   "scripts/naming/schema-naming-census.test.mjs",
+  "scripts/naming/naming-gates-mutation.test.mjs",
   "apps/api/src/database/pt-column-naming-baseline.guard.spec.ts",
   // old -> new rename table: the legacy Portuguese names are the data it maps away from
   "scripts/run-technical-english-normalization.mjs",
@@ -378,6 +380,9 @@ export function scanSource(relPath, text) {
     }
     else if (ts.isPropertyAccessExpression(n) && isEnvAccess(n.expression)) env(n.name.text, n);
     else if (ts.isElementAccessExpression(n) && isEnvAccess(n.expression) && ts.isStringLiteral(n.argumentExpression)) { claimed.add(n.argumentExpression); env(n.argumentExpression.text, n); }
+    // member READS (`row.titulo`, `row['nome']`): a legacy-field fallback is a technical use of the Portuguese name even when no declaration exists
+    else if (ts.isPropertyAccessExpression(n)) ident("property-read", n.name, n);
+    else if (ts.isElementAccessExpression(n) && n.argumentExpression && ts.isStringLiteral(n.argumentExpression)) ident("property-read", n.argumentExpression, n);
     else if (ts.isDecorator(n) && ts.isCallExpression(n.expression)) {
       const callee = n.expression.expression.getText(sf);
       const arg = n.expression.arguments[0];

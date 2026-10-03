@@ -57,6 +57,8 @@ jobs:
 
       - name: Naming check (ratchet, canonical map vs schema, generated docs in sync, guard tests)
         run: pnpm run naming:check
+      - name: Environment contract (templates of the three environments, schema, loaders, env:check)
+        run: pnpm run env:contract
 
       - name: TypeCheck (all workspaces)
         run: pnpm turbo typecheck

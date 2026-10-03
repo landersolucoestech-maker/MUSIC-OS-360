@@ -8,6 +8,7 @@ import {
   collectSupabaseEnvErrors,
   expectedSupabaseRef,
   extractSupabaseRef,
+  envSchema,
   forbiddenSupabaseRefs,
 } from './env.schema';
 
@@ -346,5 +347,24 @@ describe('collectProductionAuthorityErrors — RBAC-SHADOW-01 / DBCTX-01 (Part 4
       { ...base, DATABASE_SESSION_CONTEXT_ENABLED: 'true', RBAC_PERSISTED_AUTHORITY: 'ON', ALLOW_RBAC_SHADOW_IN_PRODUCTION: 'true' },
       'production',
     )).toEqual([]);
+  });
+});
+
+describe('env.schema — operational variables read directly by modules are validated', () => {
+  const parse = (extra: Record<string, unknown>) => envSchema.safeParse({ NODE_ENV: 'development', ...extra });
+
+  it('accepts every documented value and an unset variable', () => {
+    expect(parse({}).success).toBe(true);
+    expect(parse({ DB_POOL_MAX: '20', DB_POOL_MIN: '0', DB_POOL_CONNECTION_TIMEOUT_MS: '15000', DB_SSL: 'false', RATE_LIMIT_TRUST_PROXY: 'true', RBAC_CANONICAL_ROLE_WRITE: 'false', REGISTRY_PARTNER_API_ENABLED: 'false', REGISTRY_PORTAL_RPA_ENABLED: 'true', ADMIN_QUEUES_USER: 'u', ADMIN_QUEUES_PASS: 'p', METRICS_TOKEN: 't', BUILD_SHA: 'abc', EXTERNAL_DATA_WEBHOOK_SECRET: 's', DIRECT_DATABASE_URL: 'postgresql://x' }).success).toBe(true);
+  });
+
+  it.each([
+    ['DB_POOL_MAX', 'twenty'], ['DB_POOL_MAX', '-1'], ['DB_POOL_MIN', '1.5'], ['DB_POOL_CONNECTION_TIMEOUT_MS', '15s'],
+    ['DB_SSL', 'FALSE'], ['DB_SSL', '0'], ['RATE_LIMIT_TRUST_PROXY', 'yes'], ['RBAC_CANONICAL_ROLE_WRITE', 'off'],
+    ['REGISTRY_PARTNER_API_ENABLED', '1'], ['REGISTRY_PORTAL_RPA_ENABLED', 'TRUE'],
+  ])('rejects a malformed %s = %s (a typo must fail at boot, not be ignored)', (key, value) => {
+    const result = parse({ [key]: value });
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error?.issues)).toContain(key);
   });
 });

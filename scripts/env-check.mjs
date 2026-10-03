@@ -281,10 +281,10 @@ const envLabel =
     : distinct[0] === SUPABASE_STAGING_REF
       ? "staging"
       : distinct[0] === SUPABASE_DEV_REF
-        ? "desenvolvimento"
+        ? "development"
         : "?";
 console.log(
-  `✅ env:check OK — ref Supabase "${distinct[0] ?? "n/d"}" ` +
+  `✅ env:check OK — Supabase ref "${distinct[0] ?? "n/a"}" ` +
     `(${envLabel}) · ` +
-    `NODE_ENV=${nodeEnv} · mock=${webMock ? "ON" : "off"} · frontend↔backend alinhados`,
+    `NODE_ENV=${nodeEnv} · frontend and backend aligned`,
 );

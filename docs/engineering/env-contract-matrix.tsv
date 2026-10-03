@@ -1,0 +1,154 @@
+VARIABLE	DEVELOPMENT	STAGING	PRODUCTION	API	WEB	REQUIRED	DEFAULT	VALIDATED	SECRET	SOURCE
+ACRCLOUD_ACCESS_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+ACRCLOUD_ACCESS_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+ACRCLOUD_HOST	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+ADMIN_QUEUES_PASS	opt:api	set:api	set:api	Y	-	-	-	schema	yes	env.schema.ts api-src api.development api.staging api.production
+ADMIN_QUEUES_USER	opt:api	set:api	set:api	Y	-	-	-	schema	no	env.schema.ts api-src api.development api.staging api.production
+ALLOW_RBAC_SHADOW_IN_PRODUCTION	-	opt:api	opt:api,set:root	Y	-	-	schema:'false'	schema	no	env.schema.ts root.production api.staging api.production
+ANTHROPIC_API_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+API_URL	-	-	set:root	-	-	-	-	NO	no	root.production
+APP_DATABASE_URL	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+APP_URL	opt:api	set:api	set:api,set:root	Y	-	production(schema)	schema:'http://localhost:5000'	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+AUTENTIQUE_WEBHOOK_SECRET	opt:api	set:api	set:api,set:root	Y	-	production(schema)	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+AUTH_DISABLED	opt:api,set:root	-	set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.development root.production api.development
+BUILD_SHA	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+CORS_ORIGINS	set:api	set:api	set:api,set:root	Y	-	production(schema)	schema:'http://localhost:5000'	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+DATABASE_SESSION_CONTEXT_ENABLED	opt:api	set:api	set:api,set:root	Y	-	-	schema:'false'	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+DATABASE_URL	set:api	set:api	set:api,set:root	Y	-	production(schema)+local(env:check)	-	schema+env:check	yes	env.schema.ts api-src root.production api.development api.staging api.production
+DB_POOL_CONNECTION_TIMEOUT_MS	opt:api	set:api	set:api	Y	-	-	-	schema	no	env.schema.ts api-src api.development api.staging api.production
+DB_POOL_MAX	opt:api	set:api	set:api	Y	-	-	-	schema	no	env.schema.ts api-src api.development api.staging api.production
+DB_POOL_MIN	opt:api	set:api	set:api	Y	-	-	-	schema	no	env.schema.ts api-src api.development api.staging api.production
+DB_SSL	opt:api	set:api,set:root	set:api	Y	-	-	-	schema	no	env.schema.ts api-src root.staging api.development api.staging api.production
+DB_VERIFY_ENABLED	-	-	set:root	-	-	-	-	NO	no	root.production
+DEV_AUTH_EMAIL	opt:api,opt:root	-	-	Y	-	-	-	schema	no	env.schema.ts api-src root.development api.development
+DEV_AUTH_ENDPOINT_ENABLED	opt:api,set:root	-	-	Y	-	-	-	schema	no	env.schema.ts api-src root.development api.development
+DEV_AUTH_PASSWORD	opt:api,opt:root	-	-	Y	-	-	-	schema	yes	env.schema.ts api-src root.development api.development
+DEV_ORG_ID	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+DEV_SOCIAL_METRICS_MOCK	opt:api,set:root	-	set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.development root.production api.development
+DEV_TENANT_ID	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+DIRECT_DATABASE_URL	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts root.production api.development api.staging api.production
+DOCUSIGN_AUTH_BASE_URL	-	-	set:root	Y	-	-	schema:'https://account-d.docusign.com'	schema	no	env.schema.ts api-src root.production
+DOCUSIGN_CLIENT_SECRET	-	-	set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production
+DOCUSIGN_INTEGRATION_KEY	-	-	set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production
+DOCUSIGN_WEBHOOK_SECRET	opt:api	-	-	Y	-	-	-	schema	yes	env.schema.ts api-src api.development
+ENCRYPTION_KEY	opt:api,opt:root	set:api	set:api,set:root	Y	-	-	default(secret!)	schema	yes	env.schema.ts api-src root.development root.production api.development api.staging api.production
+EXTERNAL_DATA_WEBHOOK_SECRET	opt:api	set:api	set:api	Y	-	-	-	schema	yes	env.schema.ts api-src api.development api.staging api.production
+FRONTEND_URL	opt:api	set:api	set:api,set:root	Y	-	production(schema)	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+GOOGLE_ADS_CLIENT_ID	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+GOOGLE_ADS_CLIENT_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+GOOGLE_ADS_REDIRECT_URI	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+GOOGLE_AI_API_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+GOOGLE_CLIENT_ID	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+GOOGLE_CLIENT_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+IDEMPOTENCY_TTL_HOURS	opt:api	set:api	set:api	Y	-	-	schema:24	schema	no	env.schema.ts api-src api.development api.staging api.production
+META_APP_ID	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+META_APP_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+META_REDIRECT_URI	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+METRICS_TOKEN	opt:api	set:api	set:api	Y	-	-	-	schema	yes	env.schema.ts api-src api.development api.staging api.production
+NODE_ENV	set:api,set:root	set:api,set:root	set:api,set:root	Y	-	-	schema:'development'	schema	no	env.schema.ts api-src root.development root.staging root.production api.development api.staging api.production
+OPENAI_API_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+OPENAI_BASE_URL	-	-	set:root	-	-	-	-	NO	no	root.production
+PLATFORM_CONTACT_RECIPIENT_EMAIL	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+PORT	set:api	set:api	set:api,set:root	Y	-	-	schema:3001	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+POSTHOG_API_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+POSTHOG_HOST	opt:api	set:api	set:api,set:root	Y	-	-	schema:'https://app.posthog.com'	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+PROVISION_CONFIRM	-	opt:root	-	-	-	-	-	NO	no	root.staging
+PROVISION_PASSWORD	-	opt:root	-	-	-	-	-	NO	yes	root.staging
+R2_ACCESS_KEY	opt:api	set:api,set:root	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+R2_ACCOUNT_ID	opt:api	set:api,set:root	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+R2_BUCKET_NAME	opt:api	set:api,set:root	set:api,set:root	Y	-	-	schema:'music-os-360'	schema	no	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+R2_PUBLIC_URL	opt:api	set:api,set:root	set:api,set:root	Y	-	production(schema)	-	schema	no	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+R2_SECRET_KEY	opt:api	set:api,set:root	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+RATE_LIMIT_TRUST_PROXY	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+RBAC_AUDIT_MIRROR_ENABLED	-	-	set:root	Y	-	-	schema:'true'	schema	no	env.schema.ts root.production
+RBAC_CANONICAL_ROLE_WRITE	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+RBAC_DECISION_RETENTION_DAYS	-	-	set:root	Y	-	-	schema:30	schema	no	env.schema.ts root.production
+RBAC_DECISION_RETENTION_INTERVAL_HOURS	-	-	set:root	Y	-	-	schema:6	schema	no	env.schema.ts root.production
+RBAC_DISTRIBUTED_CACHE_ENABLED	-	-	set:root	Y	-	-	schema:'true'	schema	no	env.schema.ts api-src root.production
+RBAC_DUAL_READ_TELEMETRY	-	-	set:root	Y	-	-	schema:'true'	schema	no	env.schema.ts api-src root.production
+RBAC_HARNESS_ACCOUNTING_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_ACCOUNTING_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_HARNESS_ADMIN_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_ADMIN_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_HARNESS_ARTIST_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_ARTIST_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_HARNESS_EDITOR_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_EDITOR_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_HARNESS_MANAGER_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_MANAGER_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_HARNESS_OWNER_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_OWNER_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_HARNESS_TARGET_ENDPOINTS	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TARGET_REQUESTS	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TARGET_RESOURCES	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TARGET_ROLES	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TARGET_TENANTS	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TENANT_A	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TENANT_B	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_TENANT_C	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_VIEWER_EMAIL	-	set:root	-	-	-	-	-	NO	no	root.staging
+RBAC_HARNESS_VIEWER_PASSWORD	-	set:root	-	-	-	-	-	NO	yes	root.staging
+RBAC_PERSISTED_AUTHORITY	opt:api	set:api	set:api,set:root	Y	-	-	schema:'SHADOW'	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+REDIS_HOST	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+REDIS_PASSWORD	opt:api	-	-	Y	-	-	-	schema	yes	env.schema.ts api-src api.development
+REDIS_PORT	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+REDIS_QUEUE_URL	opt:api	set:api	set:api,set:root	Y	-	production(schema)	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+REDIS_URL	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+REGISTRY_PARTNER_API_ENABLED	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+REGISTRY_PORTAL_RPA_ENABLED	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+RESEND_API_KEY	opt:api	set:api,set:root	set:api,set:root	Y	-	production(schema)	-	schema	yes	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+RESEND_FROM_EMAIL	opt:api	set:api,set:root	set:api,set:root	Y	-	-	schema:'noreply@musicos360.com.br'	schema	no	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+SEED_ADMIN_EMAIL	-	-	set:root	Y	-	-	-	NO	no	api-src root.production
+SEED_ADMIN_NAME	-	-	set:root	Y	-	-	-	NO	no	api-src root.production
+SEED_ADMIN_SUB	-	-	set:root	Y	-	-	-	NO	no	api-src root.production
+SEED_ORG_ID	-	-	-	Y	-	-	-	NO	no	api-src
+SEED_ORG_NAME	-	-	set:root	Y	-	-	-	NO	no	api-src root.production
+SEED_ORG_SLUG	-	-	set:root	Y	-	-	-	NO	no	api-src root.production
+SEED_TENANT_ID	-	-	-	Y	-	-	-	NO	no	api-src
+SENTRY_DSN	opt:api	set:api,set:root	set:api,set:root	Y	-	production(schema)	-	schema	yes	env.schema.ts api-src root.staging root.production api.development api.staging api.production
+SENTRY_RELEASE	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+SOUNDCHARTS_CLIENT_ID	opt:api	-	-	Y	-	-	-	schema	no	env.schema.ts api-src api.development
+SOUNDCHARTS_CLIENT_SECRET	opt:api	-	-	Y	-	-	-	schema	yes	env.schema.ts api-src api.development
+SOUNDCLOUD_CLIENT_ID	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+SPOTIFY_CLIENT_ID	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+SPOTIFY_CLIENT_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+SPOTIFY_OAUTH_STATE_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+SPOTIFY_REDIRECT_URI	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+STAGING_API_URL	-	set:root	-	-	-	-	-	NO	no	root.staging
+STAGING_APP_DATABASE_URL	-	set:root	-	-	-	-	-	NO	yes	root.staging
+STAGING_DATABASE_URL	-	set:root	-	-	-	-	-	NO	yes	root.staging
+STAGING_MAIL_ALLOWLIST_DOMAINS	-	set:root	-	Y	-	-	schema:'example.com'	schema	no	env.schema.ts api-src root.staging
+STAGING_SUPABASE_ANON_KEY	-	set:root	-	-	-	-	-	NO	no	root.staging
+STAGING_SUPABASE_SERVICE_ROLE_KEY	-	set:root	-	-	-	-	-	NO	yes	root.staging
+STAGING_SUPABASE_URL	-	set:root	-	-	-	-	-	NO	no	root.staging
+STAGING_TENANT_IDS	-	set:root	-	-	-	-	-	NO	no	root.staging
+STRIPE_CONNECT_CLIENT_ID	-	-	set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production
+STRIPE_SECRET_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+STRIPE_WEBHOOK_SECRET	opt:api	set:api	set:api,set:root	Y	-	production(schema)	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+SUPABASE_ANON_KEY	set:api	set:api	set:api,set:root	Y	-	production(schema)+local(env:check)	-	schema+env:check	no	env.schema.ts root.production api.development api.staging api.production
+SUPABASE_SERVICE_ROLE_KEY	opt:api	set:api	set:api,set:root	Y	-	production(schema)	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+SUPABASE_URL	set:api	set:api	set:api,set:root	Y	-	production(schema)+local(env:check)	-	schema+env:check	no	env.schema.ts api-src root.production api.development api.staging api.production
+TENANT_ZERO_OWNER_EMAIL	-	-	-	Y	-	-	-	NO	no	api-src
+TENANT_ZERO_PRINT_PASSWORD_I_ACCEPT_THE_RISK	-	-	-	Y	-	-	-	NO	yes	api-src
+TIKTOK_CLIENT_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+TIKTOK_CLIENT_SECRET	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
+TIKTOK_REDIRECT_URI	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production api.development api.staging api.production
+USE_MOCK	-	-	set:root	Y	-	-	-	schema	no	env.schema.ts api-src root.production
+VITE_API_URL	set:web	set:web	set:web	-	Y	local(env:check)+web-build	-	env:check+web-guard	no	web-src web.development web.staging web.production
+VITE_APP_VERSION	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_AUTH_DISABLED	set:web	set:web	set:web	-	Y	-	-	web-guard	no	web-src web.development web.staging web.production
+VITE_COMMIT_SHA	-	-	-	-	Y	-	-	NO	no	web-src
+VITE_DEV_AUTH_BYPASS	set:web	set:web	set:web	-	Y	-	-	web-guard	no	web-src web.development web.staging web.production
+VITE_DOCUSIGN_AUTH_BASE_URL	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_DOCUSIGN_INTEGRATION_KEY	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_GOOGLE_CLIENT_ID	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_META_APP_ID	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_POSTHOG_KEY	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_SENTRY_DSN	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_STRIPE_CONNECT_CLIENT_ID	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_SUPABASE_ANON_KEY	set:web	set:web	set:web	-	Y	local(env:check)+web-build	-	env:check+web-guard	no	web-src web.development web.staging web.production
+VITE_SUPABASE_URL	set:web	set:web	set:web	-	Y	local(env:check)+web-build	-	env:check+web-guard	no	web-src web.development web.staging web.production
+VITE_TIKTOK_CLIENT_KEY	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+VITE_WS_ENABLED	opt:web	set:web	set:web	-	Y	-	-	NO	no	web-src web.development web.staging web.production
+WHATSAPP_WEBHOOK_VERIFY_TOKEN	opt:api	-	-	Y	-	-	-	schema	yes	env.schema.ts api-src api.development
+YOUTUBE_API_KEY	opt:api	set:api	set:api,set:root	Y	-	-	-	schema	yes	env.schema.ts api-src root.production api.development api.staging api.production
