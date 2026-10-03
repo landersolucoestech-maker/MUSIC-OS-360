@@ -42577,7 +42577,7 @@
     },
     {
       "item": "invoices.payment_method CHECK literal `transferencia` (deploy-window tolerance)",
-      "path": "apps/api/src/database/migrations/20260930000021_BackfillInvoicePaymentMethodBankTransfer.ts",
+      "path": "database-schema",
       "currentName": "transferencia",
       "layer": "database",
       "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",

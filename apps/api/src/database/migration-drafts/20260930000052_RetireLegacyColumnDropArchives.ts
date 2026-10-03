@@ -14,6 +14,11 @@ import { ARTISTS_ARCHIVE, CLIENTS_ARCHIVE } from './20261002000002_EncryptArtist
  * is a later, separate release from the drops. The migration is irreversible (down() refuses). Second lock:
  * up() and down() throw unless the operator exports LEGACY_ARCHIVE_RETIRE_CONFIRM=<CONFIRM_TOKEN> (distinct
  * from LEGACY_DROP_CONFIRM, so confirming a drop never confirms the retirement).
+ *
+ * ORDERING: this draft also retires the PII backfill archives (artists_pii_archive_20261002 / clients_pii_archive_20261002),
+ * so it must run AFTER the backfill draft 20261002000002. Its timestamp is earlier, so when it is registered it MUST be
+ * re-timestamped after the backfill; run in timestamp order before the backfill it would be a no-op (DROP IF EXISTS) and the
+ * plaintext PII archives created later would never be retired.
  */
 export const CONFIRM_ENV = 'LEGACY_ARCHIVE_RETIRE_CONFIRM';
 export const CONFIRM_TOKEN = 'retire-legacy-archives-window-over';

@@ -42,3 +42,7 @@ Status: code (additive, dual-read) shipped; the backfill + scrub of EXISTING row
 - Deterministic search on these fields is not possible (random-IV ciphertext); none existed.
 - `clients.metadata` historical keys and artist historical metadata copies stay until the draft runs; they are never returned or exported.
 - Key rotation: `EncryptionService` has no key versioning beyond the `enc:v1:` prefix; rotation needs its own plan.
+
+## Ordering of the retirement draft
+
+`20260930000052` retires the PII archives too, but its timestamp is earlier than the backfill draft. When it is registered it must be re-timestamped after `20261002000002`; otherwise it would run first as a no-op (`DROP TABLE IF EXISTS`) and the plaintext archives created by the backfill would never be retired.
