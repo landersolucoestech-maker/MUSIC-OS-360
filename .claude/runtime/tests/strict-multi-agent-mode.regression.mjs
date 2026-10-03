@@ -110,7 +110,7 @@ test("a COMPLETED task record marks the matching capability COMPLETED in the led
   try {
     ops(["init"], dir);
     const task = addRecord(dir, "task", {
-      id: "t1", title: "review billing", criterionIds: [],
+      title: "review billing", criterionIds: [],
       assignedAgent: "backend-reviewer", status: "COMPLETED",
     });
     const { capabilities, summary } = computeCapabilityLedger(dir);
@@ -128,7 +128,7 @@ test("NOT_APPLICABLE_WITH_EVIDENCE without a reason is fail-closed back to DISCO
   try {
     ops(["init"], dir);
     addRecord(dir, "task", {
-      id: "t2", title: "n/a check", criterionIds: [],
+      title: "n/a check", criterionIds: [],
       assignedAgent: "cost-efficiency-reviewer", status: "NOT_APPLICABLE_WITH_EVIDENCE",
     });
     const { capabilities } = computeCapabilityLedger(dir);
@@ -144,7 +144,7 @@ test("NOT_APPLICABLE_WITH_EVIDENCE with a concrete reason is respected and exclu
   try {
     ops(["init"], dir);
     addRecord(dir, "task", {
-      id: "t3", title: "n/a check", criterionIds: [],
+      title: "n/a check", criterionIds: [],
       assignedAgent: "cost-efficiency-reviewer", status: "NOT_APPLICABLE_WITH_EVIDENCE",
       notApplicableReason: "no infra/cost-relevant change in this diff",
     });
@@ -161,8 +161,8 @@ test("a FAILED or BLOCKED task keeps the capability outstanding -- never silentl
   const dir = tempMission();
   try {
     ops(["init"], dir);
-    addRecord(dir, "task", { id: "t4", title: "x", criterionIds: [], assignedAgent: "security-reviewer", status: "FAILED" });
-    addRecord(dir, "task", { id: "t5", title: "y", criterionIds: [], assignedAgent: "database-reviewer", status: "BLOCKED" });
+    addRecord(dir, "task", { title: "x", criterionIds: [], assignedAgent: "security-reviewer", status: "FAILED" });
+    addRecord(dir, "task", { title: "y", criterionIds: [], assignedAgent: "database-reviewer", status: "BLOCKED" });
     const outstanding = outstandingCapabilities(dir).map((c) => c.name);
     assert.ok(outstanding.includes("security-reviewer"));
     assert.ok(outstanding.includes("database-reviewer"));
@@ -203,7 +203,7 @@ test("acceptance scenario: repeated kills of a required capability in STRICT_MUL
     for (let i = 0; i < 4; i++) {
       addRecord(dir, "failure", { fingerprint: "agent-killed", summary: `attempt ${i + 1} killed`, gateResultId: null, taskId: null });
     }
-    addRecord(dir, "task", { id: "t-repeated", title: "z", criterionIds: [], assignedAgent: "distributed-systems-reviewer", status: "BLOCKED" });
+    addRecord(dir, "task", { title: "z", criterionIds: [], assignedAgent: "distributed-systems-reviewer", status: "BLOCKED" });
     const result = evaluateGateFile("completion", { cwd: dir });
     assert.equal(result.status, "BLOCKED");
     assert.ok(
@@ -222,11 +222,11 @@ test("full-mobilization-when-strict PASSES once every discovered capability has 
     const { agents, skills } = buildRegistry(dir);
     let i = 0;
     for (const a of agents.filter((x) => x.valid)) {
-      addRecord(dir, "task", { id: `ta-${i++}`, title: a.name, criterionIds: [], assignedAgent: a.name, status: "COMPLETED" });
+      addRecord(dir, "task", { title: a.name, criterionIds: [], assignedAgent: a.name, status: "COMPLETED" });
     }
     for (const s of skills.filter((x) => x.valid)) {
       addRecord(dir, "task", {
-        id: `ts-${i++}`, title: s.name, criterionIds: [], assignedAgent: s.name,
+        title: s.name, criterionIds: [], assignedAgent: s.name,
         status: "NOT_APPLICABLE_WITH_EVIDENCE", notApplicableReason: "synthetic full-coverage test — not exercised against real mission scope",
       });
     }

@@ -319,9 +319,21 @@ export function cmdEffectLog({ flags, cwd }) {
 // conflict, decision, deployment, recovery-plan, release, run, task,
 // production-validation, failure, gate-result) — one mechanism instead of a
 // bespoke command per kind. --data takes a JSON blob for full field fidelity.
+// Kinds that carry trust (evidence, approvals, delegations, orchestration state) are never created through
+// this generic, caller-controlled path: each has a sanctioned producer that binds provenance itself.
+export const CLI_FORBIDDEN_KINDS = {
+  evidence: "use `ops.mjs evidence run --cmd ...` or `ops.mjs evidence review --reviewer ...`",
+  approval: "approvals are requested by `orchestrate.mjs next` and granted only by a human through the approvals engine",
+  delegation: "delegations are opened by `orchestrate.mjs next` (or context-engine open)",
+  orchestration: "plans are created by `orchestrate.mjs plan`",
+  "workflow-match": "matches are recorded by `orchestrate.mjs plan` (workflow-match.mjs)",
+  "workflow-instance": "instances are created by `orchestrate.mjs plan`",
+};
+
 export function cmdRecordAdd({ flags, cwd }) {
   requireState(cwd);
   if (!flags.kind) throw new Error(`USAGE: record add --kind <${recordKindNames().join("|")}> --data '{"field":"value"}'`);
+  if (Object.hasOwn(CLI_FORBIDDEN_KINDS, flags.kind)) throw new Error(`RECORD_KIND_FORBIDDEN: \`record add\` cannot create "${flags.kind}" records; ${CLI_FORBIDDEN_KINDS[flags.kind]}`);
   const fields = flags.data ? JSON.parse(flags.data) : {};
   return { status: "OK", record: addRecord(cwd, flags.kind, fields) };
 }

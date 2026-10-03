@@ -39,6 +39,7 @@ const ROOT_DEFAULT = join(__dirname, "..", "..");
 const TERMINAL_OK = new Set(["COMPLETED"]);
 const NON_ACTIONABLE_REST = new Set(["WAITING_APPROVAL", "BLOCKED_EXTERNAL"]);
 const MAX_ATTEMPTS = 3;
+const MIN_REASON_LETTERS = 12;
 const MAX_STOP_BLOCKS = 3;
 const now = () => new Date().toISOString();
 const readJson = (p, fb) => (existsSync(p) ? JSON.parse(readFileSync(p, "utf8")) : fb);
@@ -177,9 +178,11 @@ function loadPlan(cwd, id) {
 // ------------------------------------------------------------------ commands
 export function plan({ order, workflow = null, intent = null, capabilities = null, tasksFile = null, title = null, adopt = [], unboundReason = null }, cwd = ROOT_DEFAULT) {
   if (!order) throw new Error('USAGE: plan --order "<text>"');
-  if (unboundReason !== null && unboundReason !== undefined && (typeof unboundReason !== "string" || unboundReason.replace(/\s/g, "").length < 12)) {
-    return { status: "INVALID_UNBOUND_REASON", message: "--unbound-reason must state the justification: a string of at least 12 non-space characters" };
+  if (unboundReason !== null && unboundReason !== undefined && (typeof unboundReason !== "string" || (unboundReason.match(/[\p{L}\p{N}]/gu) || []).length < MIN_REASON_LETTERS)) {
+    return { status: "INVALID_UNBOUND_REASON", message: `--unbound-reason must state the justification: a string with at least ${MIN_REASON_LETTERS} letters or digits (punctuation, whitespace and zero-width characters do not count)` };
   }
+  if (!Array.isArray(adopt)) return { status: "INVALID_ADOPTION", problems: ["the adoption list must be a JSON array of {phase, fromPlan, tasks, complete?} objects"] };
+  const currentMission = loadState(cwd)?.missionId ?? null;
   let tasks;
   let chosenIntent = intent;
   let routes = [];
@@ -238,10 +241,14 @@ export function plan({ order, workflow = null, intent = null, capabilities = nul
   if (problems.length) return { status: "INVALID_PLAN", problems };
   const adoptedFrom = [];
   for (const a of adopt) {
+    if (a === null || typeof a !== "object" || Array.isArray(a)) return { status: "INVALID_ADOPTION", problems: [`adoption entry ${JSON.stringify(a)} is not an object {phase, fromPlan, tasks}`] };
+    if (typeof a.fromPlan !== "string" || !a.fromPlan) return { status: "INVALID_ADOPTION", problems: [`adoption of phase "${a.phase}" must name its source plan (fromPlan)`] };
     const phaseTask = tasks.find((t) => t.id === a.phase);
     if (!bound || !phaseTask) return { status: "INVALID_ADOPTION", problems: [`phase "${a.phase}" is not a phase of ${bound}`] };
     if (!Array.isArray(a.tasks) || !a.tasks.length) return { status: "INVALID_ADOPTION", problems: [`adoption of phase "${a.phase}" lists no tasks: adopting a phase requires at least one COMPLETED task with evidence`] };
     const old = loadPlan(cwd, a.fromPlan);
+    if (!currentMission || old.missionId !== currentMission) return { status: "INVALID_ADOPTION", problems: [`plan ${a.fromPlan} belongs to mission ${old.missionId || "none"}, not the current mission ${currentMission || "none"}: only same-mission work can be adopted`] };
+    if (old.status === "ABANDONED") return { status: "INVALID_ADOPTION", problems: [`plan ${a.fromPlan} is ABANDONED: its tasks cannot be adopted`] };
     const refs = [];
     for (const tid of a.tasks) {
       const ot = old.tasks.find((x) => x.id === tid);
@@ -357,7 +364,15 @@ export function done({ planId = null, task, evidence = "", summary: text = "" },
     else if (e.missionId !== missionId) bad.push(`EVIDENCE_WRONG_MISSION: ${r} is bound to ${e.missionId || "no mission"}, not ${missionId}`);
   }
   if (bad.length) throw new Error(bad.join("; "));
-  if (t.delegationId && !getRecord(cwd, "delegation", t.delegationId)) throw new Error(`UNKNOWN_DELEGATION: ${t.delegationId} of task ${t.id} does not exist`);
+  const delegation = t.delegationId ? getRecord(cwd, "delegation", t.delegationId) : null;
+  if (t.delegationId && !delegation) throw new Error(`UNKNOWN_DELEGATION: ${t.delegationId} of task ${t.id} does not exist`);
+  // A task with an agent is closed only after `next` dispatched it, and only by evidence produced at or after
+  // that dispatch (a delegation's createdAt is the dispatch time). Adopted tasks keep their own validation.
+  if (!(t.adopted && t.adopted.length)) {
+    if (t.status !== "RUNNING" || !delegation) throw new Error(`TASK_NOT_DISPATCHED: ${t.id} is ${t.status}${delegation ? "" : " with no delegation record"}; a task is closed only after \`next\` dispatched it`);
+    const stale = refs.filter((r) => String(getRecord(cwd, "evidence", r).createdAt) < String(delegation.createdAt));
+    if (stale.length) throw new Error(`EVIDENCE_BEFORE_DISPATCH: ${stale.join(", ")} predate the dispatch of ${t.id} (${delegation.createdAt}); record fresh evidence after dispatch`);
+  }
   t.status = "COMPLETED";
   t.evidenceRefs = refs;
   t.result = text || "completed";
@@ -422,12 +437,13 @@ export function addTask({ planId = null, id, agent, skills = [], deps = [], bloc
   const p = loadPlan(cwd, planId);
   if (p.workflowInstanceId && !phase) throw new Error(`PHASE_REQUIRED: plan ${p.id} is bound to a workflow instance; attach the task to one of its phases (--phase)`);
   const t = mkTask({ id, title: id, agent, skills, dependsOn: deps, objective, acceptance, filesInScope: files });
+  let reopened = null;
   if (phase) {
     const phaseTask = p.tasks.find((x) => x.id === phase && (x.phase || x.id) === phase);
     if (!phaseTask) throw new Error(`UNKNOWN_PHASE: ${phase}`);
     t.phase = phase;
     if (!blocks.includes(phase)) blocks = [...blocks, phase];
-    if (phaseTask.status === "COMPLETED" && reopen) { phaseTask.status = "PENDING"; phaseTask.result = `reopened by new task ${id}`; }
+    if (phaseTask.status === "COMPLETED" && reopen) { reopened = phaseTask; phaseTask.status = "PENDING"; phaseTask.result = `reopened by new task ${id}`; }
   }
   const next = [...p.tasks, t];
   for (const b of blocks) {
@@ -439,7 +455,24 @@ export function addTask({ planId = null, id, agent, skills = [], deps = [], bloc
   }
   const problems = validatePlanTasks(next, cwd);
   if (problems.length) throw new Error(`INVALID_PLAN: ${problems.join("; ")}`);
+  if (reopened) {
+    // everything downstream of the reopened phase was closed on the premise that it was complete: invalidate it
+    const stale = new Set([reopened.id]);
+    for (let grew = true; grew;) {
+      grew = false;
+      for (const x of next) if (!stale.has(x.id) && x.dependsOn.some((d) => stale.has(d))) { stale.add(x.id); grew = true; }
+    }
+    stale.delete(reopened.id);
+    for (const x of next) {
+      if (!stale.has(x.id) || !["COMPLETED", "READY"].includes(x.status)) continue;
+      x.status = "PENDING";
+      x.evidenceRefs = [];
+      x.result = `invalidated: upstream phase ${reopened.id} was reopened by new task ${id}`;
+      x.delegationId = null;
+    }
+  }
   p.tasks = next;
+  if (reopened && p.status === "COMPLETED") p.status = "ACTIVE"; // a plan with reopened work is active again
   save(cwd, p);
   return { status: "OK", task: id, summary: summary(p) };
 }

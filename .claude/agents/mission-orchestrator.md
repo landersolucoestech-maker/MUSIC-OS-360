@@ -26,7 +26,7 @@ delegate, consolidate, and gate. Follow `.claude/rules/00-execution-protocol.md`
      STRICT_MULTI_AGENT` or `ops.mjs mode set --mode STRICT_MULTI_AGENT`, never assumed): full
      capability mobilization is mandatory for this mission. Discover every registered agent and
      skill (`node .claude/runtime/registry.mjs`). For each, record a `task` record
-     (`ops.mjs record add --kind task --data '{"id":"...","title":"...","criterionIds":[],
+     (`ops.mjs record add --kind task --data '{"title":"...","criterionIds":[],
      "assignedAgent":"<name>","status":"PLANNED"}'`), then dispatch it (update status to
      DISPATCHED/RUNNING as it runs, COMPLETED when it finishes) or, if it genuinely cannot
      contribute to this mission's actual scope, mark it `NOT_APPLICABLE_WITH_EVIDENCE` with a
