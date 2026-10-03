@@ -1,0 +1,9 @@
+{
+  "agent": "migration-test-engineer",
+  "objective": "Owner decision 2026-10-03 (deci-ed83c974): prepare and rehearse the encrypted PII backfill (option A) on a disposable database without any production scrub",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-037380ac",
+  "createdAt": "2026-10-03T04:37:57.576Z"
+}

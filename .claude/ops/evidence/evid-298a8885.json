@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/database/migration-drafts",
+  "command": "pnpm --filter @music-os-360/api exec jest --config jest.config.ts src/database/migration-drafts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "394977a8f1619f724b24bd768ac0551bf7e89e14a3789e17613bbb840b5e8b7a",
+  "fingerprintStatus": "BOUND",
+  "head": "a877a0cb3970dfbbcf74e61d0be477b46fa03948",
+  "durationMs": 14313,
+  "id": "evid-298a8885",
+  "createdAt": "2026-10-03T04:56:24.553Z"
+}

@@ -7,7 +7,7 @@
   "intent": null,
   "status": "ACTIVE",
   "stopBlocks": 0,
-  "lastProgressAt": "2026-10-03T04:21:26.326Z",
+  "lastProgressAt": "2026-10-03T05:00:24.728Z",
   "tasks": [
     {
       "id": "census",
@@ -200,7 +200,11 @@
       ],
       "filesInScope": [],
       "dependsOn": [
-        "schema-plan"
+        "schema-plan",
+        "pf-drop-groups",
+        "pf-pii-backfill",
+        "pf-release-census",
+        "approve-drop-40"
       ],
       "acceptance": [
         "evidence recorded: approval-record",
@@ -1584,6 +1588,149 @@
       "failureReason": null,
       "recoveryOf": "p-drop-drafts-hardening",
       "blockedExternal": null
+    },
+    {
+      "id": "pf-drop-groups",
+      "title": "pf-drop-groups",
+      "objective": "Owner decision 2026-10-03 (deci-ed83c974): run the non-destructive pre-flight of every legacy column drop group and produce one approval package per migration/group",
+      "agent": "implementation-engineer",
+      "skills": [
+        "create-migration-tests",
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "pf-drop-groups-recovery-1"
+      ],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "delegationId": "dele-20c7864d",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-84e57cf6",
+        "evid-f4317b07",
+        "evid-298a8885",
+        "evid-85d1def8",
+        "evid-2a58ddb5"
+      ],
+      "result": "pre-flight tool (26 tests), rehearsal up/down/up on a disposable COPY for groups 40-46, 48, 49, 53 (39 e2e assertions), 3 draft defects fixed (runRestore, draft 46 lock, 48/49 rehearsal), approval packages in docs/engineering/legacy-drop-approval-packages.md: all READY NO (no real environment, PITR, retention, census); commit a877a0c",
+      "failureReason": "executor migration-test-engineer write scope excludes scripts/, docs/ and migration-drafts/; reassigned to an executor that can write",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "pf-pii-backfill",
+      "title": "pf-pii-backfill",
+      "objective": "Owner decision 2026-10-03 (deci-ed83c974): prepare and rehearse the encrypted PII backfill (option A) on a disposable database without any production scrub",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "encryption-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-037380ac",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5c6ae153",
+        "evid-85d1def8",
+        "evid-2a58ddb5"
+      ],
+      "result": "backfill and scrub split into separate unregistered drafts with separate tokens, 18-step rehearsal on a disposable COPY (archive, ciphertext verification, decrypt verification, failure recovery, down/up, scrub), packages in docs/engineering/pii-approval-packages.md: READY NO (no key escrow, retention, census, staging rehearsal); commit 7d3fd3e",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "pf-release-census",
+      "title": "pf-release-census",
+      "objective": "Owner decision 2026-10-03: D3 release status census report (values, origin, Distribution relation, consumers, consequences of options A and B); no implementation",
+      "agent": "database-reviewer",
+      "skills": [
+        "database-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-f7b8c26b",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-cb1488d9",
+        "evid-b9dd85fe"
+      ],
+      "result": "D3 census report docs/engineering/release-status-census.md: valid values, legacy origin, Distribution/Takedown relation, consumers, consequences of options A and B, exact owner wording; real-environment counts NOT_MEASURED (no environment reachable); nothing implemented",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "pf-drop-groups-recovery-1",
+      "title": "recover pf-drop-groups",
+      "objective": "Find the root cause of the failure of task pf-drop-groups (\"Owner decision 2026-10-03 (deci-ed83c974): run the non-destructive pre-flight of every legacy column drop group and produce one approval package per migration/group\"): executor migration-test-engineer write scope excludes scripts/, docs/ and migration-drafts/; reassigned to an executor that can write. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-f4e98c83",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-f33933df"
+      ],
+      "result": "root cause: migration-test-engineer write scope is apps/api/src/database/**/*.migration.spec.ts and apps/api/test/e2e/schema/** (agent definition), so it cannot write scripts/, docs/ or drafts; pf-drop-groups reassigned to implementation-engineer",
+      "failureReason": null,
+      "recoveryOf": "pf-drop-groups",
+      "blockedExternal": null
+    },
+    {
+      "id": "approve-drop-40",
+      "title": "approve-drop-40",
+      "objective": "Per-operation owner approval for works legacy columns drop. Package READY_FOR_DESTRUCTIVE_EXECUTION: NO; approval must NOT be requested until every missing prerequisite is satisfied. Never self-granted.",
+      "agent": "human-approval-agent",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [
+        "pf-drop-groups"
+      ],
+      "acceptance": [
+        "Approval requested only after package READY=YES"
+      ],
+      "gates": [],
+      "approvalClass": "human-approval",
+      "status": "WAITING_APPROVAL",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": "appr-c80c4e2f",
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
     }
   ],
   "requireWorkflow": true,

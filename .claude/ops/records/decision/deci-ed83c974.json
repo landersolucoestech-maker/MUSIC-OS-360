@@ -1,0 +1,8 @@
+{
+  "topic": "destructive-approval: owner authorization limited to preparatory work (2026-10-03)",
+  "decision": "D1 column drops: approved = final preparation, censuses, verifications, rehearsals and non-destructive operations only; NO unconditional DROP authorization; production receives no DROP authorization and LEGACY_DROP_CONFIRM is never set in production. D2 artist/client PII: option A (archive -> encrypted backfill -> verification -> ciphertext canonical), non-destructive preparation authorized, plaintext scrub/removal NOT authorized (separate destructive approval). D3 release status: stays GENUINE_BUSINESS_DECISION, do not implement rejected/taken_down nor map to cancelled; produce census. D4 HR employee documents: keep capability unavailable (CAPABILITY_UNAVAILABLE), invent nothing, no data deletion. D5 CI required check: stays EXTERNAL. D6: do not run archive retirement, side-table purge, shares registry creation or transactions v2 cutover; no rollback archive may be deleted. The destructive-approval task is NOT GRANTED; protected operations stay WAITING_APPROVAL with per-operation approvals.",
+  "decidedBy": "owner (human, explicit chat message)",
+  "rationale": "Verbatim owner message of 2026-10-03; the runtime approval model is binary so this is recorded as a decision authorizing preparatory tasks only.",
+  "id": "deci-ed83c974",
+  "createdAt": "2026-10-03T04:36:25.511Z"
+}

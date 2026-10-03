@@ -1,0 +1,9 @@
+{
+  "agent": "migration-test-engineer",
+  "objective": "Owner decision 2026-10-03 (deci-ed83c974): run the non-destructive pre-flight of every legacy column drop group and produce one approval package per migration/group",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-f1d99cc0",
+  "createdAt": "2026-10-03T04:37:57.571Z"
+}

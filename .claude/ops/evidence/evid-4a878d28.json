@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "grep -n -i \"write scope\" .claude/agents/migration-test-engineer.md",
+  "command": "grep -n -i \"write scope\" .claude/agents/migration-test-engineer.md",
+  "status": "FAIL",
+  "exitCode": 2,
+  "stdoutTail": "",
+  "stderrTail": "grep: scope\": No such file or directory",
+  "workspaceFingerprint": "b0d8c253aadd6e39de7cda2d018a494f7c1250240dedc7c06266e37a5cd4028c",
+  "fingerprintStatus": "BOUND",
+  "head": "c5248f726e0af83c2c811826433ecaaa0271acfa",
+  "durationMs": 6,
+  "id": "evid-4a878d28",
+  "createdAt": "2026-10-03T04:39:42.013Z"
+}

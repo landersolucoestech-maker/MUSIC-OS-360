@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-provider-residue.mjs",
+  "command": "node scripts/verify-provider-residue.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "[verify-provider-residue] FAIL\n  - .claude/ops/evidence/evid-9b623b18.json: references a forbidden provider (Replit, Vercel or Clerk)",
+  "workspaceFingerprint": "c70f9384ec57e11814b000c3dee27c037345c6ba4eafd2797f33aa9f39d361d0",
+  "fingerprintStatus": "BOUND",
+  "head": "3adbc2d21fcda572e188793630257abdfcadf394",
+  "durationMs": 1597,
+  "id": "evid-dc6bb46b",
+  "createdAt": "2026-10-03T05:07:28.893Z"
+}

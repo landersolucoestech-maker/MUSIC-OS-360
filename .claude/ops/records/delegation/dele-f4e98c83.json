@@ -1,0 +1,9 @@
+{
+  "agent": "root-cause-investigator",
+  "objective": "Find the root cause of the failure of task pf-drop-groups (\"Owner decision 2026-10-03 (deci-ed83c974): run the non-destructive pre-flight of every legacy column drop group and produce one approval package per migration/group\"): executor migration-test-engineer write scope excludes scripts/, docs/ and migration-drafts/; reassigned to an executor that can write. Do not retry the same approach.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-f4e98c83",
+  "createdAt": "2026-10-03T04:39:34.305Z"
+}

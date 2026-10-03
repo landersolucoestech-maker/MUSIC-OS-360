@@ -1,0 +1,8 @@
+{
+  "topic": "approval appr-c80c4e2f (approve-drop-40) was opened by dispatch mechanics, not requested: do not grant",
+  "decision": "Package 40 is READY_FOR_DESTRUCTIVE_EXECUTION: NO. The per-operation task approve-drop-40 was dispatched by orchestrate next, which auto-opened approval appr-c80c4e2f. No approval is being requested for it. It must stay PENDING and must not be granted until package 40 is READY=YES with owner wording naming migration, environment, table and columns. The other protected operations (41,42,43,44,45,46,49,53, PII backfill, PII scrub) are deliberately NOT added as dispatchable tasks to avoid opening approvals for READY NO items; they are listed in docs/engineering/legacy-drop-approval-packages.md and pii-approval-packages.md.",
+  "decidedBy": "music-os-360-orchestrator",
+  "rationale": "Owner decision 2026-10-03: do not request approval for READY NO items; the approval model has no withdraw, so the open approval is documented as non-actionable instead of denied or granted.",
+  "id": "deci-f097b424",
+  "createdAt": "2026-10-03T05:00:36.940Z"
+}

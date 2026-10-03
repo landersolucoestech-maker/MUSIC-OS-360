@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "grep -n e2e/schema/ .claude/agents/migration-test-engineer.md",
+  "command": "grep -n e2e/schema/ .claude/agents/migration-test-engineer.md",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "29:- writes: apps/api/src/database/**/*.migration.spec.ts, apps/api/test/e2e/schema/**",
+  "stderrTail": "",
+  "workspaceFingerprint": "b0d8c253aadd6e39de7cda2d018a494f7c1250240dedc7c06266e37a5cd4028c",
+  "fingerprintStatus": "BOUND",
+  "head": "c5248f726e0af83c2c811826433ecaaa0271acfa",
+  "durationMs": 4,
+  "id": "evid-f33933df",
+  "createdAt": "2026-10-03T04:39:54.137Z"
+}

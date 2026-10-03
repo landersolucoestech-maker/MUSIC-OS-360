@@ -57,7 +57,11 @@
     {
       "phase": "destructive-approval",
       "taskIds": [
-        "destructive-approval"
+        "destructive-approval",
+        "pf-drop-groups",
+        "pf-pii-backfill",
+        "pf-release-census",
+        "approve-drop-40"
       ],
       "adopted": []
     },

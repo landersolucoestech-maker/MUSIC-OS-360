@@ -201,3 +201,5 @@
 {"name":"gate-run","at":"2026-10-03T04:30:26.089Z","gate":"operational-automation","status":"PASS","durationMs":61,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-03T04:30:41.159Z","gate":"security","status":"PASS","durationMs":12229,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-03T04:30:53.753Z","gate":"completion","status":"BLOCKED","durationMs":12500,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T05:08:23.156Z","gate":"security","status":"BLOCKED","durationMs":12880,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T05:08:39.486Z","gate":"security","status":"BLOCKED","durationMs":12935,"reasonCount":1}

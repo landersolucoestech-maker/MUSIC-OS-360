@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "env DB_SSL=false NODE_ENV=test DATABASE_URL=postgresql://musicos360@127.0.0.1:54329/music_os_drops_base pnpm --filter @music-os-360/api exec jest --config jest.e2e.config.ts test/e2e/schema/pii-backfill-drafts",
+  "command": "env DB_SSL=false NODE_ENV=test DATABASE_URL=postgresql://musicos360@127.0.0.1:54329/music_os_drops_base pnpm --filter @music-os-360/api exec jest --config jest.e2e.config.ts test/e2e/schema/pii-backfill-drafts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "console.log\n    PII REHEARSAL COUNTS {\"seed:artists\":6,\"seed:clients\":5,\"archive:artists\":5,\"archive:clients\":4,\"verify:artistFieldsCompared\":13,\"verify:artistFieldsDivergent\":1,\"verify:clientRows\":3,\"verify:clientsDivergent\":1,\"decrypt:equal\":14,\"decrypt:divergentSkipped\":1,\"scrub:artistsWithPlaintextLeft\":0}\n\n      at Object.<anonymous> (test/e2e/schema/pii-backfill-drafts.e2e-spec.ts:166:13)",
+  "stderrTail": "",
+  "workspaceFingerprint": "394977a8f1619f724b24bd768ac0551bf7e89e14a3789e17613bbb840b5e8b7a",
+  "fingerprintStatus": "BOUND",
+  "head": "a877a0cb3970dfbbcf74e61d0be477b46fa03948",
+  "durationMs": 10106,
+  "id": "evid-5c6ae153",
+  "createdAt": "2026-10-03T04:56:34.809Z"
+}
