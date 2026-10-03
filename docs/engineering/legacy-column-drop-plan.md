@@ -11,7 +11,7 @@ the `file:line` references of section 2 and the physical census of 3.0-3.2. This
 
 | change | where |
 |---|---|
-| Dead dual-write removed: the API no longer writes `events.data` (the sync trigger fills it); entity column is `insert:false, update:false` | `events.service.ts` (`dtoToEntity`, `create`), `entities.ts` (`EventEntity.data`), `events-data-legacy-column.spec.ts` |
+| Dead dual-write removed: the API no longer writes `events.data` (the sync trigger fills it); the entity declares no `data` column (pinned by `events-data-legacy-column.spec.ts`) | `events.service.ts` (`dtoToEntity`, `create`), `entities.ts` (`EventEntity`), `events-data-legacy-column.spec.ts` |
 | Dead web writer removed: the invoice form no longer sends `legacy_amount` (the API derives the NOT NULL mirror from `service_amount`) | `useInvoiceForm.ts`, `useInvoiceForm.legacy-amount.guard.test.ts`, `invoices.service.spec.ts` |
 | `invoices.legacy_amount` EXPAND: Stripe upsert dual-writes `service_amount`; overdue scheduler reads `service_amount ?? legacy_amount` | `billing.service.ts upsertStripeInvoice`, `invoice-overdue.scheduler.ts`, specs |
 | Backfill migration `20260930000022_BackfillCanonicalFromLegacyMirrors` (guarded, reversible, no drop): fills NULL `invoices.service_amount` from `legacy_amount` and NULL `takedowns.infringing_url` from `url`, recording ids in RLS-locked side tables | `migrations/20260930000022_*.ts`, `backfill-canonical-from-legacy-mirrors.migration.spec.ts` |
