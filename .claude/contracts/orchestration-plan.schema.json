@@ -21,6 +21,12 @@
     "title": {
       "type": "string"
     },
+    "missionId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "workflow": {
       "type": [
         "string",

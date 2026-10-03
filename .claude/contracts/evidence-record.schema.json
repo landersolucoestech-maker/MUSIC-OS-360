@@ -8,6 +8,7 @@
   "properties": {
     "id": { "type": "string" },
     "type": { "enum": ["COMMAND", "REVIEW"] },
+    "missionId": { "type": "string", "description": "Mission (state.json missionId) the evidence was produced in; orchestrate.mjs done refuses evidence bound to another mission or to none." },
     "status": { "enum": ["PASS", "FAIL", "BLOCKED"] },
     "command": { "type": "string" },
     "reviewer": { "type": "string" },

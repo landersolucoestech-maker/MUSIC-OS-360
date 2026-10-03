@@ -30,6 +30,8 @@ import { addRecord, getRecord, listRecords, updateRecord } from "./lib/record-st
 import { routeTask, classifyIntent } from "./route-task.mjs";
 import { loadWorkflow, SAFE_NAME } from "./graph-engine.mjs";
 import { matchOrder, recordMatch, MATCH_THRESHOLD } from "./workflow-match.mjs";
+import { openWorkflowTasks } from "./lib/workflow-completion.mjs";
+import { loadState } from "./lib/state-store.mjs";
 import { open as openDelegation, close as closeDelegation } from "./context-engine.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -145,14 +147,13 @@ function save(cwd, plan, progress = true) {
   return saved;
 }
 
-// A workflow instance is COMPLETED exactly when every phase task of its plan is COMPLETED.
+// A workflow instance is COMPLETED exactly when every phase task, every task attached to a phase and the
+// completion-gate task of its plan are COMPLETED with evidence (lib/workflow-completion.mjs, shared with the gate).
 function syncInstance(cwd, p) {
   if (!p.workflowInstanceId) return;
   const inst = getRecord(cwd, "workflow-instance", p.workflowInstanceId);
   if (!inst) return;
-  const phases = new Set(inst.steps.map((st) => st.phase));
-  const done = [...phases].every((ph) => p.tasks.find((t) => t.id === ph)?.status === "COMPLETED");
-  const status = done ? "COMPLETED" : "ACTIVE";
+  const status = openWorkflowTasks(p, inst).length === 0 ? "COMPLETED" : "ACTIVE";
   const taskIdsByPhase = new Map(inst.steps.map((st) => [st.phase, p.tasks.filter((t) => t.phase === st.phase).map((t) => t.id)]));
   const steps = inst.steps.map((st) => ({ ...st, taskIds: taskIdsByPhase.get(st.phase) }));
   if (status !== inst.status || JSON.stringify(steps) !== JSON.stringify(inst.steps)) {
@@ -176,6 +177,9 @@ function loadPlan(cwd, id) {
 // ------------------------------------------------------------------ commands
 export function plan({ order, workflow = null, intent = null, capabilities = null, tasksFile = null, title = null, adopt = [], unboundReason = null }, cwd = ROOT_DEFAULT) {
   if (!order) throw new Error('USAGE: plan --order "<text>"');
+  if (unboundReason !== null && unboundReason !== undefined && (typeof unboundReason !== "string" || unboundReason.replace(/\s/g, "").length < 12)) {
+    return { status: "INVALID_UNBOUND_REASON", message: "--unbound-reason must state the justification: a string of at least 12 non-space characters" };
+  }
   let tasks;
   let chosenIntent = intent;
   let routes = [];
@@ -236,13 +240,14 @@ export function plan({ order, workflow = null, intent = null, capabilities = nul
   for (const a of adopt) {
     const phaseTask = tasks.find((t) => t.id === a.phase);
     if (!bound || !phaseTask) return { status: "INVALID_ADOPTION", problems: [`phase "${a.phase}" is not a phase of ${bound}`] };
+    if (!Array.isArray(a.tasks) || !a.tasks.length) return { status: "INVALID_ADOPTION", problems: [`adoption of phase "${a.phase}" lists no tasks: adopting a phase requires at least one COMPLETED task with evidence`] };
     const old = loadPlan(cwd, a.fromPlan);
     const refs = [];
-    for (const tid of a.tasks || []) {
+    for (const tid of a.tasks) {
       const ot = old.tasks.find((x) => x.id === tid);
       if (!ot || ot.status !== "COMPLETED") return { status: "INVALID_ADOPTION", problems: [`task ${tid} of ${a.fromPlan} is not COMPLETED`] };
-      const missing = (ot.evidenceRefs || []).filter((e) => !getRecord(cwd, "evidence", e));
-      if (!(ot.evidenceRefs || []).length || missing.length) return { status: "INVALID_ADOPTION", problems: [`task ${tid} of ${a.fromPlan} has no existing evidence (${missing.join(", ") || "none recorded"})`] };
+      const missing = (ot.evidenceRefs || []).filter((e) => getRecord(cwd, "evidence", e)?.status !== "PASS");
+      if (!(ot.evidenceRefs || []).length || missing.length) return { status: "INVALID_ADOPTION", problems: [`task ${tid} of ${a.fromPlan} has no existing PASS evidence (${missing.join(", ") || "none recorded"})`] };
       refs.push({ plan: a.fromPlan, task: tid, evidenceRefs: ot.evidenceRefs });
     }
     phaseTask.adopted = [...(phaseTask.adopted || []), ...refs];
@@ -254,7 +259,7 @@ export function plan({ order, workflow = null, intent = null, capabilities = nul
     }
   }
   const rec = addRecord(cwd, "orchestration", {
-    order, title: title || order.slice(0, 80), workflow: bound, intent: chosenIntent, status: "ACTIVE", stopBlocks: 0, lastProgressAt: now(), tasks,
+    order, title: title || order.slice(0, 80), workflow: bound, intent: chosenIntent, status: "ACTIVE", stopBlocks: 0, lastProgressAt: now(), tasks, missionId: loadState(cwd)?.missionId ?? null,
     requireWorkflow: !unboundReason, ...(unboundReason ? { unboundReason } : {}),
   });
   let instanceId = null;
@@ -274,7 +279,10 @@ export function plan({ order, workflow = null, intent = null, capabilities = nul
 
 /** Per-phase view of a workflow instance, derived from the plan's tasks (never stored twice). */
 export function workflowStatus({ planId = null } = {}, cwd = ROOT_DEFAULT) {
-  const p = loadPlan(cwd, planId);
+  // default: the active plan; once the plan itself is COMPLETED, the most recent one (a finished instance stays inspectable)
+  const latest = () => listRecords(cwd, "orchestration").sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
+  const p = planId || listRecords(cwd, "orchestration").some((x) => x.status === "ACTIVE") ? loadPlan(cwd, planId) : latest();
+  if (!p) throw new Error("NO_ACTIVE_PLAN: run orchestrate.mjs plan first");
   if (!p.workflowInstanceId) return { status: "NO_WORKFLOW_INSTANCE", planId: p.id };
   const inst = getRecord(cwd, "workflow-instance", p.workflowInstanceId);
   const steps = inst.steps.map((st) => {
@@ -282,7 +290,7 @@ export function workflowStatus({ planId = null } = {}, cwd = ROOT_DEFAULT) {
     const attached = p.tasks.filter((t) => t.phase === st.phase && t.id !== st.phase);
     return { phase: st.phase, status: phaseTask ? phaseTask.status : "MISSING", tasks: attached.map((t) => ({ id: t.id, status: t.status })), adopted: st.adopted || [] };
   });
-  const complete = steps.every((s) => s.status === "COMPLETED");
+  const complete = openWorkflowTasks(p, inst).length === 0;
   return { status: complete ? "COMPLETED" : "ACTIVE", instance: inst.id, workflow: inst.workflow, matchId: inst.matchId, planId: p.id, steps };
 }
 
@@ -337,11 +345,19 @@ export function done({ planId = null, task, evidence = "", summary: text = "" },
   if (t.status === "WAITING_APPROVAL") throw new Error("TASK_WAITING_APPROVAL: only a recorded GRANTED approval completes it (sync-approvals)");
   const refs = String(evidence).split(",").map((x) => x.trim()).filter(Boolean);
   if (!refs.length) throw new Error("EVIDENCE_REQUIRED: a task is never COMPLETED without evidence records (ops.mjs evidence run/review)");
-  const known = new Set(listRecords(cwd, "evidence").map((e) => e.id));
-  const unknown = refs.filter((r) => !known.has(r));
-  if (unknown.length) throw new Error(`UNKNOWN_EVIDENCE: ${unknown.join(", ")}`);
-  const failing = listRecords(cwd, "evidence").filter((e) => refs.includes(e.id) && e.status && e.status !== "PASS");
-  if (failing.length) throw new Error(`EVIDENCE_NOT_PASS: ${failing.map((e) => `${e.id}=${e.status}`).join(", ")}; a failing check is fixed, not recorded as completion`);
+  const open = t.dependsOn.filter((d) => p.tasks.find((x) => x.id === d)?.status !== "COMPLETED");
+  if (open.length) throw new Error(`DEPENDENCIES_NOT_COMPLETED: ${t.id} waits for ${open.join(", ")}; a task is closed only after everything it depends on`);
+  const missionId = p.missionId || loadState(cwd)?.missionId;
+  if (!missionId) throw new Error("MISSION_REQUIRED: no mission id to bind evidence to (ops.mjs init)");
+  const bad = [];
+  for (const r of refs) {
+    const e = getRecord(cwd, "evidence", r);
+    if (!e) bad.push(`UNKNOWN_EVIDENCE: ${r}`);
+    else if (e.status !== "PASS") bad.push(`EVIDENCE_NOT_PASS: ${r}=${e.status}; a failing check is fixed, not recorded as completion`);
+    else if (e.missionId !== missionId) bad.push(`EVIDENCE_WRONG_MISSION: ${r} is bound to ${e.missionId || "no mission"}, not ${missionId}`);
+  }
+  if (bad.length) throw new Error(bad.join("; "));
+  if (t.delegationId && !getRecord(cwd, "delegation", t.delegationId)) throw new Error(`UNKNOWN_DELEGATION: ${t.delegationId} of task ${t.id} does not exist`);
   t.status = "COMPLETED";
   t.evidenceRefs = refs;
   t.result = text || "completed";
@@ -544,7 +560,7 @@ function main() {
   const out = (o) => console.log(JSON.stringify(o, null, 2));
   try {
     switch (cmd) {
-      case "plan": return out(plan({ order: f.order, workflow: f.workflow || null, intent: f.intent || null, capabilities: f.capabilities || null, tasksFile: f["tasks-file"] || null, title: f.title || null, adopt: f["adopt-file"] ? JSON.parse(readFileSync(f["adopt-file"], "utf8")) : [], unboundReason: f["unbound-reason"] || null }, cwd));
+      case "plan": return out(plan({ order: f.order, workflow: f.workflow || null, intent: f.intent || null, capabilities: f.capabilities || null, tasksFile: f["tasks-file"] || null, title: f.title || null, adopt: f["adopt-file"] ? JSON.parse(readFileSync(f["adopt-file"], "utf8")) : [], unboundReason: f["unbound-reason"] ?? null }, cwd));
       case "workflow-status": return out(workflowStatus({ planId: f.plan || null }, cwd));
       case "next": return out(next({ planId: f.plan || null, limit: Number(f.limit || 5) }, cwd));
       case "done": return out(done({ planId: f.plan || null, task: f.task, evidence: f.evidence, summary: f.summary }, cwd));

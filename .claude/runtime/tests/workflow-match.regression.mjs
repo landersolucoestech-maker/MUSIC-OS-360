@@ -8,7 +8,8 @@ import { mkdtempSync, rmSync, writeFileSync, mkdirSync, cpSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { addRecord, listRecords, getRecord } from "../lib/record-store.mjs";
+import { loadState } from "../lib/state-store.mjs";
+import { addRecord, listRecords, getRecord, updateRecord } from "../lib/record-store.mjs";
 import { discover, matchOrder, coverage, MATCH_THRESHOLD, normalize } from "../workflow-match.mjs";
 import { plan, next, done, addTask, workflowStatus } from "../orchestrate.mjs";
 import { evaluateGateFile } from "../gate-engine.mjs";
@@ -26,7 +27,7 @@ function mission() {
   execFileSync(process.execPath, [OPS, "init"], { cwd: dir });
   return dir;
 }
-const pass = (dir, label = "ok") => addRecord(dir, "evidence", { type: "COMMAND", label, command: label, status: "PASS", exitCode: 0, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id;
+const pass = (dir, label = "ok") => addRecord(dir, "evidence", { type: "COMMAND", missionId: loadState(dir).missionId, label, command: label, status: "PASS", exitCode: 0, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id;
 const withDir = (fn) => { const dir = mission(); try { return fn(dir); } finally { rmSync(dir, { recursive: true, force: true }); } };
 
 test("discovery finds every shipped workflow, all valid, none with problems", () => {
@@ -159,3 +160,83 @@ test("normalize strips accents so the Portuguese order matches", () => {
   assert.equal(normalize("Normalização técnica"), "normalizacao tecnica");
   assert.equal(matchOrder({ order: "Normalização da nomenclatura e dos aliases legados (naming blockers)" }).selected, "naming-normalization");
 });
+
+// ---- bypass regressions (adversarial review): B1 adoption/instance completion, B2 done ordering and evidence
+// binding, B3 unbound reason, B4 runtime gate.
+const finish = (dir, planId) => {
+  for (let i = 0; i < 30; i++) {
+    const n = next({ planId }, dir);
+    if (n.status !== "DISPATCHED") break;
+    for (const d of n.dispatched) done({ task: d.taskId, evidence: pass(dir, d.taskId), summary: "ok" }, dir);
+  }
+};
+
+test("B1: an adoption without tasks is INVALID_ADOPTION and never completes a phase", () => withDir((dir) => {
+  const old = plan({ order: "fix a defect", workflow: "bug-fix" }, dir);
+  for (const a of [{ phase: "census", fromPlan: old.planId, tasks: [], complete: true }, { phase: "census", fromPlan: old.planId, complete: true }]) {
+    const r = plan({ order: MISSION, adopt: [a] }, dir);
+    assert.equal(r.status, "INVALID_ADOPTION");
+    assert.ok(r.problems.some((x) => /at least one/.test(x)));
+  }
+  assert.equal(listRecords(dir, "orchestration").length, 1, "no plan was created by the refused adoptions");
+}));
+
+test("B1: an extra READY task attached to a phase keeps the instance (and the gate) from COMPLETED", () => withDir((dir) => {
+  const r = plan({ order: "fix a defect", workflow: "bug-fix" }, dir);
+  finish(dir, r.planId);
+  assert.equal(workflowStatus({}, dir).status, "COMPLETED");
+  // forge the bypass: a task attached to a completed phase, left READY
+  const p = listRecords(dir, "orchestration").find((x) => x.id === r.planId);
+  const { id, createdAt, ...rest } = p;
+  const extra = { ...p.tasks[0], id: "extra", status: "READY", evidenceRefs: [], dependsOn: [], phase: "reproduce" };
+  updateRecord(dir, "orchestration", id, { ...rest, tasks: [...p.tasks, extra] });
+  const g = evaluateGateFile("workflow-runtime", { cwd: dir });
+  assert.ok(g.reasons.some((x) => /phases not COMPLETED.*extra/.test(x)), g.reasons.join("|"));
+  assert.equal(workflowStatus({}, dir).status, "ACTIVE");
+  // a phase COMPLETED without evidence is not complete either
+  const p2 = listRecords(dir, "orchestration").find((x) => x.id === r.planId);
+  updateRecord(dir, "orchestration", id, { tasks: p2.tasks.filter((t) => t.id !== "extra").map((t) => (t.id === "reproduce" ? { ...t, evidenceRefs: [] } : t)) });
+  assert.ok(evaluateGateFile("workflow-runtime", { cwd: dir }).reasons.some((x) => /phases not COMPLETED.*reproduce/.test(x)));
+}));
+
+test("B2: done refuses out-of-order closure, foreign-mission evidence and a missing delegation", () => withDir((dir) => {
+  plan({ order: "fix a defect", workflow: "bug-fix" }, dir);
+  next({}, dir);
+  assert.throws(() => done({ task: "diagnose", evidence: pass(dir) }, dir), /DEPENDENCIES_NOT_COMPLETED/);
+  const foreign = addRecord(dir, "evidence", { type: "COMMAND", missionId: "mission-other", label: "x", command: "x", status: "PASS", exitCode: 0, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id;
+  assert.throws(() => done({ task: "reproduce", evidence: foreign }, dir), /EVIDENCE_WRONG_MISSION/);
+  const unbound = addRecord(dir, "evidence", { type: "COMMAND", label: "x", command: "x", status: "PASS", exitCode: 0, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id;
+  assert.throws(() => done({ task: "reproduce", evidence: unbound }, dir), /EVIDENCE_WRONG_MISSION/);
+  assert.throws(() => done({ task: "reproduce", evidence: `${pass(dir)},${foreign}` }, dir), /EVIDENCE_WRONG_MISSION/);
+  // delegation record removed -> refused
+  const pl = listRecords(dir, "orchestration")[0];
+  const { id, createdAt, ...rest } = pl;
+  updateRecord(dir, "orchestration", id, { tasks: pl.tasks.map((t) => (t.id === "reproduce" ? { ...t, delegationId: "dele-forged" } : t)) });
+  assert.throws(() => done({ task: "reproduce", evidence: pass(dir) }, dir), /UNKNOWN_DELEGATION/);
+  updateRecord(dir, "orchestration", id, { tasks: pl.tasks });
+  assert.equal(done({ task: "reproduce", evidence: pass(dir) }, dir).status, "OK");
+}));
+
+test("B3: --unbound-reason must be a real justification", () => withDir((dir) => {
+  for (const bad of [true, "", "   ", "short", "a b c d e f"]) {
+    const r = plan({ order: "water the plants", capabilities: "security.review.xss", unboundReason: bad }, dir);
+    assert.equal(r.status, "INVALID_UNBOUND_REASON", JSON.stringify(bad));
+  }
+  assert.equal(listRecords(dir, "orchestration").length, 0);
+  const cli = (args) => JSON.parse(execFileSync(process.execPath, [join(HERE, "..", "orchestrate.mjs"), "plan", "--order", "water the plants", "--capabilities", "security.review.xss", ...args], { cwd: dir }).toString());
+  assert.equal(cli(["--unbound-reason"]).status, "INVALID_UNBOUND_REASON");
+  assert.equal(cli(["--unbound-reason", " "]).status, "INVALID_UNBOUND_REASON");
+  assert.equal(cli(["--unbound-reason", "justified exception for the test"]).status, "OK");
+}));
+
+test("B4: the runtime gate needs an existing delegation record and PASS evidence on the delegated task", () => withDir((dir) => {
+  const r = plan({ order: "fix a defect", workflow: "bug-fix" }, dir);
+  finish(dir, r.planId);
+  const gate = () => evaluateGateFile("workflow-runtime", { cwd: dir }).reasons.filter((x) => /workflow runtime/.test(x));
+  assert.deepEqual(gate(), []);
+  const pl = listRecords(dir, "orchestration").find((x) => x.id === r.planId);
+  updateRecord(dir, "orchestration", pl.id, { tasks: pl.tasks.map((t) => ({ ...t, delegationId: t.delegationId ? "dele-forged" : null })) });
+  assert.equal(gate().length, 1, "forged delegation ids do not count");
+  updateRecord(dir, "orchestration", pl.id, { tasks: pl.tasks.map((t) => ({ ...t, evidenceRefs: t.evidenceRefs.length ? [addRecord(dir, "evidence", { type: "COMMAND", missionId: loadState(dir).missionId, label: "f", command: "f", status: "FAIL", exitCode: 1, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id] : [] })) });
+  assert.equal(gate().length, 1, "FAIL evidence does not count");
+}));

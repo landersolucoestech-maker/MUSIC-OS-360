@@ -11,6 +11,7 @@ import { run } from "./lib/exec.mjs";
 import { workspaceFingerprint, pathsChangedSince } from "./lib/hash.mjs";
 import { loadState } from "./lib/state-store.mjs";
 import { getRecord, listRecords } from "./lib/record-store.mjs";
+import { openWorkflowTasks } from "./lib/workflow-completion.mjs";
 import { recordEvent } from "./lib/telemetry.mjs";
 import { computeCoverage } from "./lib/coverage-ledger.mjs";
 import { outstandingCapabilities } from "./lib/capability-ledger.mjs";
@@ -279,7 +280,7 @@ const CHECKS = {
   },
 
   // A workflow was really instantiated and executed: a match record with all candidates, an instance,
-  // and at least one delegated task closed with existing evidence.
+  // and at least one delegated task (delegation record exists) closed with existing PASS evidence.
   "workflow-runtime-exercised": (ctx) => {
     const instances = listRecords(ctx.cwd, "workflow-instance");
     if (!instances.length) return { reasons: ["workflow runtime: no workflow-instance record exists (the workflow layer was never exercised)"] };
@@ -288,9 +289,9 @@ const CHECKS = {
       const match = getRecord(ctx.cwd, "workflow-match", inst.matchId);
       const plan = listRecords(ctx.cwd, "orchestration").find((pl) => pl.id === inst.planId);
       if (!match || !match.candidates || match.candidates.length < 2 || !plan) return false;
-      return plan.tasks.some((t) => t.delegationId && t.status === "COMPLETED" && (t.evidenceRefs || []).length && t.evidenceRefs.every((e) => getRecord(ctx.cwd, "evidence", e)));
+      return plan.tasks.some((t) => t.delegationId && getRecord(ctx.cwd, "delegation", t.delegationId) && t.status === "COMPLETED" && (t.evidenceRefs || []).length && t.evidenceRefs.every((e) => getRecord(ctx.cwd, "evidence", e)?.status === "PASS"));
     });
-    if (!good.length) reasons.push("workflow runtime: no instance has a match record with all candidates plus a delegated task completed with existing evidence");
+    if (!good.length) reasons.push("workflow runtime: no instance has a match record with all candidates plus a delegated task (existing delegation record) completed with existing PASS evidence");
     return { reasons };
   },
 
@@ -302,7 +303,7 @@ const CHECKS = {
       if (!plan.workflowInstanceId) { reasons.push(`orchestration ${plan.id} requires a workflow instance and has none`); continue; }
       const inst = getRecord(ctx.cwd, "workflow-instance", plan.workflowInstanceId);
       if (!inst) { reasons.push(`orchestration ${plan.id}: workflow instance ${plan.workflowInstanceId} not found`); continue; }
-      const open = inst.steps.filter((st) => plan.tasks.find((t) => t.id === st.phase)?.status !== "COMPLETED").map((st) => st.phase);
+      const open = openWorkflowTasks(plan, inst);
       if (open.length) reasons.push(`workflow instance ${inst.id} (${inst.workflow}) has phases not COMPLETED: ${open.join(", ")}`);
     }
     return { reasons };

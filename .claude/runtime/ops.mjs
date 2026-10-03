@@ -148,6 +148,7 @@ export function cmdEvidenceRun({ flags, cwd }) {
   const result = run(cmd, args, { cwd, timeout: Number(flags.timeout) || 300_000 });
   const evidence = addRecord(cwd, "evidence", {
     type: "COMMAND",
+    missionId: requireState(cwd).missionId,
     label: flags.label || flags.cmd,
     command: flags.cmd,
     status: result.ok ? "PASS" : "FAIL",
@@ -179,6 +180,7 @@ export function cmdEvidenceReview({ flags, cwd }) {
   const fp = workspaceFingerprint(cwd);
   const evidence = addRecord(cwd, "evidence", {
     type: "REVIEW",
+    missionId: state.missionId,
     reviewer: flags.reviewer,
     verdict: flags.verdict,
     status: flags.verdict,

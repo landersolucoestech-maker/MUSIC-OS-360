@@ -38,7 +38,7 @@ refused to stop while work remained.
 |---|---|
 | `plan --order` | routes the order (or takes `--workflow`, `--capabilities`, `--tasks-file`), validates agents, skills, dependencies and cycles, persists the task graph and appends the completion-gate task |
 | `next` | marks READY tasks RUNNING, opens a delegation record and returns the prompt for the `subagent_type`; approval tasks become `WAITING_APPROVAL` with a PENDING approval record |
-| `done` | requires existing PASS evidence records; releases dependents |
+| `done` | requires every `dependsOn` task COMPLETED, existing PASS evidence records bound to the plan's mission (`missionId`, stamped by `ops.mjs evidence run/review`), and an existing delegation record for delegated tasks; releases dependents |
 | `fail` | plans a root-cause recovery task and a retry; the third failure escalates and keeps blocking |
 | `block-external` | accepts only a complete contract: capability, cause, missing dependency, expected contract, current behavior, fallback, impact, unblock condition |
 | `sync-approvals` | completes an approval task only from a GRANTED record decided by someone else; DENIED fails it terminally |
@@ -57,6 +57,7 @@ without progress a stop is allowed, so a hung task cannot trap a session. Regres
 
 - **Discovery** (`workflow-match.mjs discover`): reads every `.claude/workflows/*.json`, validates it against `workflow-manifest.schema.json`, and refuses unsafe names. Each manifest carries a `match` block (`keywords`, `examples`, optional `intents` and `excludes`).
 - **Matching** (`matchOrder`): scores every workflow (keyword hits, intent, example similarity, exclusion penalty) and persists all candidates as a `workflow-match` record. A workflow is selected only at or above the threshold and when it beats the runner-up; otherwise the result is `NO_MATCH` or `AMBIGUOUS`.
-- **Instance** (`plan` binds it): a `workflow-instance` record with one step per phase; the phase tasks live in the plan. `workflow-status` derives each step's state from the tasks. The instance is COMPLETED exactly when every phase is.
-- **Adoption** (`plan --adopt-file`): a phase can adopt COMPLETED tasks of an earlier plan, only with evidence records that exist; nothing is copied or re-run.
+- **Instance** (`plan` binds it): a `workflow-instance` record with one step per phase; the phase tasks live in the plan. `workflow-status` derives each step's state from the tasks. The instance is COMPLETED exactly when every phase task, every task attached to a phase and the plan's `completion-gate` task is COMPLETED with evidence (`lib/workflow-completion.mjs`, shared with the `workflow-instance-complete` gate).
+- **Adoption** (`plan --adopt-file`): a phase can adopt COMPLETED tasks of an earlier plan, only with PASS evidence records that exist; an adoption must list at least one task (an empty one is `INVALID_ADOPTION`); nothing is copied or re-run.
+- **Unbound escape hatch**: `--unbound-reason` must be a string of at least 12 non-space characters, otherwise `INVALID_UNBOUND_REASON`.
 - **No match is a pack gap**: add or correct the workflow (this is how `naming-normalization` was added) and its match examples; `workflow-match.mjs --coverage` and the `workflow-runtime` gate prove every workflow is selected by its own examples and that a workflow was really instantiated and executed.

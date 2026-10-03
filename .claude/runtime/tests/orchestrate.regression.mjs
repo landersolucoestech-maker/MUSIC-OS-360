@@ -9,6 +9,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadState } from "../lib/state-store.mjs";
 import { addRecord, updateRecord } from "../lib/record-store.mjs";
 import { plan, next, done, reassign, addTask, fail, blockExternal, syncApprovals, check, stopCheck, promptHook } from "../orchestrate.mjs";
 
@@ -23,7 +24,7 @@ function mission() {
   execFileSync(process.execPath, [OPS, "init"], { cwd: dir });
   return dir;
 }
-const pass = (dir, label = "ok") => addRecord(dir, "evidence", { type: "COMMAND", label, command: label, status: "PASS", exitCode: 0, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id;
+const pass = (dir, label = "ok") => addRecord(dir, "evidence", { type: "COMMAND", missionId: loadState(dir).missionId, label, command: label, status: "PASS", exitCode: 0, workspaceFingerprint: "x", fingerprintStatus: "BOUND" }).id;
 const withDir = (fn) => { const dir = mission(); try { return fn(dir); } finally { rmSync(dir, { recursive: true, force: true }); } };
 
 test("a workflow becomes a persisted graph; only tasks without open dependencies are READY; a closure task is appended", () => withDir((dir) => {
@@ -136,7 +137,7 @@ test("stop-check blocks while actionable tasks remain, lets a session stop for w
 test("an invalid explicit graph (unknown agent, unknown skill, cycle) is refused", () => withDir((dir) => {
   const file = join(dir, "g.json");
   writeFileSync(file, JSON.stringify({ tasks: [{ id: "a", agent: "no-such-agent", skills: ["no-such-skill"], dependsOn: ["b"] }, { id: "b", agent: "task-orchestrator", dependsOn: ["a"] }] }));
-  const r = plan({ order: "x", tasksFile: file, unboundReason: "test" }, dir);
+  const r = plan({ order: "x", tasksFile: file, unboundReason: "test of an explicit graph" }, dir);
   assert.equal(r.status, "INVALID_PLAN");
   assert.ok(r.problems.some((p) => p.includes("unknown agent")));
   assert.ok(r.problems.some((p) => p.includes("unknown skill")));
@@ -184,9 +185,9 @@ test("security: workflow, agent, skill and task names that could leave their dir
   const file = join(dir, "tasks.json");
   for (const bad of [{ agent: "../../outside" }, { agent: "a/b" }, { skills: ["../x"] }, { id: "../evil" }, { id: "a b" }]) {
     writeFileSync(file, JSON.stringify(tasks(bad)));
-    const r = plan({ order: "x", tasksFile: file, unboundReason: "test" }, dir);
+    const r = plan({ order: "x", tasksFile: file, unboundReason: "test of an explicit graph" }, dir);
     assert.equal(r.status, "INVALID_PLAN", JSON.stringify(bad));
   }
   writeFileSync(file, JSON.stringify(tasks({})));
-  assert.equal(plan({ order: "x", tasksFile: file, unboundReason: "test" }, dir).status, "OK");
+  assert.equal(plan({ order: "x", tasksFile: file, unboundReason: "test of an explicit graph" }, dir).status, "OK");
 }));
