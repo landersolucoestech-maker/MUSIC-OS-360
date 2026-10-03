@@ -174,12 +174,20 @@ export function cmdEvidenceRun({ flags, cwd }) {
 export function cmdEvidenceReview({ flags, cwd }) {
   const state = requireState(cwd);
   for (const r of ["reviewer", "verdict", "summary"]) {
-    if (!flags[r]) throw new Error(`USAGE: evidence review --reviewer <agent> --verdict PASS|FAIL --summary "..." [--criterion <id>]`);
+    if (!flags[r]) throw new Error(`USAGE: evidence review --reviewer <agent> --verdict PASS|FAIL --summary "..." [--criterion <id>] [--independent]`);
   }
   if (!["PASS", "FAIL"].includes(flags.verdict)) throw new Error("--verdict must be PASS or FAIL");
+  // A review is attributable: the reviewer must be an agent a delegation of THIS mission was opened for
+  // (orchestrate.mjs next / context-engine open), or the caller must say so explicitly with --independent,
+  // which is recorded in the evidence (independentReviewer) so an unattributed review is visible to audits.
+  const delegated = listRecords(cwd, "delegation").some((d) => d.agent === flags.reviewer && String(d.createdAt) >= String(state.createdAt));
+  if (!delegated && !flags.independent) {
+    throw new Error(`REVIEWER_NOT_DELEGATED: no delegation of the current mission was opened for "${flags.reviewer}"; dispatch the reviewer (orchestrate.mjs next) or pass --independent to record an explicitly unattributed review`);
+  }
   const fp = workspaceFingerprint(cwd);
   const evidence = addRecord(cwd, "evidence", {
     type: "REVIEW",
+    independentReviewer: !delegated,
     missionId: state.missionId,
     reviewer: flags.reviewer,
     verdict: flags.verdict,
@@ -315,27 +323,81 @@ export function cmdEffectLog({ flags, cwd }) {
   };
 }
 
-// Generic path for every other record kind (approval, assumption, changeset,
-// conflict, decision, deployment, recovery-plan, release, run, task,
-// production-validation, failure, gate-result) — one mechanism instead of a
-// bespoke command per kind. --data takes a JSON blob for full field fidelity.
-// Kinds that carry trust (evidence, approvals, delegations, orchestration state) are never created through
-// this generic, caller-controlled path: each has a sanctioned producer that binds provenance itself.
-export const CLI_FORBIDDEN_KINDS = {
+// Generic path for the few kinds an agent legitimately authors as plain notes. It is an ALLOWLIST: a kind
+// that carries trust (evidence, approvals, delegations, orchestration state, conflicts/votes, automation
+// runs/approvals, recovery, deployment, release, ...) is never creatable here; each has a sanctioned producer
+// that binds provenance or enforces the invariants itself (or none at all, when only the runtime may write it).
+export const CLI_RECORD_ADD_ALLOWED_KINDS = ["task", "assumption", "changeset", "failure"];
+
+// Kinds that agents document through a dedicated command that fixes the kind (and, where gates read the
+// kind, its invariants) instead of the open-ended `record add`.
+export const CLI_AUTHORED_KINDS = {
+  "decision add": "decision",
+  "release add": "release",
+  "deployment add": "deployment",
+  "recovery-plan add": "recovery-plan",
+  "production-validation add": "production-validation",
+};
+
+const SANCTIONED_PRODUCERS = {
   evidence: "use `ops.mjs evidence run --cmd ...` or `ops.mjs evidence review --reviewer ...`",
   approval: "approvals are requested by `orchestrate.mjs next` and granted only by a human through the approvals engine",
   delegation: "delegations are opened by `orchestrate.mjs next` (or context-engine open)",
   orchestration: "plans are created by `orchestrate.mjs plan`",
   "workflow-match": "matches are recorded by `orchestrate.mjs plan` (workflow-match.mjs)",
   "workflow-instance": "instances are created by `orchestrate.mjs plan`",
+  conflict: "use `ops.mjs conflict open --parties a,b --description ...`; it is resolved only by `ops.mjs quorum resolve`",
+  vote: "use `ops.mjs quorum vote`",
+  decision: "use `ops.mjs decision add --topic ... --decision ... --decided-by ...`",
+  release: "use `ops.mjs release add --data '{...}'`",
+  deployment: "use `ops.mjs deployment add --data '{...}'`",
+  "recovery-plan": "use `ops.mjs recovery-plan add --data '{...}'`",
+  "production-validation": "use `ops.mjs production-validation add --data '{...}'`",
+  "automation-approval": "automation approvals are decided by a human through the approvals engine, never authored by an agent",
+  "automation-run": "automation runs are written only by the operational automation runtime",
+  "operational-recovery": "operational recovery records are written only by the operational automation runtime",
 };
 
 export function cmdRecordAdd({ flags, cwd }) {
   requireState(cwd);
-  if (!flags.kind) throw new Error(`USAGE: record add --kind <${recordKindNames().join("|")}> --data '{"field":"value"}'`);
-  if (Object.hasOwn(CLI_FORBIDDEN_KINDS, flags.kind)) throw new Error(`RECORD_KIND_FORBIDDEN: \`record add\` cannot create "${flags.kind}" records; ${CLI_FORBIDDEN_KINDS[flags.kind]}`);
+  if (!flags.kind) throw new Error(`USAGE: record add --kind <${CLI_RECORD_ADD_ALLOWED_KINDS.join("|")}> --data '{"field":"value"}'`);
+  if (!CLI_RECORD_ADD_ALLOWED_KINDS.includes(flags.kind)) {
+    const hint = Object.hasOwn(SANCTIONED_PRODUCERS, flags.kind) ? SANCTIONED_PRODUCERS[flags.kind] : "this kind has no generic CLI producer";
+    throw new Error(`RECORD_KIND_FORBIDDEN: \`record add\` cannot create "${flags.kind}" records (allowed: ${CLI_RECORD_ADD_ALLOWED_KINDS.join(", ")}); ${hint}`);
+  }
   const fields = flags.data ? JSON.parse(flags.data) : {};
   return { status: "OK", record: addRecord(cwd, flags.kind, fields) };
+}
+
+function parseDataFlag(flags) {
+  const fields = flags.data ? JSON.parse(flags.data) : {};
+  if (fields === null || typeof fields !== "object" || Array.isArray(fields)) throw new Error("INVALID_RECORD_FIELDS: --data must be a JSON object");
+  return fields;
+}
+
+export function cmdDecisionAdd({ flags, cwd }) {
+  requireState(cwd);
+  if (!flags.topic || !flags.decision || !flags["decided-by"]) {
+    throw new Error('USAGE: decision add --topic "..." --decision "..." --decided-by <agent> [--rationale "..."]');
+  }
+  // conflictId is never accepted: only `quorum resolve` links a decision to a conflict.
+  return { status: "OK", record: addRecord(cwd, "decision", { topic: flags.topic, decision: flags.decision, decidedBy: flags["decided-by"], rationale: flags.rationale || null }) };
+}
+
+function authoredKindCommand(kind) {
+  return ({ flags, cwd }) => {
+    requireState(cwd);
+    return { status: "OK", record: addRecord(cwd, kind, parseDataFlag(flags)) };
+  };
+}
+
+export function cmdConflictOpen({ flags, cwd }) {
+  requireState(cwd);
+  if (!flags.parties || !flags.description) throw new Error('USAGE: conflict open --parties <agent-a,agent-b[,...]> --description "..."');
+  const parties = [...new Set(String(flags.parties).split(",").map((x) => x.trim()).filter(Boolean))];
+  if (parties.length < 2) throw new Error("CONFLICT_NEEDS_PARTIES: a conflict needs at least two distinct parties");
+  // status/decisionId are fixed here: a conflict is born OPEN and is resolved only by `quorum resolve`.
+  return { status: "OK", record: addRecord(cwd, "conflict", { parties, description: flags.description, status: "OPEN", decisionId: null }) };
 }
 
 export function cmdRecordList({ flags, cwd }) {
@@ -437,6 +499,12 @@ const COMMANDS = {
   "baseline record": cmdBaselineRecord,
   "effect log": cmdEffectLog,
   "record add": cmdRecordAdd,
+  "decision add": cmdDecisionAdd,
+  "conflict open": cmdConflictOpen,
+  "release add": authoredKindCommand(CLI_AUTHORED_KINDS["release add"]),
+  "deployment add": authoredKindCommand(CLI_AUTHORED_KINDS["deployment add"]),
+  "recovery-plan add": authoredKindCommand(CLI_AUTHORED_KINDS["recovery-plan add"]),
+  "production-validation add": authoredKindCommand(CLI_AUTHORED_KINDS["production-validation add"]),
   "record list": cmdRecordList,
   "coverage mark": cmdCoverageMark,
   "coverage status": cmdCoverageStatus,

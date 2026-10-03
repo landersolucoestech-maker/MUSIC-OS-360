@@ -13,9 +13,8 @@ description: A structured 5-whys pass for turning a symptom into a systemic root
    first proximate trigger.
 3. At each level, ask whether this same chain could produce a DIFFERENT symptom elsewhere — if so,
    the systemic cause is broader than this one instance.
-4. Record the chain as a `decision-record` (`node .claude/runtime/ops.mjs record add --kind
-   decision --data '{"topic":"why: <symptom>","decision":"<systemic cause + prevention>",
-   "decidedBy":"..."}'`) so the reasoning survives past this conversation.
+4. Record the chain as a `decision-record` (`node .claude/runtime/ops.mjs decision add
+   --topic "why: <symptom>" --decision "<systemic cause + prevention>" --decided-by "..."`) so the reasoning survives past this conversation.
 
 ## Non-goals
 Do not use this to justify a fix you've already decided on — if the chain doesn't actually lead

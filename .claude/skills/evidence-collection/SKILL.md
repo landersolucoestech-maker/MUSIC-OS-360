@@ -21,10 +21,14 @@ command, it isn't evidence.
 ## REVIEW evidence
 
 `node .claude/runtime/ops.mjs evidence review --reviewer <agent-name> --verdict PASS|FAIL
---summary "..." [--criterion <id>]`
+--summary "..." [--criterion <id>] [--independent]`
 
 Call this only after the named reviewing agent has actually completed its pass and produced a
 verdict — never pre-emptively, and never on behalf of an agent that hasn't run.
+
+The reviewer must be an agent a delegation of the current mission was opened for (dispatched by
+`orchestrate.mjs next`); a reviewer run outside a dispatch must pass `--independent`, which is
+recorded as `independentReviewer: true` in the evidence so the unattributed review is visible.
 
 ## Freshness
 

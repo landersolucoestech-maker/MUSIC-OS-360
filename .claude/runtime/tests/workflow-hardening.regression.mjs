@@ -64,7 +64,7 @@ test("F1: `record add` refuses trust-carrying kinds with a pointer to the sancti
 test("F1: the sanctioned producers keep working (evidence run/review, orchestrate next)", () => withDir((dir) => {
   const run = ops(["evidence", "run", "--cmd", "node --version"], dir);
   assert.equal(run.status, 0, run.stdout + run.stderr);
-  const rev = ops(["evidence", "review", "--reviewer", "qa", "--verdict", "PASS", "--summary", "ok"], dir);
+  const rev = ops(["evidence", "review", "--reviewer", "qa", "--verdict", "PASS", "--summary", "ok", "--independent"], dir);
   assert.equal(rev.status, 0, rev.stdout + rev.stderr);
   plan({ order: "fix a defect", workflow: "bug-fix" }, dir);
   assert.equal(next({}, dir).status, "DISPATCHED");

@@ -19,8 +19,8 @@ the symptom go away without explaining why it happened is not this agent's outpu
    another prose reminder as the prevention action.
 
 ## Output
-`node .claude/runtime/ops.mjs record add --kind decision --data '{"topic":"root cause of
-<incident>","decision":"...","decidedBy":"root-cause-investigator"}'` capturing the causal chain
+`node .claude/runtime/ops.mjs decision add --topic "root cause of
+<incident>" --decision "..." --decided-by root-cause-investigator` capturing the causal chain
 and the chosen prevention action. This decision record is what `incident.json`'s
 `root-cause-and-prevention` phase requires for closure — a mission cannot close an incident
 workflow without one.

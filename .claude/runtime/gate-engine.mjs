@@ -298,7 +298,15 @@ const CHECKS = {
   // A plan that must be bound to a workflow is not complete until its instance is: every phase COMPLETED.
   "workflow-instance-complete": (ctx) => {
     const reasons = [];
+    const warnings = [];
     for (const plan of listRecords(ctx.cwd, "orchestration")) {
+      if (plan.status === "ABANDONED" && plan.requireWorkflow) {
+        // never a silent skip: an abandoned workflow-bound plan with unfinished work stays visible
+        const incomplete = (plan.tasks || []).filter((t) => t.status !== "COMPLETED");
+        if (incomplete.length || !plan.abandonedReason) {
+          warnings.push(`orchestration ${plan.id} was ABANDONED while bound to a workflow with ${incomplete.length} non-completed task(s) (reason: ${plan.abandonedReason || "none recorded"})`);
+        }
+      }
       if (plan.status === "ABANDONED" || !plan.requireWorkflow) continue;
       if (!plan.workflowInstanceId) { reasons.push(`orchestration ${plan.id} requires a workflow instance and has none`); continue; }
       const inst = getRecord(ctx.cwd, "workflow-instance", plan.workflowInstanceId);
@@ -306,7 +314,7 @@ const CHECKS = {
       const open = openWorkflowTasks(plan, inst);
       if (open.length) reasons.push(`workflow instance ${inst.id} (${inst.workflow}) has phases not COMPLETED: ${open.join(", ")}`);
     }
-    return { reasons };
+    return { reasons, warnings };
   },
 
   "pack-contracts-valid": (ctx) => {

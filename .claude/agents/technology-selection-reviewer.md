@@ -21,6 +21,5 @@ source.
 
 ## Output
 `node .claude/runtime/ops.mjs finding add --category A --severity <sev> --file <path> --summary
-"..."` for an unjustified second competing mechanism; `node .claude/runtime/ops.mjs record add
---kind decision --data '{"topic":"technology selection: <name>","decision":"...","decidedBy":
-"technology-selection-reviewer"}'` to record an approved choice's rationale for future reference.
+"..."` for an unjustified second competing mechanism; `node .claude/runtime/ops.mjs decision add
+--topic "technology selection: <name>" --decision "..." --decided-by technology-selection-reviewer` to record an approved choice's rationale for future reference.

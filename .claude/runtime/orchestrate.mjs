@@ -21,7 +21,7 @@
 //   node .claude/runtime/orchestrate.mjs block-external --task <id> --capability .. --cause .. --missing ..
 //        --contract .. --current .. --fallback .. --impact .. --unblock ..
 //   node .claude/runtime/orchestrate.mjs reassign --task <id> --agent <name>   (executor that can really write)
-//   node .claude/runtime/orchestrate.mjs sync-approvals | status | show | check | abandon [--plan <id>]
+//   node .claude/runtime/orchestrate.mjs sync-approvals | status | show | check | abandon --reason "<>=12 letters/digits>" [--confirm-incomplete] [--plan <id>]
 //   node .claude/runtime/orchestrate.mjs stop-check | prompt-hook          (hooks, JSON on stdin)
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -428,9 +428,22 @@ export function reassign({ planId = null, task, agent }, cwd = ROOT_DEFAULT) {
   if (!t) throw new Error(`UNKNOWN_TASK: ${task}`);
   if (!agentExists(cwd, agent)) throw new Error(`UNKNOWN_AGENT: ${agent}`);
   if (t.status === "COMPLETED") throw new Error("TASK_ALREADY_COMPLETED");
+  if (t.status === "RUNNING" || t.status === "WAITING_APPROVAL") throw new Error(`TASK_IN_FLIGHT: ${task} is ${t.status}; fail it (orchestrate.mjs fail) and re-dispatch instead of reassigning`);
   t.agent = agent;
   save(cwd, p);
   return { status: "OK", task, agent };
+}
+
+export function abandon({ planId = null, reason, confirmIncomplete = false }, cwd = ROOT_DEFAULT) {
+  const letters = typeof reason === "string" ? (reason.match(/[\p{L}\p{N}]/gu) || []).length : 0;
+  if (letters < 12) throw new Error("INVALID_ABANDON_REASON: --reason must contain at least 12 letters or digits");
+  const p = loadPlan(cwd, planId);
+  const incomplete = p.tasks.filter((t) => t.status !== "COMPLETED");
+  if (incomplete.length && !confirmIncomplete) {
+    throw new Error(`ABANDON_INCOMPLETE: plan ${p.id} has ${incomplete.length} non-completed task(s) (${incomplete.map((t) => `${t.id}:${t.status}`).slice(0, 8).join(", ")}); pass --confirm-incomplete to abandon anyway`);
+  }
+  updateRecord(cwd, "orchestration", p.id, { status: "ABANDONED", abandonedReason: reason, abandonedAt: now(), abandonedIncompleteTasks: incomplete.length });
+  return { status: "OK", planId: p.id, abandonedIncompleteTasks: incomplete.length };
 }
 
 export function addTask({ planId = null, id, agent, skills = [], deps = [], blocks = [], objective, acceptance = [], files = [], phase = null, reopen = false }, cwd = ROOT_DEFAULT) {
@@ -604,7 +617,7 @@ function main() {
       case "sync-approvals": return out(syncApprovals({ planId: f.plan || null }, cwd));
       case "status": return out(summary(loadPlan(cwd, f.plan || null)));
       case "show": return out(loadPlan(cwd, f.plan || null));
-      case "abandon": { const p = loadPlan(cwd, f.plan || null); updateRecord(cwd, "orchestration", p.id, { status: "ABANDONED" }); return out({ status: "OK", planId: p.id }); }
+      case "abandon": return out(abandon({ planId: f.plan || null, reason: f.reason, confirmIncomplete: Boolean(f["confirm-incomplete"]) }, cwd));
       case "check": {
         const r = check({ planId: f.plan || null }, cwd);
         out(r);

@@ -21,5 +21,5 @@ privilege — and for each, ask whether this specific design allows it and what 
    of the task-spec breakdown, not an afterthought.
 
 ## Output
-`node .claude/runtime/ops.mjs record add --kind decision --data '{"topic":"threat model: <feature>",
-"decision":"<threats + mitigations>","decidedBy":"threat-model"}'`.
+`node .claude/runtime/ops.mjs decision add --topic "threat model: <feature>"
+--decision "<threats + mitigations>" --decided-by threat-model'`.

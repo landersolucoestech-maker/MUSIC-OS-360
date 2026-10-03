@@ -20,7 +20,7 @@ Turn an architectural question into a recorded decision with the options conside
 ## Responsibilities
 - State the question, the constraints and the existing decisions that apply.
 - Present the real options with their cost to each layer and the rollback of each.
-- Record the decision in `docs/engineering/decisions/cross-cutting/` and as a decision record through `ops.mjs record add --kind decision`.
+- Record the decision in `docs/engineering/decisions/cross-cutting/` and as a decision record through `ops.mjs decision add`.
 - Name the producers and consumers a decision changes and the order they must change.
 - Hand the decision to the architecture-guardian for independent review.
 

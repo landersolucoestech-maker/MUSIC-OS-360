@@ -21,7 +21,7 @@ inferring health from the deploy command's exit code.
    absence of information.
 
 ## Output
-`node .claude/runtime/ops.mjs record add --kind production-validation --data
+`node .claude/runtime/ops.mjs production-validation add --data
 '{"status":"HEALTHY|DEGRADED|FAILED|OUT_OF_SCOPE","checkedJourneys":[...],"outOfScopeReason":
 null,"deploymentId":"..."}'`. `completion-gate.mjs`'s production gate requires exactly this record
 before an L5 release-touching mission can close.

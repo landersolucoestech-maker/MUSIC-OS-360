@@ -15,7 +15,7 @@ containment strategy unilaterally. Require a `recovery-plan` record ID before ac
    exists first (`node .claude/runtime/ops.mjs record list --kind approval`) — never execute a
    production-affecting recovery action without one.
 3. Execute the compensating action, then mark it `executed: true` via `node
-   .claude/runtime/ops.mjs record add --kind recovery-plan` is not for updates — use the record
+   .claude/runtime/ops.mjs recovery-plan add` is not for updates — use the record
    store's update path (see `evidence-collection` skill for the pattern) or have
    `mission-orchestrator` reconcile the linked side-effect-record's `reconciled: true`.
 4. Verify recovery actually worked with real evidence (read-after-write check, a re-run test, a

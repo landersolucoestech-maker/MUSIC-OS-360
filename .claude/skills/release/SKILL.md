@@ -9,10 +9,10 @@ description: Runs the release.json workflow end to end — supply-chain check, r
    `release.json` workflow.
 2. Delegate `supply-chain-check` to `supply-chain-reviewer`, then `regression` via the
    `regression-gates` skill.
-3. `node .claude/runtime/ops.mjs record add --kind release --data '{"sourceCommit":"<sha>",
+3. `node .claude/runtime/ops.mjs release add --data '{"sourceCommit":"<sha>",
    "artifactId":"...","gateResultIds":[...]}'`.
 4. Deploy only with a GRANTED `approval-request` (`authority.json`'s `production-write` class),
-   then `node .claude/runtime/ops.mjs record add --kind deployment --data '{"releaseId":"...",
+   then `node .claude/runtime/ops.mjs deployment add --data '{"releaseId":"...",
    "target":"...","strategy":"canary|blue-green|..."}'`.
 5. Delegate `production-validator` for the final `production-validation` record.
 6. Run `release-checkpoint` to produce the mission closure report once `completion-gate.mjs`
