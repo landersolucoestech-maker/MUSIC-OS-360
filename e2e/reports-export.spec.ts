@@ -25,7 +25,7 @@ const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 
 test.describe('Reports center — client export', () => {
-  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
+  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD missing — skipping the real E2E.');
 
   test('exports clients as a valid XLSX, no 500, no leaked technical data', async ({ page }) => {
     const pageErrors: string[] = [];

@@ -483,14 +483,14 @@ async function phase37(): Promise<void> {
   // Releases: the detail must bring the artist of the same tenant
   if (DATA_A.releaseId) {
     const r = await call('GET', `/releases/${DATA_A.releaseId}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
-    expect('GET release A retorna 200', r.status === 200, `got=${r.status}`);
+    expect('GET release A returns 200', r.status === 200, `got=${r.status}`);
     const releaseA = r.body?.data ?? r.body ?? {};
     const artistInRelease = releaseA?.artist?.id ?? releaseA?.artistId ?? releaseA?.artist_id;
     checkArtistRef('Release A only references Artist A (same tenant)', artistInRelease, DATA_A.artistId, TAG_A);
   }
   if (DATA_B.releaseId) {
     const r = await call('GET', `/releases/${DATA_B.releaseId}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
-    expect('GET release B retorna 200', r.status === 200, `got=${r.status}`);
+    expect('GET release B returns 200', r.status === 200, `got=${r.status}`);
     const releaseB = r.body?.data ?? r.body ?? {};
     const artistInRelease = releaseB?.artist?.id ?? releaseB?.artistId ?? releaseB?.artist_id;
     checkArtistRef('Release B only references Artist B (same tenant)', artistInRelease, DATA_B.artistId, TAG_B);
@@ -499,7 +499,7 @@ async function phase37(): Promise<void> {
   // Contracts: the detail must bring the artist/client of the same tenant
   if (DATA_A.contractId) {
     const r = await call('GET', `/contracts/${DATA_A.contractId}`, { token: TOKEN_A, tenantId: TENANT_A.tenantId });
-    expect('GET contract A retorna 200', r.status === 200, `got=${r.status}`);
+    expect('GET contract A returns 200', r.status === 200, `got=${r.status}`);
     const contractA = r.body?.data ?? r.body;
     const aid = contractA?.artist_id ?? contractA?.artistId ?? contractA?.artist?.id;
     const cid = contractA?.client_id ?? contractA?.clientId ?? contractA?.client?.id;
@@ -508,7 +508,7 @@ async function phase37(): Promise<void> {
   }
   if (DATA_B.contractId) {
     const r = await call('GET', `/contracts/${DATA_B.contractId}`, { token: TOKEN_B, tenantId: TENANT_B.tenantId });
-    expect('GET contract B retorna 200', r.status === 200, `got=${r.status}`);
+    expect('GET contract B returns 200', r.status === 200, `got=${r.status}`);
     const contractB = r.body?.data ?? r.body;
     const aid = contractB?.artist_id ?? contractB?.artistId ?? contractB?.artist?.id;
     const cid = contractB?.client_id ?? contractB?.clientId ?? contractB?.client?.id;

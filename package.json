@@ -36,7 +36,8 @@
     "naming:schema": "node scripts/naming/schema-naming-census.mjs --check",
     "naming:validate": "node scripts/naming/validate-canonical-map.mjs",
     "naming:residue-census": "node scripts/naming/residue-census.mjs",
-    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs scripts/naming/schema-naming-census.test.mjs",
+    "naming:audit": "node scripts/naming/normalization-audit.mjs --baseline 02f1ee8a75be16a93f91caae1d8a78702ab2f4fc",
+    "naming:check": "node scripts/naming/technical-naming-census.mjs --check && node scripts/naming/validate-canonical-map.mjs && node scripts/naming/render-naming-docs.mjs --check && node --test scripts/naming/technical-naming-census.test.mjs scripts/naming/schema-naming-census.test.mjs scripts/naming/canonical-map.test.mjs scripts/naming/residue-census.test.mjs scripts/naming/normalization-audit.test.mjs",
     "release:check": "node scripts/release-check.mjs",
     "release:migrate": "node scripts/release-check.mjs --migrate"
   },

@@ -465,7 +465,7 @@ async function main() {
   await sdkCycle(s3, bucket);
 
   const auth = await authA();
-  assert(auth.tenantId === TENANT_A || auth.tenantId, 'Tenant A ausente', auth);
+  assert(auth.tenantId === TENANT_A || auth.tenantId, 'Tenant A is missing', auth);
   const entities = await createRuntimeEntities(auth.token, auth.tenantId);
   const releaseUpload = await validateReleaseCover(auth.token, auth.tenantId, entities.releaseId);
   await validateContractPdf(auth.token, auth.tenantId, entities.contractId);

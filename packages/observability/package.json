@@ -1,7 +1,7 @@
 {
   "name": "@music-os-360/observability",
   "version": "0.0.1",
-  "description": "MUSIC OS 360 — Sentry, OpenTelemetry e Pino logger unificados",
+  "description": "MUSIC OS 360 — Unified Sentry, OpenTelemetry and Pino logger",
   "private": true,
   "type": "module",
   "main": "./src/index.ts",

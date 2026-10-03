@@ -58,7 +58,7 @@ BEGIN
   RETURN jsonb_set(event, '{claims}', v_claims);
 
 EXCEPTION WHEN OTHERS THEN
-  RAISE WARNING '[musicos360:jwt_hook] Erro ao enriquecer JWT para user %: % — JWT emitido sem app_metadata',
+  RAISE WARNING '[musicos360:jwt_hook] Failed to enrich JWT for user %: % — JWT issued without app_metadata',
     v_user_id, SQLERRM;
   RETURN event;
 END;
@@ -127,14 +127,14 @@ BEGIN
   END IF;
 
   -- ── 5. Demo Artist ────────────────────────────────────────────────────────────
-  INSERT INTO artists (id, tenant_id, nome_artistico, nome_civil, status, music_genre)
-  VALUES (v_artist_id, v_tenant_id, 'Artista Demo', 'Nome Civil Demo', 'active', 'MPB')
+  INSERT INTO artists (id, tenant_id, stage_name, full_name, status, music_genre)
+  VALUES (v_artist_id, v_tenant_id, 'Demo Artist', 'Demo Legal Name', 'active', 'MPB')
   ON CONFLICT DO NOTHING;
   RAISE NOTICE '  ✓ Demo artist created';
 
   -- ── 6. Demo Transaction ───────────────────────────────────────────────────────
-  INSERT INTO transactions (tenant_id, type, categoria, descricao, valor, data, status)
-  VALUES (v_tenant_id, 'receita', 'cachê', 'Show de demonstração', 5000.00, NOW(), 'confirmed')
+  INSERT INTO transactions (tenant_id, type, category, description, amount, transaction_date, status)
+  VALUES (v_tenant_id, 'revenue', 'performance_fees', 'Demo show', 5000.00, NOW(), 'confirmed')
   ON CONFLICT DO NOTHING;
   RAISE NOTICE '  ✓ Demo transaction created';
 

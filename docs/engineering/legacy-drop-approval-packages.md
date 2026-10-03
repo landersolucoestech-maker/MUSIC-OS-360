@@ -253,5 +253,5 @@ Missing before this package could become YES: (a) owner authorization naming thi
 
 ## Findings recorded, not fixed (outside the bounded path set)
 
-- `apps/api/migrate.mjs` still references the DEPRECATED drizzle snapshot `apps/api/drizzle/0000_mixed_jimmy_woo.sql` (which creates `events.data`); `_DEPRECATED.md` says these files must never be applied. The pre-flight allowlists the snapshot directory for that reason. Candidate cleanup for the orchestrator.
+- Mitigated: `apps/api/migrate.mjs` (which applied the DEPRECATED drizzle snapshot that creates `events.data`) now only refuses to run and points to `pnpm --filter api db:migrate`. Deleting it, `apps/api/seed.mjs` (dead; the Neon driver it imports is not installed) and the archived `apps/api/drizzle/` snapshots needs an explicit authorization to delete tracked files.
 - The draft 52 archive list and the erasure SQL are owned by another change set and were not touched here.

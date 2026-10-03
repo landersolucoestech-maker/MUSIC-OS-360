@@ -23,7 +23,10 @@ describe('AddArtistsPiiEncryptedColumns (BLK-CRM-PII-PLAINTEXT, expand phase)', 
   it('is registered, after every earlier migration', () => {
     const names = ALL_MIGRATIONS.map((m) => m.name);
     expect(names).toContain(migration.name);
-    expect(names[names.length - 1]).toBe(migration.name);
+    // registration order follows the timestamp in the class name: nothing registered before it may be newer
+    const stamp = (name: string) => /(\d{14})$/.exec(name)?.[1] ?? '';
+    const own = names.indexOf(migration.name);
+    for (const earlier of names.slice(0, own)) expect(stamp(earlier) <= stamp(migration.name)).toBe(true);
   });
 
   it('up() is additive only: nullable text columns, guarded, no data statement, no DROP/UPDATE/DELETE', async () => {

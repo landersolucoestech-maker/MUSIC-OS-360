@@ -48,20 +48,20 @@ BEGIN
     ON CONFLICT (tenant_id, auth_user_id) DO UPDATE SET
       role      = 'owner',
       is_active = TRUE;
-    RAISE NOTICE 'org_members: % criado como owner', v_admin_email;
+    RAISE NOTICE 'org_members: % created as owner', v_admin_email;
   ELSE
-    RAISE WARNING 'SEED_ADMIN_SUB não definido — pulando org_members. Substitua <<YOUR_SUPABASE_AUTH_UUID>> pelo UUID real.';
+    RAISE WARNING 'SEED_ADMIN_SUB is not set: skipping org_members. Replace <<YOUR_SUPABASE_AUTH_UUID>> with the real UUID.';
   END IF;
 
   -- ── 5. Demo Artist ──────────────────────────────────────────────────────────
-  INSERT INTO artists (id, tenant_id, nome_artistico, nome_civil, tipo, status, genero_musical)
-  VALUES (v_artist_id, v_tenant_id, 'Artista Demo', 'Nome Civil Demo', 'solo', 'ativo', 'MPB')
+  INSERT INTO artists (id, tenant_id, stage_name, full_name, status, music_genre)
+  VALUES (v_artist_id, v_tenant_id, 'Demo Artist', 'Demo Legal Name', 'active', 'MPB')
   ON CONFLICT DO NOTHING;
 
   -- ── 6. Demo Transaction ─────────────────────────────────────────────────────
-  INSERT INTO transactions (tenant_id, tipo, categoria, descricao, valor, data, status)
-  VALUES (v_tenant_id, 'receita', 'cachê', 'Show de demonstração', 5000.00, NOW(), 'confirmado')
+  INSERT INTO transactions (tenant_id, type, category, description, amount, transaction_date, status)
+  VALUES (v_tenant_id, 'revenue', 'performance_fees', 'Demo show', 5000.00, NOW(), 'confirmed')
   ON CONFLICT DO NOTHING;
 
-  RAISE NOTICE '✓ Seed operacional concluído: org=%, tenant=%', v_org_id, v_tenant_id;
+  RAISE NOTICE '✓ Operational seed finished: org=%, tenant=%', v_org_id, v_tenant_id;
 END $$;

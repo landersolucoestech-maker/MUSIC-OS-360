@@ -22,7 +22,7 @@ const CURRENT_PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 const TEST_PASSWORD = process.env.E2E_TEST_PASSWORD;
 
 test.describe('Institutional login → mandatory password change', () => {
-  test.skip(!EMAIL || !CURRENT_PASSWORD || !TEST_PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD/E2E_TEST_PASSWORD ausentes — pulando E2E real.');
+  test.skip(!EMAIL || !CURRENT_PASSWORD || !TEST_PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD/E2E_TEST_PASSWORD missing — skipping the real E2E.');
 
   test('full flow with no React crash (removeChild) and no sensitive data persisted', async ({ page }) => {
     const pageErrors: string[] = [];

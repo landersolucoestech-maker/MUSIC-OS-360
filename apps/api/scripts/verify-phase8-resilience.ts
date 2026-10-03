@@ -382,7 +382,7 @@ async function validateRace(pg: PgClient, token: string, tenantId: string, core:
     uploadRows: uploadRows.rows[0],
   };
   expect('race', badPatch.length === 0 && artistReload.res.ok, 'concurrent artist PATCH had a failure', evidence.race);
-  expect('race', ![del.res.status, patchAfter.res.status].some((s) => s >= 500), 'DELETE+PATCH simultaneo gerou 5xx', evidence.race);
+  expect('race', ![del.res.status, patchAfter.res.status].some((s) => s >= 500), 'simultaneous DELETE+PATCH produced a 5xx', evidence.race);
   expect('race', up1.key !== up2.key, 'simultaneous uploads generated a duplicate r2_key', evidence.race);
   expect('race', c1.res.ok && c2.res.ok, 'double confirm was not idempotent', evidence.race);
   expect('race', uploadRows.rows[0]?.count === 3 && uploadRows.rows[0]?.unique_keys === 3, 'concurrent uploads corrupted rows/keys', evidence.race);

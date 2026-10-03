@@ -25,7 +25,7 @@ const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 
 test.describe('CRM — contact/client timeline survives a reload (real persistence)', () => {
-  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
+  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD missing — skipping the real E2E.');
 
   test('a note recorded on the timeline stays after a full page reload', async ({ page }) => {
     const noteText = `[E2E automated — Part 80] timeline persistence check ${Date.now()}`;

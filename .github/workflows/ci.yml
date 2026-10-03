@@ -290,6 +290,8 @@ jobs:
         run: pnpm --filter @music-os-360/api db:check
       - name: Schema naming census (no new Portuguese names in the migrated schema)
         run: node scripts/naming/schema-naming-census.mjs --check
+      - name: Residue census (legacy-vocabulary backfills leave 0 legacy rows; a derivation error fails)
+        run: node scripts/naming/residue-census.mjs
       - name: Migration source-of-truth guard (no dual tracking, no drift)
         run: node scripts/verify-migration-source-of-truth.mjs
       - name: DB Verify DEV jobs gate wiring guard (catches the "always skipped" class of bug)

@@ -1,7 +1,7 @@
 {
   "name": "@music-os-360/schemas",
   "version": "0.0.1",
-  "description": "MUSIC OS 360 — Zod schemas compartilhados (validação frontend + backend)",
+  "description": "MUSIC OS 360 — Shared Zod schemas (frontend + backend validation)",
   "private": true,
   "type": "module",
   "main": "./src/index.ts",

@@ -39,7 +39,7 @@ export const CATALOG_SQL = `
   SELECT 'table' AS kind, c.relname::text AS object, NULL::text AS detail FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
    WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
   UNION ALL SELECT 'view', table_name, NULL FROM information_schema.views WHERE table_schema = 'public'
-  UNION ALL SELECT 'column', table_name || '.' || column_name, NULL FROM information_schema.columns WHERE table_schema = 'public'
+  UNION ALL SELECT 'column', table_name || '.' || column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'
   UNION ALL SELECT 'index', tablename || '.' || indexname, NULL FROM pg_indexes WHERE schemaname = 'public'
   UNION ALL SELECT 'constraint', c.conrelid::regclass::text || '.' || c.conname, pg_get_constraintdef(c.oid)
     FROM pg_constraint c JOIN pg_namespace n ON n.oid = c.connamespace WHERE n.nspname = 'public'
@@ -71,6 +71,9 @@ export function scanCatalog(rows) {
     }
     const name = kind === "enum" ? object.split("=").pop() : object.split(".").pop();
     if (ptWords(name).length) hits.push({ key: `schema::${kind}::${object}`, name });
+    // `data` is also an English word, so the lexicon cannot flag it; a DATE or TIMESTAMP column named `data`
+    // is the Portuguese word for date (events.data, lead_interactions.data). Matched in the ledger by table.column.
+    else if (kind === "column" && name === "data" && /^(date|timestamp)/.test(detail ?? "")) hits.push({ key: `schema::column::${object}`, name: object });
   }
   return hits;
 }

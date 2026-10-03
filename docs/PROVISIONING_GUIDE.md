@@ -23,7 +23,7 @@ Before you start:
 
 1. Go to [app.supabase.com](https://app.supabase.com)
 2. Click **New Project**
-3. Pick a nearby region (e.g. São Paulo - `sa-east-1`)
+3. Pick a nearby region (e.g. `sa-east-1`, South America)
 4. Write down the database password — you will need it
 5. Wait for the project to initialize (~2 minutes)
 

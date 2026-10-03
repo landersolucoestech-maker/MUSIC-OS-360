@@ -25,26 +25,28 @@ export interface LeadInteractionRecord {
   leadId: string;
   type: LeadInteractionType;
   notes: string | null;
-  data: string;
+  occurredAt: string;
   createdBy: string | null;
 }
 
-interface RawLeadInteraction {
+export interface RawLeadInteraction {
   id: string;
   lead_id: string;
   type: string;
   notes: string | null;
-  data: string;
+  occurred_at?: string;
+  /** Legacy response field of an API that predates migration 20261003000001; read-only fallback. */
+  data?: string;
   created_by: string | null;
 }
 
-function fromApi(r: RawLeadInteraction): LeadInteractionRecord {
+export function fromApi(r: RawLeadInteraction): LeadInteractionRecord {
   return {
     id: r.id,
     leadId: r.lead_id,
     type: r.type as LeadInteractionType,
     notes: r.notes,
-    data: r.data,
+    occurredAt: r.occurred_at ?? r.data ?? "",
     createdBy: r.created_by,
   };
 }

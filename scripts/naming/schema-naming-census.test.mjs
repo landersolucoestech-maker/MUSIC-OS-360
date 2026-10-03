@@ -79,3 +79,13 @@ test("catalog SQL: object and detail are text, so long table.constraint keys are
   assert.match(CATALOG_SQL, /c\.relname::text AS object/);
   assert.match(CATALOG_SQL, /NULL::text AS detail/);
 });
+
+test("an ambiguous date column named `data` is flagged by table.column, a non-date `data` column is not", () => {
+  const rows = [
+    { kind: "column", object: "events.data", detail: "timestamp without time zone" },
+    { kind: "column", object: "interactions.data", detail: "date" },
+    { kind: "column", object: "blobs.data", detail: "bytea" },
+    { kind: "column", object: "docs.data", detail: "jsonb" },
+  ];
+  assert.deepEqual(scanCatalog(rows).map((h) => h.name), ["events.data", "interactions.data"]);
+});

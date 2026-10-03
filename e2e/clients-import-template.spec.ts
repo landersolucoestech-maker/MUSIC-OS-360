@@ -17,7 +17,7 @@ const EMAIL = process.env.E2E_INSTITUTIONAL_EMAIL;
 const PASSWORD = process.env.E2E_INSTITUTIONAL_PASSWORD;
 
 test.describe('Reports center — client import (real template)', () => {
-  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
+  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD missing — skipping the real E2E.');
 
   test('the client import button opens the dialog and the downloaded template is a real backend XLSX', async ({ page }) => {
     await test.step('login institucional real', async () => {

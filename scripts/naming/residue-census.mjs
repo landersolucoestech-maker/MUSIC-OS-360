@@ -180,7 +180,7 @@ export function harvestScalarChecks(migration, queries) {
     if (guard) {
       const [, table, column, predicate, list] = guard;
       const legacy = [...list.matchAll(/'([^']*)'/g)].map((m) => m[1]);
-      merged.set(`${table}|${column}|array`, { migration, table, column, legacy, sql: `SELECT count(*)::int AS n FROM "${table}" WHERE ${predicate}]`, params: [] });
+      merged.set(`${table}|${column}|array`, { migration, table, column, legacy, sql: `SELECT count(*)::int AS n FROM "${table}" WHERE ${predicate}`, params: [] });
       continue;
     }
     for (const rule of SCALAR_RULES) {

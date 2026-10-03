@@ -46,7 +46,7 @@ interface ModuleFinding {
 }
 
 test.describe('Part 84 — functional product sweep', () => {
-  test.skip(!EMAIL || !PASSWORD, 'E2E_QA_EMAIL/E2E_QA_PASSWORD ausentes — pulando varredura real.');
+  test.skip(!EMAIL || !PASSWORD, 'E2E_QA_EMAIL/E2E_QA_PASSWORD missing — skipping the real sweep.');
 
   test('real login + visits every visible module, recording real bugs', async ({ page }) => {
     test.setTimeout(5 * 60_000); // 17 modules with networkidle — the 30s default is too short
@@ -60,7 +60,7 @@ test.describe('Part 84 — functional product sweep', () => {
     });
 
     if (page.url().includes('/change-required-password') || page.url().includes('/onboarding')) {
-      throw new Error(`Login desviou para fluxo inesperado: ${page.url()}`);
+      throw new Error(`Login diverted to an unexpected flow: ${page.url()}`);
     }
 
     const findings: ModuleFinding[] = [];

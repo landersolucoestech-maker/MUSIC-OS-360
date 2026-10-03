@@ -1,7 +1,7 @@
 {
   "name": "@music-os-360/utils",
   "version": "0.0.1",
-  "description": "MUSIC OS 360 — Utilitários puros compartilhados (sem side-effects, sem deps externas)",
+  "description": "MUSIC OS 360 — Shared pure utilities (no side effects, no external dependencies)",
   "private": true,
   "type": "module",
   "main": "./src/index.ts",

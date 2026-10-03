@@ -127,6 +127,15 @@ test("harvest: a row backfill's candidatePredicate is copied from the SELECT the
   assert.equal(found[0].sql, `SELECT count(*)::int AS n FROM "things" WHERE ("metadata" ?| ARRAY['k1']::text[])`);
 });
 
+test("harvest: a jsonb array guard becomes a syntactically balanced count check over the legacy keys", () => {
+  const found = harvestScalarChecks("mz", [
+    { sql: `UPDATE "things" SET "kinds" = (SELECT jsonb_agg(x) FROM jsonb_array_elements_text("kinds") x) WHERE jsonb_typeof("kinds") = 'array' AND "kinds" ?| ARRAY['old_a', 'old_b']`, params: [] },
+  ]);
+  assert.equal(found.length, 1);
+  assert.deepEqual(found[0].legacy, ["old_a", "old_b"]);
+  assert.equal(found[0].sql, `SELECT count(*)::int AS n FROM "things" WHERE jsonb_typeof("kinds") = 'array' AND "kinds" ?| ARRAY['old_a', 'old_b']`);
+});
+
 test("derivation from the real migration sources: every listed migration yields read-only count checks with legacy values", async () => {
   const derived = await deriveChecks();
   const byMigration = new Map();
@@ -134,6 +143,10 @@ test("derivation from the real migration sources: every listed migration yields 
   for (const prefix of [...SPEC_MIGRATIONS, ...SCALAR_MIGRATIONS]) assert.ok(byMigration.has(prefix), `no check derived for ${prefix}`);
   for (const check of derived) {
     assert.match(check.sql, /^SELECT count\(\*\)::int AS n FROM "\w+" WHERE /, check.migration);
+    const bare = check.sql.replace(/'[^']*'/g, "''");
+    for (const [open, close] of [["(", ")"], ["[", "]"]]) {
+      assert.equal(bare.split(open).length, bare.split(close).length, `${check.migration} ${check.table}.${check.column}: unbalanced ${open}${close} in ${check.sql}`);
+    }
     assert.ok(check.legacy.length > 0, `${check.migration} ${check.table}: empty legacy`);
     if (check.params.length > 0) {
       assert.ok(check.params[0].length > 0 && check.params[0].every((v) => typeof v === "string"), `${check.migration} ${check.table}: legacy params`);

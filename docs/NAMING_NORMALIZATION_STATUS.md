@@ -22,9 +22,9 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-014 | Duration (text form) | done | DONE | no |
 | NC-015 | Genre/music genre | done | DONE | no |
 | NC-016 | Name | done | DONE | no |
-| NC-017 | Name — clients / leads (corrected 2026-09-26: the row above previously listed clients and leads as DONE, but both still store `nome`) | approved | MIGRATION_REQUIRED | no |
+| NC-017 | Name — clients / leads | done | DONE | no |
 | NC-018 | Category | done | DONE | no |
-| NC-019 | Category — transactions (corrected 2026-09-26: previously listed as DONE, but `transactions` still stores `categoria`/`subcategoria` next to `financial_category_id`) | approved | MIGRATION_REQUIRED | no |
+| NC-019 | Category — transactions | done | DONE | no |
 | NC-020 | Active flag | done | DONE | no |
 | NC-021 | Sort order | done | DONE | no |
 | NC-022 | Leads client/service type | done | DONE | no |
@@ -46,7 +46,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-038 | `shares.type` vs `party_role` | done | RESOLVED | no |
 | NC-039 | `shares.role` | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-040 | `leads.observacoesInternas` | proposed | NEEDS_PRODUCT_DECISION | no |
-| NC-041 | `transactions.forma_pagamento`/`tipo_pagamento` (unwritten columns — values live in `metadata.formaPagamento`/`tipoPagamento`) | proposed | NEEDS_PRODUCT_DECISION | no |
+| NC-041 | Transactions v1 vs financial_transactions v2 ledger (the former `forma_pagamento`/`tipo_pagamento` columns are already `payment_method`/`payment_type`) | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-042 | `billing.service.ts` `upsertStripeInvoice`/`upsertStripeSubscription` correctness bugs | done | RESOLVED | no |
 | NC-043 | `works.external_source` | approved | BLOCKED_PRODUCT_DECISION | no |
 | NC-044 | `works.external_source_id` | approved | BLOCKED_PRODUCT_DECISION | no |
@@ -68,8 +68,8 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-012 | Events calendar (web) | done | DONE | no |
 | CZ-013 | Marketing module pages (web) | done | DONE | no |
 | CZ-014 | Reports page (web) | done | DONE | no |
-| CZ-015 | Project track | approved | RENAME_REQUIRED | no |
-| CZ-016 | Release track | approved | RENAME_REQUIRED | no |
+| CZ-015 | Project track | done | DONE | no |
+| CZ-016 | Release track | done | DONE | no |
 | CZ-017 | Public artist application (web) | done | DONE | no |
 | CZ-018 | Integration mappers (web) | done | DONE | no |
 | CZ-019 | Shared entity references (web) | done | DONE | no |
@@ -102,6 +102,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-046 | Marketing task status and priority vocabulary | done | DONE | no |
 | CZ-047 | Marketing content post status, target type and content type vocabulary | done | DONE | no |
 | CZ-048 | Transaction category/subcategory slug vocabulary (platform-owned options) | done | DONE | no |
+| NC-049 | Lead interaction timestamp | done | DONE | no |
 
-Concepts: 96. Renames: 0. Exceptions: 3155. Blockers: 25.
-By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, approved/MIGRATION_REQUIRED 2, approved/RENAME_REQUIRED 2, done/DONE 80, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 97. Renames: 0. Exceptions: 3165. Blockers: 29.
+By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, done/DONE 85, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

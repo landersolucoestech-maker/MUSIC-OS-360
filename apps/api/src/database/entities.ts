@@ -431,6 +431,8 @@ export class PaymentEventEntity {
   @Column({ type: 'varchar', length: 100 }) event_type: string;
   @Column({ type: 'jsonb' }) payload: Record<string, unknown>;
   @Column({ type: 'timestamp', nullable: true }) processed_at: Date | null;
+  // Lifecycle added by 20260905000001 (CHECK processing | processed | failed); written by BillingEnforcementService.
+  @Column({ type: 'varchar', length: 20, default: 'processing' }) status: 'processing' | 'processed' | 'failed';
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
 }
 
@@ -1300,7 +1302,7 @@ export class LeadInteractionEntity {
   @Column({ type: 'uuid' }) lead_id: string;
   @Column({ type: 'varchar', length: 100 }) type: string;
   @Column({ type: 'text', nullable: true }) notes: string | null;
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }) data: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }) occurred_at: Date;
   @Column({ type: 'varchar', length: 255, nullable: true }) created_by: string | null;
   @CreateDateColumn({ type: 'timestamp' }) created_at: Date;
 

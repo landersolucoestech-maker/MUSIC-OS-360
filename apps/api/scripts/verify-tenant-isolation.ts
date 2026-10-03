@@ -124,7 +124,7 @@ async function main(): Promise<void> {
     );
 
     await client.query('COMMIT');
-    ok('Orgs e tenants criados');
+    ok('Orgs and tenants created');
 
     // ── Test 1: INSERT as Tenant A ────────────────────────────────────────────
     await client.query('BEGIN');
@@ -135,7 +135,7 @@ async function main(): Promise<void> {
       [artistA, tenantA],
     );
     await client.query('COMMIT');
-    ok('TEST 1: INSERT Artista A como Tenant A');
+    ok('TEST 1: INSERT Artist A as Tenant A');
     passed++;
 
     // ── Test 2: INSERT as Tenant B ────────────────────────────────────────────
@@ -147,7 +147,7 @@ async function main(): Promise<void> {
       [artistB, tenantB],
     );
     await client.query('COMMIT');
-    ok('TEST 2: INSERT Artista B como Tenant B');
+    ok('TEST 2: INSERT Artist B as Tenant B');
     passed++;
 
     // ── Test 3: SELECT of A as Tenant A → must see 1 ────────────────────────
@@ -175,7 +175,7 @@ async function main(): Promise<void> {
     await client.query('ROLLBACK');
 
     if ((crossRead.rowCount ?? 0) === 0) {
-      ok('TEST 4: SELECT cross-tenant bloqueado por RLS — retornou 0 linhas');
+      ok('TEST 4: cross-tenant SELECT blocked by RLS — returned 0 rows');
       passed++;
     } else {
       fail(`TEST 4: CRITICAL FAILURE — RLS allowed cross-tenant read (${crossRead.rowCount} rows)`);
@@ -191,7 +191,7 @@ async function main(): Promise<void> {
     await client.query('ROLLBACK');
 
     if ((crossUpdate.rowCount ?? 0) === 0) {
-      ok('TEST 5: UPDATE cross-tenant bloqueado por RLS — afetou 0 linhas');
+      ok('TEST 5: cross-tenant UPDATE blocked by RLS — affected 0 rows');
       passed++;
     } else {
       fail(`TEST 5: CRITICAL FAILURE — RLS allowed cross-tenant UPDATE (${crossUpdate.rowCount} row(s))`);

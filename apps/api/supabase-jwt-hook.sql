@@ -89,7 +89,7 @@ BEGIN
 EXCEPTION WHEN OTHERS THEN
   -- Never block login when the query fails (e.g. the table does not exist yet).
   -- The JWT is issued without the extra claims — safe, but without tenant isolation.
-  RAISE WARNING '[musicos360:jwt_hook] Erro ao enriquecer JWT para user %: % — JWT emitido sem app_metadata',
+  RAISE WARNING '[musicos360:jwt_hook] Failed to enrich JWT for user %: % — JWT issued without app_metadata',
     v_user_id, SQLERRM;
   RETURN event;
 END;

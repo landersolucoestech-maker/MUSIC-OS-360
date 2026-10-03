@@ -330,7 +330,7 @@ export function LeadViewModal({
                   >
                     <p className="flex items-center gap-2 text-xs font-medium tracking-wider text-muted-foreground">
                       <MessageSquare className="h-3.5 w-3.5" />
-                      {LEAD_INTERACTION_TYPE_LABELS[it.type] ?? it.type} · {fmtDate(it.data)}
+                      {LEAD_INTERACTION_TYPE_LABELS[it.type] ?? it.type} · {fmtDate(it.occurredAt)}
                     </p>
                     <p className="text-sm text-foreground whitespace-pre-wrap">
                       {it.notes || "—"}

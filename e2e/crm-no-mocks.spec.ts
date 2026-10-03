@@ -23,7 +23,7 @@ const MOCK_NAMES = [
 ];
 
 test.describe('CRM (leads/contacts) — no mocked data', () => {
-  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD ausentes — pulando E2E real.');
+  test.skip(!EMAIL || !PASSWORD, 'E2E_INSTITUTIONAL_EMAIL/PASSWORD missing — skipping the real E2E.');
 
   test('loads leads/contacts through the real API, with none of the old mock names', async ({ page }) => {
     const apiCalls: string[] = [];

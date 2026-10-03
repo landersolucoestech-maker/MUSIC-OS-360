@@ -158,7 +158,7 @@ async function f72(): Promise<void> {
     const url = d.body?.data?.url ?? d.body?.url;
     ok('Download URL returned (R2 signed)', typeof url === 'string' && /\.r2\.cloudflarestorage\.com|amazonaws\.com|signature/.test(url), `url=${String(url).slice(0,80)}…`);
     const fr = await fetch(url);
-    ok('Fetch download URL retorna 200 e bytes', fr.status === 200 && (parseInt(fr.headers.get('content-length') ?? '0') > 0), `status=${fr.status} length=${fr.headers.get('content-length')}`);
+    ok('Fetch download URL returns 200 and bytes', fr.status === 200 && (parseInt(fr.headers.get('content-length') ?? '0') > 0), `status=${fr.status} length=${fr.headers.get('content-length')}`);
   } else if (UPLOAD_FILE_ID_A) {
     info('GET download skipped — PUT failed due to credential; presign+entity persisted in the database as PENDING');
   }
@@ -232,11 +232,11 @@ async function f75(): Promise<void> {
 
   // Fake mime (executable) in the images category
   const r1 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'malware.exe', mimeType: 'application/x-msdownload', sizeBytes: 100, category: 'images' } });
-  ok('mime fake (.exe em images) → 400', r1.status === 400, `status=${r1.status}`);
+  ok('fake mime (.exe in images) → 400', r1.status === 400, `status=${r1.status}`);
 
   // Images mime but a suspicious extension
   const r2 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'fake.png', mimeType: 'image/png', sizeBytes: 100, category: 'documents' } });
-  ok('mime image/png em categoria documents → 400', r2.status === 400, `status=${r2.status}`);
+  ok('mime image/png in the documents category → 400', r2.status === 400, `status=${r2.status}`);
 
   // Oversize: 11MB in images (limit 10MB)
   const r3 = await call('POST', '/uploads/presign', { token: TOKEN_A, tenant: TA, body: { fileName: 'big.png', mimeType: 'image/png', sizeBytes: 11 * 1024 * 1024, category: 'images' } });

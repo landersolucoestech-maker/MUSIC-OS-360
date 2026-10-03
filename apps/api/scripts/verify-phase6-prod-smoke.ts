@@ -110,7 +110,7 @@ async function main() {
     const r = await call('GET', '/support-tickets');
     ok('/support-tickets → 200', r.status === 200);
     const arr = Array.isArray(r.body?.data) ? r.body.data : (r.body?.data?.data ?? []);
-    ok('/support-tickets retorna array', Array.isArray(arr));
+    ok('/support-tickets returns an array', Array.isArray(arr));
   }
 
   console.log('\n── 6.9 — External Data Exchange (mock-provider gated) ──');

@@ -533,3 +533,62 @@ test("ledger rows for the deprecated Drizzle SQL and the frozen audit docs exist
   const c = census();
   for (const f of covered) assert.ok(`doc::${f}` in c.debt && !(`doc::${f}` in c.excepted), `${f} stays ratcheted debt`);
 });
+
+// ---- dataFile surface: technical names inside tracked non-code data files ----
+
+test("dataFile: SQL identifiers are scanned, comments and string literals are not", async () => {
+  const { scanData } = await import("./technical-naming-census.mjs");
+  const sql = `-- comentário em português sobre o artista\nSELECT 'Artista Demo, descrição livre' AS label;\nINSERT INTO artists (stage_name, nome_artistico) VALUES ('x', 'y');\n/* categoria */`;
+  assert.deepEqual(scanData("apps/api/seed.sql", sql), ["nome_artistico"]);
+  assert.deepEqual(scanData("apps/api/seed.sql", "INSERT INTO artists (stage_name, full_name) VALUES ('a', 'b');"), []);
+});
+
+test("dataFile: JSON keys and token-shaped values are scanned, free text is not", async () => {
+  const { scanData } = await import("./technical-naming-census.mjs");
+  const json = JSON.stringify({ artista_id: "x", note: "Texto livre em português com acentuação", status: "ativo", level: "CRITICO", ok: "active" });
+  assert.deepEqual(scanData("x/data.json", json), ["CRITICO", "artista_id", "ativo"]);
+  assert.deepEqual(scanData("x/data.json", "{ not json"), []);
+});
+
+test("dataFile: YAML and TOML keys are scanned", async () => {
+  const { scanData } = await import("./technical-naming-census.mjs");
+  assert.deepEqual(scanData("x/c.yml", "descricao: texto\nname: ok\n  - tipo_servico: y\n"), ["descricao", "tipo_servico"]);
+  assert.deepEqual(scanData("x/c.toml", "titulo = 'a'\nname = 'b'\n"), ["titulo"]);
+});
+
+test("dataFile: lockfiles are not data files, migrations are skipped by the census loop", async () => {
+  const { isDataFile } = await import("./technical-naming-census.mjs");
+  assert.equal(isDataFile("pnpm-lock.yaml"), false);
+  assert.equal(isDataFile("apps/api/drizzle/meta/_journal.json"), true);
+  assert.equal(isDataFile("apps/api/seed.sql"), true);
+  assert.equal(isDataFile("apps/web/index.html"), false);
+});
+
+test("dataFile: every Portuguese name in a tracked data file is covered by a ledger row (census sees no uncovered dataFile debt)", async () => {
+  const { census } = await import("./technical-naming-census.mjs");
+  const c = census();
+  const debt = Object.keys(c.debt).filter((k) => k.startsWith("dataFile::"));
+  assert.deepEqual(debt, []);
+  assert.ok(Object.keys(c.excepted).some((k) => k.startsWith("dataFile::")), "the dataFile surface must be exercised by at least one covered file");
+});
+
+// ---- toolMessage surface: Portuguese prose in developer tooling strings ----
+
+test("toolMessage: assertion names, log lines and skip reasons in Portuguese are found, English and short tokens are not", async () => {
+  const { scanToolMessages } = await import("./technical-naming-census.mjs");
+  const src = `ok('TEST 1: INSERT como Tenant A'); ok('TEST 1: INSERT as Tenant A'); test.skip(!x, 'variáveis ausentes — pulando E2E real.'); const k = 'artist_id'; const t = \`GET release retorna 200\`;`;
+  assert.deepEqual(scanToolMessages("apps/api/scripts/x.ts", src), ["GET release retorna 200", "TEST 1: INSERT como Tenant A", "variáveis ausentes — pulando E2E real."]);
+});
+
+test("toolMessage: only developer tooling files are scanned", async () => {
+  const { isToolingFile } = await import("./technical-naming-census.mjs");
+  for (const f of ["scripts/a.mjs", "apps/api/scripts/a.ts", "e2e/a.spec.ts", "infra/a.js", ".claude/runtime/a.mjs"]) assert.equal(isToolingFile(f), true, f);
+  for (const f of ["apps/web/src/a.tsx", "apps/api/src/a.ts", "docs/a.md", "scripts/a.json"]) assert.equal(isToolingFile(f), false, f);
+});
+
+test("toolMessage: every Portuguese tooling message is a documented exception (no uncovered debt)", async () => {
+  const { census } = await import("./technical-naming-census.mjs");
+  const c = census();
+  assert.deepEqual(Object.keys(c.debt).filter((k) => k.startsWith("toolMessage::")), []);
+  assert.ok(Object.keys(c.excepted).some((k) => k.startsWith("toolMessage::")));
+});

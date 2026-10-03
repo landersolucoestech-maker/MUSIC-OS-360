@@ -754,7 +754,7 @@ async function main(): Promise<void> {
     console.log('[3K-A][INSERT_VALIDO]', JSON.stringify(validResult));
     assert(validInsert.status === 201, `INSERT valido HTTP status=${validInsert.status}`);
     assert(validResult.ok === true, 'valid INSERT was denied');
-    assert(validResult.rows[0].tenant_id === TENANT_A, 'INSERT valido gravou tenant incorreto');
+    assert(validResult.rows[0].tenant_id === TENANT_A, 'valid INSERT wrote the wrong tenant');
 
     const validUpdate = await request(
       'PATCH',
@@ -767,7 +767,7 @@ async function main(): Promise<void> {
     console.log('[3L][UPDATE_VALIDO]', JSON.stringify(validUpdateResult));
     assert(validUpdate.status === 200, `UPDATE valido HTTP status=${validUpdate.status}`);
     assert(validUpdateResult.rows.length === 1, 'valid UPDATE did not affect conversation A');
-    assert(validUpdateResult.rows[0].tenant_id === TENANT_A, 'UPDATE valido afetou tenant incorreto');
+    assert(validUpdateResult.rows[0].tenant_id === TENANT_A, 'valid UPDATE affected the wrong tenant');
 
     const crossUpdate = await request(
       'PATCH',

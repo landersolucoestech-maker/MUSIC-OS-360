@@ -118,7 +118,7 @@ async function main(): Promise<void> {
       [cstA, tenantA],
     );
     await client.query('COMMIT');
-    ok('TEST 1: INSERT como Tenant A'); passed++;
+    ok('TEST 1: INSERT as Tenant A'); passed++;
 
     // TEST 2: active SELECT as Tenant A → sees its own record
     await client.query('BEGIN');
@@ -163,7 +163,7 @@ async function main(): Promise<void> {
     await setTenant(client, tenantB);
     const crossRead = await client.query(`SELECT id FROM contract_service_types WHERE id = $1`, [cstA]);
     await client.query('ROLLBACK');
-    if ((crossRead.rowCount ?? 0) === 0) { ok('TEST 5: SELECT cross-tenant bloqueado por RLS — 0 linhas'); passed++; }
+    if ((crossRead.rowCount ?? 0) === 0) { ok('TEST 5: cross-tenant SELECT blocked by RLS — 0 rows'); passed++; }
     else { fail(`TEST 5: CRITICAL FAILURE — RLS allowed cross-tenant read (${crossRead.rowCount} rows)`); failed++; }
 
     // TEST 6: UPDATE as Tenant A
