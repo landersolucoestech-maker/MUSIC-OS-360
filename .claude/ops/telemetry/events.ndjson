@@ -210,3 +210,17 @@
 {"name":"gate-run","at":"2026-10-03T05:31:55.623Z","gate":"pack-integrity","status":"PASS","durationMs":286,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-03T05:31:55.768Z","gate":"human-approval","status":"PASS","durationMs":54,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-03T05:31:55.935Z","gate":"operational-automation","status":"PASS","durationMs":54,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T08:53:21.601Z","gate":"security","status":"PASS","durationMs":13029,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T08:55:26.771Z","gate":"completion","status":"BLOCKED","durationMs":13955,"reasonCount":17}
+{"name":"gate-run","at":"2026-10-03T08:55:41.117Z","gate":"completion","status":"BLOCKED","durationMs":13974,"reasonCount":17}
+{"name":"gate-run","at":"2026-10-03T08:55:54.755Z","gate":"security","status":"BLOCKED","durationMs":13566,"reasonCount":16}
+{"name":"gate-run","at":"2026-10-03T08:55:55.043Z","gate":"pack-integrity","status":"PASS","durationMs":212,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T08:55:55.154Z","gate":"human-approval","status":"PASS","durationMs":39,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T08:55:55.266Z","gate":"operational-automation","status":"PASS","durationMs":41,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T09:06:23.902Z","gate":"security","status":"PASS","durationMs":13741,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T09:06:47.518Z","gate":"completion","status":"BLOCKED","durationMs":14715,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T09:07:01.531Z","gate":"completion","status":"BLOCKED","durationMs":13815,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-03T09:07:15.248Z","gate":"security","status":"PASS","durationMs":13644,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T09:07:15.521Z","gate":"pack-integrity","status":"PASS","durationMs":204,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T09:07:15.644Z","gate":"human-approval","status":"PASS","durationMs":50,"reasonCount":0}
+{"name":"gate-run","at":"2026-10-03T09:07:15.759Z","gate":"operational-automation","status":"PASS","durationMs":42,"reasonCount":0}
