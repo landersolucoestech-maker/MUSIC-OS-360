@@ -52295,13 +52295,13 @@
     {
       "id": "BLK-CI-JOB-NAME-FASE",
       "item": "CI job name `Security Regression (FASE 9.x fixes)`",
-      "blocker": "The job name is a status-check context; renaming it can break branch protection or rulesets that require it, and the repository has no authoritative record of them.",
+      "blocker": "Only one fact is outside the repository and unreadable with the available integration token: whether CLASSIC branch protection on dev requires a status check named after the old job. The job is already renamed to 'Security Regression' and every in-repo reference was derived from the local workflows; the two active repository rulesets ('bloquear branches alternativas', 'proteger dev') were read through the API and contain only deletion and non_fast_forward rules, no required status check.",
       "evidence": ".github/workflows/ci.yml:212, scripts/verify-body-limit-guard.mjs:4 and docs/runbook.md reference the name; the only evidence about required checks is the 2026-09-13 audit (dev unprotected, none required), which is a dated snapshot and says nothing about staging/main.",
-      "requiredAction": "Admin lists the required checks of every protected branch/ruleset; if the name is not required (or after updating the protection), rename it and the three references together.",
+      "requiredAction": "A repository admin confirms (Settings > Branches) that no classic branch protection rule on dev requires the old job name 'Security Regression (FASE 9.x fixes)'; if one does, update it to 'Security Regression'.",
       "owner": "platform tooling owner",
       "disposition": "EXTERNAL",
       "status": "OPEN",
-      "independentWorkCompleted": "Job renamed to 'Security Regression' with all in-repo references derived from the local workflows (commit ad618b3); no in-repo required-check reference exists. Only the remote branch-protection/ruleset listing requires repository admin access."
+      "independentWorkCompleted": "Job renamed (commit ad618b3); in-repo references derived from the local workflows; repository rulesets read via API and verified to require no status check; stale git-safety doc about rulesets corrected."
     },
     {
       "id": "BLK-LEGACY-ROOT-SQL",

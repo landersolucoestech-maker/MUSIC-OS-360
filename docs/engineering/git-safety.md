@@ -116,9 +116,11 @@ runs happen: check the Actions history of "Branch policy" for actual runs.
 The only boundary against actors without the guard (another machine, the GitHub web UI or API,
 deliberate work-arounds) is a repository ruleset, configured by the owner in the repository
 settings, not in this tree. It must target all branches and restrict creation of any branch other
-than `dev`, and on `dev` block force pushes and deletion. At the time of this change no ruleset
-exists (`GET /repos/{owner}/{repo}/rulesets` and `/rules/branches/dev` return `[]`, `dev` is not
-protected): the policy is enforced locally and detected remotely, not enforced remotely.
+than `dev`, and on `dev` block force pushes and deletion. Since 2026-09-30 two active rulesets exist
+(`bloquear branches alternativas` and `proteger dev`, read through `GET /repos/{owner}/{repo}/rulesets`):
+both carry only the `deletion` and `non_fast_forward` rules and require no status check. Classic branch
+protection is not readable with the integration token (HTTP 403), so whether it requires a named check
+is a repository-admin confirmation.
 
 Known limits of the local layers:
 
