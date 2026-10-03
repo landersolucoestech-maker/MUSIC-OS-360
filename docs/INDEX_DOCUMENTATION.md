@@ -467,11 +467,13 @@ You now have:
 From fragmented modules to a **Modern, Contextual and Thoroughly Fluid Music Operating System**.
 
 **Shall we make it a reality? 🚀**
-# CURRENT CANONICAL RELEASE
+# RELEASE BASELINE (SUPERSEDED, HISTORICAL)
 
-- `docs/runbooks/release-baseline-157-80.md` - official release runbook based on the canonical baseline `157 public tables / 80 musicos360_migrations`.
-- `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` - source of truth for the current baseline; section 6 records the technical decision that closes the 3B/3B.1 impasse.
-- `docs/DB_AUDIT_2026-07-05.md` - complete audit of real schema vs code (groups A/B/C/D); confirms the 157/80 baseline and lists removal candidates pending Go/No-Go.
+The 157/80 baseline below is a point-in-time record of 2026-07. The migration registry now holds 333 migrations; the current release contract is `docs/engineering/release-production.md` (migrations: `docs/engineering/database.md`).
+
+- `docs/runbooks/release-baseline-157-80.md` - superseded release runbook for the 2026-07 baseline `157 public tables / 80 musicos360_migrations` (historical).
+- `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` - historical record of the 2026-07 baseline decision (not the current contract); section 6 records the technical decision that closed the 3B/3B.1 impasse.
+- `docs/DB_AUDIT_2026-07-05.md` - historical record: audit of real schema vs code of 2026-07-05 (groups A/B/C/D); not the current contract.
 
 Documents blocked from execution:
 

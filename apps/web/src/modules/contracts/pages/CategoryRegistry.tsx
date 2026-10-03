@@ -21,6 +21,7 @@ import {
   type ContractCategory,
 } from "@/modules/contracts/hooks/useCategoryRegistry";
 import { toast } from "sonner";
+import { parseCategoryImportRow } from "@/modules/contracts/lib/category-import";
 
 interface CategoryRegistryProps {
   asModal?: boolean;
@@ -177,11 +178,9 @@ export default function CategoryRegistry({
         let added = 0;
         let skipped = 0;
         for (const row of rows) {
-          const label = String(row["Nome"] ?? row["nome"] ?? "").trim();
+          const { label, rawSlug, description } = parseCategoryImportRow(row);
           if (!label) { skipped++; continue; }
-          const rawSlug = String(row["Slug"] ?? row["slug"] ?? "").trim();
           const slug = rawSlug ? toSlug(rawSlug) : toSlug(label);
-          const description = String(row["Descrição"] ?? row["Descricao"] ?? row["descricao"] ?? "").trim() || undefined;
           const dupe = categories.find((c) => c.value === slug);
           if (dupe) { skipped++; continue; }
           addCategory(label, slug, description);

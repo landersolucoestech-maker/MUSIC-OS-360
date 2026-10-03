@@ -33,6 +33,7 @@ import {
 } from "@/modules/auth/services/activation-plans.service";
 import { describeAuthError } from "@/shared/lib/auth-error-messages";
 import { toUserMessage } from "@/shared/lib/errors";
+import { buildSignupMetadata } from "@/shared/lib/signup-metadata";
 
 /* ── helpers ── */
 function slugify(val: string) {
@@ -197,21 +198,7 @@ export default function Register() {
     const all = { ...data, ...d } as Step1 & Step2 & Step3 & Step4;
 
     try {
-      const { error } = await signUp(all.email, all.password, all.fullName, {
-        org_name: all.companyName,
-        trade_name: all.tradeName,
-        workspace_name: all.workspaceName,
-        workspace_slug: all.slug,
-        segment: all.segment,
-        corporate_email: all.corporateEmail,
-        phone: all.phone,
-        address: all.address,
-        city: all.city,
-        state: all.state,
-        activation_plan_id: all.activationPlanId,
-        accepted_terms: all.acceptTerms,
-        accepted_lgpd: all.acceptLgpd,
-      });
+      const { error } = await signUp(all.email, all.password, all.fullName, buildSignupMetadata(all));
       if (error) {
         toast.error(describeAuthError(error, "Erro ao criar conta. Tente novamente."));
         return;

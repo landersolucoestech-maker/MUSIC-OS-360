@@ -177,7 +177,7 @@ Every section states a command, a file or a record that reproduces its claim. Tw
 ## 30. Documentation Validation
 
 - `node .claude/runtime/build-pack-docs.mjs --check` → PASS.
-- Active docs corrected for the bypass change: `docs/engineering/security.md`, `.env.development.example`, `docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md` (dev-auth row), `apps/api/scripts/smoke-test.ts` header.
+- Active docs corrected for the bypass change: `docs/engineering/security.md`, `.env.development.example`, `docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md` (a historical record that carries the corrected dev-auth row), `apps/api/scripts/smoke-test.ts` header.
 - Historical docs still name the removed integration hooks as history (listed by the regression review); they were not rewritten.
 
 ## 31. Residue Search

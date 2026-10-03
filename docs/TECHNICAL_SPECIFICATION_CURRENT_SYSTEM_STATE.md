@@ -1,4 +1,4 @@
-> Historical document (English label). Kept as recorded; not the current contract.
+> Historical record. Kept as recorded; not the current contract.
 
 # ESPECIFICAÇÃO TÉCNICA COMPLETA DO ESTADO ATUAL DO SISTEMA
 

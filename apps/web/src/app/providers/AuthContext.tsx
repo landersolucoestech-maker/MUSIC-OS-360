@@ -26,6 +26,7 @@ import {
 } from "@/shared/lib/api-client";
 import { IS_DEV, AUTH_DISABLED, DEV_AUTH_BYPASS } from "@/shared/lib/env";
 import { normalizeEmail } from "@/shared/lib/normalize-email";
+import { buildProvisionWorkspacePayload } from "@/shared/lib/signup-metadata";
 import { getSupabaseClient } from "@/lib/supabase";
 import { UserFacingError, toUserMessage } from "@/shared/lib/errors";
 
@@ -141,21 +142,7 @@ async function provisionWorkspaceForSession(
   setAccessToken(session.access_token);
   setTenantId(null);
   clearAuthBackoff();
-  await api.patch("/auth/provision-workspace", {
-    organizationName: metadata["org_name"],
-    workspaceName: metadata["workspace_name"],
-    workspaceSlug: metadata["workspace_slug"],
-    segment: metadata["segment"],
-    tradeName: metadata["trade_name"],
-    corporateEmail: metadata["corporate_email"],
-    phone: metadata["phone"],
-    address: metadata["address"],
-    city: metadata["city"],
-    state: metadata["state"],
-    requestedPlan: metadata["requested_plan"],
-    acceptedTerms: metadata["accepted_terms"],
-    acceptedLgpd: metadata["accepted_lgpd"],
-  });
+  await api.patch("/auth/provision-workspace", buildProvisionWorkspacePayload(metadata));
   const { data, error } = await getSupabaseClient().auth.refreshSession();
   if (error || !data.session) {
     throw new UserFacingError(`Session refresh after workspace provisioning failed: ${error?.message ?? "no session returned"}`, "Não foi possível atualizar a sessão.");

@@ -148,6 +148,8 @@ export function exceptionIndex(map) {
     return words.length && words.every((w) => legalWords.has(w)) ? legalWords.get(words[0]) : undefined;
   };
   return {
+    /** Every ACTIVE, non-baselined row: the census reports the ones that suppressed nothing (stale rows). */
+    rows: (map.exceptions ?? []).filter((e) => e.status !== "REMOVED" && e.census !== "baselined"),
     get: (file, name, surface) => pick(`${file}::${name}`, surface) ?? pick(`*::${name}`, surface)
       ?? (surface ? pick(`${file}::*`, surface) : undefined) ?? byWords(name),
   };

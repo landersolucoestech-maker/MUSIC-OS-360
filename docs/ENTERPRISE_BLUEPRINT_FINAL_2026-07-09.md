@@ -1,4 +1,4 @@
-> Historical document (English label). Kept as recorded; not the current contract.
+> Historical record. Kept as recorded; not the current contract.
 
 # MUSIC OS 360 - Blueprint Enterprise Definitivo
 

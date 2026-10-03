@@ -57,6 +57,28 @@ export interface ViaCEPResponse {
   erro?: boolean;
 }
 
+/** Address fields of the app form (canonical English names). */
+export interface AddressFields {
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  addressComplement: string;
+}
+
+/**
+ * The only place that reads the ViaCEP wire fields (`logradouro`, `bairro`, `localidade`, `uf`, `complemento`:
+ * an external provider contract the app does not control). Provider values fill a field only when it has content,
+ * and a complement the user already typed is never overwritten.
+ */
+export const addressFromPostalLookup = (data: ViaCEPResponse, prev: AddressFields): AddressFields => ({
+  street: data.logradouro || prev.street,
+  neighborhood: data.bairro || prev.neighborhood,
+  city: data.localidade || prev.city,
+  state: data.uf || prev.state,
+  addressComplement: prev.addressComplement || data.complemento || "",
+});
+
 export const fetchAddressByCEP = async (cep: string): Promise<ViaCEPResponse | null> => {
   const cleanCEP = cep.replace(/\D/g, '');
   if (cleanCEP.length !== 8) return null;

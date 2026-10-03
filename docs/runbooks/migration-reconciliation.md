@@ -2,11 +2,12 @@
 
 > **DO NOT EXECUTE THIS RUNBOOK.**
 >
-> This document used the historical baseline of `61` tables / `14` migrations and the
-> assumption of old pending waves. The current source of truth validated against
-> `DATABASE_URL` is `157` public tables / `80` records in
-> `public.musicos360_migrations`. Execution of the old waves is blocked.
-> Use `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` as the canonical document.
+> OBSOLETE. This document used the historical baseline of `61` tables / `14` migrations and the
+> assumption of old pending waves. Execution of the old waves is blocked. The 2026-07 baseline of
+> `157` public tables / `80` records in `public.musicos360_migrations` is recorded in
+> `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` (historical record, not the current contract); the
+> current release and migration contract is `docs/engineering/release-production.md` and
+> `docs/engineering/database.md`.
 # Runbook — Migration Reconciliation (Prod +66) · MUSIC OS 360
 
 > Production is **66 migrations behind** (last applied `AddArtistIdToWorks20260523000001`; the repo has 79).

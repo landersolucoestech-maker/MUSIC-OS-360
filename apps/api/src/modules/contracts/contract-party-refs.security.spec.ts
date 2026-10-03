@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { ALL_ENTITIES, ContractEntity } from '../../database/entities';
 import { ContractsService } from './contracts.service';
 import { toContractResponse } from './contract-party-refs';
+import type { ContractPartyRefsDto, LegacyClientRefDto } from './dto/contract-party-ref.dto';
 
 /**
  * S1 / D1 (review bc40b76): contract responses embed only whitelisted party
@@ -159,5 +160,15 @@ describe('toContractResponse — field-by-field projection (defense in depth)', 
     const res = toContractResponse({ id: CONTRACT, artist_ref: { stage_name: 'X' }, client_ref: {} } as unknown as ContractEntity);
     expect(res.artist).toBeNull();
     expect(res.client).toBeNull();
+  });
+
+  it('the documented ContractPartyRefsDto keys are exactly the party embeds the response serializes (canonical + deprecated)', async () => {
+    const { svc } = await makeService([contractRaw()]);
+    const res = await svc.findById(TENANT, CONTRACT) as unknown as Record<string, unknown>;
+    const documented: Array<keyof ContractPartyRefsDto> = ['artist', 'client', 'artistas', 'clientes'];
+    for (const key of documented) expect(res).toHaveProperty(key);
+    const legacyClientKeys: Array<keyof LegacyClientRefDto> = ['id', 'name', 'nome'];
+    expect(Object.keys(res['clientes'] as object).sort()).toEqual([...legacyClientKeys].sort());
+    expect(Object.keys(res['client'] as object).sort()).toEqual(['id', 'name']);
   });
 });

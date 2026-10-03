@@ -1,8 +1,8 @@
 # RELEASE RUNBOOK - CANONICAL BASELINE 157/80
 
 Date: 2026-07-04
-Status: official release runbook based on the current canonical baseline
-Canonical source: `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
+Status: SUPERSEDED. Historical procedure for the 2026-07 baseline (157 public tables / 80 musicos360_migrations); the migration registry now holds 333 migrations. The current release contract is `docs/engineering/release-production.md`.
+Historical source of the baseline: `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` (historical record, not the current contract)
 
 ## 1. Objective
 

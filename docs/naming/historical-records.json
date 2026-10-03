@@ -1,0 +1,466 @@
+{
+ "schemaVersion": 1,
+ "label": "> Historical record. Kept as recorded; not the current contract.",
+ "records": {
+  "docs/BLUEPRINT_ENTERPRISE.md": {
+   "sha256": "33a97e18948bff512a5158420d6338dc0a3e623e67598cb7982e5da833df4004",
+   "lines": 722
+  },
+  "docs/DB_AUDIT_2026-07-05.md": {
+   "sha256": "8b90a91f834ba796d4a9b037352dce3af69d494f7fbb83ab5b67f00976ef9767",
+   "lines": 93
+  },
+  "docs/ENTERPRISE_BLUEPRINT_FINAL_2026-07-09.md": {
+   "sha256": "97bbe23998ce8c29b1e0baccdd9af6401d0a8f755b08209048f0933936373411",
+   "lines": 1896
+  },
+  "docs/FORM_DATABASE_ALIGNMENT_AUDIT.md": {
+   "sha256": "d9409b0104eac1f54c25053872ca895d825424e6fece992748349fc2d8a907e0",
+   "lines": 971
+  },
+  "docs/STAGE_4_CANONICAL_BASELINE_157_80.md": {
+   "sha256": "fcb2f3e91d7d04cc0628b2932dd4138a92c17d0f9de72d7bee9b95146b433a10",
+   "lines": 192
+  },
+  "docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md": {
+   "sha256": "f07bd93fd3dbc80de276975407b341c55e20fd79e1b84e07f1628bc105ddbf90",
+   "lines": 645
+  },
+  "docs/backend-v2/00-repository-state.md": {
+   "sha256": "23466aeb9a6f55e4e095d19f992c1f384044a15a33e437aed9a013de306188f2",
+   "lines": 167
+  },
+  "docs/backend-v2/01-working-tree-audit.md": {
+   "sha256": "aefcfe53b57abd7e071a22aafeb61c14a1dd8518a3f72a6bff83105bee1ea3d1",
+   "lines": 89
+  },
+  "docs/backend-v2/02-frontend-dirty-audit.md": {
+   "sha256": "4fcc13f56adef6a7ffa6de1cabba3abac1d29258b363856a51848c24abac0ca8",
+   "lines": 86
+  },
+  "docs/backend-v2/03-frontend-data-access-surface.md": {
+   "sha256": "0f40eb26d6fd8032e927c687edcd3a072aaa5eea8c26d2a831031200ae2d66c2",
+   "lines": 281
+  },
+  "docs/backend-v2/04-http-client-architecture.md": {
+   "sha256": "7ba8bcd965dec6df8906ad7d15ffa7ba7534a2686528a4a43fffb630afba1e52",
+   "lines": 473
+  },
+  "docs/backend-v2/05-http-endpoint-inventory.md": {
+   "sha256": "433f351642e33e0911d76e28fc67a4c2677220941788227205605f06c02d3410",
+   "lines": 616
+  },
+  "docs/backend-v2/06-http-request-contracts.md": {
+   "sha256": "5cea478ba5a65bfcba56f5bf42d391b78f2e307d638c32ae58a795205cf5bf0d",
+   "lines": 616
+  },
+  "docs/backend-v2/07-http-request-unknowns-resolution.md": {
+   "sha256": "f6a9002475345f896758ea9fb1dede27228ccacc8822b0a93cb38436b2148950",
+   "lines": 319
+  },
+  "docs/backend-v2/08-http-request-final-resolution.md": {
+   "sha256": "0750b896cf63fcaff27ebff4d30c78a53bb7b1adced25a0a377f68c1af3da027",
+   "lines": 166
+  },
+  "docs/backend-v2/09-http-response-contracts.md": {
+   "sha256": "ef9aef29e00ef8a9c8fb5d5d76adf09f90173702ad5dd9586725e5c3ddd176e0",
+   "lines": 564
+  },
+  "docs/backend-v2/10-http-response-unknowns-resolution.md": {
+   "sha256": "345cb1ef2127d25553c825ce19bdd78c214a9d71d10b8a8a7cf6a2ab7681a0f4",
+   "lines": 273
+  },
+  "docs/backend-v2/11-http-response-final-resolution.md": {
+   "sha256": "5bc5781d63d93c16217d88f18028d1b69abc86e9917fce1adcdb8fa0ed527168",
+   "lines": 223
+  },
+  "docs/backend-v2/12-http-list-query-contracts.md": {
+   "sha256": "a76eaa90f2d43657cb9df53a5fc72b0250aca1773ea4d7c24a0468aa22afc92b",
+   "lines": 617
+  },
+  "docs/backend-v2/13-http-error-contracts.md": {
+   "sha256": "f063e8690af393ce85a66220fbc849e865343c66a42e11234aa0ab9dfaf2109e",
+   "lines": 289
+  },
+  "docs/backend-v2/14-http-error-final-resolution.md": {
+   "sha256": "72f8bc539467396b26282c92140f09d5762b979caa1b2182d0f51a7664fcb852",
+   "lines": 61
+  },
+  "docs/backend-v2/15-frontend-auth-permission-contracts.md": {
+   "sha256": "baa3072c459fbb5ce8772f900ad5a92f0dd508b8c3ee8e4cdebf4910ee3773a8",
+   "lines": 444
+  },
+  "docs/backend-v2/16-permission-final-resolution.md": {
+   "sha256": "a1dbeb19beb2da940188adbb7b3d0858526489425d18963cba8731ee99115661",
+   "lines": 160
+  },
+  "docs/backend-v2/17-supabase-direct-access-audit.md": {
+   "sha256": "0a0ba1434cbf44f494dc3e15106c1f87cbcca3ff16d91b7604b968dc2db8c855",
+   "lines": 72
+  },
+  "docs/backend-v2/18-local-storage-audit.md": {
+   "sha256": "eb852e10a7bb390aa496a7451b83006c5a3095837b444e3efca205437b1d8ccb",
+   "lines": 532
+  },
+  "docs/backend-v2/19-backend-required-storage-map.md": {
+   "sha256": "544f4191a2ec2c08dd050348ba9c4987fd2102f77390e4c205d49524ac212610",
+   "lines": 367
+  },
+  "docs/backend-v2/20-storage-cases-legacy-check.md": {
+   "sha256": "4c768b4198ef75cd4b184bcac866c81f608466a5ab0be606610c72c09e6c3204",
+   "lines": 209
+  },
+  "docs/backend-v2/21-storage-required-functional-contracts.md": {
+   "sha256": "db59c45e627e940f63ba2f19023a92818ee028963488c29a89253ff1be5a60e3",
+   "lines": 520
+  },
+  "docs/backend-v2/22-storage-functional-unknowns-resolution.md": {
+   "sha256": "d2f582d20b10388bb0423fbf51693e530e8ff36a67b849c4f1062f99027844a4",
+   "lines": 251
+  },
+  "docs/backend-v2/23-storage-contract-final-conflicts.md": {
+   "sha256": "e53cadae7537024fefef04c8aa68d3d039cc73f871115b2e408987c2c1c682b3",
+   "lines": 195
+  },
+  "docs/backend-v2/24-required-functional-decisions.md": {
+   "sha256": "f18ebc7fc09c6f8dbf6a9e135933e5aa0fb19b18a849037b88fefc926ebf5535",
+   "lines": 178
+  },
+  "docs/backend-v2/25-distributor-integration-decision.md": {
+   "sha256": "9139eb803675a6e4dc29458d9edf3157bb7fc52f718e25421d2038a68ef4a00e",
+   "lines": 101
+  },
+  "docs/backend-v2/26-music-chat-scope-decision.md": {
+   "sha256": "5270f1e62be985f8f90423813a31b52c97e7ed9469464d083ad5df65eaff1a2b",
+   "lines": 78
+  },
+  "docs/backend-v2/27-runtime-mock-audit.md": {
+   "sha256": "f4868422206dede74b93445eb62f7765831e81c1cffd0b544c77bfb42f4f366a",
+   "lines": 267
+  },
+  "docs/backend-v2/28-runtime-mock-final-resolution.md": {
+   "sha256": "912c6ba541c7d5563150c5cfbbb01aade77e255a5564bee4298d392a92604939",
+   "lines": 260
+  },
+  "docs/backend-v2/29-memory-usage-audit.md": {
+   "sha256": "431e904e5b8f77cefa960d8307b7f61927da3fad7601dc3087522b10f9c0526b",
+   "lines": 270
+  },
+  "docs/backend-v2/30-external-service-audit.md": {
+   "sha256": "00688b041f4266031e9492b9dbc746f7cbc94e520b8404039481de1686df2d03",
+   "lines": 319
+  },
+  "docs/backend-v2/31-external-service-final-resolution.md": {
+   "sha256": "009da10493f462a6385ebe26deaecddc0f786ef183ae9a937e28f572222436cb",
+   "lines": 155
+  },
+  "docs/backend-v2/32-pending-tables-audit.md": {
+   "sha256": "152af26a0467eeec531d7385b59e4f175079ab0f1e67a9d910b377e8045c4db0",
+   "lines": 312
+  },
+  "docs/backend-v2/33-realtime-event-contracts.md": {
+   "sha256": "9f893865d170589f605041085c0e4e948431bb9c69cf19ecb066aea3ad6168a4",
+   "lines": 522
+  },
+  "docs/backend-v2/34-canonical-frontend-contract.md": {
+   "sha256": "45e54a59b6983d64e35c50d296544407cb3f28dc438e014e01a6c4e5fff2add6",
+   "lines": 500
+  },
+  "docs/backend-v2/35-canonical-contract-incomplete-resolution.md": {
+   "sha256": "fab0fe0348ca871be92ec18c2f0f95606d36157ba32a292047253dc600121322",
+   "lines": 126
+  },
+  "docs/backend-v2/36-canonical-contract-conflict-resolution.md": {
+   "sha256": "b08f67f98241a0de06ebaf03cd5eec565b00e43fa5c1ec1657c2569a464d2374",
+   "lines": 91
+  },
+  "docs/backend-v2/37-canonical-frontend-contract-final.md": {
+   "sha256": "de09779ba46515d2c68e4f8dec5e0382bfe2dc763cd3ae49a87f256f58661662",
+   "lines": 159
+  },
+  "docs/backend-v2/38-domain-inventory.md": {
+   "sha256": "bb5b13e324ccf0023ab9ebcc7cdc0dd6114a3958f012a07f6a41447180fc3576",
+   "lines": 928
+  },
+  "docs/backend-v2/39-domain-dependency-map.md": {
+   "sha256": "9ff849659dddd8d77c6a7e0bb7d8dc6c6f77fa380eebbedc030e247b7cb44db5",
+   "lines": 251
+  },
+  "docs/backend-v2/40-domain-dependency-final-resolution.md": {
+   "sha256": "ff4b9de0ac5e2af4bee83e0a53f9a683e4b3ca43aadecf66698171e0cfd37de2",
+   "lines": 154
+  },
+  "docs/backend-v2/41-domain-implementation-order.md": {
+   "sha256": "7bf206ae6d6c5a6c5dd133429be7156ff32db358d69eb9ba6b655102ab774de0",
+   "lines": 396
+  },
+  "docs/backend-v2/42-api-v2-technical-constraints.md": {
+   "sha256": "031e2c181f961a361c9971de6ac0044721207414c3c8e4fff4fb5f3131d08f5a",
+   "lines": 408
+  },
+  "docs/backend-v2/43-api-v2-http-framework-decision.md": {
+   "sha256": "27ab8f9879ca1b7e01b832fe0291e2ff6f2fe4c20fec640ca4ad7dd02234be9b",
+   "lines": 226
+  },
+  "docs/backend-v2/44-api-v2-http-framework-final-resolution.md": {
+   "sha256": "d9a994c3904e054c981dcb67aff0d4e840d616affb7039a1562501f9958c9443",
+   "lines": 104
+  },
+  "docs/backend-v2/45-api-v2-database-access-decision.md": {
+   "sha256": "f68956b52baeb17ec7d3f2e4551598abc0fc7572f59eea47b24e383fc2f173be",
+   "lines": 299
+  },
+  "docs/backend-v2/46-database-v2-migration-strategy.md": {
+   "sha256": "7422767cad713b2039a99d1e64c720fc14c831ddd07712e21bbb26aca666a997",
+   "lines": 218
+  },
+  "docs/backend-v2/47-api-v2-layered-architecture.md": {
+   "sha256": "55fd9f0e4f8deaa67562da28cf75f79a1aea95e69dd43331da0844c2a13ee83f",
+   "lines": 385
+  },
+  "docs/backend-v2/48-api-v2-directory-structure.md": {
+   "sha256": "3213d8835f6f88ac209c8979e21368fe4228a85d66e15c92cd1a6577b6d9a345",
+   "lines": 350
+  },
+  "docs/backend-v2/49-auth-tenant-request-context.md": {
+   "sha256": "e34f07dd92ca13850add792183fbfe5a875b23d9c67914bdd4e10f77926fa4ac",
+   "lines": 361
+  },
+  "docs/backend-v2/50-api-v2-error-model.md": {
+   "sha256": "85d897b03db8c16df9dced2927a53059374670bdfa808c6ddd47d5e3e2244980",
+   "lines": 366
+  },
+  "docs/backend-v2/51-api-v2-transaction-strategy.md": {
+   "sha256": "0b79850d6f5fac57124981a4a871494293eb3e66a823222aa4902302dc7ef9e3",
+   "lines": 358
+  },
+  "docs/backend-v2/52-api-v2-observability-strategy.md": {
+   "sha256": "e46a13aea258533b0e19d78dfe054c9f982d6576698f4e49441e533cbaa126fe",
+   "lines": 415
+  },
+  "docs/backend-v2/53-api-v2-configuration-secrets-strategy.md": {
+   "sha256": "ef92bc3051ff402cc6d0baed083ebfbdf72e0d28ef03452f2d2b1d6d3fb959fb",
+   "lines": 416
+  },
+  "docs/backend-v2/54-current-project-stack-audit.md": {
+   "sha256": "9bb5f6f75b2fe8e6b3f06433324e7c7ed69ed04b439f6442e83e0c557fbd53be",
+   "lines": 751
+  },
+  "docs/backend-v2/55-exact-current-stack-inventory.md": {
+   "sha256": "6015f347039935347670dcd3fbd8fa90f4d0449223ed792384e66bc899a5c868",
+   "lines": 966
+  },
+  "docs/backend-v2/56-unresolved-stack-versions-resolution.md": {
+   "sha256": "dabae5b2cfa1540aba14e7ff7aa51bff58e3972369fcab51851ff109efdaa1c4",
+   "lines": 255
+  },
+  "docs/backend-v2/57-current-stack-final.md": {
+   "sha256": "a524cf6e834174a249eb15947db8ea41b6c6d142419e9e5416b5dadeafb4a84c",
+   "lines": 282
+  },
+  "docs/backend-v2/58-api-v2-database-stack-final-decision.md": {
+   "sha256": "455bd365a7a3a2357c09ccfe899c9a1057899b81d2f7987ce9f99e30c9912045",
+   "lines": 283
+  },
+  "docs/backend-v2/59-api-v2-nestjs-version-final-decision.md": {
+   "sha256": "247775289d7f69eebc87b5338052d9b0a7dbe689795d1672f5e9b11bced2864c",
+   "lines": 218
+  },
+  "docs/backend-v2/60-api-v2-node-version-final-decision.md": {
+   "sha256": "99a103ae27d4c418d78c14909b72c3e4a93eb38cf8684ff00c87b77a9f6fa3fe",
+   "lines": 218
+  },
+  "docs/backend-v2/61-api-v2-deployment-model-final-decision.md": {
+   "sha256": "6d31323b94816b173219bddf692c0939435cba806b8a075e28a5f65dd8068b85",
+   "lines": 291
+  },
+  "docs/backend-v2/62-business-behavior-preservation-rules.md": {
+   "sha256": "4289ee42609cc28b05b4a5fbd052cb94ce728de957c2fbc78e098c97ffc4852b",
+   "lines": 321
+  },
+  "docs/backend-v2/63-api-v2-typescript-final-decision.md": {
+   "sha256": "b2f2a4fe321ed29940b914319d18a923048541c4b137a4ab92eccca4773a6466",
+   "lines": 311
+  },
+  "docs/backend-v2/64-api-v2-validation-stack-final-decision.md": {
+   "sha256": "3e338f0423128573fc5340548466be7c4fe21dbb2a6bcaa53aeaf35b4b80acf7",
+   "lines": 340
+  },
+  "docs/backend-v2/65-api-v2-drizzle-postgres-versions-final.md": {
+   "sha256": "05c059f2014c96a8594a664b504436d98d72750617ff32f6e95256dba6daaa41",
+   "lines": 288
+  },
+  "docs/backend-v2/66-api-v2-auth-jwt-stack-final-decision.md": {
+   "sha256": "20206fdf1e6e50cfede944820d8e1579a418356e239ead12ef707ea4a7b63c77",
+   "lines": 384
+  },
+  "docs/backend-v2/67-api-v2-async-processing-stack-final-decision.md": {
+   "sha256": "536df7b563227e0f27c2f43b0f42604ab14e0c872df68367022dc811cfd6c439",
+   "lines": 395
+  },
+  "docs/backend-v2/68-api-v2-observability-stack-final-decision.md": {
+   "sha256": "bcd49f29d11b9206cbff2f3f4dee5d3d65c15e0477b9e9a6815b8e643590828b",
+   "lines": 364
+  },
+  "docs/backend-v2/69-api-v2-testing-quality-gates-final-decision.md": {
+   "sha256": "2506b12f680b70bb92fed142a9f6a48ef589f7129b4e630c987bb69e58fa3bfc",
+   "lines": 384
+  },
+  "docs/backend-v2/70-api-v2-http-security-stack-final-decision.md": {
+   "sha256": "a35240c8eb5823a69f6ab477fcae98634cece9b292a6de33da460a1024efc31f",
+   "lines": 461
+  },
+  "docs/backend-v2/71-environment-file-naming-final-decision.md": {
+   "sha256": "c6d7ffe5ae43cbe66e4d93995175dc60780c555044e92aae85f59a61a9301882",
+   "lines": 253
+  },
+  "docs/backend-v2/72-api-v2-final-stack-and-readiness.md": {
+   "sha256": "e0228445e5c66677ce40e16ab55492612f5e30aadefcf811afb89c65c0da5cbc",
+   "lines": 306
+  },
+  "docs/backend-v2/73-api-v2-database-namespace-final-decision.md": {
+   "sha256": "4dbd9a0ec5f7f994bd5fbaff2c6f05d03faa6e5d25f320aefdc28a88df2a6226",
+   "lines": 212
+  },
+  "docs/backend-v2/74-zero-gap-reconstruction-contract.md": {
+   "sha256": "ebe6c7afd2dc93b95f0594856123ee5b6c402fb3a4138d09f8023717d35011ad",
+   "lines": 423
+  },
+  "docs/backend-v2/75-supabase-auth-url-smtp-configuration.md": {
+   "sha256": "7ecbf6e1d48dd625bcce124ea378c7a3bdde5511cf04347e93b03200b33f93b2",
+   "lines": 311
+  },
+  "docs/backend-v2/76-encryption-secret-exposure-resolution.md": {
+   "sha256": "25b0575199bf72e707cf2a90fed764722428628ceee8acc6a4270b9c2fa44b53",
+   "lines": 278
+  },
+  "docs/backend-v2/77-docusign-private-key-exposure-resolution.md": {
+   "sha256": "c954aa08d0059684067cafac47e38668aa0e6912fa82e9e320d1eb5c0a9b319d",
+   "lines": 341
+  },
+  "docs/backend-v2/78-current-database-complete-inventory.md": {
+   "sha256": "cdbb7ec487a6832638a2ead5ed1cbeab64fbc67e5c2f5ee4d2b1694e9375399a",
+   "lines": 318
+  },
+  "docs/backend-v2/79-database-unknown-classifications-resolution.md": {
+   "sha256": "596de84dde6ad87ce6911c72cdb26d4827e902c9edec14dfdd97d75e83b593a7",
+   "lines": 367
+  },
+  "docs/backend-v2/80-code-database-crosscheck-final-resolution.md": {
+   "sha256": "78186df6cbc645550a437d4d6d4b7ad4c4aed45eb3eec8a70a9d757f09188917",
+   "lines": 210
+  },
+  "docs/backend-v2/81-field-level-zero-gap-traceability.md": {
+   "sha256": "f1d3df5e1fd80aaf5cf0e44070b671671b8ce32d614c26781f7ab2a41a931090",
+   "lines": 142
+  },
+  "docs/backend-v2/database-inventory/code-vs-live.md": {
+   "sha256": "bf6257f5fe97f8f138ff11c89492192f3e265350401ea3a798567e3ce900e069",
+   "lines": 49
+  },
+  "docs/backend-v2/database-inventory/enums-views.md": {
+   "sha256": "44b7af454545d65123e12f91b1820b7a8d73c4b9e4ff813b7b6d34729a69eda4",
+   "lines": 188
+  },
+  "docs/backend-v2/database-inventory/frontend-cross-check.md": {
+   "sha256": "135d9061809fc6101677e5a624436c4f397ce2b7dde5d5ab6bdd5a452977b061",
+   "lines": 102
+  },
+  "docs/backend-v2/database-inventory/functions-triggers.md": {
+   "sha256": "8a273f2a8f2663562cc391579664725838b53d3dd74bd8b3db09f97bc303fef9",
+   "lines": 67
+  },
+  "docs/backend-v2/database-inventory/realtime-auth-storage.md": {
+   "sha256": "734cb23bb01d52f31d871588e68dbe30ca6fa4caa5baf4a5e8c595c0a77f5da3",
+   "lines": 160
+  },
+  "docs/backend-v2/database-inventory/rls.md": {
+   "sha256": "6fd76fb26d6dba297cd81a9148575f4b53e5e984c5d0bef89f5f7a729eaad325",
+   "lines": 252
+  },
+  "docs/backend-v2/database-inventory/schemas.md": {
+   "sha256": "a6a161704227800fc2a1d2b02e6e415c12aa23e8ee3981dfb20b44f7c8c4cca6",
+   "lines": 24
+  },
+  "docs/backend-v2/database-inventory/semantic-patterns.md": {
+   "sha256": "8f56e5a10df02232c282ccd8371e64109c18a71898990a31a8b40016de9a82fb",
+   "lines": 857
+  },
+  "docs/backend-v2/database-inventory/tables-columns.md": {
+   "sha256": "fe38017fd2adee4b840ca5e623c4ba9e9fc77d3a7a48bf39af0f51ed6b83ea52",
+   "lines": 3382
+  },
+  "docs/backend-v2/field-traceability/PROGRESS.md": {
+   "sha256": "9548946c27cc4678ce4af3bfbe512d405481f9fedac39d0b5e2d455837441da0",
+   "lines": 1198
+  },
+  "docs/backend-v2/field-traceability/modules/accounting.md": {
+   "sha256": "e559c1acad938127ae73c89c60603065c9d64da8f1ee18488f473797d14ad8e7",
+   "lines": 254
+  },
+  "docs/backend-v2/field-traceability/modules/admin.md": {
+   "sha256": "662c3b3adcb1471376266a9cf7f2c91625e300ebbfae96fad1d3c2ea8e6e3b3f",
+   "lines": 215
+  },
+  "docs/backend-v2/field-traceability/modules/leads.md": {
+   "sha256": "1800df141aa5d14aeeac102266906f3350786c7c841f9c03338960f4fc6b13ec",
+   "lines": 900
+  },
+  "docs/backend-v2/field-traceability/modules/licensing.md": {
+   "sha256": "c829c64d89097a14068328c62ca0576d7f1c4f9781c860c75e7882340a79ab57",
+   "lines": 852
+  },
+  "docs/backend-v2/field-traceability/modules/marketing.md": {
+   "sha256": "0ed7ecce5a3509817b483da5d10c7b859ec9ff8e77ee26cb72d81ee1c15d8082",
+   "lines": 794
+  },
+  "docs/backend-v2/field-traceability/modules/monitoring.md": {
+   "sha256": "95ca1bb18437297049acf113c1d0236b4f9d1e3bf3621c1360306769ebb9971b",
+   "lines": 537
+  },
+  "docs/backend-v2/field-traceability/modules/musicchat.md": {
+   "sha256": "10a3eab7d7925e5ab44cdf70830eaf765c3fae14605228ce4d1928470f434ec0",
+   "lines": 318
+  },
+  "docs/backend-v2/field-traceability/modules/projects.md": {
+   "sha256": "b0b6a1b4cf2fc82d2016d050d56e364634ad4904e2825d9a049f2c089cb3c25b",
+   "lines": 509
+  },
+  "docs/backend-v2/field-traceability/modules/releases.md": {
+   "sha256": "1c79cc83aba31d0eaa7da17a375c864890fb47b9e88ff253bbd4b0568faa42f3",
+   "lines": 532
+  },
+  "docs/backend-v2/field-traceability/modules/reports.md": {
+   "sha256": "dd48e0bb5c29d3badf6eb7a21d249adf09637819c2e0f3ced94694c5b468533a",
+   "lines": 548
+  },
+  "docs/backend-v2/field-traceability/modules/settings.md": {
+   "sha256": "59078b79be91d8b5fff5507a7bc61d07b5218386734cc1ffed78501c2686673c",
+   "lines": 423
+  },
+  "docs/backend-v2/field-traceability/modules/support.md": {
+   "sha256": "701441db463828339617e51823b89b3b32bd25be7f5f0762872f209c31aa46f0",
+   "lines": 600
+  },
+  "docs/backend-v2/field-traceability/modules/workspace.md": {
+   "sha256": "175fa02bfc7bce45915655d5e3ae255638d450acb5c733bb0fdfdc7c3df6f577",
+   "lines": 688
+  },
+  "docs/backend-v2/gap-resolution/00-canonical-gap-register.md": {
+   "sha256": "6ce304435f8211876d760c4c0f6a39c37778d63506a1cbbc638e57ba90d3d30e",
+   "lines": 1518
+  },
+  "docs/backend-v2/review/00-master-domain-functional-verification.md": {
+   "sha256": "be68870d20b7bd51a68e7973f91ed925fd397f7ca1b35d3d6bc1b3c8443642a3",
+   "lines": 3058
+  },
+  "reports/CLEANUP_REPORT.md": {
+   "sha256": "7ab57235029d5a147ccd02de4ae6f98818f827b124907cec16c7dcd1d33524a1",
+   "lines": 442
+  },
+  "reports/phase3-architecture.md": {
+   "sha256": "9f52db9b6acc7cf796e73162857c500521ac85ffe9465c1079032bb7f30287bf",
+   "lines": 45
+  }
+ }
+}

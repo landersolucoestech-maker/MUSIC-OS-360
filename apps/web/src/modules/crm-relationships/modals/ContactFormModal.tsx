@@ -18,7 +18,7 @@ import { Label } from "@/shared/ui/label";
 import { Textarea } from "@/shared/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
-import { fetchAddressByCEP, maskCEP, maskCNPJ, maskCPF, maskPhone } from "@/shared/lib/masks";
+import { addressFromPostalLookup, fetchAddressByCEP, maskCEP, maskCNPJ, maskCPF, maskPhone } from "@/shared/lib/masks";
 import { contactPriorityOptions, contactStatusOptions } from "../constants";
 import {
   PERSON_TYPE_OPTIONS,
@@ -204,14 +204,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
       setZipCodeLoading(true);
       const data = await fetchAddressByCEP(digits);
       if (!data) return;
-      setState((prev) => ({
-        ...prev,
-        street: data.logradouro || prev.street,
-        neighborhood: data.bairro || prev.neighborhood,
-        city: data.localidade || prev.city,
-        state: data.uf || prev.state,
-        addressComplement: prev.addressComplement || data.complemento || "",
-      }));
+      setState((prev) => ({ ...prev, ...addressFromPostalLookup(data, prev) }));
     } finally {
       setZipCodeLoading(false);
     }

@@ -523,8 +523,10 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   let filesScanned = 0;
   const dirs = new Set();
   const seenDirs = new Set();
+  const usedRows = new Set();
   const record = (surface, key, file, name, count = 1) => {
     const exc = name != null && exceptions.get(file, name, surface);
+    if (exc) usedRows.add(exc);
     const bucket = exc ? excepted : debt;
     if (exc) exceptedClass[key] = exc.exceptionClass ?? exc.disposition ?? "UNCLASSIFIED";
     bucket[key] = (bucket[key] ?? 0) + count;
@@ -572,6 +574,8 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     excepted: sorted(excepted),
     exceptedClass: sorted(exceptedClass),
     reportOnly,
+    /** ACTIVE ledger rows that matched no occurrence in the tree (obsolete boundaries: the code they documented is gone). */
+    unusedRows: (exceptions.rows ?? []).filter((r) => !usedRows.has(r)),
   };
 }
 
@@ -621,7 +625,10 @@ function main() {
   if (shrunk.length) {
     console.error(`\nBaseline is stale — these debts were removed and must be dropped from the baseline in the same commit (run --write):\n  ${shrunk.slice(0, 200).join("\n  ")}${shrunk.length > 200 ? `\n  … ${shrunk.length - 200} more` : ""}`);
   }
-  if (grown.length || shrunk.length) process.exit(1);
+  if (c.unusedRows.length) {
+    console.error(`\nStale exception rows (OBSOLETE_BOUNDARY: they match no occurrence; remove them from canonical-naming-map.json):\n  ${c.unusedRows.slice(0, 100).map((r) => `${r.exceptionClass} ${r.surface ?? "-"} ${r.path} :: ${r.currentName}`).join("\n  ")}${c.unusedRows.length > 100 ? `\n  … ${c.unusedRows.length - 100} more` : ""}`);
+  }
+  if (grown.length || shrunk.length || c.unusedRows.length) process.exit(1);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
