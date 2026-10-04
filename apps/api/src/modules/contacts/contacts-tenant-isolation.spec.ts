@@ -153,6 +153,46 @@ describe('ContactsService (facade) — legacy Contact payload/response contract'
     expect(clients.create.mock.calls[0][2]).toEqual({ city: 'Canonical', zip_code: '11111-111' });
   });
 
+  // [canonical payload key, legacy payload key] -> same canonical client DTO field (the canonical key name).
+  const PAIRS: ReadonlyArray<readonly [string, string]> = [
+    ['name', 'nome'],
+    ['phone', 'telefone'],
+    ['address', 'endereco'],
+    ['city', 'cidade'],
+    ['state', 'estado'],
+    ['zip_code', 'cep'],
+    ['notes', 'observacoes'],
+  ];
+
+  describe.each(PAIRS)('pair %s / %s', (canonicalKey, legacyKey) => {
+    it('create: both keys sent (either order) -> canonical value persisted, legacy ignored', async () => {
+      const clients = clientsMock();
+      const contacts = new ContactsService(clients as any);
+      await contacts.create('t1', { [canonicalKey]: 'CANON', [legacyKey]: 'LEGACY' });
+      await contacts.create('t1', { [legacyKey]: 'LEGACY', [canonicalKey]: 'CANON' });
+      expect(clients.create.mock.calls[0][2]).toEqual({ [canonicalKey]: 'CANON' });
+      expect(clients.create.mock.calls[1][2]).toEqual({ [canonicalKey]: 'CANON' });
+    });
+
+    it('update: both keys sent (either order) -> canonical value persisted, legacy ignored', async () => {
+      const clients = clientsMock();
+      const contacts = new ContactsService(clients as any);
+      await contacts.update('t1', 'c1', { [canonicalKey]: 'CANON', [legacyKey]: 'LEGACY' });
+      await contacts.update('t1', 'c1', { [legacyKey]: 'LEGACY', [canonicalKey]: 'CANON' });
+      expect(clients.update.mock.calls[0][3]).toEqual({ [canonicalKey]: 'CANON' });
+      expect(clients.update.mock.calls[1][3]).toEqual({ [canonicalKey]: 'CANON' });
+    });
+
+    it('legacy key alone maps to the canonical field (create and update)', async () => {
+      const clients = clientsMock();
+      const contacts = new ContactsService(clients as any);
+      await contacts.create('t1', { [legacyKey]: 'LEGACY' });
+      await contacts.update('t1', 'c1', { [legacyKey]: 'LEGACY' });
+      expect(clients.create.mock.calls[0][2]).toEqual({ [canonicalKey]: 'LEGACY' });
+      expect(clients.update.mock.calls[0][3]).toEqual({ [canonicalKey]: 'LEGACY' });
+    });
+  });
+
   it('returns the legacy Contact shape: documentType CPF for an individual, CNPJ otherwise, documentNumber from cpf_cnpj, country Brasil', async () => {
     const clients = clientsMock();
     const contacts = new ContactsService(clients as any);

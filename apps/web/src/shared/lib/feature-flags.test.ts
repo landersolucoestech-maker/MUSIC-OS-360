@@ -13,4 +13,18 @@ describe("feature flag keys", () => {
     expect(canonicalFeatureKeys({ moduleRh: true, moduleHr: false })).toEqual({ moduleHr: false });
     expect(canonicalFeatureKeys(null)).toEqual({});
   });
+
+  it("canonical wins in BOTH key orders: a stale legacy flag listed after the canonical one must not override it", () => {
+    const legacy = "moduleRh";
+    const canonical = "moduleHr";
+    expect(canonicalFeatureKeys({ [canonical]: false, [legacy]: true })).toEqual({ [canonical]: false });
+    expect(canonicalFeatureKeys({ [legacy]: true, [canonical]: false })).toEqual({ [canonical]: false });
+    expect(canonicalFeatureKeys({ [canonical]: true, [legacy]: false, moduleCrm: true })).toEqual({ [canonical]: true, moduleCrm: true });
+  });
+
+  it("legacy-only maps to canonical and drops the legacy key", () => {
+    const out = canonicalFeatureKeys({ ["moduleRh"]: false });
+    expect(out).toEqual({ moduleHr: false });
+    expect(Object.keys(out)).toEqual(["moduleHr"]);
+  });
 });

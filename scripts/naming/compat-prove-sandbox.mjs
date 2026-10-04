@@ -32,7 +32,7 @@ const sha = (p) => (fs.existsSync(p) ? crypto.createHash("sha256").update(fs.rea
 const SKIP = /(^|\/)(node_modules|graphify-out|dist|coverage|playwright-report|\.git)(\/|$)/;
 const skip = (rel) => SKIP.test(rel) || rel === ".claude/ops" || rel.startsWith(".claude/ops/");
 
-function makeSandbox(dir) {
+export function makeSandbox(dir) {
   fs.cpSync(REPO, dir, { recursive: true, filter: (src) => !skip(path.relative(REPO, src).split(path.sep).join("/")) });
   const mods = [".", "apps/api", "apps/web", ...fs.readdirSync(path.join(REPO, "packages")).map((p) => `packages/${p}`)];
   for (const m of mods) {

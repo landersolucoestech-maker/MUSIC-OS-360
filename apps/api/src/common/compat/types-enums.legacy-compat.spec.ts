@@ -1,4 +1,4 @@
-import { FunctionalRole, SystemRole, toCanonicalRoleSlug, toLegacyRoleSlug, isLegacyRoleSlug } from '@music-os-360/types';
+import { FunctionalRole, SystemRole, toCanonicalRoleSlug, toLegacyRoleSlug, isLegacyRoleSlug, roleSlugEquivalents, areEquivalentRoleSlugs } from '@music-os-360/types';
 
 // Legacy FunctionalRole members/values stay persisted (org_members.role, roles.slug) and must
 // keep being accepted on read, converting to the canonical English slug.
@@ -18,6 +18,17 @@ describe('packages/types enums legacy role members (legacy in, canonical out)', 
     expect(toCanonicalRoleSlug(legacyValue)).toBe(canonical);
     expect(toLegacyRoleSlug(canonical)).toBe(legacyValue);
     expect(isLegacyRoleSlug(canonical)).toBe(false);
+  });
+
+  it.each(cases)('%s: roleSlugEquivalents pairs legacy %s with canonical %s (canonical first), from either side', (_member, legacyValue, canonical) => {
+    expect(roleSlugEquivalents(canonical)).toEqual([canonical, legacyValue]);
+    expect(roleSlugEquivalents(legacyValue)).toEqual([canonical, legacyValue]);
+    expect(areEquivalentRoleSlugs(legacyValue, canonical)).toBe(true);
+  });
+
+  it('roleSlugEquivalents of an unmapped or unknown slug is just that slug', () => {
+    expect(roleSlugEquivalents('unknown_role')).toEqual(['unknown_role']);
+    expect(roleSlugEquivalents('tenant_owner')).toEqual(['tenant_owner']);
   });
 
   it('does not map unknown or inherited keys', () => {

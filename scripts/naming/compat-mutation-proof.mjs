@@ -93,7 +93,7 @@ export function routeAliases(names) {
 export function makeWildcardPredicate(ptWords) {
   const TOKEN = /^[\p{L}\p{N}_\-.\/:*@#?&=]+$/u;
   const SPACED = /^[\p{L}\p{N}_\-.\/:*@#?&=() ]+$/u;
-  return (n, namePosition = false) => typeof n === "string" && n.length >= 2 && !n.includes("://") && /\p{L}/u.test(n)
+  return (n, namePosition = false) => typeof n === "string" && n.length >= 2 && !n.includes("://")
     && (TOKEN.test(n) || (namePosition && SPACED.test(n))) && ptWords(n).length > 0;
 }
 

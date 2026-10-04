@@ -337,3 +337,91 @@ test("hash binding covers the test-runner configuration: a changed jest/vitest c
   assert.equal(pairEvidence(rec(good), F, T, (p) => (p === "apps/web/src/test/setup.ts" ? "import 'y'" : read(p)), "a").fresh, false, "an edited setup file stales the proof");
   assert.equal(pairEvidence(rec(undefined), F, T, read, "a").fresh, false, "a record with no config binding is not fresh");
 });
+
+// ---- the audit recomputes sites and census from the CURRENT source text; the stored JSON is never trusted alone (r14 re-review F5) ----
+test("oracle: a record consistent with the code is credited; a forged census, missing or invented mutations and a stale name list are refused", () => {
+  const F = "apps/api/src/m/a.ts";
+  const T = "apps/api/src/m/a.spec.ts";
+  const src = "export const a = (r) => r.canonicalfield ?? r.legacyfield;";
+  const files = { [F]: src, [T]: "y" };
+  const read = (p) => files[p] ?? null;
+  const m = findMutations(src, F, new Set(["legacyfield"]));
+  const expected = { sites: [...m.swap, ...m.guard, ...m.lit].map((x) => `${x.operator}:${x.line}:${x.label}`).sort(), census: m.census };
+  const mutations = [...m.swap, ...m.guard, ...m.lit].map((x) => ({ operator: x.operator, line: x.line, label: x.label, labels: x.labels, outcome: "KILLED" }));
+  const rec = (over = {}) => new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha(src), testSha256: sha("y"), verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations, census: m.census, ...over }]]);
+  const ev = (r, e = expected, nm = "legacyfield") => pairEvidence(r, F, T, read, nm, [], e);
+  assert.equal(ev(rec()).proven, true);
+  assert.equal(ev(rec({ census: { ...m.census, unmutatedNameSites: [] , siteCount: 99 } })).state, "CENSUS_FORGED", "a stored census that differs from the recomputed one");
+  assert.equal(ev(rec({ mutations: mutations.slice(1) })).state, "SITES_NOT_MUTATED", "fewer mutations than sites");
+  assert.equal(ev(rec({ mutations: [...mutations, { operator: "LEGACY_LITERAL", line: 9, label: "ghost", outcome: "KILLED" }] })).state, "CENSUS_FORGED", "a mutation of a site that does not exist");
+  assert.equal(ev(rec({ census: { ...m.census, names: ["other"] } })).state, "CENSUS_STALE");
+  assert.equal(ev(rec(), { ...expected, census: { ...m.census, unmutatedNameSites: [{ name: "legacyfield", line: 1, kind: "shorthand", text: "legacyfield" }] } }).state, "CENSUS_FORGED", "the code now has an unmutated form the stored census does not list");
+});
+
+test("audit: a multi-file row is credited only when EVERY runtime file is proven", () => {
+  const A = "apps/api/src/m/a.ts";
+  const B = "apps/api/src/m/b.ts";
+  const T = "apps/api/src/m/m.spec.ts";
+  const text = { [A]: "export const a = r.legacyfield;", [B]: "export const b = r.legacyfield;", [T]: "it('legacyfield', () => {})" };
+  const read = (p) => text[p] ?? null;
+  const mk = (f) => { const m = findMutations(text[f], f, new Set(["legacyfield"])); return { file: f, test: T, fileSha256: sha(text[f]), testSha256: sha(text[T]), verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations: m.lit.map((x) => ({ operator: x.operator, line: x.line, label: x.label, outcome: "KILLED" })), census: m.census }; };
+  const map = { exceptions: [row({ path: `${A},${B}`, coveringTest: T })], concepts: [] };
+  const both = counters(audit(map, { readFile: read, mutation: { results: [mk(A), mk(B)] } })).COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF;
+  const onlyA = counters(audit(map, { readFile: read, mutation: { results: [mk(A)] } })).COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF;
+  assert.equal(both, 0);
+  assert.equal(onlyA, 1, "one proven file does not credit a row that names two runtime files");
+});
+
+test("per-name credit also follows the `labels` of a swap or guard mutation", () => {
+  const F = "apps/api/src/m/a.ts";
+  const T = "apps/api/src/m/a.spec.ts";
+  const read = (p) => ({ [F]: "x", [T]: "y" })[p] ?? null;
+  const rec = (outcome) => new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: outcome === "KILLED" ? "PROVEN" : "CANONICAL_FIRST_UNENFORCED", exhaustive: true, mutations: [{ operator: "CANONICAL_FIRST", line: 1, label: "other", labels: ["swapname"], outcome }], census: { version: 1, names: ["swapname"], wildcard: false, siteCount: 1, unmutatedPtSites: [], unmutatedNameSites: [] } }]]);
+  assert.equal(pairEvidence(rec("KILLED"), F, T, read, "swapname").proven, true, "credited through labels, not through the label");
+  assert.equal(pairEvidence(rec("SURVIVED"), F, T, read, "swapname").proven, false);
+});
+
+test("binding: an opt-in verification script counts only when a package script wires it", () => {
+  const S = "apps/api/scripts/verify-legacy-x.ts";
+  const e = { ...row({ path: S, coveringTest: S }) };
+  const withoutWire = bindingOf(e, (p) => (p === S ? "legacyfield" : p === "package.json" ? "{}" : null));
+  assert.deepEqual([withoutWire.bound, withoutWire.via], [false, "SCRIPT_NOT_WIRED"]);
+  const wired = bindingOf(e, (p) => (p === S ? "legacyfield" : p === "apps/api/package.json" ? '{"scripts":{"v":"ts-node scripts/verify-legacy-x.ts"}}' : null));
+  assert.deepEqual([wired.bound, wired.via], [true, "SELF_SCRIPT"]);
+});
+
+// ---- the harness's own operators and census (r14 re-review F6) ----
+test("name position: a string with spaces is a site as a key, element access, case label, equality operand or array element, and not as a call argument or plain value", () => {
+  const wc = makeWildcardPredicate(ptWords);
+  const sitesOf = (src) => findMutations(src, "a.ts", new Set(), wc, { ptWords }).lit.map((x) => x.label);
+  assert.deepEqual(sitesOf('const o = { "licença médica": 1 };'), ["licença médica"]);
+  assert.deepEqual(sitesOf('const v = o["licença médica"];'), ["licença médica"]);
+  assert.deepEqual(sitesOf('switch (k) { case "licença médica": break; }'), ["licença médica"]);
+  assert.deepEqual(sitesOf('const b = k === "licença médica";'), ["licença médica"]);
+  assert.deepEqual(sitesOf('const b = k !== "licença médica";'), ["licença médica"]);
+  assert.deepEqual(sitesOf('const l = ["licença médica", "x"];'), ["licença médica"]);
+  assert.deepEqual(sitesOf('f("licença médica"); const m = "licença médica";'), [], "a call argument and a plain value are sentences, not names");
+});
+
+test("operators: `||` canonical-first swaps and the three quote styles of a namespaced prefix are mutated", () => {
+  const sw = findMutations("const a = r.canonicalfield || r.legacyfield;", "a.ts", new Set(["legacyfield"]));
+  assert.equal(sw.swap.length, 1);
+  assert.ok(apply("const a = r.canonicalfield || r.legacyfield;", sw.swap[0]).includes("(r.legacyfield) || (r.canonicalfield)"));
+  const src = `const a = 'legacyns:x'; const b = "legacyns:y"; const c = \`legacyns:z\`;`;
+  const prefixSites = findMutations(src, "a.ts", new Set(["legacyns"])).lit.filter((x) => x.operator === "PREFIX_LITERAL");
+  assert.equal(prefixSites.length, 3);
+});
+
+test("census: keys and members the predicate rejects, JSX attributes, methods, siteCount and import/export/type strings", () => {
+  const rejectAll = () => false;
+  const ptSites = (src, file = "a.ts") => findMutations(src, file, new Set(), rejectAll, { ptWords }).census.unmutatedPtSites.map((x) => `${x.kind}:${x.text}`);
+  assert.deepEqual(ptSites("const o = { contrato: 1 }; const v = o.contrato;"), ["key:contrato", "member:contrato"]);
+  const named = findMutations('const m = <Foo obra="x" />; class C { obra() {} }', "a.tsx", new Set(["obra"]));
+  assert.deepEqual(named.census.unmutatedNameSites.map((x) => x.kind).sort(), ["jsx-attribute", "method"]);
+  const m = findMutations("const a = r.canonicalfield ?? r.legacyfield; const b = 'legacyfield';", "a.ts", new Set(["legacyfield"]));
+  assert.equal(m.census.siteCount, m.swap.length + m.guard.length + m.lit.length);
+  assert.ok(m.census.siteCount >= 2);
+  const wc = makeWildcardPredicate(ptWords);
+  const clean = findMutations('import x from "contratos"; export * from "contratos"; type T = "contratos";', "a.ts", new Set(), wc, { ptWords });
+  assert.deepEqual(clean.census.unmutatedPtSites, [], "module specifiers and literal types are not sites");
+});

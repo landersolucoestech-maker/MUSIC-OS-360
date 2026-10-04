@@ -147,7 +147,7 @@ export function runnerConfigSha(test, readFile) {
 }
 
 /** Mutation evidence of a (runtime file, test) pair, fresh only for the current sources. */
-export function pairEvidence(results, file, test, readFile, name = "*", exemptions = []) {
+export function pairEvidence(results, file, test, readFile, name = "*", exemptions = [], expected = null) {
   const rec = results.get(`${file}\u0000${test}`);
   if (!rec) return { verdict: "NOT_RUN", fresh: false };
   const f = readFile(file);
@@ -170,12 +170,19 @@ export function pairEvidence(results, file, test, readFile, name = "*", exemptio
   // CENSUS (computed by the harness from the same source text): a credit needs every site it could not mutate to be accounted for.
   // A wildcard row is a whole-file claim, so every Portuguese string/key/member/template part of the file must be a mutated site or carry a ledger exemption
   // with a reason; a named row must have no occurrence in a form the operators skip (shorthand, binding element, JSX attribute, method, template part).
-  const census = rec.census;
+  // `expected` is what the harness would compute NOW from the current source text (sites and census): the stored JSON is never trusted on its own
+  const census = expected ? expected.census : rec.census;
   const valid = (exemptions ?? []).filter((x) => x && typeof x.text === "string" && String(x.reason ?? "").trim().length >= 12);
   let censusState = null;
   let matched = [];
   if (!declared && baseProven) {
-    if (!census) censusState = "CENSUS_MISSING";
+    if (!rec.census) censusState = "CENSUS_MISSING";
+    else if (expected && JSON.stringify(rec.census.names) !== JSON.stringify(expected.census.names)) censusState = "CENSUS_STALE"; // a ledger name added after the run
+    else if (expected && JSON.stringify(rec.census) !== JSON.stringify(expected.census)) censusState = "CENSUS_FORGED"; // the stored census is not what the code yields
+    else if (expected && JSON.stringify((rec.mutations ?? []).map((m) => `${m.operator}:${m.line}:${m.label}`).sort()) !== JSON.stringify(expected.sites)) {
+      const have = new Set((rec.mutations ?? []).map((m) => `${m.operator}:${m.line}:${m.label}`));
+      censusState = expected.sites.some((x) => !have.has(x)) ? "SITES_NOT_MUTATED" : "CENSUS_FORGED"; // fewer mutations than sites, or mutations of sites that do not exist
+    }
     else if (name === "*" ? census.wildcard !== true : !(census.names ?? []).includes(name)) censusState = "CENSUS_STALE";
     else if (!Number.isInteger(census.siteCount) || (rec.mutations?.length ?? 0) < census.siteCount) censusState = "SITES_NOT_MUTATED"; // the harness sees more sites than the record mutated (e.g. a predicate widened after the run)
     else {
@@ -191,7 +198,7 @@ export function pairEvidence(results, file, test, readFile, name = "*", exemptio
 }
 
 /** Pure audit over a ledger. */
-export function audit(map, { readFile, unusedRows = [], mutation = { results: [] } }) {
+export function audit(map, { readFile, unusedRows = [], mutation = { results: [] }, oracle = null }) {
   const unused = new Set(unusedRows);
   const results = new Map((mutation.results ?? []).map((r) => [`${r.file}\u0000${r.test}`, r]));
   const rows = [];
@@ -209,7 +216,7 @@ export function audit(map, { readFile, unusedRows = [], mutation = { results: []
       const states = [];
       const matchedAll = new Set();
       for (const f of runtimeFiles) {
-        const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile, e.currentName, e.proofExemptions));
+        const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile, e.currentName, e.proofExemptions, oracle ? oracle(f, t, readFile) : null));
         for (const x of ev) for (const m of x.matched ?? []) matchedAll.add(m);
         for (const x of ev) legacyFirst.push(...(x.legacyFirst ?? []).map((l) => ({ file: f, ...l })));
         states.push(ev.some((x) => x.fresh && x.proven) ? "PROVEN" : ev.some((x) => !x.fresh && x.verdict !== "NOT_RUN") ? "STALE" : ev.find((x) => x.verdict !== "NOT_RUN")?.state ?? "NOT_RUN");
@@ -269,11 +276,33 @@ const readRepo = (p) => { const f = path.join(ROOT, p); return fs.existsSync(f) 
 
 const tsvCell = (s) => String(s ?? "").replace(/[\t\r\n]+/g, " ").trim();
 
-function main() {
+/** Recomputes, from the current source text, the mutation sites and the census of a pair exactly as the harness does (dynamic import: the harness imports this module). */
+async function buildOracle(map) {
+  const proof = await import("./compat-mutation-proof.mjs");
+  const { ptWords } = await import("./pt-lexicon.mjs");
+  const wildcard = proof.makeWildcardPredicate(ptWords);
+  const pairs = new Map(proof.pairsFromLedger(map).map((p) => [`${p.file}\u0000${p.test}`, p]));
+  const cache = new Map();
+  return (file, test, readFile) => {
+    const key = `${file}\u0000${test}`;
+    if (cache.has(key)) return cache.get(key);
+    const pair = pairs.get(key);
+    const text = readFile(file);
+    let out = null;
+    if (pair && text != null) {
+      const m = proof.findMutations(text, file, pair.names, pair.wildcard ? wildcard : null, { ptWords });
+      out = { sites: [...m.swap, ...m.guard, ...m.lit].map((x) => `${x.operator}:${x.line}:${x.label}`).sort(), census: m.census };
+    }
+    cache.set(key, out);
+    return out;
+  };
+}
+
+async function main() {
   const mode = process.argv[2] ?? "--check";
   const map = loadAuthority();
   const c = census();
-  const rows = audit(map, { readFile: readRepo, unusedRows: c.unusedRows, mutation: loadMutation() });
+  const rows = audit(map, { readFile: readRepo, unusedRows: c.unusedRows, mutation: loadMutation(), oracle: await buildOracle(map) });
   const cnt = counters(rows);
   const groups = groupRows(rows);
   const open = ["COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF", "OBSOLETE_BOUNDARIES", "MISCLASSIFIED_OPERATIONAL_USAGE", "LEGACY_FIRST_READS"];
@@ -328,5 +357,5 @@ function main() {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  try { main(); } catch (err) { console.error(`compat-boundary-audit FAILED: ${err.stack ?? err.message}`); process.exit(2); }
+  main().catch((err) => { console.error(`compat-boundary-audit FAILED: ${err.stack ?? err.message}`); process.exit(2); });
 }

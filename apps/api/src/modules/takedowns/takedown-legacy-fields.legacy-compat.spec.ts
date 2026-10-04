@@ -1,3 +1,4 @@
+import { TakedownsService } from './takedowns.service';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import {
   ACCEPTED_TAKEDOWN_PRIORITIES,
@@ -90,5 +91,69 @@ describe('takedown legacy names: every deprecated field and value, one by one', 
     expect(canonicalTakedownType('alta')).toBe('alta');
     expect([...ACCEPTED_TAKEDOWN_TYPES].sort()).toEqual(['enviado', 'recebido', 'received', 'sent']);
     expect([...ACCEPTED_TAKEDOWN_PRIORITIES].sort()).toEqual(['alta', 'baixa', 'high', 'low', 'media', 'medium']);
+  });
+});
+
+// ─── Service wiring: the legacy names must be translated on the real service's persistence boundary ───
+describe('TakedownsService wiring: legacy payload/query names are applied before persistence', () => {
+  function makeWiredService() {
+    const qb = {
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getManyAndCount: jest.fn(async () => [[], 0]),
+      getOne: jest.fn(async () => ({ id: 't1', tenant_id: 'tenant-1' })),
+    };
+    const repo = {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => ({ id: 't1', ...(v as object) })),
+      update: jest.fn(async () => ({ affected: 1 })),
+      createQueryBuilder: jest.fn(() => qb),
+    };
+    const ds = { getRepository: jest.fn(() => repo) };
+    return { service: new TakedownsService(ds as never), repo, qb };
+  }
+
+  const LEGACY_PAYLOAD = Object.fromEntries([
+    ...X_TAKEDOWN_FIELDS.map(([legacy], i) => [legacy, `value-${i}`]),
+    ['type', 'enviado'],
+  ]);
+  const EXPECTED_PERSISTED = {
+    ...Object.fromEntries(X_TAKEDOWN_FIELDS.map(([, canonical], i) => [canonical, `value-${i}`])),
+    type: 'sent',
+    priority: 'high',
+  };
+
+  // priority is itself one of the deprecated fields (value-5) -> override it with a legacy VALUE to also pin the value mapping
+  const payload = { ...LEGACY_PAYLOAD, prioridade: 'alta' };
+
+  it('create persists the canonical column names and canonical type/priority values', async () => {
+    const { service, repo } = makeWiredService();
+    await service.create('tenant-1', 'user-1', payload as never);
+    const persisted = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(persisted).toEqual({ ...EXPECTED_PERSISTED, tenant_id: 'tenant-1', created_by: 'user-1' });
+    for (const [legacy] of X_TAKEDOWN_FIELDS) expect(persisted).not.toHaveProperty(legacy);
+  });
+
+  it('update persists the canonical column names and canonical type/priority values', async () => {
+    const { service, repo } = makeWiredService();
+    await service.update('tenant-1', 'user-1', 't1', payload as never);
+    const updates = (repo.update.mock.calls[0] as unknown[])[1] as Record<string, unknown>;
+    expect(updates).toMatchObject(EXPECTED_PERSISTED);
+    for (const [legacy] of X_TAKEDOWN_FIELDS) expect(updates).not.toHaveProperty(legacy);
+  });
+
+  it('list maps the legacy query filter to the canonical platform filter', async () => {
+    const { service, qb } = makeWiredService();
+    await service.list('tenant-1', { ['plataforma']: 'youtube' } as never);
+    expect(qb.andWhere).toHaveBeenCalledWith('t.platform = :platform', { platform: 'youtube' });
+  });
+
+  it('list: the canonical query filter wins over the legacy one', async () => {
+    const { service, qb } = makeWiredService();
+    await service.list('tenant-1', { ['plataforma']: 'legacy', platform: 'canonical' } as never);
+    expect(qb.andWhere).toHaveBeenCalledWith('t.platform = :platform', { platform: 'canonical' });
   });
 });
