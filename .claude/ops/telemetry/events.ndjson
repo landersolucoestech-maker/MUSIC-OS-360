@@ -233,3 +233,4 @@
 {"name":"gate-run","at":"2026-10-03T13:13:03.776Z","gate":"operational-automation","status":"PASS","durationMs":39,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-04T22:50:09.493Z","gate":"security","status":"BLOCKED","durationMs":17761,"reasonCount":16}
 {"name":"gate-run","at":"2026-10-04T22:50:28.649Z","gate":"security","status":"BLOCKED","durationMs":17372,"reasonCount":16}
+{"name":"gate-run","at":"2026-10-04T23:12:17.440Z","gate":"security","status":"BLOCKED","durationMs":19300,"reasonCount":16}

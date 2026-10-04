@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/naming/schema-naming-census.mjs --check",
+  "command": "node scripts/naming/schema-naming-census.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "schema naming census: 5204 catalog objects, 0 Portuguese names (39 excepted)",
+  "stderrTail": "",
+  "workspaceFingerprint": "9b94ab3c615e107976503fd1c9c81efc64d6a82a534424d27f170031c6d7d0e8",
+  "fingerprintStatus": "BOUND",
+  "head": "55d47a866b9c72cbcda448b3b10fcdf964485f42",
+  "durationMs": 275,
+  "id": "evid-4e9d4248",
+  "createdAt": "2026-10-04T23:13:33.781Z"
+}

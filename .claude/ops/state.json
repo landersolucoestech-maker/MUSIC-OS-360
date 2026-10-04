@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-04T22:32:01.555Z",
+  "updatedAt": "2026-10-04T23:13:40.705Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -786,6 +786,20 @@
       "createdAt": "2026-10-04T22:29:04.928Z",
       "justification": "LOW, not exploitable today (counters 0, no credited name with an inconclusive own site); documented in naming-state-separation.md; revisit when the wiring tooling is next extended",
       "resolvedAt": "2026-10-04T22:29:12.324Z"
+    },
+    {
+      "id": "find-c960afe9",
+      "category": "E",
+      "severity": "LOW",
+      "file": "scripts/cleanup/cleanup-check.mjs",
+      "line": null,
+      "summary": "cleanup:check (not run in CI) reports 10 pre-existing findings: 8 tracked historical/audit docs (frozen historical records by hash, docs/naming/historical-records.json) and the banned Supabase ref string in env.schema.spec.ts and docs/SUPABASE_ENVIRONMENTS.md. They predate this mission; changing the baseline or allowlist needs an architecture decision.",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-04T23:13:26.646Z",
+      "justification": "Pre-existing and outside this mission scope; not enforced in CI; the doc files are frozen historical records. Reported to the owner in the final report.",
+      "resolvedAt": "2026-10-04T23:13:26.769Z"
     }
   ],
   "evidenceIds": [
@@ -1300,7 +1314,12 @@
     "evid-0f762c61",
     "evid-c2b94c2d",
     "evid-574aea0e",
-    "evid-657fe67e"
+    "evid-657fe67e",
+    "evid-daf08923",
+    "evid-a910cdf8",
+    "evid-4e9d4248",
+    "evid-32863435",
+    "evid-aedad95d"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
