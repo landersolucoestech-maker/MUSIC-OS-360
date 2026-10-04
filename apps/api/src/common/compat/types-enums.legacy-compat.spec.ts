@@ -1,4 +1,4 @@
-import { FunctionalRole, toCanonicalRoleSlug, toLegacyRoleSlug, isLegacyRoleSlug } from '@music-os-360/types';
+import { FunctionalRole, SystemRole, toCanonicalRoleSlug, toLegacyRoleSlug, isLegacyRoleSlug } from '@music-os-360/types';
 
 // Legacy FunctionalRole members/values stay persisted (org_members.role, roles.slug) and must
 // keep being accepted on read, converting to the canonical English slug.
@@ -82,5 +82,46 @@ describe('RBAC runtime keeps resolving the legacy role slugs (same level and per
     const service = new rbac.RbacService({ resolve: jest.fn() } as never);
     expect(service.getPermissions('viewer')).not.toContain('contracts:create');
     expect(service.getHierarchyLevel('not_a_role')).toBe(0);
+  });
+});
+
+// Persisted permission rows and the seed matrix still spell the HR module `rh:*`; the runtime accepts both spellings
+// (a grant of rh:x is a grant of hr:x and vice versa, same action only). Each legacy `rh:` namespace site must be pinned.
+describe('RBAC hr/rh permission namespace aliases (legacy rh:* grants stay valid)', () => {
+  type RbacModule = typeof import('../../core/rbac/rbac.service');
+  const load = (): RbacModule => {
+    let out: RbacModule | undefined;
+    jest.isolateModules(() => {
+      out = require('../../core/rbac/rbac.service') as RbacModule;
+    });
+    return out!;
+  };
+  const actions = ['read', 'create', 'update', 'delete'] as const;
+
+  it.each(actions)('a legacy rh:%s grant also grants hr:%s and nothing wider', (action) => {
+    const { expandHrPermissionAliases } = load();
+    const out = expandHrPermissionAliases([`rh:${action}`]);
+    expect([...out].sort()).toEqual([`hr:${action}`, `rh:${action}`].sort());
+  });
+
+  it.each(actions)('a canonical hr:%s grant also reads as the legacy rh:%s and nothing wider', (action) => {
+    const { expandHrPermissionAliases } = load();
+    const out = expandHrPermissionAliases([`hr:${action}`]);
+    expect([...out].sort()).toEqual([`hr:${action}`, `rh:${action}`].sort());
+  });
+
+  it('keys outside the hr/rh namespace are passed through untouched', () => {
+    const { expandHrPermissionAliases } = load();
+    expect(expandHrPermissionAliases(['artist:read', 'rhythm:read'])).toEqual(['artist:read', 'rhythm:read']);
+  });
+
+  it('the legacy seed matrix grants the full rh:* set to super_admin and to the rh_manager slug, each action explicitly', () => {
+    const { ROLE_PERMISSIONS } = load();
+    for (const role of [SystemRole.SUPER_ADMIN, FunctionalRole.RH_MANAGER]) {
+      for (const action of actions) {
+        expect(ROLE_PERMISSIONS[role]).toContain(`rh:${action}`);
+      }
+    }
+    expect(ROLE_PERMISSIONS[FunctionalRole.COLABORADOR]).not.toContain('rh:read');
   });
 });

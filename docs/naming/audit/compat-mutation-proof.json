@@ -242,7 +242,7 @@
    "file": "apps/api/src/core/rbac/rbac.service.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "9d203f2b5893041840f592d572246511d7f5b7339eaae46882b90d06778998f8",
-   "testSha256": "be04b1ed234ec60c24e16d35ad49a7c7e1527751fd4323c7a00e6075cd5f3670",
+   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -274,14 +274,73 @@
      "line": 194,
      "label": "PRODUTOR",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 57,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 58,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 81,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 81,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 81,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 81,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 212,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 212,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 212,
+     "label": "rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "PREFIX_LITERAL",
+     "line": 212,
+     "label": "rh",
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
-   "namesWithoutSite": [
-    "rh"
-   ],
+   "namesWithoutSite": [],
    "exhaustive": true,
+   "fallbackOperators": 1,
    "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
@@ -320,7 +379,7 @@
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "0454a37037b41ac3bffbd76a016a803d4c8f6d886a35347db41201f961bdd1d0",
-   "testSha256": "be04b1ed234ec60c24e16d35ad49a7c7e1527751fd4323c7a00e6075cd5f3670",
+   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -382,6 +441,7 @@
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
+   "fallbackOperators": 1,
    "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
@@ -626,8 +686,8 @@
    "file": "apps/api/src/database/migration-drafts/20261002000002_EncryptArtistsAndClientsPiiBackfill.ts",
    "test": "apps/api/src/database/migration-drafts/encrypt-artists-clients-pii.draft.spec.ts",
    "fileSha256": "ac8db85e152659568b3b17bc3035bb01860d10343688bb819353a8f6ade7c387",
-   "testSha256": "44724af9c745442f6aeaccfb4d88ffd821ade435a06234710a7fda13f00ee492",
-   "verdict": "PARTIAL",
+   "testSha256": "261d4f55b11b5903c72e813c29a982a17381ebc9f2d21b49904bc8ae15a01a06",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -687,7 +747,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 72,
      "label": "documento",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -770,8 +830,8 @@
    "file": "apps/api/src/database/seeds/04_rbac_seed.ts",
    "test": "apps/api/src/database/seeds/04_rbac_seed.canonical-grants.spec.ts",
    "fileSha256": "82f3ed98a4e0c6d916a34865ecbefda376d2cdbab0859ae04bcb1229cedd931b",
-   "testSha256": "bb817319907a605f1bf54c7e67b2576a5936ef8a1cf3ca71df1371c10c310ae7",
-   "verdict": "PARTIAL",
+   "testSha256": "6e2d1dbee33745011a682d1be5bd98e817ce22fb4937c555f1c5c35b8a5df6e2",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -783,7 +843,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 46,
      "label": "artista",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2146,8 +2206,8 @@
    "file": "apps/api/src/modules/audiovisual/dto/audiovisual.dto.ts",
    "test": "apps/api/src/modules/audiovisual/dto/audiovisual.dto.spec.ts",
    "fileSha256": "c6e3b89eda064a4302081f999cbde02b41e0baed8fce9e5480c878619a57ad19",
-   "testSha256": "23d53e22d9716487f2c43c94ea76a75b96a83114d130ce9f78e449d2b6cc6d79",
-   "verdict": "PARTIAL",
+   "testSha256": "828737cf35cf76d69bfb16c579bd6b461c33053867cbcea428c2f7ba7537f6cb",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -2159,7 +2219,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 81,
      "label": "videomaker",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -2281,8 +2341,8 @@
    "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
    "test": "apps/api/src/modules/clients/client-contract.spec.ts",
    "fileSha256": "61cd93fdeb700e88f1b5d4a3825382d0c11d57eeb5d88947393b39fa888575eb",
-   "testSha256": "623b0255c6922734b7744a0bede20cb05a0c2762ffc773b6677bcd5335fe6bfd",
-   "verdict": "PARTIAL",
+   "testSha256": "82e521844fa1b9da3a26ba82b6fee32994160a28dd7a9cbca7984edbf768169d",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -2384,7 +2444,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 175,
      "label": "cpf_cnpj",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2396,7 +2456,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 65,
      "label": "foto",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2420,7 +2480,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 143,
      "label": "interacoes",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2462,7 +2522,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 67,
      "label": "responsavel_cargo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2474,7 +2534,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 66,
      "label": "responsavel_nome",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2498,7 +2558,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 136,
      "label": "tipo_pessoa",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2510,7 +2570,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 61,
      "label": "alta",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2522,13 +2582,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 61,
      "label": "baixa",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 27,
      "label": "categoria",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2540,7 +2600,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 38,
      "label": "cidade",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2552,25 +2612,25 @@
      "operator": "LEGACY_LITERAL",
      "line": 41,
      "label": "endereco_completo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 39,
      "label": "estado",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 61,
      "label": "estrategica",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 29,
      "label": "foto",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2594,7 +2654,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 25,
      "label": "nome",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2606,7 +2666,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 32,
      "label": "nome_pf",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2618,7 +2678,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 48,
      "label": "observacoes",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2636,13 +2696,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 57,
      "label": "pessoa_juridica",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 42,
      "label": "prioridade_contato",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2654,7 +2714,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 44,
      "label": "responsavel_cargo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2666,7 +2726,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 43,
      "label": "responsavel_nome",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2678,7 +2738,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 47,
      "label": "telefone",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -2691,7 +2751,7 @@
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 1,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2719,7 +2779,7 @@
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
    "test": "apps/api/src/modules/clients/client-contract.spec.ts",
    "fileSha256": "32304d83cd8385ceca92698211d7e4d2ee72489bf91ee951ee845ed801023dca",
-   "testSha256": "623b0255c6922734b7744a0bede20cb05a0c2762ffc773b6677bcd5335fe6bfd",
+   "testSha256": "82e521844fa1b9da3a26ba82b6fee32994160a28dd7a9cbca7984edbf768169d",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -3193,7 +3253,7 @@
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
    "test": "apps/api/src/modules/contract-service-types/dto/create-contract-service-type.dto.spec.ts",
    "fileSha256": "675e8c668e74b4f11d945f5797ca7835e84676cc1b5b8eea1316ad606260f338",
-   "testSha256": "6d7365c979087ed070405705318ef6ce773bbb039b01ccb3faf90cae584e2897",
+   "testSha256": "48552bd53b364702fbc21476cc25c09cda08c15dc9eff5af5838a9f3be8684b9",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -3206,32 +3266,32 @@
      "operator": "LEGACY_LITERAL",
      "line": 47,
      "label": "artista",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 57,
      "label": "misto",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 48,
      "label": "pessoa_fisica",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 49,
      "label": "pessoa_juridica",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 4,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -3385,7 +3445,7 @@
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "13a81ce23fb1dac4f3379c07ea165d03e696f66fa52995b5d75601ab79ef6798",
-   "testSha256": "f5bbc85ce4af428ffc37ecb2bf611a4321910defca5588808ad0cfb673414f46",
+   "testSha256": "d65c155ae7016e4e843ada749678b8d1eeb6d3448b222c85f7382cdd7f533b31",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -3406,8 +3466,8 @@
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "test": "apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts",
    "fileSha256": "109dbda31a6b9b1dcd04adaf6215ed3c8c2edeb1faf2e86783e912d9599f07c1",
-   "testSha256": "3d8a3f60e08ef47d0535c67d0d9c97b0a43334b4216d5ff12a18d99ad029ebbd",
-   "verdict": "PARTIAL",
+   "testSha256": "5bcc59d5ce911e19a5ecd867fa11cf3775c4943c865f6991b50e29335f382c18",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -3449,37 +3509,37 @@
      "operator": "LEGACY_LITERAL",
      "line": 249,
      "label": "titulo",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 250,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 255,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 257,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 258,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 260,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -3516,15 +3576,15 @@
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 1,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "109dbda31a6b9b1dcd04adaf6215ed3c8c2edeb1faf2e86783e912d9599f07c1",
-   "testSha256": "f5bbc85ce4af428ffc37ecb2bf611a4321910defca5588808ad0cfb673414f46",
-   "verdict": "PARTIAL",
+   "testSha256": "d65c155ae7016e4e843ada749678b8d1eeb6d3448b222c85f7382cdd7f533b31",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -3542,13 +3602,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 249,
      "label": "titulo",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 250,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -3560,26 +3620,26 @@
      "operator": "LEGACY_LITERAL",
      "line": 257,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 258,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 260,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 1,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -3622,7 +3682,7 @@
    "file": "apps/api/src/modules/contracts/contracts.service.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testSha256": "f5bbc85ce4af428ffc37ecb2bf611a4321910defca5588808ad0cfb673414f46",
+   "testSha256": "d65c155ae7016e4e843ada749678b8d1eeb6d3448b222c85f7382cdd7f533b31",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -3747,14 +3807,14 @@
    "file": "apps/api/src/modules/contracts/dto/create-contract.dto.ts",
    "test": "apps/api/src/modules/contracts/dto/create-contract.dto.legacy-compat.spec.ts",
    "fileSha256": "0daad3b7ed6bf773b7fb45615bbd139bdcf3ac158173d45f3b6e4056fc414d4e",
-   "testSha256": "c1fda30d3dd5c0c67caa70374ddbc97745f015a19702e4960d15ba532561573d",
-   "verdict": "PARTIAL",
+   "testSha256": "dea09baa2c03dcad16f85b74d8e9c64d36061a2f5f8f1be5768e756e4f2f6b37",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
      "line": 154,
      "label": "arquivo_url",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -3772,31 +3832,31 @@
      "operator": "LEGACY_LITERAL",
      "line": 142,
      "label": "exclusivo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 106,
      "label": "tipo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 102,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 130,
      "label": "valor",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 166,
      "label": "versoes",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -4145,8 +4205,8 @@
    "file": "apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts",
    "test": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.spec.ts",
    "fileSha256": "1f8aca6960ea4e6e2762312696f46877594d0e9c1e1c2071a7ce0bb26d904d8c",
-   "testSha256": "09ca5d4ec24dac31aed26c3653e9ec321761ecbc3f43d0e39d801c81b844f8e5",
-   "verdict": "PARTIAL",
+   "testSha256": "0c7c7be859f52fd150a3adcf6802c531c08c9d1cbc10b9ebb5b705fa8d63e535",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -4158,7 +4218,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 20,
      "label": "calculo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -4289,7 +4349,7 @@
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
    "test": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.spec.ts",
    "fileSha256": "379c90500daf67ec902bedf88d19dbdc4d31b33860be185f8123016d260e8fde",
-   "testSha256": "09ca5d4ec24dac31aed26c3653e9ec321761ecbc3f43d0e39d801c81b844f8e5",
+   "testSha256": "0c7c7be859f52fd150a3adcf6802c531c08c9d1cbc10b9ebb5b705fa8d63e535",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4358,8 +4418,8 @@
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
    "test": "apps/api/src/modules/hr/dto/create-employee.dto.legacy-compat.spec.ts",
    "fileSha256": "17cc56add06cb7c3f29ef0d3a28327cc6a83b092d8706fef4ed3e06eca77e7cb",
-   "testSha256": "f4ac4973b30981d571ffd629a94df79dc60fb73f17c5323615fca53af5ee253f",
-   "verdict": "PARTIAL",
+   "testSha256": "d730fd08a457a42ac198937f8afef56cbb8a4a4bd9bf2d24b3c8d6ab0a7b7a1b",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -4371,13 +4431,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 25,
      "label": "departamento",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 28,
      "label": "salario",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -4391,7 +4451,7 @@
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "17cc56add06cb7c3f29ef0d3a28327cc6a83b092d8706fef4ed3e06eca77e7cb",
-   "testSha256": "42ec8303782ad8b566b8580b4cbd0ecdfc154838bfa73c6ae6709c728a650dac",
+   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4430,7 +4490,7 @@
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
    "test": "apps/api/src/common/validators/legacy-url-dtos.spec.ts",
    "fileSha256": "efffb406dbc0cb76eaff6c91a0a7d2174fc4281e08fd97ab0aa0f0c85c58ee0c",
-   "testSha256": "bf17eab63cc83fa9dfaaa3754576f04d10743b225f4ff786876f32c927f905c7",
+   "testSha256": "0c56f1b0a9842f5c59e23ebb42f09092f71697831a5ed81e26aa634b0fbad0e3",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4472,7 +4532,7 @@
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "efffb406dbc0cb76eaff6c91a0a7d2174fc4281e08fd97ab0aa0f0c85c58ee0c",
-   "testSha256": "42ec8303782ad8b566b8580b4cbd0ecdfc154838bfa73c6ae6709c728a650dac",
+   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4517,8 +4577,8 @@
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
    "test": "apps/api/src/common/validators/legacy-url-dtos.spec.ts",
    "fileSha256": "2e701047e34367d699a0861e10529445c50d9f2741bbdc01db0441179b5345b3",
-   "testSha256": "bf17eab63cc83fa9dfaaa3754576f04d10743b225f4ff786876f32c927f905c7",
-   "verdict": "PARTIAL",
+   "testSha256": "0c56f1b0a9842f5c59e23ebb42f09092f71697831a5ed81e26aa634b0fbad0e3",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -4530,13 +4590,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 12,
      "label": "competencia",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 36,
      "label": "competencia",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -4571,7 +4631,7 @@
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "2e701047e34367d699a0861e10529445c50d9f2741bbdc01db0441179b5345b3",
-   "testSha256": "42ec8303782ad8b566b8580b4cbd0ecdfc154838bfa73c6ae6709c728a650dac",
+   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4652,8 +4712,8 @@
    "file": "apps/api/src/modules/hr/hr-legacy-fields.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "e373dfad8685d01f24ecda9f5964bdbf9c16c0abdc35d22d1db017f56c1fd92b",
-   "testSha256": "42ec8303782ad8b566b8580b4cbd0ecdfc154838bfa73c6ae6709c728a650dac",
-   "verdict": "PARTIAL",
+   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -4701,7 +4761,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 27,
      "label": "competencia",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -4713,7 +4773,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 19,
      "label": "data_demissao",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -4743,49 +4803,49 @@
      "operator": "LEGACY_LITERAL",
      "line": 43,
      "label": "documento_url",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 56,
      "label": "estagio",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 68,
      "label": "ferias",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 26,
      "label": "funcionario_id",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 39,
      "label": "funcionario_id",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 28,
      "label": "mes_referencia",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 41,
      "label": "motivo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 21,
      "label": "observacoes",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -4803,7 +4863,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 33,
      "label": "pago_em",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -4815,13 +4875,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 29,
      "label": "salario_bruto",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 31,
      "label": "salario_liquido",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -4833,7 +4893,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 58,
      "label": "temporario",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -4845,14 +4905,14 @@
      "operator": "LEGACY_LITERAL",
      "line": 22,
      "label": "vinculo_usuario_id",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 5,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -5015,8 +5075,8 @@
    "file": "apps/api/src/modules/inventory/dto/inventory.dto.ts",
    "test": "apps/api/src/modules/inventory/inventory-contract.spec.ts",
    "fileSha256": "94bc49922dfa588703b4f6ce8902f080204b1ebff02a2740469cf606c0c7b95b",
-   "testSha256": "091de2f094d68d2e7964e39fd9ade0fbdb73ea7710dcf53a51f9d9183d2a8315",
-   "verdict": "PARTIAL",
+   "testSha256": "49c9ceca36436a734f9affcb9c770c1e736084f1a2f4d29454d170564c50ef83",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -5040,7 +5100,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 46,
      "label": "localizacao",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -5072,8 +5132,8 @@
    "file": "apps/api/src/modules/inventory/inventory-legacy-fields.ts",
    "test": "apps/api/src/modules/inventory/inventory-contract.spec.ts",
    "fileSha256": "19e54d8d40b20db9646b2440d3cb54b1758c856ea47f538dff2da86292c8c789",
-   "testSha256": "091de2f094d68d2e7964e39fd9ade0fbdb73ea7710dcf53a51f9d9183d2a8315",
-   "verdict": "PARTIAL",
+   "testSha256": "49c9ceca36436a734f9affcb9c770c1e736084f1a2f4d29454d170564c50ef83",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -5145,7 +5205,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 36,
      "label": "reservado",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -6109,20 +6169,20 @@
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
    "test": "apps/api/src/modules/licensing/dto/licensing.dto.legacy-compat.spec.ts",
    "fileSha256": "21873b9964ba101a5127e8810fdc9b8b21748cd3ff66f5c8431f3dd38cd9ce01",
-   "testSha256": "80dbba93b8a9384051c88419a57ee6014e5fe46387d73e66fc5b65f5420ea7dc",
-   "verdict": "PARTIAL",
+   "testSha256": "97d6491cdeb978ae9fcdb88754d82f72d8a65bf9cdc631e6809e9c72da0095cd",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
      "line": 47,
      "label": "artista",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 45,
      "label": "moeda",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -6148,8 +6208,8 @@
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
    "test": "apps/api/src/modules/licensing/license-contract.spec.ts",
    "fileSha256": "21873b9964ba101a5127e8810fdc9b8b21748cd3ff66f5c8431f3dd38cd9ce01",
-   "testSha256": "f17cb1c9d6966ff60b2b4819990784722141b7b627cbc6851e1581dbcf5e3073",
-   "verdict": "PARTIAL",
+   "testSha256": "4e46345944b300cfde7daccda75ab63e228dacc17057acda7b27fba48a750e52",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -6167,7 +6227,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 70,
      "label": "midia_destino",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -7945,8 +8005,8 @@
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
    "test": "apps/api/src/modules/phonograms/phonogram-contract.spec.ts",
    "fileSha256": "07c092ee97c884c6e11dd5442c10a2f3f711ead95cc597ed6a0abdba042b619a",
-   "testSha256": "a31a8c19758cda20fe98bbc5effa59e33d7ca2e0cfc908ee355563145e34c50c",
-   "verdict": "PARTIAL",
+   "testSha256": "1dfc8e93b356ecf6cbf6e083013359cf0e5f057430a779b5d27e96e9f26c56fa",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -8102,7 +8162,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 69,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -8133,8 +8193,8 @@
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.ts",
    "test": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.legacy-compat.spec.ts",
    "fileSha256": "cad14036512d39e6ef31491292b322063526d465a78f1e917d257ac16d485d50",
-   "testSha256": "0370a4009b670611d5f52f5855593146fef6996bd251259b32df250a679b3138",
-   "verdict": "PARTIAL",
+   "testSha256": "4dd3e914193e648306282b8912f75100fe600e44d6ec0af64c2abb76b7094d35",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -8152,52 +8212,52 @@
      "operator": "LEGACY_LITERAL",
      "line": 169,
      "label": "titulo",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 170,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 175,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 177,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 178,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 180,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 1,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.ts",
    "test": "apps/api/src/modules/phonograms/phonograms.service.spec.ts",
    "fileSha256": "cad14036512d39e6ef31491292b322063526d465a78f1e917d257ac16d485d50",
-   "testSha256": "6f521b79573cef3d7565dea282876f42268a965ed83ccf23baf301952b81dfce",
-   "verdict": "PARTIAL",
+   "testSha256": "1390f31ca43b19bc5b6efb9ed8f5c2b0bf7336d2c655e8e29da608db04032b57",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -8215,13 +8275,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 169,
      "label": "titulo",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 170,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -8233,34 +8293,34 @@
      "operator": "LEGACY_LITERAL",
      "line": 177,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 178,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 180,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 1,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
    "test": "apps/api/src/modules/phonograms/phonogram-contract.spec.ts",
    "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
-   "testSha256": "a31a8c19758cda20fe98bbc5effa59e33d7ca2e0cfc908ee355563145e34c50c",
-   "verdict": "PARTIAL",
+   "testSha256": "1dfc8e93b356ecf6cbf6e083013359cf0e5f057430a779b5d27e96e9f26c56fa",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -8362,7 +8422,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 55,
      "label": "fisico",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -8488,7 +8548,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 55,
      "label": "todos",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -8533,8 +8593,8 @@
    "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
    "test": "apps/api/src/modules/phonograms/phonograms.service.spec.ts",
    "fileSha256": "862d18fbccb72f0b5953a130db0e2164f2f03e6837fbccd22bd4240e574280a4",
-   "testSha256": "6f521b79573cef3d7565dea282876f42268a965ed83ccf23baf301952b81dfce",
-   "verdict": "PARTIAL",
+   "testSha256": "1390f31ca43b19bc5b6efb9ed8f5c2b0bf7336d2c655e8e29da608db04032b57",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -8546,7 +8606,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 177,
      "label": "titulo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -10959,8 +11019,8 @@
    "file": "apps/api/src/modules/takedowns/dto/takedowns.dto.ts",
    "test": "apps/api/src/modules/takedowns/takedown-contract.spec.ts",
    "fileSha256": "11df8fc57dcce725a6bd7d4e8034e7c78a0355021fa8de6570a88f586c96e783",
-   "testSha256": "2f0785cb50af429940142fc8fe112e29f183b1157f73fce4f380f7b11519aefb",
-   "verdict": "PARTIAL",
+   "testSha256": "822dbe162d6019f51f0b8a8531710c2f092f1bae4bec1a3838220cbf6afa3466",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -11014,7 +11074,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 60,
      "label": "plataforma",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -11133,8 +11193,8 @@
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
    "test": "apps/api/src/database/transaction-taxonomy.migration.spec.ts",
    "fileSha256": "94d4a6b191bdd9493a0efb9743e17418a8067250fafd7df7bda41beaa272e44c",
-   "testSha256": "4858e59bb5da3a7090148d7871831af2a5bbde6174fa0fbc5792662a29580d4c",
-   "verdict": "PARTIAL",
+   "testSha256": "d14dea56030ec2bbc5e0227ff6a7c3b90d5194c6bae008d528a80307187d63a1",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -11146,7 +11206,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 207,
      "label": "outros",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -12434,14 +12494,14 @@
    "file": "apps/api/src/modules/works/dto/create-work.dto.ts",
    "test": "apps/api/src/modules/works/dto/create-work.dto.legacy-compat.spec.ts",
    "fileSha256": "b41a6aefea5e9e1677af8c059459a61d3f83b201c40fae8f9b9cb07c8083021e",
-   "testSha256": "54835e6c96896c00ad964c49b93fab52693d1fa866594599a872091bd27950e5",
-   "verdict": "PARTIAL",
+   "testSha256": "e693fe021f90709cf603c01fa222ca11857c69741717015095cb0fcd4b60579d",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
      "line": 100,
      "label": "compositor",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -12453,55 +12513,55 @@
      "operator": "LEGACY_LITERAL",
      "line": 110,
      "label": "ia_melodia",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 103,
      "label": "idioma",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 114,
      "label": "letra_completa",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 116,
      "label": "letristas",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 112,
      "label": "outros_titulos",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 115,
      "label": "participantes",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 113,
      "label": "referencias_conexas",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 108,
      "label": "tipo_ia",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 117,
      "label": "tipo_obra",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -12515,7 +12575,7 @@
    "file": "apps/api/src/modules/works/dto/create-work.dto.ts",
    "test": "apps/api/src/modules/works/work-contract.spec.ts",
    "fileSha256": "b41a6aefea5e9e1677af8c059459a61d3f83b201c40fae8f9b9cb07c8083021e",
-   "testSha256": "f149c5a227366089808b9b84786be220eab1b75170ce0f68700b919778715e50",
+   "testSha256": "fada5b0df7124d94840908b17800ad4b8dbd232ab4045277c89a9cbcd53a4944",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -12560,7 +12620,7 @@
    "file": "apps/api/src/modules/works/dto/query-work.dto.ts",
    "test": "apps/api/src/modules/works/work-contract.spec.ts",
    "fileSha256": "76a68f0a91aa7cbe982d8a4c006f22ee08dfc795fd62af24f88789dceea58318",
-   "testSha256": "f149c5a227366089808b9b84786be220eab1b75170ce0f68700b919778715e50",
+   "testSha256": "fada5b0df7124d94840908b17800ad4b8dbd232ab4045277c89a9cbcd53a4944",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -12628,7 +12688,7 @@
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
    "test": "apps/api/src/modules/works/work-contract.spec.ts",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testSha256": "f149c5a227366089808b9b84786be220eab1b75170ce0f68700b919778715e50",
+   "testSha256": "fada5b0df7124d94840908b17800ad4b8dbd232ab4045277c89a9cbcd53a4944",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -12713,7 +12773,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 121,
      "label": "participantes",
-     "outcome": "INCONCLUSIVE"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -12954,7 +13014,7 @@
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
-   "inconclusive": 1,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -14030,8 +14090,8 @@
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
    "test": "apps/web/src/modules/artist/components/ArtistVision360Modal.legacy-compat.test.tsx",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testSha256": "50a95b91f7f221322495edef3ef7e81f3445bd7a4150fe46fdc1885e51ffe90f",
-   "verdict": "PARTIAL",
+   "testSha256": "590b4505c1b9726a17c4b8a58bad952c185951f0152c42fd1ffeb09f397cded9",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -14061,7 +14121,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 1635,
      "label": "financeiro",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -14104,8 +14164,8 @@
    "file": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "test": "apps/web/src/modules/artist/forms/artist-form.definition.legacy-compat.test.ts",
    "fileSha256": "f4be98872475046223428ec9e6098eceb53d078913e160b46848a96ff5d006f5",
-   "testSha256": "11a086b38c59b18de3203b388e9669d094ad6896141f05a4fa16a3f1915a0ce8",
-   "verdict": "PARTIAL",
+   "testSha256": "acb90c5bf39a92f38214156830a83139753623276ccbe566f2c0a3bf754a5013",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -14153,7 +14213,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 689,
      "label": "tipo_perfil",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -14277,8 +14337,8 @@
    "file": "apps/web/src/modules/artist/lib/revenue-nature.ts",
    "test": "apps/web/src/modules/artist/lib/revenue-nature.legacy-compat.test.ts",
    "fileSha256": "8dfc820f572cf742c98a0217a883c9e2386ab96a486d7f2b7ed945ce0b7f4b81",
-   "testSha256": "267e1dc26a94b49b2de6f3db353cc88b479a5f4e7114ff0cbbc35db2ec359701",
-   "verdict": "PARTIAL",
+   "testSha256": "649ef6da91b57d7324c6c8daf69943f6d0d43f59a357bbae371b58457315b79a",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -14290,19 +14350,19 @@
      "operator": "LEGACY_LITERAL",
      "line": 13,
      "label": "licenc",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 14,
      "label": "patroc",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 14,
      "label": "publi",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -14517,9 +14577,9 @@
   {
    "file": "apps/web/src/modules/contracts/components/ContractFormModal.tsx",
    "test": "apps/web/src/modules/contracts/components/ContractFormModal.legacy-compat.test.tsx",
-   "fileSha256": "1f9f5ea2f50651b86c255dd2e21df4e1e1b00dbb9c1aae18ba7a9282c79cfe53",
-   "testSha256": "72c63ac97d1ace5b802e1d97f338b696a911e834ed5fbd513ed8d5b550e68b62",
-   "verdict": "PARTIAL",
+   "fileSha256": "9a4d0d96860607c0a0f576fe201f6f126102b1e4300af9cdaad3e24f93ee2b24",
+   "testSha256": "e676d29025f3387ac45b29eb6966db8782a400210ffc289988500d590127fa35",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -14535,7 +14595,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 92,
+     "line": 90,
      "label": "agenciamento",
      "outcome": "KILLED"
     },
@@ -14547,9 +14607,9 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 98,
+     "line": 96,
      "label": "distribuicao",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -14571,9 +14631,9 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 100,
+     "line": 98,
      "label": "gestao",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -14589,43 +14649,31 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 94,
+     "line": 92,
      "label": "licenciamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 99,
-     "label": "licenciamento",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 81,
-     "label": "outros",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 90,
-     "label": "outros",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 97,
+     "label": "licenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 95,
      "label": "outros",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 101,
+     "line": 99,
      "label": "outros",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 108,
+     "line": 106,
      "label": "outros",
      "outcome": "KILLED"
     },
@@ -14655,7 +14703,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 88,
+     "line": 91,
      "label": "producao_musical",
      "outcome": "KILLED"
     },
@@ -14667,25 +14715,19 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 95,
-     "label": "producao_musical",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
      "line": 81,
      "label": "publicidade",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 89,
+     "line": 88,
      "label": "publicidade",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 96,
+     "line": 94,
      "label": "publicidade",
      "outcome": "KILLED"
     },
@@ -14716,20 +14758,8 @@
     {
      "operator": "LEGACY_LITERAL",
      "line": 88,
-     "label": "producao",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 89,
      "label": "publicitario",
      "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 90,
-     "label": "semantico",
-     "outcome": "SURVIVED"
     }
    ],
    "legacyFirst": [],
@@ -15265,8 +15295,8 @@
    "file": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
    "test": "apps/web/src/modules/contracts/lib/contract-wizard-party.test.ts",
    "fileSha256": "1aba3a9b1a205f0d496ae2b7f92a9b6c6684e60fe3e28d07d4e169b504f63627",
-   "testSha256": "4555433316ccc183234cbec43e6f2828d4e4d54d2e307852f861c67483beed8e",
-   "verdict": "PARTIAL",
+   "testSha256": "07652113071319e8210ad99803fec6a887938068258ac216dc88c76e789ad7cd",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -15290,13 +15320,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 107,
      "label": "artistas",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 112,
      "label": "casado",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -15308,7 +15338,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 113,
      "label": "divorciado",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -15362,7 +15392,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 101,
      "label": "pf",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -15398,7 +15428,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 111,
      "label": "solteiro",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -15410,13 +15440,13 @@
      "operator": "LEGACY_LITERAL",
      "line": 115,
      "label": "uniao_estavel",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 114,
      "label": "viuvo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -15944,8 +15974,8 @@
    "file": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
    "test": "apps/web/src/modules/events/lib/agenda-spreadsheet.legacy-compat.test.ts",
    "fileSha256": "2f9957e20ce70922f16ff2a2239a6dc3cb078a485222b9b12aea4e04e7c63bc3",
-   "testSha256": "89b066a05c0bbf5088da4d48ae796de5974c5a75add8d7959f4eddb05c7d69fb",
-   "verdict": "PARTIAL",
+   "testSha256": "97636314e89989c21e5252dee23b7c88e1ead09094df50454ff5dcb6d4115f70",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -15963,7 +15993,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 36,
      "label": "horario",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -16129,9 +16159,9 @@
   {
    "file": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "test": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.legacy-compat.test.ts",
-   "fileSha256": "626995cf1efca42a2697e4c94c49c53d69ec720a91acd5c0efc4b7400c388a45",
+   "fileSha256": "c3c150f16fa5520e89ad77acb3a081532f889f7f144461a05ec22354da8c3f9e",
    "testSha256": "ef6df93ce3429e951c67c9474a6b2dfbc1b83a2900e3eb63c7f87088c76aec94",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -16141,45 +16171,39 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 156,
+     "line": 155,
      "label": "captacao_leads",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 156,
+     "line": 155,
      "label": "conversao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 156,
+     "line": 155,
      "label": "conversoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 155,
+     "line": 154,
      "label": "crescimento_seguidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 155,
+     "line": 154,
      "label": "engajamento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 155,
+     "line": 154,
      "label": "seguidores",
      "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 154,
-     "label": "trafego",
-     "outcome": "SURVIVED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -16244,8 +16268,8 @@
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
    "test": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.legacy-compat.test.ts",
    "fileSha256": "8d799766af1a1a3db45eae466d63dfbadaa8bae4dc3dd7bf7bba7d31144867ca",
-   "testSha256": "27f22816894708c3310b205be3e2153a8b7cd9a9f0b4c3a850c44c6c3bf1a193",
-   "verdict": "PARTIAL",
+   "testSha256": "dbe22d3a0cd108a8aa61f6515024506270d4d7d0e366cd3e6bc12f4b70d5a361",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -16257,7 +16281,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 11,
      "label": "misto",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -16269,7 +16293,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 24,
      "label": "misto",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -17342,8 +17366,8 @@
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "test": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.legacy-compat.test.ts",
    "fileSha256": "b9db87c04d2546cf5f4f954cb9e725bea4da5deaf33363ea900f662fa00e2f96",
-   "testSha256": "26b7cb42cae0669aadfd51fc32fa1996ba4c18b09f1199a12df4c60a46636997",
-   "verdict": "PARTIAL",
+   "testSha256": "04ac2b4cef3d5ac4ca642b38f7ae57e809f796461dfe2817047483725b872ef3",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -17361,7 +17385,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 470,
      "label": "conteudo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
@@ -17498,8 +17522,8 @@
    "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
    "test": "apps/web/src/modules/releases/components/ReleaseFormModal.legacy-compat.test.tsx",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testSha256": "f90debd5df639f03a91a2383b57f7ad03e1be238e2c2ecbb9e76e8bda56324c1",
-   "verdict": "PARTIAL",
+   "testSha256": "fbaf4cc0ae53a63b0e3cecb94e058e7d52d85f17365c08ab4ef96d151a37969c",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -17517,7 +17541,7 @@
      "operator": "LEGACY_LITERAL",
      "line": 101,
      "label": "eletronica",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -18722,14 +18746,14 @@
    "file": "apps/web/src/modules/settings/lib/user-status.ts",
    "test": "apps/web/src/modules/settings/lib/user-status.legacy-compat.test.ts",
    "fileSha256": "a53b7c5ba28fc44691772bdbd061969102daa33896f95189874f6a9f6bbf8a7d",
-   "testSha256": "f8eb284a0be800a47f76f4f6599412ff8a87ba39e543de73f0096efddf3476dd",
-   "verdict": "PARTIAL",
+   "testSha256": "f0927d1fcc15104914bff145d505e3a90d1ad320fc4cb87bdc0eaac160979aad",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
      "line": 17,
      "label": "ativo",
-     "outcome": "SURVIVED"
+     "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -19380,7 +19404,7 @@
    "file": "packages/types/src/enums.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "d0713a3354213ec8af55f2065fdd7455a4111d5752bc6324a3f2906b1d5bd0fc",
-   "testSha256": "be04b1ed234ec60c24e16d35ad49a7c7e1527751fd4323c7a00e6075cd5f3670",
+   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -19412,19 +19436,49 @@
      "line": 49,
      "label": "rh_manager",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "ENUM_MEMBER",
+     "line": 45,
+     "label": "ARTISTA",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "ENUM_MEMBER",
+     "line": 48,
+     "label": "COLABORADOR",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "ENUM_MEMBER",
+     "line": 47,
+     "label": "COMERCIAL",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "ENUM_MEMBER",
+     "line": 41,
+     "label": "JURIDICO",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "ENUM_MEMBER",
+     "line": 46,
+     "label": "PRODUTOR",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "ENUM_MEMBER",
+     "line": 49,
+     "label": "RH_MANAGER",
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
-   "namesWithoutSite": [
-    "ARTISTA",
-    "COLABORADOR",
-    "COMERCIAL",
-    "JURIDICO",
-    "PRODUTOR",
-    "RH_MANAGER"
-   ],
+   "namesWithoutSite": [],
    "exhaustive": true,
+   "fallbackOperators": 1,
    "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
@@ -19453,7 +19507,7 @@
    "file": "packages/types/src/role-slugs.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "e8f28d52cf5a24d2ed672a8f56eb92ce9d23972edfb01af5e3b3a8d4a11b1aac",
-   "testSha256": "be04b1ed234ec60c24e16d35ad49a7c7e1527751fd4323c7a00e6075cd5f3670",
+   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -19497,6 +19551,7 @@
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
+   "fallbackOperators": 1,
    "inconclusive": 0,
    "diagnosticsRelaxed": true
   }

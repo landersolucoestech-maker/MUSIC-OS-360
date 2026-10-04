@@ -211,3 +211,24 @@ test("producer and consumer agree: records built from the REAL findMutations out
   assert.equal(ev(swapSurvives, "legacythree"), true);
   assert.equal(ev({ ...allKilled, exhaustive: undefined }, "legacyone"), false, "a record that is not exhaustive credits no named row");
 });
+
+test("proof fallback: an enum member named by a ledger row is mutated only when the name has no ordinary site", () => {
+  const src = "export enum Role { ARTISTA = 'artista', OTHER = 'other' }";
+  const m = findMutations(src, "a.ts", new Set(["ARTISTA"]));
+  const em = m.lit.filter((x) => x.operator === "ENUM_MEMBER");
+  assert.equal(em.length, 1);
+  assert.equal(em[0].label, "ARTISTA");
+  assert.ok(apply(src, em[0]).includes("__mutated__ = 'artista'"));
+  // the member name also exists as a literal elsewhere: the ordinary LEGACY_LITERAL site wins and no fallback is generated
+  const both = findMutations("export enum Role { ARTISTA = 'x' }\nconst a = 'ARTISTA';", "a.ts", new Set(["ARTISTA"]));
+  assert.equal(both.lit.filter((x) => x.operator === "ENUM_MEMBER").length, 0);
+});
+
+test("proof fallback: a legacy namespace prefix is mutated for a name without ordinary site, and the plain name is never touched", () => {
+  const src = "const a = 'rh:read'; const b = `rh:${k}`; const c = 'rhx:read'; type T = 'rh' | 'hr';";
+  const m = findMutations(src, "a.ts", new Set(["rh"]));
+  const pf = m.lit.filter((x) => x.operator === "PREFIX_LITERAL");
+  assert.equal(pf.length, 2);
+  assert.ok(apply(src, pf[0]).includes("'__mutated__:read'"));
+  assert.ok(apply(src, pf[1]).includes("`__mutated__:${k}`"));
+});

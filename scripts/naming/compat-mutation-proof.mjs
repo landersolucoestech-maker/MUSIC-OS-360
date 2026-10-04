@@ -139,6 +139,30 @@ export function findMutations(text, file, names, wildcardWords = null) {
     ts.forEachChild(node, visit);
   };
   visit(sf);
+  // FALLBACK operators, only for a ledger name that has no ordinary site (no literal, key, member read, swap or guard):
+  //   ENUM_MEMBER     the enum member named by the ledger row is renamed (the legacy member disappears from the exported enum);
+  //   PREFIX_LITERAL  a namespaced key `<name>:<rest>` (the legacy permission/event namespace) loses its legacy namespace.
+  // They never apply to a name that already has a site, so the records of every other pair keep their meaning.
+  const labelled = new Set([...swap, ...guard].flatMap((m) => m.labels ?? []).concat(lit.map((m) => m.label)));
+  const orphans = [...names].filter((n) => typeof n === "string" && !labelled.has(n) && !n.startsWith("/"));
+  if (orphans.length) {
+    const fallback = (node) => {
+      if (ts.isEnumMember(node) && ts.isIdentifier(node.name) && orphans.includes(node.name.text)) {
+        lit.push({ operator: "ENUM_MEMBER", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: "__mutated__", label: node.name.text });
+      }
+      if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateHead(node)) {
+        const raw = text.slice(node.getStart(sf), node.getEnd());
+        const q = raw[0];
+        for (const n of orphans) {
+          if (/^[a-z][a-z0-9_]*$/.test(n) && (q === "'" || q === '"' || q === "`") && raw.slice(1).startsWith(`${n}:`)) {
+            lit.push({ operator: "PREFIX_LITERAL", line: lineOf(node), start: node.getStart(sf) + 1, end: node.getStart(sf) + 1 + n.length, replacement: "__mutated__", label: n });
+          }
+        }
+      }
+      ts.forEachChild(node, fallback);
+    };
+    fallback(sf);
+  }
   return { lit, swap, guard, legacyFirst, declarations };
 }
 
@@ -245,7 +269,7 @@ async function main() {
     const original = fs.readFileSync(abs, "utf8");
     // resume: a pair already judged against the SAME file and test bytes is not run again (an interrupted run continues where it stopped)
     const done = results.get(`${pair.file}\u0000${pair.test}`);
-    if (done && done.verdict && done.exhaustive === true && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
+    if (done && done.verdict && done.exhaustive === true && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
     // the hashes bind to the sources that were actually mutated and tested (the --root copy); the audit compares
     // them with the repository, so any later edit of either file makes the result stale
     const realText = original;
@@ -265,6 +289,7 @@ async function main() {
     const labelled = new Set([...muts.swap, ...muts.guard].flatMap((m) => m.labels ?? []).concat(perNameAll.map((m) => m.label)));
     rec.namesWithoutSite = [...pair.names].filter((n) => !labelled.has(n));
     rec.exhaustive = true;
+    rec.fallbackOperators = 1;
     const queue = [...muts.swap, ...muts.guard, ...perNameChosen];
     try {
       for (const m of queue) {
