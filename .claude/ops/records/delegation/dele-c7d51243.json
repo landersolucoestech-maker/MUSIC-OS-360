@@ -1,0 +1,9 @@
+{
+  "agent": "secrets-reviewer",
+  "objective": "Independently scan the final diff and tracked files for real secrets, credential shapes and unsafe defaults (env templates, tests, fixtures, docs, scripts); report names/shapes only.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-c7d51243",
+  "createdAt": "2026-10-04T23:17:43.130Z"
+}

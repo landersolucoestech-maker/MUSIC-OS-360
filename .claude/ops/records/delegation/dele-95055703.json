@@ -1,0 +1,9 @@
+{
+  "agent": "frontend-consistency-reviewer",
+  "objective": "Independently review naming and structure consistency of the web helpers legacy-reads, legacy-title, signup-metadata, masks, category-labels, category-import and their tests.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-95055703",
+  "createdAt": "2026-10-04T23:17:43.141Z"
+}
