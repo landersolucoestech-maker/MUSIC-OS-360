@@ -44,3 +44,47 @@ describe('ImportMapperService — headers of spreadsheets exported before CZ-039
     expect(unknownColumns).toEqual([]);
   });
 });
+
+/**
+ * Legacy wiring of normalizeFieldKey in the mapper: header spellings of older exports/scripts
+ * (kebab-case, PascalCase, camelCase) are resolved to the snake_case columns, and tenant_id "in any form"
+ * is ignored (multi-tenant security: never importable, never reported as a mappable column).
+ */
+describe('ImportMapperService — header spelling normalization (legacy wiring)', () => {
+  const mapper = new ImportMapperService();
+
+  it.each([
+    ['artist-id', 'artist_id'],
+    ['Artist-Id', 'artist_id'],
+    ['artistId', 'artist_id'],
+    ['ArtistId', 'artist_id'],
+    ['release-date', 'release_date'],
+    ['releaseDate', 'release_date'],
+    ['ReleaseDate', 'release_date'],
+  ])('header %p maps to the snake_case column %p', (header, column) => {
+    const { mapping, unknownColumns } = mapper.build(def('works', ['title', 'artist_id', 'release_date']), [header]);
+    expect(mapping[header]).toBe(column);
+    expect(unknownColumns).toEqual([]);
+  });
+
+  it.each(['tenant-id', 'Tenant-Id', 'tenantId', 'TenantId', 'tenant_id', 'Tenant_Id', 'TENANT_ID', 'tenant', 'TENANT'])(
+    'tenant header %p is ignored and reported, never mapped (even when a column named tenant_id were importable)',
+    (header) => {
+      const { mapping, unknownColumns, ignoredColumns } = mapper.build(def('works', ['title', 'tenant_id']), [header]);
+      expect(mapping[header]).toBeNull();
+      expect(ignoredColumns).toEqual([header]);
+      expect(unknownColumns).toEqual([]);
+    },
+  );
+
+  it('a tenant header does not hide the other headers of the same file', () => {
+    const { mapping, ignoredColumns, unknownColumns } = mapper.build(
+      def('works', ['title', 'artist_id']),
+      ['Tenant-Id', 'artist-id', 'title', 'bogus'],
+    );
+    expect(ignoredColumns).toEqual(['Tenant-Id']);
+    expect(mapping['artist-id']).toBe('artist_id');
+    expect(mapping['title']).toBe('title');
+    expect(unknownColumns).toEqual(['bogus']);
+  });
+});

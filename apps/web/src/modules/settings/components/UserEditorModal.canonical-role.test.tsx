@@ -64,3 +64,19 @@ describe("UserEditorModal canonical role slugs", () => {
     expect(updateMutateAsync).toHaveBeenCalledWith(expect.objectContaining({ role: "constructor" }));
   });
 });
+
+describe("UserEditorModal legacy member status", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const withStatus = (status: string): UserAccount => ({ ...member("admin"), status } as unknown as UserAccount);
+
+  it.each([["ativo", "active"], ["active", "active"], ["inativo", "inactive"], ["suspenso", "inactive"], ["pendente", "inactive"]])(
+    "a member stored with status %s is saved with canonical status %s",
+    async (stored, expected) => {
+      render(<UserEditorModal open onOpenChange={() => {}} user={withStatus(stored)} mode="edit" />);
+      fireEvent.click(screen.getByText("Salvar alterações"));
+      await waitFor(() => expect(updateMutateAsync).toHaveBeenCalledTimes(1));
+      expect(updateMutateAsync).toHaveBeenCalledWith(expect.objectContaining({ id: "u1", status: expected }));
+    },
+  );
+});

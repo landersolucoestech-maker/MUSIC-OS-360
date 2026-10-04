@@ -198,6 +198,29 @@ describe('ImportEngineService — projects on a single sheet', () => {
     expect(rows[0]).toContain('Nome da música');
     expect(rows[0]).toContain('Arquivos de Áudio (MP3/WAV)');
   });
+
+  // Legacy wiring: the template reads contract.repeatingGroup to expand the repeated / multi-valued columns.
+  it('projects template example row expands the repeating-group columns (multi-valued ones with two examples)', async () => {
+    const result = await makeProjectsEngine().buildTemplate('projects', 't');
+    const wb = XLSX.read(result.body, { type: 'buffer' });
+    const rows = XLSX.utils.sheet_to_json<unknown[]>(wb.Sheets.Projetos!, { header: 1 });
+    const header = rows[0] as string[];
+    const example = rows[1] as string[];
+    const cell = (label: string) => example[header.indexOf(label)];
+    expect(header).toContain('Compositores');
+    expect(cell('Compositores')).toBe('Exemplo 1 | Exemplo 2');
+    expect(cell('Nome da música')).toBe('exemplo');
+    // every multi-valued repeating column carries the two-example form, every other repeating column the single one
+    const multiExamples = example.filter((value) => value === 'Exemplo 1 | Exemplo 2');
+    expect(multiExamples).toHaveLength(3); // composers, performers, producers
+  });
+
+  it('a plain entity template (no repeating group) never emits multi-valued examples', async () => {
+    const result = await makeEngine().buildTemplate('artists', 't');
+    const wb = XLSX.read(result.body, { type: 'buffer' });
+    const rows = XLSX.utils.sheet_to_json<unknown[]>(wb.Sheets.Artistas!, { header: 1 });
+    expect((rows[1] as string[]).some((value) => String(value).includes(' | '))).toBe(false);
+  });
 });
 
 describe('ImportEngineService — invoices.payment_method vocabulary (chk_invoices_payment_method)', () => {

@@ -152,7 +152,7 @@ export function wiringSites(files, credited = new Set()) {
           else if (bound.has(callee.text)) { kind = "CONSUMER"; target = bound.get(callee.text); }
         } else if (ts.isPropertyAccessExpression(callee) && ts.isIdentifier(callee.expression) && namespaces.has(callee.expression.text)) { kind = "CONSUMER"; target = namespaces.get(callee.expression.text); }
         if (kind) {
-          out.push({ kind, file, line: lineOf(sf, node), text: node.getText(sf).slice(0, 120), start: node.getStart(sf), end: node.getEnd(), first: node.arguments.length ? node.arguments[0].getText(sf) : "undefined", ...(target ? { target } : {}) });
+          out.push({ kind, file, line: lineOf(sf, node), text: node.getText(sf).slice(0, 120), start: node.getStart(sf), end: node.getEnd(), first: node.arguments.length ? `(${node.arguments[0].getText(sf)})` : "undefined", ...(target ? { target } : {}) });
         }
       }
       ts.forEachChild(node, visit);

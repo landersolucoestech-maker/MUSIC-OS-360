@@ -106,6 +106,38 @@ describe('EntityMetadataService — entity-driven inventory', () => {
     expect(typeof e!.hasTimestamps).toBe('boolean');
     expect(Array.isArray(e!.risks)).toBe(true);
   });
+
+  // Legacy wiring: column labels come from the central PT-BR layer (explicit null when untranslated),
+  // never from the raw snake_case column name.
+  describe('column labels (central pt-BR layer)', () => {
+    // accounting_summary is a synthetic (non-decorator) entity with hand-written labels: not a scan() column
+    const allColumns = inv.entities
+      .filter((e) => e.tableName !== 'accounting_summary')
+      .flatMap((e) => e.columns.map((c) => ({ table: e.tableName, ...c })));
+
+    it('a translated column carries its pt-BR label (not the raw column name)', () => {
+      const updatedAt = byTable.get('artists')?.columns.find((c) => c.name === 'updated_at');
+      expect(updatedAt?.label).toBe('Atualizado em');
+      const tenantCol = byTable.get('artists')?.columns.find((c) => c.name === 'tenant_id');
+      expect(tenantCol?.label).toBe('Tenant');
+    });
+
+    it('every column label equals the central layer result: label or explicit null', () => {
+      const { tryGetFieldLabelPtBr } = jest.requireActual('./i18n/field-labels.pt-br') as {
+        tryGetFieldLabelPtBr: (k: string) => string | null;
+      };
+      const mismatches = allColumns.filter((c) => c.label !== tryGetFieldLabelPtBr(c.name));
+      expect(mismatches.map((c) => `${c.table}.${c.name}`)).toEqual([]);
+    });
+
+    it('no snake_case column name leaks as a label', () => {
+      const leaked = allColumns.filter((c) => c.name.includes('_') && c.label === c.name);
+      expect(leaked.map((c) => `${c.table}.${c.name}`)).toEqual([]);
+      // a column that is not translated is reported as null, not as its technical name
+      const untranslated = allColumns.filter((c) => c.label === null);
+      for (const c of untranslated) expect(c.label).toBeNull();
+    });
+  });
 });
 
 describe('EntityMetadataService — identity column probes are English only', () => {

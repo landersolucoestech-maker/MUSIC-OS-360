@@ -54,4 +54,32 @@ describe('ContractTemplatesService legacy field wiring', () => {
     expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['content']).toBe('CANON');
     expect(((repo.update.mock.calls[0] as unknown[])[1] as Record<string, unknown>)['content']).toBe('CANON');
   });
+  it('create and update store the canonical service_type for a legacy category slug (and keep custom slugs untouched)', async () => {
+    const { service, repo } = make();
+    await service.create('tenant-1', 'user-1', { name: 'T', content: 'B', service_type: 'distribuicao' } as never);
+    expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['service_type']).toBe('distribution');
+    await service.update('tenant-1', 'tpl-1', { service_type: 'distribuicao' } as never);
+    expect(((repo.update.mock.calls[0] as unknown[])[1] as Record<string, unknown>)['service_type']).toBe('distribution');
+    await service.update('tenant-1', 'tpl-1', { service_type: 'my-custom-slug' } as never);
+    expect(((repo.update.mock.calls[1] as unknown[])[1] as Record<string, unknown>)['service_type']).toBe('my-custom-slug');
+  });
+
+  it('list(type) expands a platform category to every persisted spelling and filters a custom slug exactly', async () => {
+    const qb: Record<string, jest.Mock> = {};
+    for (const m of ['where', 'andWhere', 'orderBy', 'skip', 'take']) qb[m] = jest.fn(() => qb);
+    qb['getManyAndCount'] = jest.fn(async () => [[], 0]);
+    const repo = { createQueryBuilder: jest.fn(() => qb) };
+    const service = new ContractTemplatesService({ getRepository: () => repo } as never);
+
+    await service.list('tenant-1', { type: 'distribution' });
+    expect(qb['andWhere']).toHaveBeenCalledWith('t.service_type IN (:...types)', { types: ['distribution', 'distribuicao'] });
+
+    qb['andWhere'].mockClear();
+    await service.list('tenant-1', { type: 'distribuicao' });
+    expect(qb['andWhere']).toHaveBeenCalledWith('t.service_type IN (:...types)', { types: ['distribution', 'distribuicao'] });
+
+    qb['andWhere'].mockClear();
+    await service.list('tenant-1', { type: 'my-custom-slug' });
+    expect(qb['andWhere']).toHaveBeenCalledWith('t.service_type = :type', { type: 'my-custom-slug' });
+  });
 });

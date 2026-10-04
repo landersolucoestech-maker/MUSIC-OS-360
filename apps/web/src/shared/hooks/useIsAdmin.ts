@@ -5,7 +5,7 @@ import { useCurrentRole } from "./useHasRole";
  * (super_admin, tenant_owner, or admin).
  *
  * Deny-by-default: returns false when role is null/undefined.
- * For more granular checks, use useHasRole() or useCanAccess().
+ * For more granular checks, use useHasRole().
  */
 export function useIsAdmin() {
   const role = useCurrentRole();

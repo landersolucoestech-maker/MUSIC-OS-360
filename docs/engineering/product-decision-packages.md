@@ -139,3 +139,29 @@ TEST_IMPACT: A: report-contract specs, verify-canonical-column-order, entity spe
 REVERSIBILITY: A reversible from the archive while kept; B/C reversible.
 EXACT_OWNER_DECISION_REQUIRED: "External-source columns of works and phonograms: (A) drop the six columns (archive first), using external_identifiers as the single model for external ids; (B) keep for the planned catalog sync [owner, date, which model carries last-synced-at]; or (C) keep inert for now. Real non-null counts in [environments]: [numbers]."
 ```
+
+---
+
+## D-06 Unwired UI handlers and test-only resolver
+
+```text
+DECISION_ID: D-06 (BLK-UNWIRED-UI-SCAFFOLD)
+DOMAIN: frontend (schedule, settings users, contracts utils)
+CURRENT_STATE: four pieces of code call the legacy-compatibility helpers but nothing reachable in production runs them: (1) Schedule.tsx handleExcelExport / handleExcelImport (no button or input references them, excelInputRef is never attached) and the unused `type` property of schedulerEvents; (2) Settings.tsx user status filter (state can only be set to "all status" through clearUserFilters, no UI setter exists); (3) apps/web contract-variables resolver (no production importer, used only by its tests).
+CURRENT_DATA: none (client-side only).
+CANONICAL_RULES_ALREADY_KNOWN: one concept, one authoritative implementation; no permanent scaffolding disguised as a fix (naming-canonical rule); spreadsheet exchange is XLSX only (csv-engineer rule).
+WHAT_IS_UNDEDUCIBLE: whether the Schedule spreadsheet import/export, the Settings user status filter and contract variable resolution are planned features.
+OPTION_A: delete the dead handlers, filter branch and resolver (and their tests).
+OPTION_B: wire them as real features (UI control, permission check, tests) with an owner and date.
+OPTION_C: keep as inert scaffolding with an owner and a deadline (stays a recorded finding until then).
+CONSEQUENCES_A: smaller surface, removes the unproven legacy-compat call sites; features must be rebuilt if wanted later.
+CONSEQUENCES_B: product work; import must follow the import-automation preview/approval rules.
+MIGRATION_IMPACT: none.
+API_IMPACT: none for A and C; B may reuse the existing import endpoints.
+FRONTEND_IMPACT: A removes code; B adds UI; C none.
+DATA_IMPACT: none.
+SECURITY_IMPACT: B: import handlers must validate files and neutralize formulas; A/C none.
+TEST_IMPACT: A removes the resolver tests; B adds behavior tests; C none. The wiring-proof exemptions in docs/naming/audit/compat-wiring-exemptions.json name this decision and are removed when it is decided.
+REVERSIBILITY: A recoverable from git history; B/C reversible.
+EXACT_OWNER_DECISION_REQUIRED: "Schedule spreadsheet import/export, Settings user status filter, contract variable resolver: for each, (A) delete, (B) wire as a feature [owner, date], or (C) keep inert [owner, deadline]."
+```

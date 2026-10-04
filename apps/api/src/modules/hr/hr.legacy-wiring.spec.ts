@@ -38,4 +38,15 @@ describe('HrService.updateEmployee legacy field wiring', () => {
     await service.updateEmployee('tenant-1', 'user-1', 'e1', { job_title: 'Canon', [LEGACY_TITLE]: 'Legacy' } as never);
     expect(((repo.update.mock.calls[0] as unknown[])[1] as Record<string, unknown>)['job_title']).toBe('Canon');
   });
+  it.each([
+    ['autonomo', 'freelancer'],
+    ['Estágio', 'internship'],
+    ['CLT', 'clt'],
+    ['pj', 'pj'],
+  ])('updateEmployee({contract_type:%s}) persists %s', async (legacy, canonical) => {
+    const { service, repo } = make();
+    await service.updateEmployee('tenant-1', 'user-1', 'e1', { contract_type: legacy } as never);
+    const patch = (repo.update.mock.calls[0] as unknown[])[1] as Record<string, unknown>;
+    expect(patch['contract_type']).toBe(canonical);
+  });
 });

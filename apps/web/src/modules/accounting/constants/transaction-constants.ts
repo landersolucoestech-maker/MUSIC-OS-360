@@ -639,24 +639,9 @@ export const isServiceRequiringArtistAndProject = (subcategory: string): boolean
   return expenseServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(subcategory));
 };
 
-// Checks whether an expense product requires an event
-export const isProductRequiringEvent = (subcategory: string): boolean => {
-  return expenseProductsRequiringEvent.includes(canonicalTransactionSlug(subcategory));
-};
-
 // Checks whether a music revenue requires artist + project
 export const isMusicRevenueRequiringArtistAndProject = (subcategory: string): boolean => {
   return musicRevenueRequiringArtistAndProject.includes(canonicalTransactionSlug(subcategory));
-};
-
-// Checks whether a revenue service requires artist + project
-export const isRevenueServiceRequiringArtistAndProject = (subcategory: string): boolean => {
-  return revenueServicesRequiringArtistAndProject.includes(canonicalTransactionSlug(subcategory));
-};
-
-// Checks whether a revenue service requires only the artist
-export const isRevenueServiceRequiringArtistOnly = (subcategory: string): boolean => {
-  return revenueServicesRequiringArtistOnly.includes(canonicalTransactionSlug(subcategory));
 };
 
 

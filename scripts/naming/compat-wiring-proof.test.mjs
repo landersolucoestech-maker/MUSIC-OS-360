@@ -19,11 +19,11 @@ test("wiring sites: every production call of a covered helper is found with its 
     ["apps/api/src/modules/m/other.ts", "const unrelated = other(dto);"],
   ]);
   const sites = wiringSites(files);
-  assert.deepEqual(sites.map((s) => [s.file, s.line, s.first]), [["apps/api/src/modules/m/m.service.ts", 4, "dto"], ["apps/api/src/modules/m/m.service.ts", 7, "dto"]]);
+  assert.deepEqual(sites.map((s) => [s.file, s.line, s.first]), [["apps/api/src/modules/m/m.service.ts", 4, "(dto)"], ["apps/api/src/modules/m/m.service.ts", 7, "(dto)"]]);
   assert.ok(HELPERS.has("applyDeprecatedFieldAliases"));
   // the mutation is a pure text replacement of the call by its first argument
   const s = sites[0];
-  assert.ok((SERVICE.slice(0, s.start) + s.first + SERVICE.slice(s.end)).includes("const data = dto;"));
+  assert.ok((SERVICE.slice(0, s.start) + s.first + SERVICE.slice(s.end)).includes("const data = (dto);"));
 });
 
 test("moduleDirOf: the module directory owns the specs that must notice the wiring", () => {
@@ -64,9 +64,9 @@ test("consumer sites: a call of a function imported from a credited file (relati
   const sites = wiringSites(files, credited).filter((s) => s.kind === "CONSUMER");
   assert.deepEqual(sites.map((s) => [s.file, s.first]).sort(), [
     ["apps/web/src/App.tsx", "undefined"],
-    ["apps/web/src/modules/m/a.tsx", "raw"],
-    ["apps/web/src/modules/m/b.tsx", "raw"],
-    ["apps/web/src/modules/m/c.tsx", "raw"],
+    ["apps/web/src/modules/m/a.tsx", "(raw)"],
+    ["apps/web/src/modules/m/b.tsx", "(raw)"],
+    ["apps/web/src/modules/m/c.tsx", "(raw)"],
   ]);
   assert.ok(sites.every((s) => s.target === "apps/web/src/modules/m/lib/vocab.ts"));
   // no credited files: only helper sites are searched
@@ -111,4 +111,12 @@ test("exemptions: an equivalent mutant needs file, exact text and a substantive 
   assert.equal(staleExemptions([], [good]).length, 1);
   assert.equal(staleExemptions([site], [{ ...good, reason: "x" }]).length, 1, "an invalid exemption is reported");
   assert.equal(validExemption(good), true);
+});
+
+test("the bypass text is parenthesized: a first argument that mixes operators never changes the surrounding expression (r14 wiring batch 3: `!f(x ?? \"\")`)", () => {
+  const files = new Map([["apps/api/src/modules/m/m.service.ts", "export const g = (d) => !applyDeprecatedFieldAliases(d.v ?? '', T);"]]);
+  const s = wiringSites(files)[0];
+  const text = files.get(s.file);
+  assert.equal(s.first, "(d.v ?? '')");
+  assert.equal(text.slice(0, s.start) + s.first + text.slice(s.end), "export const g = (d) => !(d.v ?? '');");
 });
