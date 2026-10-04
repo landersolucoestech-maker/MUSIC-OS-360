@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "qa-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Compatibility phase executed fresh at 921a601: API legacy/compat 80 suites 1578 tests pass; web legacy 107 files 837 tests pass; tooling node --test 48/48; compat audit 0, wiring audit 0.",
+  "workspaceFingerprint": "397b93ac6b710c1feac43030923e0309e1b459e4bfc5252fc8094d7ff2735455",
+  "fingerprintStatus": "BOUND",
+  "head": "c4954cad3f7664bd1d08bc28b1af4332161510cb",
+  "id": "evid-657fe67e",
+  "createdAt": "2026-10-04T22:32:01.551Z"
+}

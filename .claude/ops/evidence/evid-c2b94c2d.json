@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/naming/compat-boundary-audit.mjs --check",
+  "command": "node scripts/naming/compat-boundary-audit.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "compat-boundary audit: 4025 rows, 839 groups, {\"COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF\":0,\"OBSOLETE_BOUNDARIES\":0,\"MISCLASSIFIED_OPERATIONAL_USAGE\":0,\"LEGACY_FIRST_READS\":0}\n  proof basis: 1346 rows by mutation, 2 by the compiler only (declaration names, no mutation executed), 2385 rows by binding only (legacy literal used as a test fixture or script): binding is not behavioral proof",
+  "stderrTail": "",
+  "workspaceFingerprint": "397b93ac6b710c1feac43030923e0309e1b459e4bfc5252fc8094d7ff2735455",
+  "fingerprintStatus": "BOUND",
+  "head": "c4954cad3f7664bd1d08bc28b1af4332161510cb",
+  "durationMs": 11863,
+  "id": "evid-c2b94c2d",
+  "createdAt": "2026-10-04T22:31:59.078Z"
+}

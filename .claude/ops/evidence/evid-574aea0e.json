@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/naming/compat-wiring-proof.mjs --check",
+  "command": "node scripts/naming/compat-wiring-proof.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "compat-wiring audit: 504 production call sites (43 of applyDeprecatedFieldAliases, 461 consumer calls of credited files), WIRING_SITES_UNPROVEN=0",
+  "stderrTail": "",
+  "workspaceFingerprint": "397b93ac6b710c1feac43030923e0309e1b459e4bfc5252fc8094d7ff2735455",
+  "fingerprintStatus": "BOUND",
+  "head": "c4954cad3f7664bd1d08bc28b1af4332161510cb",
+  "durationMs": 2255,
+  "id": "evid-574aea0e",
+  "createdAt": "2026-10-04T22:32:01.443Z"
+}
