@@ -357,7 +357,7 @@ async function main() {
     if (!baselineCache.has(pair.test)) { const b = runTest(pair.test); baselineCache.set(pair.test, classifyRun(b.status, b.output)); }
     const rec = { file: pair.file, test: pair.test, fileSha256: sha256(realText), testSha256: sha256(fs.readFileSync(testAbs, "utf8")), verdict: "", mutations: [], legacyFirst: [] };
     if (baselineCache.get(pair.test) !== "pass") { rec.verdict = "BASELINE_RED"; results.set(`${pair.file}\u0000${pair.test}`, rec); console.log(`[${i + 1}/${pairs.length}] BASELINE_RED ${pair.file} <= ${pair.test}`); continue; }
-    const muts = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null);
+    const muts = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords });
     rec.census = muts.census;
     rec.configSha256 = runnerConfigSha(pair.test, readRepoFile); // the REPO configuration (the sandbox copy of jest.config is relaxed on purpose)
     if (pair.wildcard) rec.wildcardPredicate = 2;

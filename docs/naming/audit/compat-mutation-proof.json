@@ -51,7 +51,7 @@
    "file": "apps/api/src/common/compat/contract-last-payment.ts",
    "test": "apps/api/src/common/compat/contract-last-payment.spec.ts",
    "fileSha256": "4eb7c5b2f97fd66e82b0a62374e7631661529b2f09386d4d99b28d69e177e9a0",
-   "testSha256": "acdf2a2cb97e5804b5c262eefa2551570fa714d4b97c8e1751106f366dec9108",
+   "testSha256": "af454bd0b1c21e787647450dd649aedc26ee886a285faa1bd0b588bbb15f3756",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -92,11 +92,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -109,13 +104,19 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/common/compat/plan-features.ts",
    "test": "apps/api/src/common/compat/plan-features.spec.ts",
    "fileSha256": "eae0d1dc8805aabe1fc51a2d99228ded44c41992009c26efc3789935f4991551",
-   "testSha256": "9fcd100afcbdadad8ce8a156833623ca85e5ec5e242d502f35ac52521b634358",
+   "testSha256": "bc5752217d95e7ca354f4cc1417deb9830eff2d577e17c8fd599e8e7f3bc4d3d",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4157,7 +4158,7 @@
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "test": "apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts",
    "fileSha256": "109dbda31a6b9b1dcd04adaf6215ed3c8c2edeb1faf2e86783e912d9599f07c1",
-   "testSha256": "5bcc59d5ce911e19a5ecd867fa11cf3775c4943c865f6991b50e29335f382c18",
+   "testSha256": "dbe637b8e0a1d30e22e1c27abefaba522e4b3344632fb75c0dc48a77ae6cf700",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -4264,11 +4265,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -4298,7 +4294,14 @@
     ],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
@@ -16635,7 +16638,7 @@
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
    "test": "apps/web/src/modules/accounting/constants/transaction-constants.legacy-compat.test.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
    "testSha256": "31d9171b4ee1866c04aff19a37f6d92ae2c5890498ed0f4bc8de9796f7abe22e",
    "verdict": "PROVEN",
    "mutations": [
@@ -16647,11 +16650,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -16662,7 +16660,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/accounting/utils/financialRules.utils.ts",
@@ -22903,8 +22907,8 @@
   {
    "file": "apps/web/src/shared/lib/feature-flags.ts",
    "test": "apps/web/src/shared/lib/feature-flags.test.ts",
-   "fileSha256": "f24db0ccbb240fc41fbb052780b1c843d02e80395a89fb58744e98c7f7e85e48",
-   "testSha256": "b0bc35ccd67ed5341be676e295f620b26a9d1d8feb5a80f34d7ff5038c500297",
+   "fileSha256": "43136f0efae005a816a4e1247dce2a9e955b58d9a81c75beacdd3f7b59894f71",
+   "testSha256": "4a8883ab4978c4a79fcd5cfb4c0abe5f23e0ef19fc145f0dc7f3fc20f9a10c62",
    "verdict": "PROVEN",
    "mutations": [
     {
