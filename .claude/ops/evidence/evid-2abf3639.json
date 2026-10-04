@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "requirements-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r17 requirements review PASS_WITH_FINDINGS: no dropped or reinterpreted scope; destructive actions none, approvals appr-c80c4e2f/appr-6570cc2f PENDING ungranted, no *_CONFIRM set, D-01..D-06 left to owner, no gate weakened (all semantic diffs tighten), branch dev only. Open items carried to closure: orchestration audit counters (applicable agents/skills without justification), re-prove wiring --check with no agents active (one transient UNPROVEN=1 seen during parallel review), disclose binding-only basis (2387 rows) and the dead-code deletions in the final report, regression/security gates re-run fresh at freeze.",
+  "workspaceFingerprint": "c37ee1effe67fe531498ff55ee68c05ff195b2184c37365d3ede15c9bd1b2e69",
+  "fingerprintStatus": "BOUND",
+  "head": "7efd1e7080a2d0421bd8262a6200818ca1c1c544",
+  "id": "evid-2abf3639",
+  "createdAt": "2026-10-04T23:19:37.431Z"
+}

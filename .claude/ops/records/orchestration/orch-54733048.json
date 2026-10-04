@@ -5,7 +5,7 @@
   "intent": null,
   "status": "ACTIVE",
   "stopBlocks": 1,
-  "lastProgressAt": "2026-10-04T23:19:12.511Z",
+  "lastProgressAt": "2026-10-04T23:19:37.516Z",
   "tasks": [
     {
       "id": "census",
@@ -738,12 +738,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "RUNNING",
+      "status": "COMPLETED",
       "attempts": 0,
       "delegationId": "dele-6dab8fe0",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-2abf3639"
+      ],
+      "result": "r17 requirements: PASS_WITH_FINDINGS; open items tracked for closure.",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
