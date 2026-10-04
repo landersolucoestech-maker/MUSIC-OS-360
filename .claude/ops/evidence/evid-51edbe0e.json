@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "mutation-test-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r14: strict compat proof NOT sound as stated. BLOCKER: wildcard row legacy-redirects.tsx credited PROVEN but 41/44 route entries survive rename (wildcardWords excludes strings with slash). MAJOR: compat audit not enforced in CI (naming:check lacks it); wildcard coverage bounded by lexicon/regex; hash binding covers only runtime file + test. MINOR: binding-only rows (2002) not behaviorally proven; 322 fixture rows share a generic reason/owner; docs drift. Equivalent-mutant removals verified behavior-preserving (57531-input differential, 0 diffs). 1349 mutation-credited rows recomputed independently: 0 mismatches.",
+  "workspaceFingerprint": "7217b7af82ea90e7a20f3a82aeaf956e04e7fb973b8ff2ee5831e0d5b820b8cf",
+  "fingerprintStatus": "BOUND",
+  "head": "8871390cdd61f7def649023b9b2b4780aa7b03cb",
+  "id": "evid-51edbe0e",
+  "createdAt": "2026-10-04T06:33:58.280Z"
+}

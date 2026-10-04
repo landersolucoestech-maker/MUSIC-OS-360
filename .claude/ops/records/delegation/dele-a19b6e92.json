@@ -1,0 +1,9 @@
+{
+  "agent": "root-cause-investigator",
+  "objective": "Find the root cause of the failure of task r14-mutation (\"Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.\"): r14 verdict FAIL: wildcard route-path row falsely credited (41/44 legacy routes survive), compat gate not in CI, wildcard coverage bounded by lexicon, binding-only rows unlabelled. Fix, re-prove, re-review.. Do not retry the same approach.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-a19b6e92",
+  "createdAt": "2026-10-04T06:34:04.971Z"
+}

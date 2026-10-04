@@ -5,7 +5,7 @@
   "intent": null,
   "status": "ACTIVE",
   "stopBlocks": 1,
-  "lastProgressAt": "2026-10-04T05:58:08.236Z",
+  "lastProgressAt": "2026-10-04T08:37:10.057Z",
   "tasks": [
     {
       "id": "census",
@@ -1389,7 +1389,8 @@
       "filesInScope": [],
       "dependsOn": [
         "w14-mutation-proof",
-        "r14-mutation-recovery-1"
+        "r14-mutation-recovery-1",
+        "r14-mutation-recovery-2"
       ],
       "acceptance": [
         "verdict PASS/FAIL",
@@ -1398,12 +1399,12 @@
       "gates": [],
       "approvalClass": null,
       "status": "RUNNING",
-      "attempts": 1,
-      "delegationId": "dele-f51fa6b0",
+      "attempts": 2,
+      "delegationId": "dele-2d7c6db4",
       "approvalId": null,
       "evidenceRefs": [],
       "result": null,
-      "failureReason": "Independent review FAIL: 805 rows were credited by sibling kills (SAMPLED_PAIR) and 3 contract-wizard-party rows survive their own mutation; fix in progress: every ledger name is now mutated and credited only for its own name (exhaustive proof running), then re-review",
+      "failureReason": "r14 verdict FAIL: wildcard route-path row falsely credited (41/44 legacy routes survive), compat gate not in CI, wildcard coverage bounded by lexicon, binding-only rows unlabelled. Fix, re-prove, re-review.",
       "recoveryOf": null,
       "blockedExternal": null,
       "phase": "compatibility"
@@ -1605,6 +1606,35 @@
         "evid-bc42de7d"
       ],
       "result": "completed",
+      "failureReason": null,
+      "recoveryOf": "r14-mutation",
+      "blockedExternal": null
+    },
+    {
+      "id": "r14-mutation-recovery-2",
+      "title": "recover r14-mutation",
+      "objective": "Find the root cause of the failure of task r14-mutation (\"Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.\"): r14 verdict FAIL: wildcard route-path row falsely credited (41/44 legacy routes survive), compat gate not in CI, wildcard coverage bounded by lexicon, binding-only rows unlabelled. Fix, re-prove, re-review.. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-a19b6e92",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a4a4df39",
+        "evid-0e9c8436"
+      ],
+      "result": "Root cause (independent investigator): the wildcard predicate defined both the denominator and the evidence, so sites it could not see (routes, accents, spaced names) were never mutated. Fixed with a widened predicate, a census of unmutated sites + siteCount enforced by the audit, text-matched exemptions with reasons, runner-config binding; legacy-redirects pinned (51/51 killed).",
       "failureReason": null,
       "recoveryOf": "r14-mutation",
       "blockedExternal": null
