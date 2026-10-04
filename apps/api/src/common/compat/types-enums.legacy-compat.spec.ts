@@ -117,11 +117,12 @@ describe('RBAC hr/rh permission namespace aliases (legacy rh:* grants stay valid
 
   it('the legacy seed matrix grants the full rh:* set to super_admin and to the rh_manager slug, each action explicitly', () => {
     const { ROLE_PERMISSIONS } = load();
-    for (const role of [SystemRole.SUPER_ADMIN, FunctionalRole.RH_MANAGER]) {
+    for (const role of [SystemRole.SUPER_ADMIN, 'rh_manager']) {
       for (const action of actions) {
         expect(ROLE_PERMISSIONS[role]).toContain(`rh:${action}`);
       }
     }
-    expect(ROLE_PERMISSIONS[FunctionalRole.COLABORADOR]).not.toContain('rh:read');
+    const collaboratorSlug: string = 'colaborador';
+    expect(ROLE_PERMISSIONS[collaboratorSlug]).not.toContain('rh:read');
   });
 });

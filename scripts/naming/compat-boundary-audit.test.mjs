@@ -225,10 +225,10 @@ test("proof fallback: an enum member named by a ledger row is mutated only when 
 });
 
 test("proof fallback: a legacy namespace prefix is mutated for a name without ordinary site, and the plain name is never touched", () => {
-  const src = "const a = 'rh:read'; const b = `rh:${k}`; const c = 'rhx:read'; type T = 'rh' | 'hr';";
-  const m = findMutations(src, "a.ts", new Set(["rh"]));
-  const pf = m.lit.filter((x) => x.operator === "PREFIX_LITERAL");
-  assert.equal(pf.length, 2);
-  assert.ok(apply(src, pf[0]).includes("'__mutated__:read'"));
-  assert.ok(apply(src, pf[1]).includes("`__mutated__:${k}`"));
+  const src = "const a = 'legacyns:read'; const b = `legacyns:${k}`; const c = 'legacynsx:read'; type T = 'legacyns' | 'canonical';";
+  const m = findMutations(src, "a.ts", new Set(["legacyns"]));
+  const prefixMutations = m.lit.filter((x) => x.operator === "PREFIX_LITERAL");
+  assert.equal(prefixMutations.length, 2);
+  assert.ok(apply(src, prefixMutations[0]).includes("'__mutated__:read'"));
+  assert.ok(apply(src, prefixMutations[1]).includes("`__mutated__:${k}`"));
 });

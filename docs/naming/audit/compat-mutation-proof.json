@@ -242,7 +242,7 @@
    "file": "apps/api/src/core/rbac/rbac.service.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "9d203f2b5893041840f592d572246511d7f5b7339eaae46882b90d06778998f8",
-   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
+   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -379,7 +379,7 @@
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "0454a37037b41ac3bffbd76a016a803d4c8f6d886a35347db41201f961bdd1d0",
-   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
+   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -19404,7 +19404,7 @@
    "file": "packages/types/src/enums.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "d0713a3354213ec8af55f2065fdd7455a4111d5752bc6324a3f2906b1d5bd0fc",
-   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
+   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -19507,7 +19507,7 @@
    "file": "packages/types/src/role-slugs.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "e8f28d52cf5a24d2ed672a8f56eb92ce9d23972edfb01af5e3b3a8d4a11b1aac",
-   "testSha256": "0917556579bd83af7818104dd4f6d0c1ca843f428366056bd98e7283157ba9c6",
+   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
    "verdict": "PROVEN",
    "mutations": [
     {
