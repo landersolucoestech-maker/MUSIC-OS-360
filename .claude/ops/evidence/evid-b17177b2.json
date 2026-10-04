@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "mutation-test-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r14 re-review: original blocker (legacy-redirects) closed and census/siteCount/exemption/config-hash mechanisms hold (1349 rows recomputed, 0 mismatches). Still FAIL: F1 canonical-wins guard in plan-features.ts and web feature-flags.ts deletable with tests green; F2 pick() argument order in contacts.service.ts and other legacy-first forms invisible to operators; F3 six applyDeprecatedFieldAliases call sites removable with related tests green (projects, contract-service-types, contract-templates x2, hr updateEmployee); F4 gate not in naming:check (expected until PASS); F5 audit trusts stored census; F6 tooling tests leave harness/audit mutants alive; F7 minor (roleSlugEquivalents granularity, Navigate replace).",
+  "workspaceFingerprint": "822f9eefb447537779186f4a94300c821488fedc148d0ad4335a90d92638a683",
+  "fingerprintStatus": "BOUND",
+  "head": "9584eed59c696377b075a89133b2d1dbd0a96f98",
+  "id": "evid-b17177b2",
+  "createdAt": "2026-10-04T09:15:47.628Z"
+}

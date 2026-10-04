@@ -1,0 +1,9 @@
+{
+  "action": "human-approval",
+  "requestedBy": "human-approval-agent",
+  "status": "PENDING",
+  "grantedBy": null,
+  "resolvedAt": null,
+  "id": "appr-eccc285e",
+  "createdAt": "2026-10-04T10:50:21.405Z"
+}

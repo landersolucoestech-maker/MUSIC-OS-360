@@ -1,0 +1,138 @@
+{
+  "workflow": "naming-normalization",
+  "planId": "orch-54733048",
+  "matchId": "work-2e30a33e",
+  "status": "ACTIVE",
+  "adoptedFrom": [
+    "orch-e848167d"
+  ],
+  "steps": [
+    {
+      "phase": "census",
+      "taskIds": [
+        "census"
+      ],
+      "adopted": [
+        "orch-e848167d:census"
+      ]
+    },
+    {
+      "phase": "classify",
+      "taskIds": [
+        "classify"
+      ],
+      "adopted": [
+        "orch-e848167d:classify",
+        "orch-e848167d:w1-env-trace",
+        "orch-e848167d:w2-compat-semantic-groups",
+        "orch-e848167d:w3-historical-trace",
+        "orch-e848167d:w4-decisions-trace",
+        "orch-e848167d:w5-ci-check-exhaustion",
+        "orch-e848167d:r1-env-security",
+        "orch-e848167d:r2-naming",
+        "orch-e848167d:r3-docs",
+        "orch-e848167d:r4-decisions",
+        "orch-e848167d:r5-ci-docs"
+      ]
+    },
+    {
+      "phase": "canonical-model",
+      "taskIds": [
+        "canonical-model"
+      ],
+      "adopted": [
+        "orch-e848167d:canonical-model"
+      ]
+    },
+    {
+      "phase": "schema-plan",
+      "taskIds": [
+        "schema-plan"
+      ],
+      "adopted": [
+        "orch-e848167d:schema-plan",
+        "orch-e848167d:w6-destructive-dossier",
+        "orch-e848167d:w7-pii-key-custody",
+        "orch-e848167d:r6-dossier-db",
+        "orch-e848167d:r6b-dossier-guard",
+        "orch-e848167d:r7-pii"
+      ]
+    },
+    {
+      "phase": "destructive-approval",
+      "taskIds": [
+        "destructive-approval"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "propagate",
+      "taskIds": [
+        "propagate"
+      ],
+      "adopted": [
+        "orch-e848167d:propagate",
+        "orch-e848167d:w8-env-templates",
+        "orch-e848167d:w9-web-fixes",
+        "orch-e848167d:w10-api-tests",
+        "orch-e848167d:w11-ledger-gate",
+        "orch-e848167d:w12-dead-generator",
+        "orch-e848167d:w13-doc-corrections",
+        "orch-e848167d:r8-protected",
+        "orch-e848167d:r9-frontend",
+        "orch-e848167d:r9b-architecture",
+        "orch-e848167d:r10-backend",
+        "orch-e848167d:r11-ledger",
+        "orch-e848167d:r12-dead"
+      ]
+    },
+    {
+      "phase": "compatibility",
+      "taskIds": [
+        "compatibility",
+        "r14-mutation"
+      ],
+      "adopted": [
+        "orch-e848167d:w14-mutation-proof",
+        "orch-e848167d:w15-proof-closure",
+        "orch-e848167d:r15-regression"
+      ]
+    },
+    {
+      "phase": "verify",
+      "taskIds": [
+        "verify"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "residue",
+      "taskIds": [
+        "residue"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "review",
+      "taskIds": [
+        "review",
+        "r16-secrets",
+        "r17-requirements",
+        "r18-frontend-security",
+        "r19-frontend-consistency"
+      ],
+      "adopted": [
+        "orch-e848167d:r3b-docs-corrections"
+      ]
+    },
+    {
+      "phase": "closure",
+      "taskIds": [
+        "closure"
+      ],
+      "adopted": []
+    }
+  ],
+  "id": "work-8965dbca",
+  "createdAt": "2026-10-04T10:50:12.989Z"
+}

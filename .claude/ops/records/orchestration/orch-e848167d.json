@@ -3,9 +3,9 @@
   "title": "foundation-closure",
   "workflow": "naming-normalization",
   "intent": null,
-  "status": "ACTIVE",
-  "stopBlocks": 1,
-  "lastProgressAt": "2026-10-04T08:37:10.057Z",
+  "status": "ABANDONED",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-04T09:15:47.709Z",
   "tasks": [
     {
       "id": "census",
@@ -1398,13 +1398,13 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "RUNNING",
-      "attempts": 2,
+      "status": "FAILED",
+      "attempts": 3,
       "delegationId": "dele-2d7c6db4",
       "approvalId": null,
       "evidenceRefs": [],
       "result": null,
-      "failureReason": "r14 verdict FAIL: wildcard route-path row falsely credited (41/44 legacy routes survive), compat gate not in CI, wildcard coverage bounded by lexicon, binding-only rows unlabelled. Fix, re-prove, re-review.",
+      "failureReason": "r14 re-review FAIL: F1 canonical-wins guards, F2 precedence forms, F3 call-site wiring, F5 census recompute in audit, F6 tooling mutants. Fix, re-prove, re-review.",
       "recoveryOf": null,
       "blockedExternal": null,
       "phase": "compatibility"
@@ -1644,5 +1644,8 @@
   "requireWorkflow": true,
   "id": "orch-e848167d",
   "createdAt": "2026-10-03T15:08:52.613Z",
-  "workflowInstanceId": "work-d7470294"
+  "workflowInstanceId": "work-d7470294",
+  "abandonedReason": "Superseded by orch-54733048: r14-mutation reached the 3-attempt loop breaker (FAIL x2 independent reviews, findings fixed in commits up to 9dafda6); completed work adopted by the new plan on the owner's decision to abandon and recreate. Pending approvals appr-c80c4e2f and appr-6570cc2f remain ungranted.",
+  "abandonedAt": "2026-10-04T10:50:17.495Z",
+  "abandonedIncompleteTasks": 12
 }

@@ -1,0 +1,839 @@
+{
+  "order": "Close the technical foundation: normalization of technical language, naming blockers, compatibility boundaries and legacy aliases, environment contract, historical records, destructive approval packages and product decision packages",
+  "title": "foundation-closure (continuation of orch-e848167d)",
+  "workflow": "naming-normalization",
+  "intent": null,
+  "status": "ACTIVE",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-04T10:50:21.413Z",
+  "tasks": [
+    {
+      "id": "census",
+      "title": "census",
+      "objective": "Phase \"census\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: repo-inspector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "repository-census"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "evidence recorded: census-report"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-4cd8051a"
+      ],
+      "result": "adopted from orch-e848167d: census",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "census",
+          "evidenceRefs": [
+            "evid-4cd8051a"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "classify",
+      "title": "classify",
+      "objective": "Phase \"classify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: duplication-detector, dead-code-detector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "duplication-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census"
+      ],
+      "acceptance": [
+        "evidence recorded: classification-record"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-4129fb10",
+        "evid-c21baa55",
+        "evid-488df408",
+        "evid-f044b542",
+        "evid-2655bb55",
+        "evid-a1e2a02c",
+        "evid-6dd1dc3e",
+        "evid-6c0f9460",
+        "evid-90b02f6d",
+        "evid-4f7966e7",
+        "evid-62158e0f"
+      ],
+      "result": "adopted from orch-e848167d: classify, w1-env-trace, w2-compat-semantic-groups, w3-historical-trace, w4-decisions-trace, w5-ci-check-exhaustion, r1-env-security, r2-naming, r3-docs, r4-decisions, r5-ci-docs",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "classify",
+          "evidenceRefs": [
+            "evid-4129fb10"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w1-env-trace",
+          "evidenceRefs": [
+            "evid-c21baa55"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w2-compat-semantic-groups",
+          "evidenceRefs": [
+            "evid-488df408"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w3-historical-trace",
+          "evidenceRefs": [
+            "evid-f044b542"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w4-decisions-trace",
+          "evidenceRefs": [
+            "evid-2655bb55"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w5-ci-check-exhaustion",
+          "evidenceRefs": [
+            "evid-a1e2a02c"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r1-env-security",
+          "evidenceRefs": [
+            "evid-6dd1dc3e"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r2-naming",
+          "evidenceRefs": [
+            "evid-6c0f9460"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r3-docs",
+          "evidenceRefs": [
+            "evid-90b02f6d"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r4-decisions",
+          "evidenceRefs": [
+            "evid-4f7966e7"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r5-ci-docs",
+          "evidenceRefs": [
+            "evid-62158e0f"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "canonical-model",
+      "title": "canonical-model",
+      "objective": "Phase \"canonical-model\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: domain-boundary-guardian.",
+      "agent": "naming-reviewer",
+      "skills": [
+        "canonical-naming"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "classify"
+      ],
+      "acceptance": [
+        "evidence recorded: canonical-map-update"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-15efc678"
+      ],
+      "result": "adopted from orch-e848167d: canonical-model",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "canonical-model",
+          "evidenceRefs": [
+            "evid-15efc678"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "schema-plan",
+      "title": "schema-plan",
+      "objective": "Phase \"schema-plan\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: database-reviewer, rollback-planner.",
+      "agent": "migration-planner",
+      "skills": [
+        "migration-audit",
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model"
+      ],
+      "acceptance": [
+        "evidence recorded: migration-plan",
+        "evidence recorded: rollback-plan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-ed522b3f",
+        "evid-7e8cb642",
+        "evid-1e989842",
+        "evid-68d120d8",
+        "evid-856073d5",
+        "evid-5467f479"
+      ],
+      "result": "adopted from orch-e848167d: schema-plan, w6-destructive-dossier, w7-pii-key-custody, r6-dossier-db, r6b-dossier-guard, r7-pii",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "schema-plan",
+          "evidenceRefs": [
+            "evid-ed522b3f"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w6-destructive-dossier",
+          "evidenceRefs": [
+            "evid-7e8cb642"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w7-pii-key-custody",
+          "evidenceRefs": [
+            "evid-1e989842"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r6-dossier-db",
+          "evidenceRefs": [
+            "evid-68d120d8"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r6b-dossier-guard",
+          "evidenceRefs": [
+            "evid-856073d5"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r7-pii",
+          "evidenceRefs": [
+            "evid-5467f479"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "destructive-approval",
+      "title": "destructive-approval",
+      "objective": "Phase \"destructive-approval\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: approval-router.",
+      "agent": "human-approval-agent",
+      "skills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "schema-plan"
+      ],
+      "acceptance": [
+        "evidence recorded: approval-record",
+        "a recorded human approval of this phase"
+      ],
+      "gates": [],
+      "approvalClass": "human-approval",
+      "status": "WAITING_APPROVAL",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": "appr-eccc285e",
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "propagate",
+      "title": "propagate",
+      "objective": "Phase \"propagate\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: refactoring-engineer.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "safe-refactor",
+        "schema-normalization"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model",
+        "schema-plan"
+      ],
+      "acceptance": [
+        "evidence recorded: change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-accfb061",
+        "evid-bdfe38bc",
+        "evid-020e8049",
+        "evid-b9ec999a",
+        "evid-7379e0f6",
+        "evid-c6821f1b",
+        "evid-2cf1b1f9",
+        "evid-79b01a2d",
+        "evid-ed4c11d7",
+        "evid-377f7d65",
+        "evid-fa0c763f",
+        "evid-52f91b3f",
+        "evid-a5a016cd"
+      ],
+      "result": "adopted from orch-e848167d: propagate, w8-env-templates, w9-web-fixes, w10-api-tests, w11-ledger-gate, w12-dead-generator, w13-doc-corrections, r8-protected, r9-frontend, r9b-architecture, r10-backend, r11-ledger, r12-dead",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "propagate",
+          "evidenceRefs": [
+            "evid-accfb061"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w8-env-templates",
+          "evidenceRefs": [
+            "evid-bdfe38bc"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w9-web-fixes",
+          "evidenceRefs": [
+            "evid-020e8049"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w10-api-tests",
+          "evidenceRefs": [
+            "evid-b9ec999a"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w11-ledger-gate",
+          "evidenceRefs": [
+            "evid-7379e0f6"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w12-dead-generator",
+          "evidenceRefs": [
+            "evid-c6821f1b"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w13-doc-corrections",
+          "evidenceRefs": [
+            "evid-2cf1b1f9"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r8-protected",
+          "evidenceRefs": [
+            "evid-79b01a2d"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r9-frontend",
+          "evidenceRefs": [
+            "evid-ed4c11d7"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r9b-architecture",
+          "evidenceRefs": [
+            "evid-377f7d65"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r10-backend",
+          "evidenceRefs": [
+            "evid-fa0c763f"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r11-ledger",
+          "evidenceRefs": [
+            "evid-52f91b3f"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r12-dead",
+          "evidenceRefs": [
+            "evid-a5a016cd"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compatibility",
+      "title": "compatibility",
+      "objective": "Phase \"compatibility\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: contract-test-engineer.",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "propagate",
+        "r14-mutation"
+      ],
+      "acceptance": [
+        "evidence recorded: compatibility-test-run"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "w14-mutation-proof",
+          "evidenceRefs": [
+            "evid-48ba7c36"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "w15-proof-closure",
+          "evidenceRefs": [
+            "evid-8d56578a",
+            "evid-39a818ed"
+          ]
+        },
+        {
+          "plan": "orch-e848167d",
+          "task": "r15-regression",
+          "evidenceRefs": [
+            "evid-2a013f14"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "title": "verify",
+      "objective": "Phase \"verify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: verification-controller.",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "run-unit-tests",
+        "run-typecheck"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "compatibility"
+      ],
+      "acceptance": [
+        "evidence recorded: after-test-run",
+        "evidence recorded: migration-verification"
+      ],
+      "gates": [
+        "global"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "verify"
+    },
+    {
+      "id": "residue",
+      "title": "residue",
+      "objective": "Phase \"residue\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: orphan-detector.",
+      "agent": "dead-code-detector",
+      "skills": [
+        "residue-search",
+        "orphan-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "verify"
+      ],
+      "acceptance": [
+        "evidence recorded: residue-scan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "residue"
+    },
+    {
+      "id": "review",
+      "title": "review",
+      "objective": "Phase \"review\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: regression-reviewer.",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit",
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue",
+        "r16-secrets",
+        "r17-requirements",
+        "r18-frontend-security",
+        "r19-frontend-consistency"
+      ],
+      "acceptance": [
+        "evidence recorded: security-verdict",
+        "evidence recorded: regression-verdict"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review",
+      "adopted": [
+        {
+          "plan": "orch-e848167d",
+          "task": "r3b-docs-corrections",
+          "evidenceRefs": [
+            "evid-5d38e241"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "closure",
+      "title": "closure",
+      "objective": "Phase \"closure\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: completion-controller.",
+      "agent": "git-auditor",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "review"
+      ],
+      "acceptance": [
+        "evidence recorded: gate-results",
+        "evidence recorded: final-report"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "closure"
+    },
+    {
+      "id": "r14-mutation",
+      "title": "r14-mutation",
+      "objective": "Independent, adversarial review of the FINAL strict compatibility proof. History: two earlier r14 rounds on orch-e848167d returned FAIL and the task hit the 3-attempt loop breaker; the findings (wildcard false credit on legacy-redirects, canonical-wins guards, precedence forms, six alias-helper call sites, audit trusting stored JSON, tooling mutants) were fixed in commits up to 9dafda6. Judge: (1) per-name mutation proof with census, exemptions, runner-config binding and the audit recompute oracle; (2) the wiring gate scripts/naming/compat-wiring-proof.mjs; (3) that the claim is stated precisely in docs/engineering/naming-state-separation.md (what is proven, binding-only rows, known limits). Try to disprove; report PASS, PASS_WITH_FINDINGS or FAIL with reproductions.",
+      "agent": "mutation-test-reviewer",
+      "skills": [
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "false-green attempts"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-7b68142b",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "r16-secrets",
+      "title": "r16-secrets",
+      "objective": "Independently scan the final diff and tracked files for real secrets, credential shapes and unsafe defaults (env templates, tests, fixtures, docs, scripts); report names/shapes only.",
+      "agent": "secrets-reviewer",
+      "skills": [
+        "secret-scan"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r17-requirements",
+      "title": "r17-requirements",
+      "objective": "Independently verify requirement-to-evidence closure of the 21 sections of the foundation-closure order and of the orchestration-audit order: dropped, narrowed or adjacent behavior; categories A/B/C only.",
+      "agent": "requirements-reviewer",
+      "skills": [
+        "plan"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r18-frontend-security",
+      "title": "r18-frontend-security",
+      "objective": "Independently review web edits touching consent, signup payload, postal-code provider fetch and rendered credit lists for XSS, unsafe URLs, token handling and client-only authorization.",
+      "agent": "frontend-security-reviewer",
+      "skills": [
+        "xss-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r19-frontend-consistency",
+      "title": "r19-frontend-consistency",
+      "objective": "Independently review naming and structure consistency of the web helpers legacy-reads, legacy-title, signup-metadata, masks, category-labels, category-import and their tests.",
+      "agent": "frontend-consistency-reviewer",
+      "skills": [
+        "naming-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "classify",
+        "canonical-model",
+        "schema-plan",
+        "destructive-approval",
+        "propagate",
+        "compatibility",
+        "verify",
+        "residue",
+        "review",
+        "closure",
+        "r14-mutation",
+        "r16-secrets",
+        "r17-requirements",
+        "r18-frontend-security",
+        "r19-frontend-consistency"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    }
+  ],
+  "missionId": "mission-c83f8d58",
+  "requireWorkflow": true,
+  "id": "orch-54733048",
+  "createdAt": "2026-10-04T10:50:12.986Z",
+  "workflowInstanceId": "work-8965dbca"
+}

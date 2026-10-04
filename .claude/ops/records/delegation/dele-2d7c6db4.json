@@ -3,7 +3,7 @@
   "objective": "Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.",
   "requirementIds": [],
   "filesInScope": [],
-  "status": "OPEN",
+  "status": "CLOSED",
   "id": "dele-2d7c6db4",
   "createdAt": "2026-10-04T08:37:10.054Z"
 }
