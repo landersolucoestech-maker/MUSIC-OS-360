@@ -36,8 +36,8 @@ const GUARD_FILE_ALLOWLIST = new Set([
 
 // Historical docs that ALREADY existed when the gate was created (2026-07-04).
 // Do not add new items here without an explicit architecture decision.
-// CLEANUP_REPORT.md moved from root/ (tracked, baseline below) to reports/
-// (untracked, the same convention as everything else in reports/) — Part 81.
+// CLEANUP_REPORT.md moved from root/ to reports/, where it is tracked as a
+// frozen historical record (docs/naming/historical-records.json) — Part 81.
 const HISTORICAL_DOC_BASELINE = new Set([]);
 
 const JUNK_PATTERN = /\.(log|tmp|bak|orig|rej)$|~$|(^|\/)\.DS_Store$|(^|\/)Thumbs\.db$|(^|\/)\.tmp-/i;

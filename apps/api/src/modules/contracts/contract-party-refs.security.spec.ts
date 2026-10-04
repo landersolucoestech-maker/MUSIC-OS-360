@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { ALL_ENTITIES, ContractEntity } from '../../database/entities';
+import { ArtistRefDto, ClientRefDto, ContractPartyRefsDto, LegacyClientRefDto } from './dto/contract-party-ref.dto';
 import { ContractsService } from './contracts.service';
 import { toContractResponse } from './contract-party-refs';
-import type { ContractPartyRefsDto, LegacyClientRefDto } from './dto/contract-party-ref.dto';
 
 /**
  * S1 / D1 (review bc40b76): contract responses embed only whitelisted party
@@ -165,10 +165,17 @@ describe('toContractResponse — field-by-field projection (defense in depth)', 
   it('the documented ContractPartyRefsDto keys are exactly the party embeds the response serializes (canonical + deprecated)', async () => {
     const { svc } = await makeService([contractRaw()]);
     const res = await svc.findById(TENANT, CONTRACT) as unknown as Record<string, unknown>;
-    const documented: Array<keyof ContractPartyRefsDto> = ['artist', 'client', 'artistas', 'clientes'];
-    for (const key of documented) expect(res).toHaveProperty(key);
-    const legacyClientKeys: Array<keyof LegacyClientRefDto> = ['id', 'name', 'nome'];
-    expect(Object.keys(res['clientes'] as object).sort()).toEqual([...legacyClientKeys].sort());
-    expect(Object.keys(res['client'] as object).sort()).toEqual(['id', 'name']);
+    // Read the keys from the Swagger metadata of the documented DTOs so a DTO/serializer drift fails at runtime.
+    const documentedKeys = (cls: { prototype: object }): string[] =>
+      ((Reflect.getMetadata('swagger/apiModelPropertiesArray', cls.prototype) ?? []) as string[])
+        .map((k) => k.replace(/^:/, ''))
+        .sort();
+    expect(documentedKeys(ContractPartyRefsDto)).toEqual(['artist', 'artistas', 'client', 'clientes']);
+    for (const key of documentedKeys(ContractPartyRefsDto)) expect(res).toHaveProperty(key);
+    expect(Object.keys(res['artist'] as object).sort()).toEqual(documentedKeys(ArtistRefDto));
+    expect(Object.keys(res['artistas'] as object).sort()).toEqual(documentedKeys(ArtistRefDto));
+    expect(Object.keys(res['client'] as object).sort()).toEqual(documentedKeys(ClientRefDto));
+    expect(Object.keys(res['clientes'] as object).sort()).toEqual(documentedKeys(LegacyClientRefDto));
+    expect(documentedKeys(LegacyClientRefDto)).toEqual(['id', 'name', 'nome']);
   });
 });

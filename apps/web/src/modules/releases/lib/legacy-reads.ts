@@ -3,7 +3,7 @@
  * responses of builds older than the English contract). The canonical field always wins; the deprecated one is read
  * only when the canonical one is absent. This is the only place of the releases module that names those fields.
  */
-import { parseTracksFromProject, type TrackData } from "@/modules/projects/utils/track-helpers";
+import { parseTracksFromProject, type TrackData } from "@/modules/projects/lib/track-helpers";
 
 type Loose = Record<string, unknown>;
 

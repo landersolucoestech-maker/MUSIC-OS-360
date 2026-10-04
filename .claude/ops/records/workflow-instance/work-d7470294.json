@@ -20,7 +20,12 @@
         "w2-compat-semantic-groups",
         "w3-historical-trace",
         "w4-decisions-trace",
-        "w5-ci-check-exhaustion"
+        "w5-ci-check-exhaustion",
+        "r1-env-security",
+        "r2-naming",
+        "r3-docs",
+        "r4-decisions",
+        "r5-ci-docs"
       ],
       "adopted": []
     },
@@ -36,7 +41,10 @@
       "taskIds": [
         "schema-plan",
         "w6-destructive-dossier",
-        "w7-pii-key-custody"
+        "w7-pii-key-custody",
+        "r6-dossier-db",
+        "r6b-dossier-guard",
+        "r7-pii"
       ],
       "adopted": []
     },
@@ -56,7 +64,13 @@
         "w10-api-tests",
         "w11-ledger-gate",
         "w12-dead-generator",
-        "w13-doc-corrections"
+        "w13-doc-corrections",
+        "r8-protected",
+        "r9-frontend",
+        "r9b-architecture",
+        "r10-backend",
+        "r11-ledger",
+        "r12-dead"
       ],
       "adopted": []
     },
@@ -65,7 +79,9 @@
       "taskIds": [
         "compatibility",
         "w14-mutation-proof",
-        "w15-proof-closure"
+        "w15-proof-closure",
+        "r14-mutation",
+        "r15-regression"
       ],
       "adopted": []
     },
@@ -86,7 +102,12 @@
     {
       "phase": "review",
       "taskIds": [
-        "review"
+        "review",
+        "r3b-docs-corrections",
+        "r16-secrets",
+        "r17-requirements",
+        "r18-frontend-security",
+        "r19-frontend-consistency"
       ],
       "adopted": []
     },

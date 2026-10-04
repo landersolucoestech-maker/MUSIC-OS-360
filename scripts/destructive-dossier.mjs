@@ -30,11 +30,12 @@ export const REQUIREMENT_TYPES = ["HUMAN_APPROVAL", "HUMAN_DECISION", "EXTERNAL_
 
 /** Primitive costs measured on this workspace (synthetic table, 273 MB per million rows, 4 vCPU shared with other jobs). */
 export const MEASURED_RATES = {
-  provenance: "microbenchmark of 2026-10-03 on the disposable PostgreSQL 16 of this workspace: synthetic table of 1,000,000 and 3,000,000 rows (273 MB and 829 MB), run while three other CPU-heavy jobs shared the 4 vCPUs; order of magnitude only, to be re-measured on a staging restore",
-  preconditionScanPerMillionRowsSec: "0.08 to 0.14",
-  archiveInsertPerMillionRowsSec: "1.3 to 1.6",
-  dropColumnMs: "3 to 4 (catalog change, independent of row count)",
-  restoreUpdatePerMillionRowsSec: "19 to 40 (down() only)",
+  provenance: "microbenchmark of 2026-10-03 (reproducible: scripts/legacy-drop-primitive-benchmark.sql) on the disposable PostgreSQL 16 of this workspace: synthetic table of 1,000,000 and 3,000,000 rows (273 MB and 829 MB, about 270 bytes per row), run while other CPU-heavy jobs shared the 4 vCPUs (contention biases the numbers pessimistic); the legacy columns of the synthetic table are tiny (short text, a one-key jsonb object, uuid) and the table fits in RAM (warm cache), so large TOASTed text/jsonb values (for example works.legacy_lyrics, legacy_alternative_titles, HR data) will cost more than these figures for archive insert and verification joins; order of magnitude only, to be re-measured on a staging restore. WAL volume, replication lag and archive table size were not estimated",
+  preconditionScanPerMillionRowsSec: "0.03 to 0.18 s per million rows",
+  archiveInsertPerMillionRowsSec: "1.3 to 1.7 s per million rows (CREATE TABLE AS, a lower bound: the draft inserts into a primary-key table)",
+  verificationJoinsPerMillionRowsSec: "1.1 to 1.2 s per million rows per join (two joins: NOT EXISTS coverage and archive-to-live stale check)",
+  dropColumnMs: "3 to 4 ms (catalog change, independent of row count)",
+  restoreUpdatePerMillionRowsSec: "19 to 40 s per million rows (down() only)",
 };
 
 const PII_PACKAGES = [
@@ -53,7 +54,8 @@ const PII_PACKAGES = [
       ["EXTERNAL_REQUIREMENT", "backup restore proof and a PITR restore point id taken immediately before the run"],
       ["HUMAN_DECISION", "ENCRYPTION_KEY custody: named holder, escrow location, recovery procedure, rotation plan (see docs/engineering/pii-key-custody-request.md)"],
       ["HUMAN_DECISION", "retention owner, period and policy of the two plaintext archive tables"],
-      ["EXTERNAL_REQUIREMENT", "confirmation that the dual-read API release is live on every instance of the target; a maintenance window for the FOR UPDATE row locks"],
+      ["EXTERNAL_REQUIREMENT", "confirmation that the dual-read API release is live on every instance of the target"],
+      ["HUMAN_DECISION", "maintenance window for the FOR UPDATE row locks"],
     ],
   },
   {
@@ -72,6 +74,8 @@ const PII_PACKAGES = [
       ["EXTERNAL_REQUIREMENT", "backup restore proof and a PITR restore point id taken immediately before the run"],
       ["HUMAN_DECISION", "ENCRYPTION_KEY custody and escrow, proven by a restore of the key in a clean environment (see docs/engineering/pii-key-custody-request.md)"],
       ["HUMAN_DECISION", "retention owner, period and policy of the plaintext archives that become the only plaintext copy"],
+      ["EXTERNAL_REQUIREMENT", "confirmation that the dual-read API release is live on every instance of the target (an old build would read NULL plaintext as empty and could write plaintext back)"],
+      ["HUMAN_DECISION", "maintenance window for the FOR UPDATE row locks; also the lifetime of older backups and PITR points that still hold plaintext after the scrub"],
     ],
   },
 ];
@@ -86,13 +90,43 @@ function dropPackage(g, drafts) {
   const rows = (census.per_table ?? []).map((t) => `${t.table}=${t.rows_holding_legacy_values}/${t.rows_total}`).join(" ");
   const div = ev["7"];
   const pii = (drafts.find((d) => d.short === g.group) ?? {}).pii;
-  return { id: g.group, short: `package ${g.group} ${g.label}`, migration: `${g.migration} | ${ev["1"].file} | sha256=${ev["1"].sha256} | registered=${ev["1"].registered}`, destructive: g.destructive, tables, columns: cols,
+  const o = OVERRIDES[g.group] ?? {};
+  const base = { id: g.group, short: `package ${g.group} ${g.label}`, migration: `${g.migration} | ${ev["1"].file} | sha256=${ev["1"].sha256} | registered=${ev["1"].registered}`, destructive: g.destructive, tables, columns: cols,
     disposableCensus: `${rows} (disposable base, no business rows)`, divergences: `${div.status}: blocking=${div.blocking_total}, informational=${div.informational_total} over ${(div.checks ?? []).length} check(s) on the disposable base`,
     archive: `${tables.map((t) => `${t}_legacy_archive_20260930`).join(", ")}: created by up() (RLS enabled and forced, no policy, grants to PUBLIC/anon/authenticated/musicos_app revoked), holds the legacy values by id; kept by down(); retired only by draft 20260930000052 after the retention window`,
     restore: `down() re-adds the columns (nullable, same type) and restores the values by id from the archive (refuses without it, never drops it); disposable rehearsal ${ev["10"].status}: values equal by id after down(), archive kept. A restore of a real backup was never performed`,
     rehearsal: `disposable COPY ${ev["11"].status} (legacy-column-drop-drafts e2e spec, up -> down -> up)`,
     pii: Boolean(pii), missing: [] };
+  return { ...base, ...o, divergences: o.divergences ?? (base.divergences + (o.divergences_note ? `; ${o.divergences_note}` : "")), dependencies: `${o.dependencies ?? "release B0 (entity/reader/writer removal) and release A deployed everywhere; the 15 owner evidence items of scripts/legacy-drop-preflight.mjs; one destructive migration per deploy"}; ${COMMON_DEPENDENCY_TAIL}` };
 }
+
+/** Facts that differ from the generic base-driven archive-then-drop shape (derived from the drafts, verified by the independent review). */
+export const OVERRIDES = {
+  "46": {
+    archive: "NO archive table: events.data is enforced equal to events.starts_at (NOT NULL) by the sync trigger, so the precondition `data IS DISTINCT FROM starts_at` = 0 and `starts_at IS NULL` = 0 proves the column carries no information",
+    restore: "down(): ADD COLUMN data, UPDATE events SET data = starts_at, SET NOT NULL, recreate the sync function, the trigger and idx_events_tenant_data (rebuilt from starts_at, not restored from an archive). up() drops trigger and function before the column and asserts idx_events_tenant_starts_at exists first",
+    retention: "NOT_APPLICABLE (no archive)", noRetentionItem: true,
+    dependencies: "release B0 (entity/reader/writer removal) deployed everywhere; index idx_events_tenant_starts_at present; one destructive migration per deploy; draft 52 retires no events archive because none exists",
+    lockEstimate: "up(): SET LOCAL lock_timeout 15s, then LOCK TABLE events IN SHARE ROW EXCLUSIVE MODE first (readers continue, writers wait, also while queueing for up to 15s), held through the whole transaction: one precondition scan of events (data IS DISTINCT FROM starts_at, starts_at IS NULL), then DROP TRIGGER, DROP FUNCTION and DROP COLUMN (catalog changes, ACCESS EXCLUSIVE, milliseconds); no archive insert and no joins. down() is NOT a catalog change: a full-table UPDATE events SET data = starts_at plus SET NOT NULL and an index rebuild, proportional to table size. Real window EXTERNAL_REQUIREMENT (needs real row counts and a staging restore)",
+  },
+  "48": {
+    archive: "NO archive and no data loss: the draft only runs ALTER COLUMN DROP NOT NULL on invoices.legacy_amount (precursor of package 49)",
+    restore: "down(): refuses when legacy_amount is absent or when any row has both amounts NULL, otherwise refills legacy_amount from service_amount and SET NOT NULL",
+    retention: "NOT_APPLICABLE (no archive)", noRetentionItem: true,
+    dependencies: "requires migration 20260930000022; must be applied BEFORE package 49 with the stop-writing/entity-removal release between them; rollback order is 49 then 48 (legacy-column-drop-plan.md)",
+    lockEstimate: "up(): SET LOCAL lock_timeout 15s, then LOCK TABLE invoices IN SHARE ROW EXCLUSIVE MODE first (readers continue, writers wait, also while queueing for up to 15s), held through the transaction: one precondition scan of invoices, then ALTER COLUMN legacy_amount DROP NOT NULL (the ALTER itself is metadata-only, ACCESS EXCLUSIVE for milliseconds); there is no DROP COLUMN, no archive and no join. down() refills legacy_amount from service_amount (a full-table UPDATE) and sets NOT NULL again. Real window EXTERNAL_REQUIREMENT (needs real row counts and a staging restore)",
+    b0: "release A deployed everywhere so that no writer depends on NOT NULL invoices.legacy_amount; release B0 (stop-writing/entity removal) comes AFTER 48 is applied everywhere and BEFORE package 49, so it is not a prerequisite of 48",
+  },
+  "49": { dependencies: "package 48 applied first and migration 20260930000022 present, with the stop-writing and entity-removal release between 48 and 49; rollback order 49 then 48; draft 52 retires the archive and must be re-timestamped after 49 and the PII drafts" },
+  "53": {
+    archive: "employees_pii_legacy_archive_20260930 (distinct from package 45's employees_legacy_archive_20260930): created by up(), RLS enabled and forced, no policy, app roles revoked, holds rg, birth_date, address by id; kept by down()",
+    divergences: "NO machine check exists in the draft (checks: [] by design): the gate is the owner census (plan 3.6) and the HR retention decision, so this is not a clean ZERO",
+    dependencies: "independent of package 45 although both touch employees: they must not share a deploy; owner census 3.6 and HR retention decision; release B0",
+  },
+  "43": { divergences_note: "the draft's single check is informational and vacuous: the real gate is the owner-signed (legacy, status) pair census" },
+  "45": { lockNote: "three tables (employees, payroll_entries, leave_requests) are locked one after another, each under its own 15s lock_timeout, and the ALTERs run last: check for deadlock risk against other writers" },
+};
+const COMMON_DEPENDENCY_TAIL = "draft 20260930000052 (RetireLegacyColumnDropArchives) retires the archives of 40-45, 49, 53 and the two PII archives and must be re-timestamped AFTER 20261002000002 and 20261002000003, otherwise it is a no-op through DROP IF EXISTS and the archives are never retired";
 
 export function buildPackages(preflight, drafts) {
   const pk = [];
@@ -103,31 +137,32 @@ export function buildPackages(preflight, drafts) {
   return pk;
 }
 
-const COMMON_MISSING = (id, pii) => [
+const COMMON_MISSING = (id, pii, noRetention = false, b0 = "release B0 (entity/reader/writer removal) and release A deployed and green in every environment") => [
   ["HUMAN_APPROVAL", `explicit owner approval naming migration ${id}, the environment and the columns (decision deci-ed83c974 grants none)`],
   ["EXTERNAL_REQUIREMENT", "real-environment census (read-only connection; `node scripts/legacy-drop-preflight.mjs --env <dev|staging|production> --group " + id + "` with DATABASE_URL of that environment)"],
-  ["EXTERNAL_REQUIREMENT", "release B0 (entity/reader/writer removal) and release A deployed and green in every environment"],
+  ["EXTERNAL_REQUIREMENT", b0],
+  ["EXTERNAL_REQUIREMENT", "coexistence proof: B0 deployed for at least one full deploy cycle and no old build/instance still running (rollout complete, old revision drained) before the drop (plan: docs/engineering/legacy-column-drop-plan.md, section on coexistence)"],
   ["EXTERNAL_REQUIREMENT", "staging rehearsal on a fresh restore of production data (up, verify, down, byte-equal values, up)"],
   ["EXTERNAL_REQUIREMENT", "PITR restore point id (`--pitr-id`) taken immediately before the deploy, and a restore proof"],
   ["EXTERNAL_REQUIREMENT", "table size and measured lock window on production-sized data (formula in LOCK_ESTIMATE)"],
   ["HUMAN_APPROVAL", "draft moved to migrations/ and registered, LEGACY_DROP_CONFIRM present only in the single executing deploy job (never from this workspace), one destructive migration per deploy, rollback owner on call"],
-  ...(pii ? [["HUMAN_DECISION", "retention owner, period and policy of the archive that holds personal data"]] : []),
+  ...(noRetention ? [] : [["HUMAN_DECISION", pii ? "retention owner, period and policy of the archive that holds personal data" : "owner of the retention window after which draft 20260930000052 may retire the archive"]]),
 ];
 
 export function render(packages, { sizes, generatedFrom }) {
   const out = [];
   out.push("# Destructive approval dossier (generated)", "");
-  out.push(`Generated by \`node scripts/destructive-dossier.mjs\` from ${generatedFrom}. Preparation only: every package says \`READY: NO\`, nothing was dropped, scrubbed or approved, no confirmation token was set. Every real-environment measurement is \`EXTERNAL_REQUIREMENT\` because no dev, staging or production database is reachable from this workspace.`, "");
+  out.push(`Generated by \`node scripts/destructive-dossier.mjs\` from ${generatedFrom}. Scope: the column-drop and PII packages 40-46, 48, 49, 53 and the PII backfill/scrub. Other destructive or irreversible drafts are covered by their own plans and tokens, not by a block here: 20260930000050 PurgeBackfillSideTables (DROP TABLE of the backfill side tables, irreversible, token BACKFILL_PURGE_CONFIRM; docs/engineering/backfill-side-tables-retention.md), 20260930000052 RetireLegacyColumnDropArchives (drops the only copy of the dropped values, irreversible, token LEGACY_ARCHIVE_RETIRE_CONFIRM; legacy-column-drop-plan.md and the dependency line of each block), 20260930000051 and the role-slug retirement (docs/engineering/rbac-retirement-plan.md). Preparation only: every package says \`READY: NO\`, nothing was dropped, scrubbed or approved, no confirmation token was set. Every real-environment measurement is \`EXTERNAL_REQUIREMENT\` because no dev, staging or production database is reachable from this workspace.`, "");
   out.push("Missing items are typed: `HUMAN_APPROVAL` (explicit approval naming migration and environment, never self-granted), `HUMAN_DECISION` (a policy the owner defines), `EXTERNAL_REQUIREMENT` (access, credential or infrastructure outside this workspace).", "");
   out.push("## Measured primitives (lock estimate inputs)", "", `Provenance: ${MEASURED_RATES.provenance}.`, "");
-  out.push("| Primitive | Measured |", "|---|---|", `| precondition scan | ${MEASURED_RATES.preconditionScanPerMillionRowsSec} s per million rows per check |`, `| archive insert (rows holding legacy values) | ${MEASURED_RATES.archiveInsertPerMillionRowsSec} s per million rows |`, `| ALTER TABLE DROP COLUMN | ${MEASURED_RATES.dropColumnMs} ms |`, `| down(): restore UPDATE | ${MEASURED_RATES.restoreUpdatePerMillionRowsSec} s per million rows |`, "");
-  out.push("The draft takes `LOCK TABLE ... IN SHARE ROW EXCLUSIVE MODE` first (readers continue, writers wait) under `lock_timeout = 15s`, and holds it through preconditions, archive insert, two verification joins and the drop: the write-blocking window of `up()` is about `rows_with_legacy_values x (archive rate + verification rate)` plus the scans, and the DROP itself is a catalog change.", "");
+  out.push("| Primitive | Measured |", "|---|---|", `| precondition scan (all rows, per check) | ${MEASURED_RATES.preconditionScanPerMillionRowsSec} |`, `| archive insert (rows holding legacy values) | ${MEASURED_RATES.archiveInsertPerMillionRowsSec} |`, `| verification joins (two) | ${MEASURED_RATES.verificationJoinsPerMillionRowsSec} |`, `| ALTER TABLE DROP COLUMN | ${MEASURED_RATES.dropColumnMs} |`, `| down(): restore UPDATE | ${MEASURED_RATES.restoreUpdatePerMillionRowsSec} |`, "");
+  out.push("Base-driven drafts (40-45, 49, 53) take `LOCK TABLE ... IN SHARE ROW EXCLUSIVE MODE` first (readers continue, writers wait) under `SET LOCAL lock_timeout = '15s'`, which bounds each lock acquisition and not the total window, and hold it to the end of the transaction through the preconditions, the archive insert, two verification joins and the drop. Estimated write-blocking window of `up()`: `T_scan(all rows, once per check) + T_insert(rows holding legacy values) + 2 x T_join + O(ms)`. The final `ALTER TABLE ... DROP COLUMN` needs ACCESS EXCLUSIVE, so readers are blocked from that statement until commit (and queue behind its wait). Queueing for SHARE ROW EXCLUSIVE behind a long-running writer already stalls every writer that arrives after it, for up to the 15s lock_timeout, before the window itself starts. Packages 46 and 48 are not base-driven (no archive, no joins): their own LOCK_ESTIMATE lines apply. The two PII drafts take NO table lock: their exposure is row locks (`FOR UPDATE`, 200-row keyset batches) held through the whole transaction.", "");
   out.push("## Overview", "", "| Package | Table | Destructive | Disposable census | Rehearsal (disposable) | READY |", "|---|---|---|---|---|---|");
   for (const p of packages) out.push(`| ${p.short} | ${p.tables.join(", ")} | ${p.destructive ? "yes" : "no (precursor/backfill)"} | ${p.disposableCensus ?? "synthetic rows only"} | ${(p.rehearsal ?? "").split(" (")[0].split(":")[0]} | NO |`);
   out.push("");
   for (const p of packages) {
     const size = p.tables.map((t) => `${t}=${sizes?.[t] != null ? `${sizes[t]} bytes (disposable, empty)` : "NOT_MEASURED"}`).join("; ");
-    const missing = (p.missing && p.missing.length ? p.missing : COMMON_MISSING(p.id, p.pii));
+    const missing = (p.missing && p.missing.length ? p.missing : COMMON_MISSING(p.id, p.pii, Boolean(p.noRetentionItem), p.b0));
     out.push(`## ${p.short}`, "", "```text");
     out.push(`PACKAGE: ${p.short} (${p.destructive ? "DESTRUCTIVE" : "non-destructive precursor or backfill"})`);
     out.push(`MIGRATION: ${p.migration}`);
@@ -140,9 +175,12 @@ export function render(packages, { sizes, generatedFrom }) {
     out.push(`RESTORE_PLAN: ${p.restore}`);
     out.push("PITR_REQUIREMENT: EXTERNAL_REQUIREMENT: a point-in-time restore point id of the target database taken immediately before the deploy, plus a restore proof into a disposable target (a configured backup is not restore evidence); never invented here");
     out.push(`TABLE_SIZE: ${size}; real size EXTERNAL_REQUIREMENT (SELECT pg_total_relation_size on the target)`);
-    out.push(`LOCK_ESTIMATE: SHARE ROW EXCLUSIVE on ${p.tables.join(", ")} with lock_timeout 15s; window formula above; real window EXTERNAL_REQUIREMENT (needs real row counts and a staging restore)`);
+    out.push(p.id.startsWith("PII")
+      ? `LOCK_ESTIMATE: no table lock; FOR UPDATE row locks in 200-row keyset batches on ${p.tables.join(", ")} held through the whole transaction, lock_timeout 15s; duration proportional to candidate rows (not measured: needs real counts and a staging restore: EXTERNAL_REQUIREMENT)`
+      : p.lockEstimate ? `LOCK_ESTIMATE: ${p.lockEstimate}`
+      : `LOCK_ESTIMATE: SHARE ROW EXCLUSIVE on ${p.tables.join(", ")} (lock_timeout 15s per acquisition), ACCESS EXCLUSIVE at the final DROP; window formula above${p.lockNote ? `; ${p.lockNote}` : ""}; real window EXTERNAL_REQUIREMENT (needs real row counts and a staging restore)`);
     out.push(`STAGING_REHEARSAL: disposable COPY: ${p.rehearsal}; staging rehearsal on restored target data: EXTERNAL_REQUIREMENT`);
-    out.push(`RETENTION: ${p.pii ? "HUMAN_DECISION: owner, period and policy of the archive that holds personal data are NOT_DEFINED (none is invented here)" : "archive kept until the separate retirement draft 20260930000052 runs after its retention window; owner of that window is a HUMAN_DECISION recorded with the approval"}`);
+    out.push(`RETENTION: ${p.retention ?? (p.pii ? "HUMAN_DECISION: owner, period and policy of the archive that holds personal data are NOT_DEFINED (none is invented here)" : "archive kept until the separate retirement draft 20260930000052 runs after its retention window; owner of that window is a HUMAN_DECISION recorded with the approval")}`);
     out.push(`KEY_CUSTODY: ${p.id.startsWith("PII") ? "HUMAN_DECISION: NOT_DEFINED (see docs/engineering/pii-key-custody-request.md for exactly what the owner must provide)" : "NOT_APPLICABLE (no encrypted data in this package)"}`);
     out.push(`DEPENDENCIES: ${p.dependencies ?? "release B0 (entity/reader/writer removal) and release A deployed everywhere; the 15 owner evidence items of scripts/legacy-drop-preflight.mjs; draft 20260930000052 retires the archive only after retention; one destructive migration per deploy"}`);
     out.push("READY: NO");

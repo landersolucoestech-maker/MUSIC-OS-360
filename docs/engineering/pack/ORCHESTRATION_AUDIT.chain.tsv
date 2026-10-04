@@ -1,0 +1,50 @@
+TASK	WORKFLOW	PHASE	AGENT	SKILLS	IMPLEMENTER	REVIEWER	TESTER	GATE	EVIDENCE	STATUS
+census	naming-normalization	census	naming-analyzer	naming-analysis,repository-census	specialist	none	-	-	evid-4cd8051a	COMPLETED
+classify	naming-normalization	classify	naming-analyzer	naming-analysis,duplication-analysis,dead-code-analysis	specialist	none	-	-	evid-4129fb10	COMPLETED
+canonical-model	naming-normalization	canonical-model	naming-reviewer	canonical-naming	specialist	none	-	-	evid-15efc678	COMPLETED
+schema-plan	naming-normalization	schema-plan	migration-planner	migration-audit,destructive-change-check	specialist	none	-	-	evid-ed522b3f	COMPLETED
+destructive-approval	naming-normalization	destructive-approval	human-approval-agent	evaluate-human-approval,request-human-approval	specialist	none	-	-		WAITING_APPROVAL
+propagate	naming-normalization	propagate	implementation-engineer	safe-refactor,schema-normalization	specialist	none	-	incremental	evid-accfb061	COMPLETED
+compatibility	naming-normalization	compatibility	qa-engineer	create-contract-tests,create-regression-tests	specialist	none	-	-		PENDING
+verify	naming-normalization	verify	migration-test-engineer	create-migration-tests,run-unit-tests,run-typecheck	specialist	none	-	global		PENDING
+residue	naming-normalization	residue	dead-code-detector	residue-search,orphan-analysis	specialist	secrets-reviewer(r16-secrets); requirements-reviewer(r17-requirements); frontend-security-reviewer(r18-frontend-security); frontend-consistency-reviewer(r19-frontend-consistency)	-	-		PENDING
+review	naming-normalization	review	security-reviewer	security-audit,diff-review,blast-radius-analysis	specialist	none	-	-		PENDING
+closure	naming-normalization	closure	git-auditor	definition-of-done	specialist	none	-	completion		PENDING
+w1-env-trace	naming-normalization	classify	config-mapper	config-map,environment-map	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	security-reviewer(r1-env-security)	-	-	evid-c21baa55	COMPLETED
+w2-compat-semantic-groups	naming-normalization	classify	naming-analyzer	naming-analysis,canonical-naming	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	naming-reviewer(r2-naming)	-	-	evid-488df408	COMPLETED
+w3-historical-trace	naming-normalization	classify	stale-code-detector	stale-code-analysis,residue-search	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	documentation-reviewer(r3-docs)	-	-	evid-f044b542	COMPLETED
+w4-decisions-trace	naming-normalization	classify	producer-consumer-tracer	producer-consumer-trace,data-flow-trace,cross-layer-impact	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	domain-boundary-reviewer(r4-decisions)	-	-	evid-2655bb55	COMPLETED
+w5-ci-check-exhaustion	naming-normalization	classify	devops-ci-reviewer	branch-policy-check,external-action-check	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	adversarial-reviewer(r5-ci-docs)	-	-	evid-a1e2a02c	COMPLETED
+w6-destructive-dossier	naming-normalization	schema-plan	migration-planner	migration-audit,destructive-change-check,rollback-analysis	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	database-reviewer(r6-dossier-db); destructive-change-guard(r6b-dossier-guard)	-	-	evid-7e8cb642	COMPLETED
+w7-pii-key-custody	naming-normalization	schema-plan	encryption-reviewer	encryption-audit,pii-audit,data-retention-audit	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	pii-reviewer(r7-pii)	-	-	evid-1e989842	COMPLETED
+w8-env-templates	naming-normalization	propagate	implementation-engineer	protected-file-check,config-map	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	protected-file-validator(r8-protected)	-	-	evid-bdfe38bc	COMPLETED
+w9-web-fixes	naming-normalization	propagate	frontend-engineer	safe-refactor,cross-layer-impact	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	frontend-reviewer(r9-frontend); architecture-reviewer(r9b-architecture)	-	-	evid-020e8049	COMPLETED
+w10-api-tests	naming-normalization	propagate	backend-engineer	create-api-tests,create-contract-tests	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	backend-reviewer(r10-backend)	-	-	evid-b9ec999a	COMPLETED
+w11-ledger-gate	naming-normalization	propagate	implementation-engineer	canonical-naming,scope-lock	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	code-reviewer(r11-ledger)	-	-	evid-7379e0f6	COMPLETED
+w12-dead-generator	naming-normalization	propagate	dead-code-detector	dead-code-analysis,residue-search	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	dead-code-reviewer(r12-dead)	-	-	evid-c6821f1b	COMPLETED
+w13-doc-corrections	naming-normalization	propagate	implementation-engineer	stale-code-analysis,diff-review	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	documentation-reviewer(r3b-docs-corrections)	-	-	evid-2cf1b1f9	COMPLETED
+w14-mutation-proof	naming-normalization	compatibility	test-strategy-engineer	create-regression-tests,run-unit-tests	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	mutation-test-reviewer(r14-mutation)	command evidence	-	evid-48ba7c36	COMPLETED
+w15-proof-closure	naming-normalization	compatibility	qa-engineer	create-contract-tests,create-regression-tests	orchestrator (ORCHESTRATION_BYPASS) then specialist re-derivation	regression-reviewer(r15-regression)	command evidence	-	evid-8d56578a,evid-39a818ed	COMPLETED
+completion-gate	naming-normalization	completion-gate	completion-controller	definition-of-done	specialist	none	-	completion		PENDING
+r1-env-security	naming-normalization	classify	security-reviewer	security-audit,secret-scan	n/a (review task)	-	-	-	evid-6dd1dc3e	COMPLETED
+r2-naming	naming-normalization	classify	naming-reviewer	canonical-naming	n/a (review task)	-	-	-	evid-6c0f9460	COMPLETED
+r3-docs	naming-normalization	classify	documentation-reviewer	diff-review	n/a (review task)	-	-	-	evid-90b02f6d	COMPLETED
+r4-decisions	naming-normalization	classify	domain-boundary-reviewer	contract-tracing	n/a (review task)	-	-	-	evid-4f7966e7	COMPLETED
+r5-ci-docs	naming-normalization	classify	adversarial-reviewer	review	n/a (review task)	-	-	-	evid-62158e0f	COMPLETED
+r6-dossier-db	naming-normalization	schema-plan	database-reviewer	migration-audit	n/a (review task)	-	-	-	evid-68d120d8	COMPLETED
+r6b-dossier-guard	naming-normalization	schema-plan	destructive-change-guard	destructive-change-check	n/a (review task)	-	-	-	evid-856073d5	COMPLETED
+r7-pii	naming-normalization	schema-plan	pii-reviewer	pii-audit	n/a (review task)	-	-	-	evid-5467f479	COMPLETED
+r8-protected	naming-normalization	propagate	protected-file-validator	protected-file-check	n/a (review task)	-	-	-	evid-79b01a2d	COMPLETED
+r9-frontend	naming-normalization	propagate	frontend-reviewer	frontend-audit	n/a (review task)	-	-	-	evid-ed4c11d7	COMPLETED
+r9b-architecture	naming-normalization	propagate	architecture-reviewer	cross-layer-impact	n/a (review task)	-	-	-	evid-377f7d65	COMPLETED
+r10-backend	naming-normalization	propagate	backend-reviewer	backend-audit	n/a (review task)	-	-	-	evid-fa0c763f	COMPLETED
+r11-ledger	naming-normalization	propagate	code-reviewer	review	n/a (review task)	-	-	-	evid-52f91b3f	COMPLETED
+r12-dead	naming-normalization	propagate	dead-code-reviewer	dead-code-analysis	n/a (review task)	-	-	-	evid-a5a016cd	COMPLETED
+r14-mutation	naming-normalization	compatibility	mutation-test-reviewer	create-regression-tests	n/a (review task)	-	-	-		READY
+r15-regression	naming-normalization	compatibility	regression-reviewer	diff-review	n/a (review task)	-	-	-	evid-2a013f14	COMPLETED
+r3b-docs-corrections	naming-normalization	review	documentation-reviewer	diff-review	n/a (review task)	-	-	-	evid-5d38e241	COMPLETED
+r16-secrets	naming-normalization	review	secrets-reviewer	secret-scan	n/a (review task)	-	-	-		PENDING
+r17-requirements	naming-normalization	review	requirements-reviewer	plan	n/a (review task)	-	-	-		PENDING
+r18-frontend-security	naming-normalization	review	frontend-security-reviewer	xss-audit	n/a (review task)	-	-	-		PENDING
+r19-frontend-consistency	naming-normalization	review	frontend-consistency-reviewer	naming-analysis	n/a (review task)	-	-	-		PENDING
+r14-mutation-recovery-1	naming-normalization	r14-mutation-recovery-1	root-cause-investigator	root-cause-analysis	n/a (review task)	mutation-test-reviewer(r14-mutation)	-	-	evid-bc42de7d	COMPLETED

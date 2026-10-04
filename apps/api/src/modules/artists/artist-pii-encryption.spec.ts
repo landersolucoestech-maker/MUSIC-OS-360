@@ -133,6 +133,14 @@ describe('artists PII at rest (BLK-CRM-PII-PLAINTEXT)', () => {
   it('sanitizeArtistMetadataInput drops PII keys case/format-insensitively and keeps others', () => {
     expect(sanitizeArtistMetadataInput({ 'Chave Pix': 'x', 'BANK-NAME': 'y', Rg: 'z', keep: 1 })).toEqual({ keep: 1 });
   });
+
+  it.each([
+    'cpf', 'cnpj', 'cpf_cnpj', 'documento', 'document', 'rg', 'birth_date', 'data_nascimento', 'address', 'endereco',
+    'bank_name', 'banco', 'bank_branch', 'agencia', 'bank_account', 'conta', 'pix_key', 'chave_pix', 'account_holder',
+    'titular_conta', 'email', 'e_mail', 'phone', 'telefone', 'celular', 'manager_contact', 'manager_contato',
+  ])('sanitizeArtistMetadataInput drops the plaintext PII key %j (canonical and pre-CZ-042 spellings) and keeps a neutral key', (key) => {
+    expect(sanitizeArtistMetadataInput({ [key]: 'plaintext-secret', keep: 1 })).toEqual({ keep: 1 });
+  });
 });
 
 describe('EncryptionService dual-read helpers', () => {

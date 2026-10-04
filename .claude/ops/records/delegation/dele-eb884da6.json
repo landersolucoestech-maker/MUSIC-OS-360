@@ -1,0 +1,14 @@
+{
+  "agent": "frontend-engineer",
+  "objective": "Extract and fix the web legacy-read boundaries: canonical-first legacy title, signup consent metadata builders, ViaCEP address mapper, spreadsheet header parser, release canonical-first reads and the stale project-track auto-fill of the release form.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/web/src/shared/lib",
+    "apps/web/src/modules/releases",
+    "apps/web/src/modules/contracts",
+    "apps/web/src/app/providers/AuthContext.tsx"
+  ],
+  "status": "CLOSED",
+  "id": "dele-eb884da6",
+  "createdAt": "2026-10-03T15:10:44.681Z"
+}

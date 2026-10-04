@@ -32,7 +32,9 @@ test("H2: growth or a silent edit of the body fails, a missing file fails", () =
 
 test("H3: an executable consumer fails, a comment-only mention and the naming tooling do not", () => {
   assert.deepEqual(checks(validate(setup({ files: { "scripts/gen.mjs": `fs.readFileSync("${rec}")` } }))), ["H3_NOT_CONSUMED"]);
-  assert.deepEqual(checks(validate(setup({ files: { "apps/api/x.ts": `import a from "./a";\n// motivated by ${rec}\n` } }))), []);
+  assert.deepEqual(checks(validate(setup({ files: { "apps/api/src/database/migrations/2026_x.ts": `import a from "./a";\n// motivated by ${rec}\n` } }))), []);
+  assert.deepEqual(checks(validate(setup({ files: { "apps/api/src/x.ts": `// motivated by ${rec}\n` } }))), ["H3_NOT_CONSUMED"], "an unlabelled comment citation outside migrations fails");
+  assert.deepEqual(validate(setup({ files: { "apps/api/src/x.ts": `// historical record: ${rec}\n` } })), []);
   assert.deepEqual(validate(setup({ files: { "scripts/naming/tool.mjs": `const p = "${rec}"` } })), []);
   assert.deepEqual(checks(validate(setup({ files: { "package.json": `{"scripts":{"x":"node ${rec}"}}` } }))), ["H3_NOT_CONSUMED"]);
 });

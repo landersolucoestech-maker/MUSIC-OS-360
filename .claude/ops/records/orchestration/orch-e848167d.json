@@ -4,8 +4,8 @@
   "workflow": "naming-normalization",
   "intent": null,
   "status": "ACTIVE",
-  "stopBlocks": 0,
-  "lastProgressAt": "2026-10-03T15:08:52.633Z",
+  "stopBlocks": 2,
+  "lastProgressAt": "2026-10-03T23:46:35.414Z",
   "tasks": [
     {
       "id": "census",
@@ -23,12 +23,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-532a4bb9",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-4cd8051a"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -51,19 +53,26 @@
         "w2-compat-semantic-groups",
         "w3-historical-trace",
         "w4-decisions-trace",
-        "w5-ci-check-exhaustion"
+        "w5-ci-check-exhaustion",
+        "r1-env-security",
+        "r2-naming",
+        "r3-docs",
+        "r4-decisions",
+        "r5-ci-docs"
       ],
       "acceptance": [
         "evidence recorded: classification-record"
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-320adc96",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-4129fb10"
+      ],
+      "result": "completed",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -86,12 +95,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-700364c9",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-15efc678"
+      ],
+      "result": "completed",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -110,7 +121,10 @@
       "dependsOn": [
         "canonical-model",
         "w6-destructive-dossier",
-        "w7-pii-key-custody"
+        "w7-pii-key-custody",
+        "r6-dossier-db",
+        "r6b-dossier-guard",
+        "r7-pii"
       ],
       "acceptance": [
         "evidence recorded: migration-plan",
@@ -118,12 +132,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-07506f00",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-ed522b3f"
+      ],
+      "result": "completed",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -148,10 +164,10 @@
       ],
       "gates": [],
       "approvalClass": "human-approval",
-      "status": "PENDING",
+      "status": "WAITING_APPROVAL",
       "attempts": 0,
       "delegationId": null,
-      "approvalId": null,
+      "approvalId": "appr-6570cc2f",
       "evidenceRefs": [],
       "result": null,
       "failureReason": null,
@@ -177,7 +193,13 @@
         "w10-api-tests",
         "w11-ledger-gate",
         "w12-dead-generator",
-        "w13-doc-corrections"
+        "w13-doc-corrections",
+        "r8-protected",
+        "r9-frontend",
+        "r9b-architecture",
+        "r10-backend",
+        "r11-ledger",
+        "r12-dead"
       ],
       "acceptance": [
         "evidence recorded: change-set-record"
@@ -186,12 +208,14 @@
         "incremental"
       ],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-fe9cd863",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-accfb061"
+      ],
+      "result": "completed",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -210,7 +234,9 @@
       "dependsOn": [
         "propagate",
         "w14-mutation-proof",
-        "w15-proof-closure"
+        "w15-proof-closure",
+        "r14-mutation",
+        "r15-regression"
       ],
       "acceptance": [
         "evidence recorded: compatibility-test-run"
@@ -302,7 +328,12 @@
       ],
       "filesInScope": [],
       "dependsOn": [
-        "residue"
+        "residue",
+        "r3b-docs-corrections",
+        "r16-secrets",
+        "r17-requirements",
+        "r18-frontend-security",
+        "r19-frontend-consistency"
       ],
       "acceptance": [
         "evidence recorded: security-verdict",
@@ -374,12 +405,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-8104613e",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-c21baa55"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -405,12 +438,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-3c80a8d6",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-488df408"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -420,7 +455,7 @@
       "id": "w3-historical-trace",
       "title": "w3-historical-trace",
       "objective": "Validate each of the 115 HISTORICAL_RECORD documents individually (header, frozen body, no executable consumer, no unlabelled normative reference) and find active documents that cite a historical record as current.",
-      "agent": "documentation-reviewer",
+      "agent": "stale-code-detector",
       "skills": [
         "stale-code-analysis",
         "residue-search"
@@ -437,12 +472,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-6e4a377e",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-f044b542"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -467,12 +504,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-46a3eaaf",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-2655bb55"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -498,12 +537,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-14141f89",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-a1e2a02c"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -530,12 +571,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-f35a1106",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-7e8cb642"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -562,12 +605,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-db2348c8",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-1e989842"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -596,12 +641,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-4b06f61d",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-bdfe38bc"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -629,12 +676,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-eb884da6",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-020e8049"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -661,12 +710,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-fae74e92",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-b9ec999a"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -693,12 +744,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-4bb6b330",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-7379e0f6"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -723,12 +776,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-b0fc8ac2",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-c6821f1b"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -738,7 +793,7 @@
       "id": "w13-doc-corrections",
       "title": "w13-doc-corrections",
       "objective": "Correct the active documents that presented historical baselines as current and normalize the six variant historical labels.",
-      "agent": "documentation-reviewer",
+      "agent": "implementation-engineer",
       "skills": [
         "stale-code-analysis",
         "diff-review"
@@ -754,12 +809,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-1d5a13f9",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-2cf1b1f9"
+      ],
+      "result": "specialist verification PASS (see evidence)",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -785,12 +842,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-0b796d71",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-48ba7c36"
+      ],
+      "result": "completed",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -815,12 +874,15 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-902e785b",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-8d56578a",
+        "evid-39a818ed"
+      ],
+      "result": "completed",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -879,6 +941,672 @@
       "result": null,
       "failureReason": null,
       "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "r1-env-security",
+      "title": "r1-env-security",
+      "objective": "Independently review the environment-template work: no real secret in any tracked template, anon-key placeholder canonical, credential-looking value guard sound (positive and abuse cases), no unauthorized change to non-template files.",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit",
+        "secret-scan"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w1-env-trace"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL with evidence",
+        "abuse cases exercised"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-22d4c5e8",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-6dd1dc3e"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "r2-naming",
+      "title": "r2-naming",
+      "objective": "Independently review the semantic classification of ledger rows: rules deterministic, categories correct, no obsolete or misclassified row hidden.",
+      "agent": "naming-reviewer",
+      "skills": [
+        "canonical-naming"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w2-compat-semantic-groups"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "sample of rows re-classified by hand"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-7baa5046",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-6c0f9460"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "r3-docs",
+      "title": "r3-docs",
+      "objective": "Independently review the historical-record audit and the corrections of active documents that cited historical records as current.",
+      "agent": "documentation-reviewer",
+      "skills": [
+        "diff-review"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w3-historical-trace"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "each corrected statement matches repository reality"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5691d8c0",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-90b02f6d"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "r4-decisions",
+      "title": "r4-decisions",
+      "objective": "Independently review the five product decision packages: facts true against the code, domain separations preserved (Project/Release/Distribution/Registry/Phonogram/Work, internal vs external finance), no invented decision, exact owner question.",
+      "agent": "domain-boundary-reviewer",
+      "skills": [
+        "contract-tracing"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w4-decisions-trace"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "each factual claim re-verified"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-6e9693f3",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-4f7966e7"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "r5-ci-docs",
+      "title": "r5-ci-docs",
+      "objective": "Blind adversarial review of the required-CI-check note and the PII key custody request: claims true, nothing bypassed, exact human actions complete.",
+      "agent": "adversarial-reviewer",
+      "skills": [
+        "review"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w5-ci-check-exhaustion"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "claims disproved or confirmed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-3e70e83f",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-62158e0f"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "r6-dossier-db",
+      "title": "r6-dossier-db",
+      "objective": "Independently review the destructive approval dossier against the real drafts, preflight tool and rehearsal specs: fields true, lock estimate reasoning sound, nothing executed, READY NO justified.",
+      "agent": "database-reviewer",
+      "skills": [
+        "migration-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w6-destructive-dossier"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "draft facts re-derived"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-c4e02edb",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-68d120d8"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "r6b-dossier-guard",
+      "title": "r6b-dossier-guard",
+      "objective": "Independently verify that no destructive operation, confirmation token or approval was produced or implied by the closure work and that every package keeps its approval boundary.",
+      "agent": "destructive-change-guard",
+      "skills": [
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w6-destructive-dossier"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "search for tokens and approvals"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-242ebd9c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-856073d5"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "r7-pii",
+      "title": "r7-pii",
+      "objective": "Independently review the PII key custody request and rotation contract against EncryptionService and the PII drafts.",
+      "agent": "pii-reviewer",
+      "skills": [
+        "pii-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w7-pii-key-custody"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "contract matches code"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-c3ebf47d",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5467f479"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "r8-protected",
+      "title": "r8-protected",
+      "objective": "Independently validate the protected environment files: only authorized edits, no secret, no value of a real credential, line-level diff reviewed.",
+      "agent": "protected-file-validator",
+      "skills": [
+        "protected-file-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w8-env-templates"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "diff of each protected file"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-3cd1a05a",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-79b01a2d"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "r9-frontend",
+      "title": "r9-frontend",
+      "objective": "Independently review the web changes (legacy title, signup metadata, ViaCEP mapper, spreadsheet headers, release reads, track auto-fill): behavior preserved or fixed, canonical-first, no regression, data flow consistent with the API.",
+      "agent": "frontend-reviewer",
+      "skills": [
+        "frontend-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w9-web-fixes"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "regressions sought"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-ad055a33",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-ed4c11d7"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "r9b-architecture",
+      "title": "r9b-architecture",
+      "objective": "Independently review cross-layer coherence of the web, API and tooling changes: layering, duplicated rules, new helpers justified, no second source of truth.",
+      "agent": "architecture-reviewer",
+      "skills": [
+        "cross-layer-impact"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w9-web-fixes"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "boundary findings"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-5dd3c94e",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-377f7d65"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "r10-backend",
+      "title": "r10-backend",
+      "objective": "Independently review the API specs added: assertions strong, each fails when the boundary breaks, no mock removes the boundary under test.",
+      "agent": "backend-reviewer",
+      "skills": [
+        "backend-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w10-api-tests"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "weak assertions listed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-bc0cf0f5",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-fa0c763f"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "r11-ledger",
+      "title": "r11-ledger",
+      "objective": "Independently review the stale-ledger-row gate and ledger edits: gate correct, no row removed that still matched, rows added honest.",
+      "agent": "code-reviewer",
+      "skills": [
+        "review"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w11-ledger-gate"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "removed rows re-checked"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-f8bf8026",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-52f91b3f"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "r12-dead",
+      "title": "r12-dead",
+      "objective": "Independently verify the removed generator script had no consumer, including dynamic references.",
+      "agent": "dead-code-reviewer",
+      "skills": [
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w12-dead-generator"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "reference search"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-e26cad28",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a5a016cd"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "r14-mutation",
+      "title": "r14-mutation",
+      "objective": "Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.",
+      "agent": "mutation-test-reviewer",
+      "skills": [
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w14-mutation-proof",
+        "r14-mutation-recovery-1"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "false-green attempts"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 1,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": "Independent review FAIL: 805 rows were credited by sibling kills (SAMPLED_PAIR) and 3 contract-wizard-party rows survive their own mutation; fix in progress: every ledger name is now mutated and credited only for its own name (exhaustive proof running), then re-review",
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "r15-regression",
+      "title": "r15-regression",
+      "objective": "Independently check the tests added to close survivors and the code fixes for regressions of previously working behavior.",
+      "agent": "regression-reviewer",
+      "skills": [
+        "diff-review"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w15-proof-closure"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL",
+        "sibling features checked"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-98ab67d2",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2a013f14"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "r3b-docs-corrections",
+      "title": "r3b-docs-corrections",
+      "objective": "Independently review the w13 corrections: active documents that presented historical baselines as current, and the six normalized historical labels (diff against b8422ff of docs/INDEX_DOCUMENTATION.md, docs/runbooks/*, docs/CODEBASE_MAP.md, docs/engineering/pack/FINAL_REPORT.md, historical labels).",
+      "agent": "documentation-reviewer",
+      "skills": [
+        "diff-review"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "w13-doc-corrections"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-f2c24e84",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-5d38e241"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r16-secrets",
+      "title": "r16-secrets",
+      "objective": "Independently scan the final diff and tracked files for real secrets, credential shapes and unsafe defaults (env templates, tests, fixtures, docs, scripts); report names/shapes only.",
+      "agent": "secrets-reviewer",
+      "skills": [
+        "secret-scan"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r17-requirements",
+      "title": "r17-requirements",
+      "objective": "Independently verify requirement-to-evidence closure of the 21 sections of the foundation-closure order and of the orchestration-audit order: dropped, narrowed or adjacent behavior; categories A/B/C only.",
+      "agent": "requirements-reviewer",
+      "skills": [
+        "plan"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r18-frontend-security",
+      "title": "r18-frontend-security",
+      "objective": "Independently review web edits touching consent, signup payload, postal-code provider fetch and rendered credit lists for XSS, unsafe URLs, token handling and client-only authorization.",
+      "agent": "frontend-security-reviewer",
+      "skills": [
+        "xss-audit"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r19-frontend-consistency",
+      "title": "r19-frontend-consistency",
+      "objective": "Independently review naming and structure consistency of the web helpers legacy-reads, legacy-title, signup-metadata, masks, category-labels, category-import and their tests.",
+      "agent": "frontend-consistency-reviewer",
+      "skills": [
+        "naming-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "verdict PASS/FAIL"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "r14-mutation-recovery-1",
+      "title": "recover r14-mutation",
+      "objective": "Find the root cause of the failure of task r14-mutation (\"Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.\"): Independent review FAIL: 805 rows were credited by sibling kills (SAMPLED_PAIR) and 3 contract-wizard-party rows survive their own mutation; fix in progress: every ledger name is now mutated and credited only for its own name (exhaustive proof running), then re-review. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-0153fba7",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-bc42de7d"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": "r14-mutation",
       "blockedExternal": null
     }
   ],

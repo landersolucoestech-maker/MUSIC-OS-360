@@ -1,0 +1,14 @@
+{
+  "agent": "config-mapper",
+  "objective": "Trace every environment variable of the three environments (consumers, required vs optional, schema, validation, placeholders, docs, loaders) and the 14 protected-template items plus the truncated SUPABASE_ANON_KEY of the root production template, without reading or printing any secret value.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/env-contract-census.mjs",
+    ".env.production",
+    "apps/api/.env.staging",
+    "apps/api/.env.production"
+  ],
+  "status": "CLOSED",
+  "id": "dele-8104613e",
+  "createdAt": "2026-10-03T15:10:44.654Z"
+}

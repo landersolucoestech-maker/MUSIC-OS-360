@@ -460,6 +460,7 @@ export const envSchema = z.object({
   ENCRYPTION_KEY: z
     .string()
     .length(64, 'ENCRYPTION_KEY must be 64 hex chars')
+    .regex(/^[0-9a-fA-F]{64}$/, 'ENCRYPTION_KEY must contain only hexadecimal characters')
     .default('0000000000000000000000000000000000000000000000000000000000000000')
     .refine(
       (val) => {

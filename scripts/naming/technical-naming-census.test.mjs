@@ -6,6 +6,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { scanSource, compare, census, stripRecordId } from "./technical-naming-census.mjs";
@@ -200,7 +201,8 @@ test("docs and non-code files are in the census: Markdown prose and every tracke
 });
 
 test("tooling error: a malformed baseline JSON fails explicitly (never false success)", () => {
-  const badBaselinePath = path.join(here, "does-not-exist-malformed.json");
+  const badDir = fs.mkdtempSync(path.join(os.tmpdir(), "naming-malformed-"));
+  const badBaselinePath = path.join(badDir, "malformed.json");
   fs.writeFileSync(badBaselinePath, "{ not valid json");
   try {
     const r = spawnSync(process.execPath, [path.join(here, "technical-naming-census.mjs"), "--check"], {
@@ -209,7 +211,7 @@ test("tooling error: a malformed baseline JSON fails explicitly (never false suc
     assert.notEqual(r.status, 0, r.stdout + r.stderr);
     assert.match(r.stderr, /technical-naming census FAILED/);
   } finally {
-    fs.unlinkSync(badBaselinePath);
+    fs.rmSync(badDir, { recursive: true, force: true });
   }
 });
 
@@ -604,4 +606,26 @@ test("property-read: process.env member reads stay on the envVar surface, not on
   const hits = scanSource("apps/api/src/m.ts", "export const v = process.env.SENHA_PADRAO;\n");
   assert.equal(hits.filter((h) => h.kind === "property-read").length, 0);
   assert.equal(hits.filter((h) => h.surface === "envVar").length, 1);
+});
+
+test("stale-row gate: a row matching no occurrence is reported in unusedRows; removing a covering row makes debt appear", async () => {
+  const { exceptionIndex } = await import("./canonical-map.mjs");
+  const authority = loadAuthority();
+  const base = { exceptionClass: "TEMPORARY_MIGRATION_COMPATIBILITY", status: "ACTIVE" };
+  const stale = { ...base, path: "apps/api/src/does-not-exist.ts", currentName: "nomeQueNaoExiste", surface: "identifier" };
+  const staleWildcard = { ...base, path: "*", currentName: "zzzzstaleword" };
+  const tableRegister = { ...base, id: "EXM-TEST-TABLE", path: "scripts/naming/technical-naming-census.mjs", currentName: "TEST_TABLE" };
+  const covering = authority.exceptions.find((e) => e.status === "ACTIVE" && e.census !== "baselined" && e.path.startsWith("apps/") && !e.path.includes(",") && e.currentName !== "*");
+  assert.ok(covering, "the ledger must hold at least one exact-path row to mutate");
+
+  // (a) the committed ledger has no stale row; adding two rows that cover nothing makes exactly those two stale
+  const withStale = census({ exceptions: exceptionIndex({ ...authority, exceptions: [...authority.exceptions, stale, staleWildcard, tableRegister] }) });
+  // the EXM-* register row documents a census-internal table and is never a stale candidate
+  assert.deepEqual(withStale.unusedRows, [stale, staleWildcard]);
+
+  // (b) removing a row that covers an occurrence turns it into debt (and the row cannot be reported stale: it is gone)
+  const without = census({ exceptions: exceptionIndex({ ...authority, exceptions: authority.exceptions.filter((e) => e !== covering) }) });
+  assert.deepEqual(without.unusedRows, []);
+  const grown = Object.keys(without.debt).filter((k) => k.includes(covering.path));
+  assert.ok(grown.length > 0, `removing the row for ${covering.path} :: ${covering.currentName} must leave debt in that file`);
 });

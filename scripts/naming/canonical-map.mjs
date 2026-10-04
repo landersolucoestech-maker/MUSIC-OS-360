@@ -147,9 +147,16 @@ export function exceptionIndex(map) {
     const words = ptWords(name);
     return words.length && words.every((w) => legalWords.has(w)) ? legalWords.get(words[0]) : undefined;
   };
+  /** Every legal-term row that a name is covered by through its words (all of them, not only the first). */
+  const wordRows = (name) => (name && legalWords.size && ptWords(name).length && ptWords(name).every((w) => legalWords.has(w)) ? [...new Set(ptWords(name).map((w) => legalWords.get(w)))] : []);
   return {
-    /** Every ACTIVE, non-baselined row: the census reports the ones that suppressed nothing (stale rows). */
-    rows: (map.exceptions ?? []).filter((e) => e.status !== "REMOVED" && e.census !== "baselined"),
+    wordRows,
+    /**
+     * Every ACTIVE row that must suppress at least one occurrence: the census reports the ones that suppressed nothing (stale rows).
+     * Not candidates: `census: "baselined"` records (they never suppress) and `EXM-*` rows, which are the governance register of a
+     * census-internal exemption table (the technical-naming-census test proves each EXM row matches exactly one declared table).
+     */
+    rows: (map.exceptions ?? []).filter((e) => e.status !== "REMOVED" && e.census !== "baselined" && !String(e.id ?? "").startsWith("EXM-")),
     get: (file, name, surface) => pick(`${file}::${name}`, surface) ?? pick(`*::${name}`, surface)
       ?? (surface ? pick(`${file}::*`, surface) : undefined) ?? byWords(name),
   };

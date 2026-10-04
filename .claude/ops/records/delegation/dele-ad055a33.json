@@ -1,0 +1,9 @@
+{
+  "agent": "frontend-reviewer",
+  "objective": "Independently review the web changes (legacy title, signup metadata, ViaCEP mapper, spreadsheet headers, release reads, track auto-fill): behavior preserved or fixed, canonical-first, no regression, data flow consistent with the API.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-ad055a33",
+  "createdAt": "2026-10-03T15:49:33.357Z"
+}

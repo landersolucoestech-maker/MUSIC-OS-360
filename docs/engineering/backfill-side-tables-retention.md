@@ -167,3 +167,7 @@ silently translated:
 There is no internal caller left (web and e2e were searched). **External API consumers and cached old web bundles must be updated**;
 announce this in the release notes of the version that ships the removal. Historic `activity_logs` actions are
 already covered by migration `20260928000023`.
+
+## PII archives of the encryption backfill (gap recorded, decision pending)
+
+`artists_pii_archive_20261002` and `clients_pii_archive_20261002` (created by drafts 20261002000002/3 before the plaintext scrub) are retired by draft 52 like the other archives, but they are NOT in the per-tenant erasure statements above: until the owner decides retention and erasure for them (`pii-key-custody-request.md` owner items 10 and 11) there is no per-tenant erasure path for the plaintext they hold, and older backups and PITR points keep plaintext until they expire. This is a HUMAN_DECISION, not something this repository can invent.

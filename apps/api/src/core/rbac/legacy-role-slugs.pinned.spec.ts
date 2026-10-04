@@ -22,7 +22,8 @@ describe('legacy Portuguese role slugs keep their level and permissions (persist
     expect(roleLevel(english)).toBe(level);
     for (const permission of sample) expect(ROLE_PERMISSIONS[legacy]).toContain(permission);
     expect(ROLE_PERMISSIONS[legacy]).toBeDefined();
-    expect(ROLE_PERMISSIONS[english] ?? ROLE_PERMISSIONS[legacy]).toEqual(ROLE_PERMISSIONS[legacy]);
+    expect(ROLE_PERMISSIONS[english]).toBeDefined();
+    expect(ROLE_PERMISSIONS[english]).toEqual(ROLE_PERMISSIONS[legacy]);
   });
 
   it('the alias table maps each English slug to its Portuguese slug and nothing else', () => {

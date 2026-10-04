@@ -1,0 +1,9 @@
+{
+  "agent": "security-reviewer",
+  "objective": "Independently review the environment-template work: no real secret in any tracked template, anon-key placeholder canonical, credential-looking value guard sound (positive and abuse cases), no unauthorized change to non-template files.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-22d4c5e8",
+  "createdAt": "2026-10-03T15:49:33.336Z"
+}

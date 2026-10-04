@@ -1,0 +1,12 @@
+{
+  "agent": "migration-planner",
+  "objective": "Produce the complete approval dossier of every destructive package (40-46, 49, 53, PII backfill, PII scrub): table, columns, census, divergences, archive and restore plan, PITR, size, lock estimate, rehearsal, retention, key custody, dependencies, READY and typed missing requirements. No destruction.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/destructive-dossier.mjs",
+    "docs/engineering/destructive-approval-dossier.md"
+  ],
+  "status": "CLOSED",
+  "id": "dele-f35a1106",
+  "createdAt": "2026-10-03T15:10:44.674Z"
+}

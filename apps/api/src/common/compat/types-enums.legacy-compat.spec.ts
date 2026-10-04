@@ -25,3 +25,62 @@ describe('packages/types enums legacy role members (legacy in, canonical out)', 
     expect(toCanonicalRoleSlug('unknown_role')).toBe('unknown_role');
   });
 });
+
+// The legacy slugs are what org_members.role / roles.slug still persist: the RBAC runtime must keep
+// resolving each one to its level and permission set, and each English alias must resolve identically.
+// The modules are loaded inside the test (not at import time) so that a broken legacy mapping (which makes
+// rbac.service throw while it builds the alias matrix) fails as an assertion instead of as a suite crash.
+describe('RBAC runtime keeps resolving the legacy role slugs (same level and permissions as the canonical alias)', () => {
+  type RbacModule = typeof import('../../core/rbac/rbac.service');
+  type HierarchyModule = typeof import('../../core/rbac/role-hierarchy');
+  const load = (): { rbac: RbacModule; hierarchy: HierarchyModule } => {
+    let out: { rbac: RbacModule; hierarchy: HierarchyModule } | undefined;
+    jest.isolateModules(() => {
+      out = {
+        rbac: require('../../core/rbac/rbac.service') as RbacModule,
+        hierarchy: require('../../core/rbac/role-hierarchy') as HierarchyModule,
+      };
+    });
+    return out!;
+  };
+
+  const expected: Array<[legacy: string, canonical: string, level: number, grantedKey: string]> = [
+    ['artista', 'artist', 30, 'artist:read'],
+    ['colaborador', 'collaborator', 20, 'catalog:read'],
+    ['comercial', 'sales', 45, 'crm:create'],
+    ['juridico', 'legal', 55, 'contracts:create'],
+    ['produtor', 'producer', 40, 'catalog:create'],
+    ['rh_manager', 'hr_manager', 55, 'rh:create'],
+  ];
+
+  it('loading the RBAC runtime does not throw', () => {
+    expect(() => load()).not.toThrow();
+  });
+
+  it.each(expected)('%s keeps its own hierarchy level and permissions; %s resolves to the same', (legacy, canonical, level, grantedKey) => {
+    const { rbac } = load();
+    const service = new rbac.RbacService({ resolve: jest.fn() } as never);
+    expect(rbac.ROLE_HIERARCHY[legacy]).toBe(level);
+    expect(service.getHierarchyLevel(legacy)).toBe(level);
+    expect(service.getHierarchyLevel(canonical)).toBe(level);
+    expect(service.getPermissions(legacy)).toContain(grantedKey);
+    expect(service.getPermissions(legacy).length).toBeGreaterThan(0);
+    expect(service.getPermissions(canonical)).toEqual(service.getPermissions(legacy));
+    expect(rbac.ROLE_PERMISSIONS[legacy]).toBeDefined();
+  });
+
+  it('English aliases map onto exactly the legacy slugs persisted in the database', () => {
+    const { hierarchy } = load();
+    // artist/artista is a separate persisted row (artist is not an alias), every other pair is an alias
+    for (const [legacy, canonical] of expected.filter(([l]) => l !== 'artista')) {
+      expect(hierarchy.ENGLISH_ROLE_ALIASES[canonical]).toBe(legacy);
+    }
+  });
+
+  it('unrelated roles are not widened by the legacy handling', () => {
+    const { rbac } = load();
+    const service = new rbac.RbacService({ resolve: jest.fn() } as never);
+    expect(service.getPermissions('viewer')).not.toContain('contracts:create');
+    expect(service.getHierarchyLevel('not_a_role')).toBe(0);
+  });
+});

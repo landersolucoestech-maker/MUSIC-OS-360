@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "stale-code-detector",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "115 records verified frozen with canonical label, six label normalizations differ only on line 1, no executable consumer, no active document cites a record as current; findings (billing guard comment, cleanup-check comment, audit loopholes, unfrozen corpus files) fixed afterwards by the orchestrator and covered by the audit tool.",
+  "workspaceFingerprint": "1de75ccf2fbbe31ae0e632fdf61c5a6add7ca67d8d0e4372c27cbb665abf504f",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-f044b542",
+  "createdAt": "2026-10-03T15:49:01.078Z"
+}

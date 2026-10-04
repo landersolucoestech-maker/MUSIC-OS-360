@@ -23,7 +23,10 @@ test("looksLikeRealSecret: real shapes and truncated JWT-looking credentials are
   assert.equal(looksLikeRealSecret(jwt.split(".")[0], "SUPABASE_SERVICE_ROLE_KEY"), true);
   assert.equal(looksLikeRealSecret("<SUPABASE_ANON_KEY>", "SUPABASE_ANON_KEY"), false);
   assert.equal(looksLikeRealSecret("a".repeat(64), "ENCRYPTION_KEY"), true);
-  assert.equal(looksLikeRealSecret("a".repeat(64), "SUPABASE_ANON_KEY"), false, "a non-JWT value cannot be a working Supabase JWT");
+  assert.equal(looksLikeRealSecret("a".repeat(64), "SUPABASE_ANON_KEY"), true, "a long hex credential pasted in a JWT slot is still a credential");
+  assert.equal(looksLikeRealSecret("sk_live_" + "A".repeat(24), "SUPABASE_SERVICE_ROLE_KEY"), true, "a provider key pasted in the wrong slot is still caught");
+  assert.equal(looksLikeRealSecret(`Bearer ${jwt.split(".")[0]}`, "SUPABASE_ANON_KEY"), true, "prefixed forms are caught");
+  assert.equal(looksLikeRealSecret("not-a-jwt", "SUPABASE_ANON_KEY"), false);
   assert.equal(looksLikeRealSecret("sk_live_" + "A".repeat(24), "STRIPE_SECRET_KEY"), true);
   assert.equal(looksLikeRealSecret("<ENCRYPTION_KEY>", "ENCRYPTION_KEY"), false);
   assert.equal(looksLikeRealSecret("postgresql://musicos_app:<APP_DB_PASSWORD>@<DB_HOST>:5432/<DB_NAME>", "APP_DATABASE_URL"), false);

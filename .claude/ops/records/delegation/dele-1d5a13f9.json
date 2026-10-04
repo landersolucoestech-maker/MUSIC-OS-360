@@ -1,0 +1,13 @@
+{
+  "agent": "implementation-engineer",
+  "objective": "Correct the active documents that presented historical baselines as current and normalize the six variant historical labels.",
+  "requirementIds": [],
+  "filesInScope": [
+    "docs/INDEX_DOCUMENTATION.md",
+    "docs/runbooks",
+    "docs/CODEBASE_MAP.md"
+  ],
+  "status": "CLOSED",
+  "id": "dele-1d5a13f9",
+  "createdAt": "2026-10-03T15:10:44.691Z"
+}

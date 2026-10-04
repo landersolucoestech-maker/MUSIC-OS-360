@@ -62,3 +62,19 @@ describe("ReleaseFormModal project seed: legacy track JSON keys in projects.desc
     expect(screen.getByDisplayValue("Comp")).toBeTruthy();
   });
 });
+
+describe("ReleaseFormModal project seed: hydrated project.tracks (canonical source)", () => {
+  it("pre-fills the release tracks from project.tracks even when description is free text", async () => {
+    await selectProject({
+      id: "p3", title: "Proj", artist_id: "a1", music_genre: "pop", type: "single",
+      description: "texto livre, não é JSON",
+      tracks: [{ name: "Faixa Canônica", composers: ["Comp Canon"], producers: ["Prod Canon"], lyrics: "letra canônica" }],
+    });
+    await waitFor(() => expect(screen.getByDisplayValue("Proj")).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Envio de faixas" }));
+    expect(await screen.findByDisplayValue("Faixa Canônica")).toBeTruthy();
+    expect(screen.getByDisplayValue("Comp Canon")).toBeTruthy();
+    expect(screen.getByDisplayValue("Prod Canon")).toBeTruthy();
+    expect(screen.getByDisplayValue("letra canônica")).toBeTruthy();
+  });
+});

@@ -1,0 +1,11 @@
+{
+  "agent": "producer-consumer-tracer",
+  "objective": "Trace producers, consumers, semantics and data of the five open product decisions (release status, transactions v2 ledger, shares registry, leads internal notes, external-source columns) without inventing a decision.",
+  "requirementIds": [],
+  "filesInScope": [
+    "docs/engineering/product-decision-packages.md"
+  ],
+  "status": "CLOSED",
+  "id": "dele-46a3eaaf",
+  "createdAt": "2026-10-03T15:10:44.665Z"
+}

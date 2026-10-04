@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "qa-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "w15 groups A,B,C: survivors killed by new real assertions (delivered hand-backs); mutation re-run pending",
+  "workspaceFingerprint": "a8c0fb0c8e6328f9d5bfbb705b262b4ae8a09c35b68396b5c2667f66ac4f1d26",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-ed3d519d",
+  "createdAt": "2026-10-03T19:46:00.644Z"
+}

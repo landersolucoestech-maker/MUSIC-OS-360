@@ -1,0 +1,9 @@
+{
+  "agent": "naming-reviewer",
+  "objective": "Independently review the semantic classification of ledger rows: rules deterministic, categories correct, no obsolete or misclassified row hidden.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-7baa5046",
+  "createdAt": "2026-10-03T15:49:33.340Z"
+}

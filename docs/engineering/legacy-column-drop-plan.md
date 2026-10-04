@@ -239,8 +239,9 @@ the archive early through draft 52 after the rollback window, not to keep the ar
    invoices (after 5.1). There is no draft 47 (takedowns.url no longer exists, see 5.2).
 4. After the retention window (owner decides, suggested 90 days) a separate migration drops the `*_legacy_archive_20260930` tables:
    gated draft `20260930000052_RetireLegacyColumnDropArchives.ts` (own token `LEGACY_ARCHIVE_RETIRE_CONFIRM=retire-legacy-archives-window-over`,
-   distinct from `LEGACY_DROP_CONFIRM`; only `DROP TABLE IF EXISTS` of the ten archives (the nine default ones plus `employees_pii_legacy_archive_20260930` of draft 53); `down()` refuses, irreversible; spec
+   distinct from `LEGACY_DROP_CONFIRM`; only `DROP TABLE IF EXISTS` of the twelve archives (the nine default ones, `employees_pii_legacy_archive_20260930` of draft 53, and the two PII archives `artists_pii_archive_20261002` and `clients_pii_archive_20261002` of drafts 20261002000002/3); `down()` refuses, irreversible; spec
    `retire-legacy-column-drop-archives.draft.spec.ts` keeps it unregistered and checks it lists exactly the archives of the drop plans).
+   As drafted, 52 sorts BEFORE 20261002000002 and 20261002000003: it must be re-timestamped AFTER them (and after the PII scrub), otherwise it runs as a no-op through `DROP IF EXISTS` and the archives are never retired.
    It must not be registered while rollback is still wanted. The `*_backfill_20260930` tracking tables are retired by draft 50
    (`backfill-side-tables-retention.md`). Until retirement, the archive tables are part of the per-tenant erasure procedure of that document.
 
@@ -352,7 +353,7 @@ Order (each step needs its own evidence; nothing below is executed by an agent, 
 2. B0 per table group (code only, no migration): entity declaration and reader/writer removal, deployed and green everywhere, one release BEFORE that group's drop.
 3. One destructive migration per deploy, DEV, then STAGING (rehearsal), then PRODUCTION, each its own authorization. Suggested group order in section 4.
 4. Invoices: 48 (relax NOT NULL), then the stop-writing + entity-removal release (5.1 step 3, which is B0 of 49), then 49.
-5. Retention window (owner decides, suggested 90 days), then draft 52 (archives, including the employees PII archive). Never while a rollback is still wanted.
+5. Retention window (owner decides, suggested 90 days), then draft 52, re-timestamped after 49 and after the PII drafts 20261002000002/3 (archives, including the employees PII archive and the two PII archives). Never while a rollback is still wanted.
 6. Draft 50 (backfill side tables) only after ALL rollback windows of the `20260930*` backfills are over, in every environment (`backfill-side-tables-retention.md`).
 7. PII encryption of artists and clients (separate plan, `data-governance-pii-backfill.md`): additive migration first, then the dual-write release, then the backfill, then verification, then the scrub of the plaintext as its OWN authorization (it is destructive and is not covered by any approval of this plan).
 
@@ -368,3 +369,7 @@ External evidence that must exist before the corresponding approval (an item tha
 - PITR / backup point id taken immediately before each production deploy;
 - table sizes and measured lock timings of the rehearsal (the 15s `lock_timeout` and the SHARE ROW EXCLUSIVE lock must be acceptable for the largest table: works, phonograms, transactions, invoices, employees);
 - key escrow / recovery of the encryption keys (PII encryption, step 7), proven by a restore of a key and a decrypt of a sample.
+
+## Coexistence of old and new application builds (per package group)
+
+Every drop follows the same expand/contract shape: the additive release A (canonical column and dual-write) is already deployed; B0 removes the entity declaration and every reader/writer of the legacy column and must be deployed and green in every environment for at least one full deploy cycle before the drop, so that no old build (which still selects or writes the legacy column) can run against the dropped schema; the destructive migration then runs alone in its own deploy; `down()` re-adds the column and restores values by id from the archive (or rebuilds them, packages 46 and 48), so a rolled-back build keeps working. The minimum duration of the B0 window and the proof that no old instance is running (rollout complete, old revision drained) are owner-confirmed items of each package's approval; the dossier lists them under DEPENDENCIES and MISSING_REQUIREMENT.

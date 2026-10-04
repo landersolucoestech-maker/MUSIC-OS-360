@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "frontend-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r9 frontend: PASS, no blocking defects; plan key is find-8fb21cf0",
+  "workspaceFingerprint": "688c4cae9a554831ca576143ce28452917933df8161eb447a1f65efe09c4bffd",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-ed4c11d7",
+  "createdAt": "2026-10-03T18:38:03.216Z"
+}

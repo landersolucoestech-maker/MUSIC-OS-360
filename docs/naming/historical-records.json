@@ -358,6 +358,10 @@
    "sha256": "bf6257f5fe97f8f138ff11c89492192f3e265350401ea3a798567e3ce900e069",
    "lines": 49
   },
+  "docs/backend-v2/database-inventory/constraints.md": {
+   "sha256": "2904ed33ee5a0c4b41b17054e4682dc19a0e2f8b02a9bc745a605f15403475fc",
+   "lines": 1632
+  },
   "docs/backend-v2/database-inventory/enums-views.md": {
    "sha256": "44b7af454545d65123e12f91b1820b7a8d73c4b9e4ff813b7b6d34729a69eda4",
    "lines": 188
@@ -369,6 +373,10 @@
   "docs/backend-v2/database-inventory/functions-triggers.md": {
    "sha256": "8a273f2a8f2663562cc391579664725838b53d3dd74bd8b3db09f97bc303fef9",
    "lines": 67
+  },
+  "docs/backend-v2/database-inventory/indexes.md": {
+   "sha256": "c4c55ffb9bbe3ee3912b30edff756774c98ea63eaf970c511f5f69a2bb42dab6",
+   "lines": 655
   },
   "docs/backend-v2/database-inventory/realtime-auth-storage.md": {
    "sha256": "734cb23bb01d52f31d871588e68dbe30ca6fa4caa5baf4a5e8c595c0a77f5da3",
@@ -401,6 +409,50 @@
   "docs/backend-v2/field-traceability/modules/admin.md": {
    "sha256": "662c3b3adcb1471376266a9cf7f2c91625e300ebbfae96fad1d3c2ea8e6e3b3f",
    "lines": 215
+  },
+  "docs/backend-v2/field-traceability/modules/artist.md": {
+   "sha256": "aaa33aae66771f6d7beda3a17cf498acf5bb51493ba37ace9d9508520181e6ce",
+   "lines": 296
+  },
+  "docs/backend-v2/field-traceability/modules/audiovisual.md": {
+   "sha256": "ac6154d3cbc0fb1e5f9cc69a1886ed0c2a862233d5ecfd0a9339b883d62be6c8",
+   "lines": 245
+  },
+  "docs/backend-v2/field-traceability/modules/auth.md": {
+   "sha256": "d76232f74c90c109383836509a2ee9afd198e7897490330c112d7c8178b05b26",
+   "lines": 253
+  },
+  "docs/backend-v2/field-traceability/modules/catalog.md": {
+   "sha256": "660799c058234c185925e60d56455d4f487f6c0f026ee766ce06df60e0d33ccf",
+   "lines": 597
+  },
+  "docs/backend-v2/field-traceability/modules/contracts.md": {
+   "sha256": "193dff0d2abdbb7547fd6bde8df65c37d80e0bdb3e55ba776c46e9cc3e2b65a5",
+   "lines": 884
+  },
+  "docs/backend-v2/field-traceability/modules/crm-relationships.md": {
+   "sha256": "8592499a0404516de122b453c112af5e4f38dcdf3d5886f789f5e14f6d389072",
+   "lines": 631
+  },
+  "docs/backend-v2/field-traceability/modules/dashboard.md": {
+   "sha256": "26335f7f6b30a1aff504433d8fa3e75f57480e85fa00aba96efd44ac1632a296",
+   "lines": 579
+  },
+  "docs/backend-v2/field-traceability/modules/events.md": {
+   "sha256": "9b3d22a5ff36df3f14e30eef1dc9bbae89a959a3503ff977ae43450065dd9b3f",
+   "lines": 775
+  },
+  "docs/backend-v2/field-traceability/modules/hr.md": {
+   "sha256": "4adbceea31d845b569428019a6dfdeefc1946806906a80192ef71962ce3d0dd6",
+   "lines": 328
+  },
+  "docs/backend-v2/field-traceability/modules/integrations.md": {
+   "sha256": "4f8c3b6389422cbe7301910b7bcdc3adfe2d0e75174074b821f5af34a146bdc6",
+   "lines": 1079
+  },
+  "docs/backend-v2/field-traceability/modules/inventory.md": {
+   "sha256": "72b0968ed6c1781031f6b43982bb7fe9b1d645183220a67dced3a3661b93fdfa",
+   "lines": 792
   },
   "docs/backend-v2/field-traceability/modules/leads.md": {
    "sha256": "1800df141aa5d14aeeac102266906f3350786c7c841f9c03338960f4fc6b13ec",
@@ -453,6 +505,10 @@
   "docs/backend-v2/review/00-master-domain-functional-verification.md": {
    "sha256": "be68870d20b7bd51a68e7973f91ed925fd397f7ca1b35d3d6bc1b3c8443642a3",
    "lines": 3058
+  },
+  "docs/backend-v2/review/01-full-project-exhaustive-verification.md": {
+   "sha256": "a01d2c7dd3326ed352004585c77c8dfb33304bf8670fa03df93c2d3be4ad8a25",
+   "lines": 3497
   },
   "reports/CLEANUP_REPORT.md": {
    "sha256": "7ab57235029d5a147ccd02de4ae6f98818f827b124907cec16c7dcd1d33524a1",

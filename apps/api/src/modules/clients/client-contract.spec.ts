@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CreateClientDto, CreateClientTimelineEntryDto, QueryClientDto, UpdateClientDto } from './dto/clients.dto';
 import { ClientsService } from './clients.service';
-import { canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
+import { METADATA_PII_KEYS, canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
 
 /**
  * CZ-043: the client (CRM contact) contract is snake_case English = columns.
@@ -171,6 +171,64 @@ describe('Client request/response contract (CZ-043)', () => {
     const updated = canonicalizeClientInput({ metadata: pii }, { update: true }) as Record<string, unknown>;
     expect(updated['metadata']).toEqual({ leadId: 'lead-1' });
     expect(JSON.stringify(created)).not.toMatch(/a@b\.c|x@y\.z/);
+  });
+});
+
+describe('client legacy address/document names: cep, complemento, cpf, cnpj (CZ-043 deploy skew)', () => {
+  it('top-level deprecated cep/complemento are moved to zip_code/address_complement; the canonical field wins when both are sent', () => {
+    expect(canonicalizeClientInput({ name: 'A', cep: '01000-000', complemento: 'Sala 2' } as never)).toEqual({
+      name: 'A', zip_code: '01000-000', address_complement: 'Sala 2',
+    });
+    expect(
+      canonicalizeClientInput({ name: 'A', zip_code: '11111-111', cep: '22222-222', address_complement: 'Canonical', complemento: 'Legacy' } as never),
+    ).toEqual({ name: 'A', zip_code: '11111-111', address_complement: 'Canonical' });
+  });
+
+  it('the legacy metadata copy unfolds cep/complemento into the columns, never over a canonical top-level value, and never stays in metadata', () => {
+    const unfolded = canonicalizeClientInput({
+      name: 'A', metadata: { tipo_pessoa: 'pessoa_fisica', cep: '01000-000', complemento: 'Sala 2', origem: 'x' },
+    } as never) as Record<string, unknown>;
+    expect(unfolded).toMatchObject({ person_type: 'individual', zip_code: '01000-000', address_complement: 'Sala 2', metadata: { origem: 'x' } });
+
+    const canonicalWins = canonicalizeClientInput({
+      name: 'A', zip_code: '99999-999', address_complement: 'Top', metadata: { tipo_pessoa: 'pessoa_fisica', cep: '01000-000', complemento: 'Meta' },
+    } as never) as Record<string, unknown>;
+    expect(canonicalWins).toMatchObject({ zip_code: '99999-999', address_complement: 'Top' });
+    expect(canonicalWins['metadata']).toEqual({});
+  });
+
+  it('a legacy metadata cpf or cnpj becomes cpf_cnpj (cpf first); a document sent by name never gets overridden', () => {
+    expect(canonicalizeClientInput({ name: 'A', metadata: { tipo_pessoa: 'pessoa_fisica', cpf: '111.222.333-44' } } as never))
+      .toMatchObject({ cpf_cnpj: '111.222.333-44', metadata: {} });
+    expect(canonicalizeClientInput({ name: 'A', metadata: { tipo_pessoa: 'pessoa_juridica', cnpj: '12.345.678/0001-00' } } as never))
+      .toMatchObject({ cpf_cnpj: '12.345.678/0001-00', metadata: {} });
+    expect(canonicalizeClientInput({ name: 'A', metadata: { tipo_pessoa: 'pessoa_fisica', cpf: '111', cnpj: '222' } } as never))
+      .toMatchObject({ cpf_cnpj: '111' });
+    expect(canonicalizeClientInput({ name: 'A', cpf_cnpj: 'CANONICAL', metadata: { tipo_pessoa: 'pessoa_fisica', cpf: 'META' } } as never))
+      .toMatchObject({ cpf_cnpj: 'CANONICAL', metadata: {} });
+    expect(canonicalizeClientInput({ name: 'A', document: 'LEGACY-TOP', metadata: { tipo_pessoa: 'pessoa_fisica', cnpj: 'META' } } as never))
+      .toMatchObject({ cpf_cnpj: 'LEGACY-TOP', metadata: {} });
+  });
+
+  it('a metadata that carries ONLY a plaintext cpf or cnpj is itself recognized as a pre-CZ-043 payload and unfolded; no top-level cpf/cnpj key is produced', () => {
+    for (const [key, value] of [['cpf', '111.222.333-44'], ['cnpj', '12.345.678/0001-00']] as const) {
+      const out = canonicalizeClientInput({ name: 'A', metadata: { [key]: value } } as never) as Record<string, unknown>;
+      expect(out['cpf_cnpj']).toBe(value);
+      expect(out['metadata']).toEqual({});
+      expect(out).not.toHaveProperty('cpf');
+      expect(out).not.toHaveProperty('cnpj');
+    }
+  });
+
+  it('the exported plaintext-PII key set (consumed by the scrub migration draft) pins cpf and cnpj, and the other document spellings', () => {
+    for (const key of ['cpf', 'cnpj', 'cpf_cnpj', 'documento', 'document', 'rg']) expect(METADATA_PII_KEYS.has(key)).toBe(true);
+  });
+
+  it('cpf/cnpj never stay in metadata, for a canonical payload as well as for a legacy one', () => {
+    for (const metadata of [{ cpf: '1', cnpj: '2', keep: 1 }, { tipo_pessoa: 'pessoa_fisica', cpf: '1', cnpj: '2', keep: 1 }]) {
+      const out = canonicalizeClientInput({ name: 'A', metadata } as never) as Record<string, unknown>;
+      expect(out['metadata']).toEqual({ keep: 1 });
+    }
   });
 });
 

@@ -43,6 +43,8 @@ export const bodyOf = (text) => text.split("\n").slice(1).join("\n");
 export const CORPUS = /^(docs\/backend-v2\/|reports\/|\.audit-runtime\/)/;
 /** A reference line that is only a code comment (a published migration may cite the audit that motivated it). */
 export const isCommentLine = (line) => /^\s*(\/\/|\*|\/\*|--|#)/.test(line);
+/** Published migrations are immutable history: only they may cite a record in a comment without labelling it. */
+export const isMigration = (f) => /(^|\/)migrations\/[^/]+$/.test(f);
 const LABELLED = /historical|frozen|superseded|point-in-time|archived|kept as recorded|not the current contract|histórico/i;
 
 function trackedFiles() {
@@ -63,16 +65,19 @@ export function validate({ records, manifest, files, readRecord }) {
     if (!m) violations.push({ file: p, check: "H2_FROZEN", detail: "no manifest entry" });
     else if (m.sha256 !== sha256(body) || m.lines !== body.split("\n").length) violations.push({ file: p, check: "H2_FROZEN", detail: `body changed (manifest ${m.lines} lines, now ${body.split("\n").length})` });
   }
-  const base = (p) => p.split("/").pop();
+  const baseCount = new Map();
+  for (const r of records) baseCount.set(r.split("/").pop(), (baseCount.get(r.split("/").pop()) ?? 0) + 1);
+  // a basename identifies a record only when it is long and unique among the records (integrations.md would match docs/engineering/integrations.md)
+  const base = (p) => { const b = p.split("/").pop(); return b.length >= 22 && baseCount.get(b) === 1 ? b : p; };
   for (const [f, text] of Object.entries(files)) {
     if (isHistoricalFile(f)) continue;
     const executable = /^(apps|packages|\.github|\.claude\/runtime|\.claude\/hooks|scripts)\//.test(f) && !/\.md$/.test(f) || /(^|\/)package\.json$/.test(f);
-    const inCorpus = CORPUS.test(f) || /^(?:.*\n){0,9}.*(SUPERSEDED|OBSOLETE|Historical record)/.test(text.slice(0, 1500));
+    const inCorpus = CORPUS.test(f);
     const isNamingTool = inCorpus || /^scripts\/naming\//.test(f) || f === "docs/naming/canonical-naming-map.json" || /^docs\/naming\/(audit\/|historical-records\.json)/.test(f);
     const lines = text.split("\n");
     for (const p of records) {
       if (!text.includes(p) && !(f.endsWith(".md") && text.includes(base(p)))) continue;
-      if (executable && !isNamingTool && lines.some((l) => l.includes(p) && !isCommentLine(l))) violations.push({ file: p, check: "H3_NOT_CONSUMED", detail: `referenced by executable ${f}` });
+      if (executable && !isNamingTool && lines.some((l) => l.includes(p) && (!isCommentLine(l) || (!isMigration(f) && !LABELLED.test(l))))) violations.push({ file: p, check: "H3_NOT_CONSUMED", detail: `referenced by executable ${f}` });
       if (f.endsWith(".md") && !isNamingTool) {
         lines.forEach((line, i) => {
           if (!(line.includes(p) || line.includes(base(p)))) return;
@@ -94,10 +99,16 @@ export function buildManifest(records, readRecord) {
   return out;
 }
 
+/** Every tracked Markdown file of the frozen corpora (docs/backend-v2, reports) is a record even when it has no Portuguese prose; the corpus README is the status document, not a record. */
+export function corpusMarkdown(tracked) {
+  return tracked.filter((f) => /\.md$/.test(f) && /^(docs\/backend-v2\/|reports\/)/.test(f) && f !== "docs/backend-v2/README.md");
+}
+
 function main() {
   const mode = process.argv[2] ?? "--check";
   const map = loadAuthority();
-  const records = historicalPaths(map);
+  const ledgerRecords = historicalPaths(map);
+  const records = [...new Set([...ledgerRecords, ...corpusMarkdown(trackedFiles())])].sort();
   const readRecord = (p) => { const f = path.join(ROOT, p); return fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null; };
   if (mode === "--write") {
     fs.writeFileSync(MANIFEST, JSON.stringify(buildManifest(records, readRecord), null, 1) + "\n");
@@ -115,7 +126,7 @@ function main() {
   const violations = validate({ records, manifest, files, readRecord });
   // H5: every record is covered by a doc row of class UX_TEXT with census "baselined"
   const covered = new Set((map.exceptions ?? []).filter((e) => e.census === "baselined" && e.surface === "doc" && e.exceptionClass === "UX_TEXT").flatMap((e) => String(e.path).split(/\s*,\s*/)));
-  for (const p of records) if (!covered.has(p)) violations.push({ file: p, check: "H5_LEDGER", detail: "not covered by a baselined doc row of class UX_TEXT" });
+  for (const p of ledgerRecords) if (!covered.has(p)) violations.push({ file: p, check: "H5_LEDGER", detail: "not covered by a baselined doc row of class UX_TEXT" });
   const unique = [...new Map(violations.map((v) => [`${v.file}|${v.check}|${v.detail}`, v])).values()];
   console.log(`historical-records audit: ${records.length} records, MISCLASSIFIED_HISTORICAL_RECORDS=${new Set(unique.map((v) => v.file)).size}, violations=${unique.length}`);
   for (const v of unique.slice(0, 80)) console.error(`  ${v.check} ${v.file}: ${v.detail}`);

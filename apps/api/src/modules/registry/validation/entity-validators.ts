@@ -25,7 +25,7 @@ function toPercent(value: string | number | null | undefined): number {
 
 function isPublisherRole(role: string | null | undefined): boolean {
   const r = (role ?? '').toLowerCase();
-  return r.includes('publisher') || r.includes('editora') || r.includes('editor');
+  return r.includes('publisher') || r.includes('editor');
 }
 
 // Canonical share roles are English (CZ-037: party_role author/composer/

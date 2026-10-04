@@ -4,7 +4,14 @@ import { validateSync } from 'class-validator';
 import { ShareStatus } from '@music-os-360/types';
 import { SharesService } from './shares.service';
 import { CreateShareDto, QueryShareDto } from './dto/shares.dto';
-import { SHARE_DEPRECATED_FIELDS } from './share-legacy-fields';
+import {
+  SHARE_DEPRECATED_FIELDS,
+  SHARE_HISTORY_ENTRY_DEPRECATED_FIELDS,
+  SHARE_QUERY_DEPRECATED_FIELDS,
+  canonicalizeShareHistory,
+  canonicalizeShareValues,
+} from './share-legacy-fields';
+import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 
 /**
  * CZ-037: share fields and values are English. LEGACY_WEB_SHARE is the payload a
@@ -117,5 +124,110 @@ describe('Share request contract (CZ-037)', () => {
     await service.create('tenant-1', { direction: 'entrada', party_role: 'outro', holderName: 'X' } as never);
     expect(repo.create.mock.calls[0][0]).toMatchObject({ direction: 'receivable', party_role: 'other' });
     for (const direction of ['saida', 'a_pagar']) expect(errorsFor(QueryShareDto, { direction })).toEqual([]);
+  });
+});
+
+// ─── Exhaustive pins of every legacy name of share-legacy-fields.ts (explicit static tables, not derived from the module) ───
+type Row2 = ReadonlyArray<readonly [string, string]>;
+type Row3 = ReadonlyArray<readonly [string, string, string]>;
+const X_SHARE_FIELDS: Row2 = [
+  ['artista_externo', 'external_artist_name'],
+  ['artista_project_id', 'artist_id'],
+  ['pagador', 'payer'],
+  ['pagador_contato', 'payer_contact'],
+  ['origem_acordo', 'agreement_source'],
+  ['data_prevista', 'expected_at'],
+  ['acordo_notas', 'agreement_notes'],
+  ['acordo_url', 'agreement_url'],
+  ['versao', 'version'],
+  ['historico', 'history'],
+];
+
+const X_SHARE_QUERY_FIELDS: Row2 = [
+  ['workId', 'work_id'],
+  ['trackId', 'phonogram_id'],
+  ['role', 'party_role'],
+];
+
+const X_SHARE_HISTORY_KEYS: Row2 = [
+  ['versao', 'version'],
+  ['data', 'date'],
+  ['autor', 'author'],
+  ['descricao', 'description'],
+  ['acao', 'action'],
+  ['usuario', 'user'],
+  ['observacao', 'note'],
+  ['valor_anterior', 'previous_value'],
+  ['valor_novo', 'new_value'],
+];
+
+/** [column, legacy value, canonical value] */
+const X_SHARE_VALUES: Row3 = [
+  ['status', 'ativo', 'active'],
+  ['status', 'inativo', 'inactive'],
+  ['status', 'pendente', 'pending'],
+  ['status', 'liquidado', 'settled'],
+  ['status', 'parcial', 'partial'],
+  ['status', 'enviado', 'sent'],
+  ['status', 'aceito', 'accepted'],
+  ['status', 'recebido', 'received'],
+  ['status', 'recusado', 'refused'],
+  ['status', 'erro', 'error'],
+  ['status', 'cancelado', 'cancelled'],
+  ['direction', 'a_receber', 'receivable'],
+  ['direction', 'a_enviar', 'payable'],
+  ['direction', 'entrada', 'receivable'],
+  ['direction', 'saida', 'payable'],
+  ['direction', 'a_pagar', 'payable'],
+  ['type', 'compositor', 'composer'],
+  ['type', 'interprete', 'performer'],
+  ['type', 'produtor', 'producer'],
+  ['type', 'editora', 'publisher'],
+  ['type', 'gravadora', 'record_label'],
+  ['type', 'empresario', 'manager'],
+  ['type', 'outro', 'other'],
+  ['party_role', 'autor', 'author'],
+  ['party_role', 'compositor', 'composer'],
+  ['party_role', 'interprete', 'performer'],
+  ['party_role', 'produtor', 'producer'],
+  ['party_role', 'editora', 'publisher'],
+  ['party_role', 'outro', 'other'],
+];
+
+describe('share legacy names: every deprecated field, query key, history key and value, one by one', () => {
+  it('the exported alias tables declare exactly the expected pairs', () => {
+    expect({ ...SHARE_DEPRECATED_FIELDS }).toEqual(Object.fromEntries(X_SHARE_FIELDS));
+    expect({ ...SHARE_QUERY_DEPRECATED_FIELDS }).toEqual(Object.fromEntries(X_SHARE_QUERY_FIELDS));
+    expect({ ...SHARE_HISTORY_ENTRY_DEPRECATED_FIELDS }).toEqual(Object.fromEntries(X_SHARE_HISTORY_KEYS));
+  });
+
+  describe.each([
+    ['request field', SHARE_DEPRECATED_FIELDS, X_SHARE_FIELDS],
+    ['query key', SHARE_QUERY_DEPRECATED_FIELDS, X_SHARE_QUERY_FIELDS],
+  ] as const)('%s', (_n, table, rows) => {
+    it.each(rows)('%s -> %s: legacy-only moves, the CANONICAL value wins when both are sent', (legacy, canonical) => {
+      expect(applyDeprecatedFieldAliases({ [legacy]: 'legacy-value' }, table)).toEqual({ [canonical]: 'legacy-value' });
+      expect(applyDeprecatedFieldAliases({ [legacy]: 'legacy-value', [canonical]: 'canonical-value' }, table)).toEqual({ [canonical]: 'canonical-value' });
+    });
+  });
+
+  it.each(X_SHARE_HISTORY_KEYS)('history entry key %s -> %s: legacy-only moves, canonical wins when both are present', (legacy, canonical) => {
+    expect(canonicalizeShareHistory([{ [legacy]: 'legacy-value' }])).toEqual([{ [canonical]: 'legacy-value' }]);
+    expect(canonicalizeShareHistory([{ [legacy]: 'legacy-value', [canonical]: 'canonical-value' }])).toEqual([{ [canonical]: 'canonical-value' }]);
+  });
+
+  it('history: percentual of an old entry is historical data and is NOT remapped; non-array and non-object entries pass through', () => {
+    expect(canonicalizeShareHistory([{ percentual: 5 }, 'x', null])).toEqual([{ percentual: 5 }, 'x', null]);
+    expect(canonicalizeShareHistory('x')).toBe('x');
+  });
+
+  it.each(X_SHARE_VALUES)('column %s: legacy value %s -> %s; the canonical value is unchanged', (column, legacy, canonical) => {
+    expect(canonicalizeShareValues({ [column]: legacy })).toEqual({ [column]: canonical });
+    expect(canonicalizeShareValues({ [column]: canonical })).toEqual({ [column]: canonical });
+  });
+
+  it('a legacy value of one column is not translated under another column; unknown text is kept', () => {
+    expect(canonicalizeShareValues({ direction: 'ativo' })).toEqual({ direction: 'ativo' });
+    expect(canonicalizeShareValues({ status: 'custom' })).toEqual({ status: 'custom' });
   });
 });

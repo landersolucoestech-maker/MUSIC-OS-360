@@ -97,3 +97,39 @@ describe("marital status vocabulary", () => {
     expect(maritalStatusDocumentText(undefined)).toBe("");
   });
 });
+
+describe("normalizeSavedParty: pinned legacy key table (literal keys, independent of the map under test)", () => {
+  const PINNED: ReadonlyArray<readonly [string, string]> = [
+    ["nome", "name"],
+    ["nome_artistico", "stage_name"],
+    ["nome_civil", "full_name"],
+    ["telefone", "phone"],
+    ["endereco", "address"],
+    ["nacionalidade", "nationality"],
+    ["profissao", "occupation"],
+    ["estado_civil", "marital_status"],
+    ["razao_social", "legal_name"],
+    ["representante_legal", "legal_representative"],
+    ["cpf_representante", "legal_representative_cpf"],
+    ["rg_representante", "legal_representative_rg"],
+    ["nacionalidade_representante", "legal_representative_nationality"],
+    ["estado_civil_representante", "legal_representative_marital_status"],
+    ["profissao_representante", "legal_representative_occupation"],
+    ["endereco_representante", "legal_representative_address"],
+  ];
+
+  it.each(PINNED)("a draft saved with the deprecated key %s is read as %s", (legacyKey, canonicalKey) => {
+    const out = normalizeSavedParty({ type: "individual", origin: "manual", [legacyKey]: "stored value" }) as Record<string, unknown>;
+    expect(out[canonicalKey]).toBe("stored value");
+    expect(out).not.toHaveProperty(legacyKey);
+  });
+
+  it("the canonical key wins when a draft carries both spellings", () => {
+    const out = normalizeSavedParty({ type: "individual", origin: "manual", estado_civil: "legacy", marital_status: "canonical" }) as Record<string, unknown>;
+    expect(out["marital_status"]).toBe("canonical");
+  });
+
+  it("the table of deprecated keys is exactly the pinned list (a renamed or dropped key fails here)", () => {
+    expect(Object.entries(LEGACY_PARTY_FIELD_KEYS).sort()).toEqual([...PINNED].map(([a, b]) => [a, b]).sort());
+  });
+});

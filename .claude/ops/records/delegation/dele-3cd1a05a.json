@@ -1,0 +1,9 @@
+{
+  "agent": "protected-file-validator",
+  "objective": "Independently validate the protected environment files: only authorized edits, no secret, no value of a real credential, line-level diff reviewed.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-3cd1a05a",
+  "createdAt": "2026-10-03T15:49:33.355Z"
+}

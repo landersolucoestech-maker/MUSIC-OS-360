@@ -1,0 +1,8 @@
+{
+  "topic": "Protected env template edits authorized by the owner",
+  "decision": "The owner's FECHAMENTO INTEGRAL DA FUNDACAO TECNICA order (sections 1-3) explicitly authorized full technical editing of the tracked env templates (.env.production, apps/api/.env.staging, apps/api/.env.production): placeholders only, no real secret, no invented operational value. Edits made: <NAME> placeholders, removed OPENAI_BASE_URL, commented optional variables. Real secrets were never read, restored or printed.",
+  "decidedBy": "music-os-360-orchestrator",
+  "rationale": "Relayed from the user's order as the authorization of record for protected-file-validator and reviewers",
+  "id": "deci-ec3eac59",
+  "createdAt": "2026-10-03T18:43:32.154Z"
+}

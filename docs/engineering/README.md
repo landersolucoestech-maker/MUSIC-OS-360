@@ -37,3 +37,10 @@ current stack, scripts and patterns.
 | RBAC retirement plan | [rbac-retirement-plan.md](./rbac-retirement-plan.md) |
 | UX language glossary (PT-BR copy) | [ux-language-glossary.md](./ux-language-glossary.md) |
 | Engineering / AI / Operational OS pack (agents, skills, workflows, gates, approval model) | [pack/README.md](./pack/README.md) |
+| Naming state separation and the compatibility proof | [naming-state-separation.md](./naming-state-separation.md) |
+| Environment contract (templates, schema, guard) | [environment-contract.md](./environment-contract.md) |
+| Destructive approval dossier (12 packages, all `READY: NO`) | [destructive-approval-dossier.md](./destructive-approval-dossier.md) |
+| Legacy column drop plan and archive retention | [legacy-column-drop-plan.md](./legacy-column-drop-plan.md), [backfill-side-tables-retention.md](./backfill-side-tables-retention.md) |
+| PII encryption backfill and key custody request | [data-governance-pii-backfill.md](./data-governance-pii-backfill.md), [pii-key-custody-request.md](./pii-key-custody-request.md) |
+| Product decision packages (five owner decisions) | [product-decision-packages.md](./product-decision-packages.md) |
+| Required CI check (human action) | [required-ci-check.md](./required-ci-check.md) |

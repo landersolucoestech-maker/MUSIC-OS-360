@@ -1,7 +1,11 @@
 import { ValidateTransactionTypeAndRestrictFinancialRuleVocabulary20260930000011 as Migration } from './migrations/20260930000011_ValidateTransactionTypeAndRestrictFinancialRuleVocabulary';
 import { ALL_MIGRATIONS } from './migrations';
 import { TRANSACTION_TYPES } from '../modules/transactions/transaction-legacy-fields';
-import { CALCULATION_METHODS, RULE_TYPES } from '../modules/financial-rules/financial-rule-legacy.mapper';
+import {
+  CALCULATION_METHODS,
+  RULE_TYPES,
+  normalizeFinancialRuleInput,
+} from '../modules/financial-rules/financial-rule-legacy.mapper';
 
 type Call = { sql: string; params?: unknown[] };
 
@@ -91,5 +95,29 @@ describe('ValidateTransactionTypeAndRestrictFinancialRuleVocabulary2026093000001
     expect(readd[0].sql).toContain('chk_transactions_type');
     expect(readd[0].sql).toContain('NOT VALID');
     expect(calls.some((c) => c.sql.includes('VALIDATE CONSTRAINT'))).toBe(false);
+  });
+});
+
+describe('financial rule legacy input still maps to the vocabulary the CHECK constraints allow', () => {
+  it.each([
+    ['percentual', 'percentage'], ['fixo', 'fixed'], ['faixa', 'tiered'],
+  ])('deprecated calculation method %j (field calculo) is normalized to %j, inside CALCULATION_METHODS', (legacy, canonical) => {
+    const out = normalizeFinancialRuleInput({ calculo: legacy });
+    expect(out).toEqual({ calculation_method: canonical });
+    expect(CALCULATION_METHODS).toContain(out['calculation_method']);
+  });
+
+  it.each([
+    ['imposto', 'tax'], ['comissao', 'commission'], ['desconto', 'discount'], ['taxa', 'fee'], ['outros', 'other'],
+  ])('deprecated rule type %j is normalized to %j, inside RULE_TYPES', (legacy, canonical) => {
+    const out = normalizeFinancialRuleInput({ type: legacy });
+    expect(out).toEqual({ type: canonical });
+    expect(RULE_TYPES).toContain(out['type']);
+  });
+
+  it('the canonical field wins over the deprecated one (calculo, condicoes) and the deprecated key is dropped', () => {
+    expect(normalizeFinancialRuleInput({ calculation_method: 'tiered', calculo: 'fixo' })).toEqual({ calculation_method: 'tiered' });
+    expect(normalizeFinancialRuleInput({ conditions: { a: 1 }, condicoes: { a: 2 } })).toEqual({ conditions: { a: 1 } });
+    expect(normalizeFinancialRuleInput({ condicoes: { a: 2 } })).toEqual({ conditions: { a: 2 } });
   });
 });

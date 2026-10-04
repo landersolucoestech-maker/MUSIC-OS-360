@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "root-cause-investigator",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r14 recovery: root cause established; G1-G4 closed; G5/G6 accepted limits; G7 test + exhaustive-for-named-rows implemented after the review (delivered hand-back)",
+  "workspaceFingerprint": "a6321f1b7f240532cf4cc1c093420c575c0e6e8279076808093b29921590f8e7",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-bc42de7d",
+  "createdAt": "2026-10-03T23:46:35.330Z"
+}

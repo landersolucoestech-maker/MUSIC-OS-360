@@ -1,0 +1,14 @@
+{
+  "agent": "backend-engineer",
+  "objective": "Add the API behavior tests that prove the compatibility boundaries: provision-workspace consent DTO contract, contract party refs DTO keys, contracts canonical-first payload, financial rule canonical conditions, pinned legacy role slugs.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src/modules/auth/dto",
+    "apps/api/src/modules/contracts",
+    "apps/api/src/modules/financial-rules",
+    "apps/api/src/core/rbac"
+  ],
+  "status": "CLOSED",
+  "id": "dele-fae74e92",
+  "createdAt": "2026-10-03T15:10:44.685Z"
+}

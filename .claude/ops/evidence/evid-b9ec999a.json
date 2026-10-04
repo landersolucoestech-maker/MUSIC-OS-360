@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "backend-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "27 mutations of the code under test, every spec fails when its boundary breaks; two weak assertions strengthened; a staged mutant of contract-party-refs.ts was caused by a concurrent git add and verified identical to HEAD after re-staging.",
+  "workspaceFingerprint": "1de75ccf2fbbe31ae0e632fdf61c5a6add7ca67d8d0e4372c27cbb665abf504f",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-b9ec999a",
+  "createdAt": "2026-10-03T15:49:02.949Z"
+}

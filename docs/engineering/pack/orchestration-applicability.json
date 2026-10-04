@@ -1,0 +1,384 @@
+{
+ "agents": {
+  "applicable": {
+   "music-os-360-orchestrator": {
+    "role": "lead orchestrator of the mission (main session)",
+    "notUsedReason": "used as the lead session (not a delegated task)"
+   },
+   "naming-analyzer": {
+    "role": "census and semantic classification of naming"
+   },
+   "naming-reviewer": {
+    "role": "independent review of canonical naming"
+   },
+   "config-mapper": {
+    "role": "environment contract trace"
+   },
+   "stale-code-detector": {
+    "role": "stale active citations of historical records"
+   },
+   "producer-consumer-tracer": {
+    "role": "producer/consumer trace of the product decisions"
+   },
+   "devops-ci-reviewer": {
+    "role": "required CI check review"
+   },
+   "migration-planner": {
+    "role": "destructive package dossier"
+   },
+   "encryption-reviewer": {
+    "role": "PII key custody and rotation contract"
+   },
+   "implementation-engineer": {
+    "role": "protected template, ledger gate and doc corrections"
+   },
+   "frontend-engineer": {
+    "role": "web legacy-read fixes"
+   },
+   "backend-engineer": {
+    "role": "API compatibility specs"
+   },
+   "dead-code-detector": {
+    "role": "consumer proof of the removed generator"
+   },
+   "test-strategy-engineer": {
+    "role": "mutation proof harness"
+   },
+   "qa-engineer": {
+    "role": "closing mutation survivors with tests"
+   },
+   "security-reviewer": {
+    "role": "independent security review (templates, guard, abuse paths)"
+   },
+   "documentation-reviewer": {
+    "role": "documentation review"
+   },
+   "domain-boundary-reviewer": {
+    "role": "domain separation review of the decision packages"
+   },
+   "adversarial-reviewer": {
+    "role": "blind adversarial review"
+   },
+   "database-reviewer": {
+    "role": "review of the destructive dossier"
+   },
+   "destructive-change-guard": {
+    "role": "proof that nothing destructive was executed or implied"
+   },
+   "pii-reviewer": {
+    "role": "PII custody review"
+   },
+   "protected-file-validator": {
+    "role": "protected environment files review"
+   },
+   "frontend-reviewer": {
+    "role": "web change review"
+   },
+   "architecture-reviewer": {
+    "role": "cross-layer coherence review"
+   },
+   "backend-reviewer": {
+    "role": "API spec review"
+   },
+   "code-reviewer": {
+    "role": "tooling review"
+   },
+   "dead-code-reviewer": {
+    "role": "review of the dead code removal"
+   },
+   "mutation-test-reviewer": {
+    "role": "false-green review of the mutation proof"
+   },
+   "regression-reviewer": {
+    "role": "regression review"
+   },
+   "verification-controller": {
+    "role": "final re-execution of checks"
+   },
+   "migration-test-engineer": {
+    "role": "migration and database gates (disposable PostgreSQL)"
+   },
+   "orphan-detector": {
+    "role": "residue and orphan scan"
+   },
+   "git-auditor": {
+    "role": "final repository integrity audit"
+   },
+   "completion-controller": {
+    "role": "completion decision"
+   },
+   "repo-inspector": {
+    "role": "census of the repository state",
+    "notUsedReason": "covered by the census phase task when dispatched in the final re-audit"
+   },
+   "human-approval-agent": {
+    "role": "destructive approval phase (mechanical, never granted)",
+    "notUsedReason": "the phase task is WAITING_APPROVAL by design; never granted"
+   },
+   "approval-router": {
+    "role": "destructive approval phase (mechanical, never granted)",
+    "notUsedReason": "the phase task is WAITING_APPROVAL by design; never granted"
+   },
+   "domain-boundary-guardian": {
+    "role": "canonical-model phase guard",
+    "notUsedReason": "canonical-model phase task runs in the final re-audit"
+   },
+   "rollback-planner": {
+    "role": "rollback plans of the destructive packages (schema-plan phase)",
+    "notUsedReason": "rollback is part of the dossier review; phase task runs in the final re-audit"
+   },
+   "duplication-detector": {
+    "role": "classify phase duplicate detection",
+    "notUsedReason": "classify phase task runs in the final re-audit"
+   },
+   "requirements-reviewer": {
+    "role": "requirement-to-evidence closure review"
+   },
+   "secrets-reviewer": {
+    "role": "secret handling review of templates and guard"
+   },
+   "branch-policy-validator": {
+    "role": "dev-only branch policy before the final commit",
+    "notUsedReason": "runs at the final commit"
+   },
+   "staged-diff-reviewer": {
+    "role": "staged diff review before the final commit",
+    "notUsedReason": "runs at the final commit"
+   },
+   "commit-validator": {
+    "role": "commit validation before the final commit",
+    "notUsedReason": "runs at the final commit"
+   },
+   "requirements-analyst": {
+    "role": "requirements of the closure order",
+    "notUsedReason": "requirements recorded by the orchestrator through ops.mjs; independent requirements-reviewer used instead"
+   },
+   "frontend-security-reviewer": {
+    "role": "final independent sweep of the web edits that touch consent, signup payload and the postal-code provider call"
+   },
+   "frontend-consistency-reviewer": {
+    "role": "final independent naming/structure consistency sweep of the web helpers (legacy-reads, legacy-title, signup-metadata, masks, category-labels)"
+   },
+   "refactoring-engineer": {
+    "role": "behavior-preserving extraction of web helpers",
+    "notUsedReason": "the extractions (legacy-reads, legacy-title, signup-metadata, masks, category-import) were executed directly by the orchestrator before delegation was enforced: recorded ORCHESTRATION_BYPASS, independently validated by frontend-reviewer (r9) and regression-reviewer (r15); no further refactor is planned"
+   }
+  },
+  "notApplicable": {
+   "byName": [
+    [
+     "^ai-|^prompt-engineer$|^ai-llm",
+     "this mission changes no AI/LLM product feature, prompt, tool policy or model routing"
+    ],
+    [
+     "-agent$",
+     "operational music-business agent (catalog, rights, contracts, distribution, finance operations): this mission changes no operational flow of the product"
+    ],
+    [
+     "^(accessibility|animation|interaction|responsive|visual|design-system|ui-ux|browser-|frontend-performance|visual-qa|component|routing|state-management|form|data-fetching)",
+     "no visual, interaction or accessibility change: the web edits are data-reading helpers and one form pre-fill, covered by frontend-reviewer"
+    ],
+    [
+     "^(load|performance|chaos|resilience|capacity|saturation|circuit-breaker|alerting|availability|degradation|metrics|tracing|telemetry|timeout|retry|queue|worker|scheduler|caching|webhook|oauth|rate-limit|job|event|connector|adapter|sync|provider|external|integration|mapping|credential|csrf|ssrf|xss|sql-injection|file-upload|session|authentication|authorization|rbac|tenant|multi-tenant|permission|auth-engineer|input-validation|abuse|auditability|prompt-injection|vulnerability|threat|webhook-security)",
+     "no integration, queue, worker, auth, tenant or performance behavior was changed; authorization and tenant boundaries are untouched (the only RBAC change is a pinned spec)"
+    ],
+    [
+     "^(api|dto|controller|repository|service-layer|use-case|validation|serialization|transaction|error-handling|concurrency|background|backend-architecture|api-architecture|data-architecture|domain-architecture|event-driven|frontend-architecture|infrastructure|platform|architecture-engineer|architecture-mapper|module|route|api-mapper|database-mapper|environment-mapper|event-flow|integration-mapper|ownership|queue-flow|security-boundary|tenant-boundary|worker-mapper)",
+     "no new module, controller, DTO or architecture decision: changes are compatibility readers, specs, tooling and documentation"
+    ],
+    [
+     "^(schema|migration-engineer|indexing|query|database-engineer|import-export|xlsx|csv|data-engineering|data-integrity|data-migration|denormalization|normalization|relational|locking|optimistic|archival|backup|restore|retention|transaction-reviewer|database-security|database-reliability|concurrency-reviewer)",
+     "no schema or migration was added or executed; destructive migrations are prepared as drafts only (reviewed by database-reviewer and destructive-change-guard)"
+    ],
+    [
+     "^(abstraction|boundary|cloud-infrastructure|code-smell|cohesion|complexity|consistency|coupling|duplication-reviewer|error-model|maintainability|mobile|payments|readability|technical-debt|modularity|contract-architecture|event-architecture|integration-architecture|queue-architecture|worker-architecture|service-layer-reviewer|repository-reviewer|api-reviewer|contract-reviewer|naming-reviewer)",
+     "general code-quality review is covered by code-reviewer, architecture-reviewer and naming-reviewer on this small tooling change set"
+    ],
+    [
+     "^(mission-|task-|agent-|dependency-|capability-|skill-|tool-|validation-|workflow-|context-|parallel-|repository-orchestrator|retry-orchestrator|escalation|evidence-|implementation-lead|risk-|runtime-continuity|autonomous|execution-planner|implementation-planner|refactoring-planner|release-planner|risk-planner|scope-planner|test-planner|recovery|release-orch|incident|root-cause|production-validator|release-)",
+     "coordination, routing, planning, recovery and release roles are performed by the workflow runtime (orchestrate.mjs, workflow-match.mjs) for this plan; no incident, recovery or release occurred"
+    ],
+    [
+     "^(repo-intelligence|repo-investigator|codebase-explorer|runtime-path|regression-analyzer|blast-radius|api-contract-analyzer|configuration-analyzer|data-flow-tracer|database-schema-analyzer|dependency-analyzer|dependency-tracer|environment-analyzer|feature-flag|ownership-analyzer|package-analyzer|technical-debt-analyzer|circular|unreachable|ambiguity|assumption|contradiction|acceptance-criteria|specification|requirements-validator|requirements-validator)",
+     "investigation covered by the specialist tasks of the plan (config-mapper, producer-consumer-tracer, stale-code-detector, dead-code-detector); no extra analysis needed"
+    ],
+    [
+     "^(unit-test|api-test|browser-test|contract-test|e2e|integration-test|security-test|smoke|test-engineer|runtime-validator|flaky|fixture|mock|snapshot|test-data|accessibility-auditor|performance-test)",
+     "test authorship done by qa-engineer, backend-engineer and frontend-engineer; no e2e, browser, load or integration journey changed"
+    ],
+    [
+     "^(atomic-commit|change-scope|commit-message|dependency-safety|dirty-tree|history-rewrite|protected-branch|release-guardian|release-validator|repo-identity|repository-guardian|scope-lock|diff-reviewer|merge-safety|untracked-file|rollback-analyzer|architecture-guardian)",
+     "repository hygiene guards: covered at the final commit by git-auditor, branch-policy-validator, staged-diff-reviewer and commit-validator; no history rewrite, merge or release happened"
+    ],
+    [
+     "^(compliance|cost-efficiency|dependency-reviewer|distributed-systems|integration-reviewer|performance-reviewer|reliability-observability|supply-chain|technology-selection|logging|ai-)",
+     "no dependency, infrastructure, cost or reliability change; the only dependency change (dotenv declaration) belongs to an earlier order"
+    ],
+    [
+     "^(artist-operations|security-investigator|security-auditor|security-engineer|compliance-privacy)",
+     "covered by security-reviewer, pii-reviewer and secrets-reviewer; no incident or hardening change"
+    ],
+    [
+     "^observability-engineer$",
+     "no logging, metrics, tracing or correlation code changed in this mission"
+    ],
+    [
+     "^runtime-performance-reviewer$",
+     "no hot path, query or loop was changed; the heavy mutation harness is offline tooling, not product runtime"
+    ],
+    [
+     "^frontend-data-flow-reviewer$",
+     "no query key, cache invalidation or fetch was added or changed; the web edits are pure data-reading helpers (reviewed by frontend-reviewer r9)"
+    ]
+   ],
+   "byKindDomain": []
+  }
+ },
+ "skills": {
+  "applicable": {
+   "backend-audit": {},
+   "blast-radius-analysis": {
+    "notUsedReason": "blast radius of each change was traced by the propagate task (producer/consumer tracing) and the regression review r15"
+   },
+   "branch-policy-check": {},
+   "canonical-naming": {},
+   "code-review": {
+    "notUsedReason": "covered by the review skill used by r11-ledger and the diff-review skill used by r15/r3b"
+   },
+   "config-map": {},
+   "contract-tracing": {},
+   "create-api-tests": {},
+   "create-contract-tests": {},
+   "create-migration-tests": {
+    "notUsedReason": "no new migration beyond the guarded rename, whose spec already exists and was extended with the lock_timeout assertion"
+   },
+   "create-regression-tests": {},
+   "cross-layer-impact": {},
+   "data-flow-trace": {},
+   "data-retention-audit": {},
+   "dead-code-analysis": {},
+   "definition-of-done": {
+    "notUsedReason": "applied by the completion-controller at closure (completion gate)"
+   },
+   "destructive-change-check": {},
+   "diff-review": {},
+   "dirty-tree-check": {
+    "notUsedReason": "runs at the final commit"
+   },
+   "duplication-analysis": {},
+   "encryption-audit": {},
+   "environment-map": {},
+   "evaluate-human-approval": {
+    "notUsedReason": "no human approval was requested or evaluated: approvals stay PENDING and ungranted (category A)"
+   },
+   "evidence-collection": {
+    "notUsedReason": "evidence is recorded through ops.mjs evidence run/review by the orchestrator"
+   },
+   "external-action-check": {},
+   "frontend-audit": {},
+   "git-safety-check": {
+    "notUsedReason": "runs at the final commit"
+   },
+   "migration-audit": {},
+   "naming-analysis": {},
+   "orphan-analysis": {
+    "notUsedReason": "applied by the residue phase (orphan-detector)"
+   },
+   "pii-audit": {},
+   "producer-consumer-trace": {},
+   "protected-file-check": {},
+   "quality-gate": {
+    "notUsedReason": "final gates run after the reviews"
+   },
+   "regression-gates": {
+    "notUsedReason": "final gates run after the reviews"
+   },
+   "repo-identity-check": {
+    "notUsedReason": "identity verified by the git-guard hook at session start"
+   },
+   "repository-census": {},
+   "request-human-approval": {
+    "notUsedReason": "the destructive-approval phase creates its mechanical approval request; this mission does not request any additional approval"
+   },
+   "residue-search": {},
+   "review": {},
+   "rollback-analysis": {},
+   "run-typecheck": {
+    "notUsedReason": "executed as command evidence (pnpm typecheck for api and web) in the final gates"
+   },
+   "run-unit-tests": {},
+   "safe-refactor": {},
+   "schema-normalization": {},
+   "scope-lock": {},
+   "secret-scan": {},
+   "security-audit": {},
+   "staged-diff-review": {
+    "notUsedReason": "runs at the final commit"
+   },
+   "stale-code-analysis": {},
+   "change-cluster-consolidator": {
+    "notUsedReason": "applied by the orchestrator at commit time to split the mixed working tree into atomic commits (no separate task: the skill is a commit procedure)"
+   },
+   "database-schema-drift": {
+    "notUsedReason": "schema drift is gated by scripts/naming/schema-naming-census.mjs and db:check runs in the final gates; the only schema change is the guarded rename 20261003000001 reviewed in schema-plan"
+   },
+   "databaseMigrationSafety": {
+    "notUsedReason": "migration safety (locking, backfill, rollback) was applied through migration-audit in the schema-plan task, which covers the same rules"
+   },
+   "human-approval-validation": {
+    "notUsedReason": "validated by recording every pending approval as ungranted; no destructive step was executed, so there was no approval to validate"
+   },
+   "repo-inspect": {
+    "notUsedReason": "repository state was inspected at the start of the mission and by git-auditor/branch-policy-validator at closure"
+   }
+  },
+  "notApplicable": {
+   "byName": [
+    [
+     "^ai-",
+     "no AI/LLM product feature was changed"
+    ],
+    [
+     "^(send|follow-up|schedule|escalate|route|submit|sync|process|prepare-release|release|check-signature|archive-signed|select-contract|populate|generate|calculate|compare|create-phonogram|create-work|create-project|extract|transcribe|normalize|merge|link|resolve|reconcile|retry-|repair|rollback-import|rollback-operational|resume|recover|reject|record-automation|trace-automation|explain-automation|audit-automation|assign|prioritize|detect|validate|import|execute-approved|preview-import|upload|assemble|advance|close-completed|create-operational|create-operational-task|stripe|royalties|security-tenancy|contracts-side|soundcharts|trace-rights|handle-provider|mission-recovery|resume-after|validate-)",
+     "operational music-business or runtime-recovery skill: this mission changes no operational flow, signature, distribution, import, rights or provider synchronization"
+    ],
+    [
+     "^(create-(api-route|component|controller|event|hook|integration|job|queue|repository|service|use-case|webhook|worker|migration|visual|accessibility|performance|load|e2e|integration|security|tenant-isolation|authorization|unit)|implement-|modify-schema|safe-db-rename|schema-normalization|refactor-)",
+     "construction skill for a new feature or schema: this mission adds compatibility tests and tooling, not a new feature, schema or migration (migration drafts are only reviewed)"
+    ],
+    [
+     "-audit$|-map$|-trace$|-analysis$|-check$|^(architecture-map|api-map|route-map|module-map|ownership-map|queue-map|worker-map|event-map|database-map|integration-map|authorization-map|cross-layer|impact|producer-consumer-trace|data-flow-trace|runtime-path-trace|systemic-audit|why|trace|discover|doc-writer|pr-writer|prime|plan|bootstrap|control-plane|intake|recall|remember|quorum|improve|continuous-improvement|verify|gate|execute|fix-bug|debug-assistant|root-cause-analysis|incident|feature-planner|frontend-design|test-generator|dependency-trace|dependency-scan|dependency-cycle-analysis|supply-chain-audit)",
+     "analysis or planning skill whose subject was not changed by this mission or whose role was covered by a specialist task using the same procedure (see the used skills); no applicable change surface"
+    ],
+    [
+     "^(run-|production-build|runtime-smoke|browser-runtime|localhost|external-action|external-boundary|release-checkpoint|git-checkpoint|checkpoint|resume|prime|evidence|trace)",
+     "execution or checkpoint skill covered by the final gates and the orchestrator evidence runner (ops.mjs evidence run)"
+    ],
+    [
+     "^(accessibility|animation|component|design|empty-state|error-state|form-|frontend|interaction|layout|loading-state|modal|navigation|responsive|spacing|state-management|table|typography|ui-humanization|visual|refactor-component|ui)",
+     "no visual, interaction or accessibility change"
+    ],
+    [
+     "^api-design$",
+     "no new endpoint or contract was designed in this mission"
+    ],
+    [
+     "^authorization-hardening$",
+     "no authorization rule was changed; RBAC legacy slug handling was only pinned by tests"
+    ],
+    [
+     "^structured-output-validation$",
+     "no model output is consumed by the changed code"
+    ],
+    [
+     "^threat-model$",
+     "no new trust boundary or integration was introduced"
+    ],
+    [
+     "^tool-policy-validation$",
+     "no agent tool policy was changed"
+    ]
+   ]
+  }
+ }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "pii-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r7 pii re-verification after fixes: PASS",
+  "workspaceFingerprint": "c480b4a61ccc426d1258864b45367652d988633094b3dac70a3f33b071562d94",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-5467f479",
+  "createdAt": "2026-10-03T18:36:09.438Z"
+}

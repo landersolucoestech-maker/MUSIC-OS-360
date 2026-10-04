@@ -10,7 +10,7 @@ import { seedRbac } from './04_rbac_seed';
  */
 async function runSeed() {
   const grants = new Map<string, Set<string>>();
-  const roleInserts: Array<{ slug: string; assignable: boolean }> = [];
+  const roleInserts: Array<{ slug: string; name: string; level: number; assignable: boolean }> = [];
   const ds = {
     query: jest.fn(async (sql: string, params: unknown[] = []) => {
       if (sql.includes('INSERT INTO "role_permissions"')) {
@@ -20,7 +20,7 @@ async function runSeed() {
         return [];
       }
       if (sql.includes('INSERT INTO "roles"')) {
-        roleInserts.push({ slug: params[0] as string, assignable: params[3] as boolean });
+        roleInserts.push({ slug: params[0] as string, name: params[1] as string, level: params[2] as number, assignable: params[3] as boolean });
         return [];
       }
       if (sql.includes('count(*)')) return [{ permissions: 0, roles: 0, rolepermissions: 0 }];
@@ -73,5 +73,22 @@ describe('04_rbac_seed canonical-first grants', () => {
       const inert = r.slug === 'super_admin' || Object.prototype.hasOwnProperty.call(ENGLISH_ROLE_ALIASES, r.slug);
       expect({ slug: r.slug, assignable: r.assignable }).toEqual({ slug: r.slug, assignable: !inert });
     }
+  });
+
+  it('persists the legacy juridico row with its display name and hierarchy level; its legal alias shares both and is inert', async () => {
+    const { roleInserts } = await runSeed();
+    const bySlug = new Map(roleInserts.map((r) => [r.slug, r]));
+    const legacy = bySlug.get('juridico');
+    const alias = bySlug.get('legal');
+    expect(legacy).toBeDefined();
+    expect(alias).toBeDefined();
+    // the legacy row is the persisted holder: a real display name (not the slug fallback) and assignable
+    expect(legacy!.name).toBe('Jurídico');
+    expect(legacy!.name).not.toBe('juridico');
+    expect(legacy!.level).toBe(ROLE_HIERARCHY['juridico']);
+    expect(legacy!.assignable).toBe(true);
+    expect(alias!.name).toBe(legacy!.name);
+    expect(alias!.level).toBe(legacy!.level);
+    expect(alias!.assignable).toBe(false);
   });
 });

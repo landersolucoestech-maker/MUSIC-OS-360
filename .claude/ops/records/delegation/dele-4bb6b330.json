@@ -1,0 +1,12 @@
+{
+  "agent": "implementation-engineer",
+  "objective": "Add the stale-ledger-row gate to the census, prune the rows that matched nothing, add rows for new files and keep the census, validator and rendered docs consistent.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/naming",
+    "docs/naming/canonical-naming-map.json"
+  ],
+  "status": "CLOSED",
+  "id": "dele-4bb6b330",
+  "createdAt": "2026-10-03T15:10:44.687Z"
+}

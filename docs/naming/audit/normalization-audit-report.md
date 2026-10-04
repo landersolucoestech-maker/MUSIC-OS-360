@@ -54,7 +54,7 @@ Owner order: prove the normalization against a baseline and correct everything i
 | R4 | Release status (D3), transactions v2 ledger cutover, shares registry creation, leads internal notes, external-source columns | HUMAN_DECISION | Owner answers (wording options for D3 in `docs/engineering/release-status-census.md`) |
 | R5 | Required CI check name confirmation (BLK-CI-JOB-NAME-FASE) | EXTERNAL_DEPENDENCY | A repository admin confirms (classic branch protection returned 403) |
 
-Frozen historical records (115 Markdown documents, 8695 Portuguese prose lines) are counted separately as HISTORICAL_RECORD: every one carries a "Historical record / not the current contract" header (verified file by file), is explicitly not the current contract, are held by a per-file ratchet (growth fails), and are not translated by policy.
+Frozen historical records (129 Markdown documents, 8695 Portuguese prose lines) are counted separately as HISTORICAL_RECORD: every one carries a "Historical record / not the current contract" header (verified file by file), is explicitly not the current contract, are held by a per-file ratchet (growth fails), and are not translated by policy.
 
 ## Third order (2026-10-03): protected templates resolved
 

@@ -1,0 +1,9 @@
+{
+  "agent": "backend-reviewer",
+  "objective": "Independently review the API specs added: assertions strong, each fails when the boundary breaks, no mock removes the boundary under test.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-bc0cf0f5",
+  "createdAt": "2026-10-03T15:49:33.361Z"
+}

@@ -33,6 +33,10 @@ describe("audio level compat mapper", () => {
     expect(audioLevelLabel("high")).toBe("alta");
     expect(audioLevelLabel("medium")).toBe("média");
     expect(audioLevelLabel("alta")).toBe("alta");
+    expect(audioLevelLabel("low")).toBe("baixa");
+    expect(audioLevelLabel("baixa")).toBe("baixa");
+    expect(audioLevelLabel("baixa/media")).toBe("baixa");
+    expect(normalizeAudioLevel("low")).toBe("low");
     expect(audioLevelLabel("pending")).toBe("pending");
     expect(audioLevelLabel(undefined)).toBeUndefined();
   });

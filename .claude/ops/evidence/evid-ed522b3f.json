@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "migration-planner",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "schema-plan phase: PASS (delivered hand-back); LOW doc findings F1-F4 fixed after",
+  "workspaceFingerprint": "38368a7dfe19799a54bac0627328946196e27cc2bab2442a11adf1afd96cb2bd",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-ed522b3f",
+  "createdAt": "2026-10-03T18:57:45.795Z"
+}

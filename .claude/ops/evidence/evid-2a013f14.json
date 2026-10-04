@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "regression-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r15 regression review: PASS (delivered hand-back); intended behavior changes documented (project track prefill canonical-first, legacyTitle precedence)",
+  "workspaceFingerprint": "f54b274d05f27665a81c98bf57a758e5a4a3286271d4e9c508810e4b8ad902a3",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-2a013f14",
+  "createdAt": "2026-10-03T22:14:18.404Z"
+}

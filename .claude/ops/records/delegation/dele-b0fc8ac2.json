@@ -1,0 +1,11 @@
+{
+  "agent": "dead-code-detector",
+  "objective": "Prove with a consumer search that scripts/generate-blueprint-appendices.mjs (a generator that rewrites a frozen historical record) has no consumer, then remove it with its ledger row.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/generate-blueprint-appendices.mjs"
+  ],
+  "status": "CLOSED",
+  "id": "dele-b0fc8ac2",
+  "createdAt": "2026-10-03T15:10:44.689Z"
+}

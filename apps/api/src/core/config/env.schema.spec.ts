@@ -368,3 +368,19 @@ describe('env.schema — operational variables read directly by modules are vali
     expect(JSON.stringify(result.error?.issues)).toContain(key);
   });
 });
+
+describe('env.schema — ENCRYPTION_KEY format', () => {
+  const parseKey = (ENCRYPTION_KEY: string) => envSchema.safeParse({ NODE_ENV: 'development', ENCRYPTION_KEY });
+  const keyIssue = (r: ReturnType<typeof parseKey>) => !r.success && r.error.issues.some((i) => i.path[0] === 'ENCRYPTION_KEY');
+
+  it('accepts 64 hexadecimal characters of either case', () => {
+    expect(keyIssue(parseKey('a'.repeat(64)))).toBe(false);
+    expect(keyIssue(parseKey('A1'.repeat(32)))).toBe(false);
+  });
+
+  it('rejects a 64-character value that is not hexadecimal, and any other length', () => {
+    expect(keyIssue(parseKey('g'.repeat(64)))).toBe(true);
+    expect(keyIssue(parseKey('<ENCRYPTION_KEY>'.padEnd(64, 'x')))).toBe(true);
+    expect(keyIssue(parseKey('a'.repeat(63)))).toBe(true);
+  });
+});

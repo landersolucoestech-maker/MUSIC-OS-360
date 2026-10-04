@@ -1,0 +1,9 @@
+{
+  "agent": "adversarial-reviewer",
+  "objective": "Blind adversarial review of the required-CI-check note and the PII key custody request: claims true, nothing bypassed, exact human actions complete.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-3e70e83f",
+  "createdAt": "2026-10-03T15:49:33.348Z"
+}

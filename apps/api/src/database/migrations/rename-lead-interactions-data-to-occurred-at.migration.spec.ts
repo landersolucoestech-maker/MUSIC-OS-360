@@ -22,6 +22,7 @@ describe('RenameLeadInteractionsDataToOccurredAt (cross-layer: DB column, entity
     expect(r.calls).toHaveLength(1);
     expect(r.calls[0]).toContain('RENAME COLUMN "data" TO "occurred_at"');
     expect(r.calls[0]).toMatch(/IF EXISTS[\s\S]*column_name = 'data'[\s\S]*NOT EXISTS[\s\S]*column_name = 'occurred_at'/);
+    expect(r.calls[0]).toContain("SET LOCAL lock_timeout = '15s'");
     expect(r.calls[0]).not.toMatch(/DROP|UPDATE|DELETE|INSERT|ALTER COLUMN|TYPE/);
   });
 

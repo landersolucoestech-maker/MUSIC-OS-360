@@ -1,6 +1,13 @@
 import { BackfillInvoicePaymentMethodBankTransfer20260930000021 as Migration } from './migrations/20260930000021_BackfillInvoicePaymentMethodBankTransfer';
 import { ALL_MIGRATIONS } from './migrations';
-import { CANONICAL_INVOICE_PAYMENT_METHODS, INVOICE_PAYMENT_METHODS } from '../modules/invoices/invoice-legacy-fields';
+import {
+  CANONICAL_INVOICE_PAYMENT_METHODS,
+  INVOICE_DEPRECATED_FIELDS,
+  INVOICE_ITEM_DEPRECATED_FIELDS,
+  INVOICE_PAYMENT_METHODS,
+  canonicalInvoicePaymentMethod,
+} from '../modules/invoices/invoice-legacy-fields';
+import { applyDeprecatedFieldAliases } from '../common/compat/deprecated-field-aliases.util';
 
 type Call = { sql: string; params?: unknown[] };
 
@@ -60,5 +67,53 @@ describe('BackfillInvoicePaymentMethodBankTransfer20260930000021', () => {
     const { query } = runner();
     await migration.up({ query } as never);
     for (const [line] of (console.log as unknown as jest.Mock).mock.calls) expect(String(line)).toMatch(/row\(s\)/);
+  });
+});
+
+describe('invoice legacy request contract (CZ-036 deploy-skew window): legacy input still maps to the canonical output', () => {
+  it('every deprecated invoice field is moved to its canonical name and the deprecated key never survives', () => {
+    const legacy = {
+      numero: 'NF-1', venda_id: 's1', data_emissao: '2026-09-01', vencimento: '2026-10-01',
+      tomador_razao_social: 'Tomador LTDA', forma_pagamento: 'pix', condicao_pagamento: '30 dias', itens: [{ x: 1 }],
+    };
+    const out = applyDeprecatedFieldAliases(legacy, INVOICE_DEPRECATED_FIELDS);
+    expect(out).toEqual({
+      invoice_number: 'NF-1', sale_id: 's1', issued_at: '2026-09-01', due_at: '2026-10-01',
+      tomador_legal_name: 'Tomador LTDA', payment_method: 'pix', payment_terms: '30 dias', items: [{ x: 1 }],
+    });
+  });
+
+  it('when canonical and deprecated invoice names are both sent the CANONICAL value wins and the deprecated key is dropped', () => {
+    const out = applyDeprecatedFieldAliases(
+      { tomador_legal_name: 'Canonical', tomador_razao_social: 'Legacy', payment_terms: 'canonical', condicao_pagamento: 'legacy' },
+      INVOICE_DEPRECATED_FIELDS,
+    ) as Record<string, unknown>;
+    expect(out).toEqual({ tomador_legal_name: 'Canonical', payment_terms: 'canonical' });
+  });
+
+  it('every deprecated item key (codigo_servico, quantidade) is moved; canonical wins when both are sent', () => {
+    expect(applyDeprecatedFieldAliases({ codigo_servico: '1.07', quantidade: 3 }, INVOICE_ITEM_DEPRECATED_FIELDS)).toEqual({ service_code: '1.07', quantity: 3 });
+    expect(
+      applyDeprecatedFieldAliases({ service_code: 'new', codigo_servico: 'old', quantity: 1, quantidade: 9 }, INVOICE_ITEM_DEPRECATED_FIELDS),
+    ).toEqual({ service_code: 'new', quantity: 1 });
+  });
+
+  it.each([
+    ['dinheiro', 'cash'],
+    ['cartao_credito', 'credit_card'],
+    ['cartao_debito', 'debit_card'],
+    ['cheque', 'check'],
+    ['transferencia', 'bank_transfer'],
+    [' Cartao_Credito ', 'credit_card'],
+  ])('canonicalInvoicePaymentMethod maps the deprecated value %j to %j', (legacy, canonical) => {
+    expect(canonicalInvoicePaymentMethod(legacy)).toBe(canonical);
+  });
+
+  it('canonical and rail proper names pass through unchanged; unknown values are never guessed', () => {
+    for (const value of ['credit_card', 'debit_card', 'bank_transfer', 'pix', 'boleto', 'cash', 'check']) {
+      expect(canonicalInvoicePaymentMethod(value)).toBe(value);
+    }
+    expect(canonicalInvoicePaymentMethod('moeda_x')).toBe('moeda_x');
+    expect(canonicalInvoicePaymentMethod(42)).toBe(42);
   });
 });

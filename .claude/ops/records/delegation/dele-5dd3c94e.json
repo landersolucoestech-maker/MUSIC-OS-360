@@ -1,0 +1,9 @@
+{
+  "agent": "architecture-reviewer",
+  "objective": "Independently review cross-layer coherence of the web, API and tooling changes: layering, duplicated rules, new helpers justified, no second source of truth.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-5dd3c94e",
+  "createdAt": "2026-10-03T15:49:33.359Z"
+}

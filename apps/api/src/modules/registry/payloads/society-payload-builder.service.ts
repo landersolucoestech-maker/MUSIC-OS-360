@@ -18,7 +18,7 @@ import type {
 
 function isPublisher(role: string | null | undefined): boolean {
   const r = (role ?? '').toLowerCase();
-  return r.includes('publisher') || r.includes('editora') || r.includes('editor');
+  return r.includes('publisher') || r.includes('editor');
 }
 
 /**

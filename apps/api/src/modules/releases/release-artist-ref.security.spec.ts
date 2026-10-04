@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { ALL_ENTITIES, type ReleaseEntity } from '../../database/entities';
 import { toReleaseResponse } from './release-artist-ref';
 import { ReleasesService } from './releases.service';
+import { ReleaseArtistEmbedDto } from './dto/releases.dto';
 
 /**
  * S1 (review bc40b76): release responses embed only `{ id, stage_name }` of the
@@ -74,6 +75,19 @@ describe('Release artist embed is a minimal projection (S1)', () => {
     expect(res['artistas']).toEqual({ id: ARTIST, stage_name: 'MC Teste' });
     expect(res).not.toHaveProperty('artist_ref');
     expectNoSensitive(res);
+  });
+
+  it('the Swagger contract documents the deprecated alias `artistas` next to the canonical `artist`, and the response carries exactly those two keys', async () => {
+    const meta = (prop: string) => Reflect.getMetadata('swagger/apiModelProperties', ReleaseArtistEmbedDto.prototype, prop) as Record<string, unknown> | undefined;
+    expect(meta('artist')).toBeDefined();
+    expect(meta('artist')?.['deprecated']).toBeUndefined();
+    expect(meta('artistas')).toBeDefined();
+    expect(meta('artistas')?.['deprecated']).toBe(true);
+    const { svc } = await makeService([releaseRaw()]);
+    const res = await svc.findById(TENANT, RELEASE) as unknown as Record<string, unknown>;
+    const documented = (Reflect.getMetadata('swagger/apiModelPropertiesArray', ReleaseArtistEmbedDto.prototype) as string[]).map((k) => k.replace(/^:/, ''));
+    expect(documented.sort()).toEqual(['artist', 'artistas']);
+    for (const key of documented) expect(res).toHaveProperty(key);
   });
 
   it('list returns the same projection; unmatched artist → null embeds', async () => {

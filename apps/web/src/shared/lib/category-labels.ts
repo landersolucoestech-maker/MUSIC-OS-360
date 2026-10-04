@@ -9,28 +9,19 @@ const CATEGORY_LABELS: Record<string, string> = {
   external_rights_receipts: "Recebimentos externos de direitos",
   "recebimentos externos de direitos": "Recebimentos externos de direitos",
   cache: "Cachê de Shows",
-  licenciamento: "Licenciamento",
   distribuicao: "Distribuição",
   producao_musical: "Produção Musical",
   marketing: "Marketing",
   marketing_digital: "Marketing Digital",
   marketing_offline: "Marketing Offline",
   juridico: "Honorários Jurídicos",
-  administrativo: "Administrativo",
   producao_audiovisual: "Produção Audiovisual",
   software: "Software",
   producao: "Produção",
   shows: "Shows",
-  operacional: "Operacional",
   // ── Contracts / services (CST) ──────────────────────────────────────────────────
-  empresariamento: "Empresariamento",
-  suporte_financeiro: "Suporte Financeiro",
   gestao: "Gestão",
-  agenciamento: "Agenciamento",
   edicao: "Edição",
-  publicidade: "Publicidade",
-  parceria: "Parceria",
-  exclusividade: "Exclusividade",
   gravacao: "Gravação",
   // Canonical English ids of the platform-owned contract categories (legacy slugs above/below).
   recording: "Gravação",
@@ -47,9 +38,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   semantico: "Semântico (IA)",
   cessao_direitos: "Cessão de Direitos",
   // ── Project / marketing / content ────────────────────────────────────────────────
-  influenciadores: "Influenciadores",
-  outros: "Outros",
-  outro: "Outro",
 };
 
 /** PT-BR Title Case keeping connectors lowercase. */

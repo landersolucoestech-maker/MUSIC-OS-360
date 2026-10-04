@@ -1,0 +1,15 @@
+{
+  "agent": "implementation-engineer",
+  "objective": "Edit the protected templates under the owner authorization: remove the unread OPENAI_BASE_URL, document 13 optional variables as placeholders, replace the truncated JWT-looking SUPABASE_ANON_KEY with the canonical placeholder, add the guard that rejects credential-looking template values, clear the pending declarations.",
+  "requirementIds": [],
+  "filesInScope": [
+    ".env.production",
+    "apps/api/.env.staging",
+    "apps/api/.env.production",
+    "scripts/env-contract-census.mjs",
+    "scripts/env-contract.config.json"
+  ],
+  "status": "CLOSED",
+  "id": "dele-4b06f61d",
+  "createdAt": "2026-10-03T15:10:44.678Z"
+}

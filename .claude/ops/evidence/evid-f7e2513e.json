@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "architecture-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r9b-architecture:FAIL(compat_proof_pending_and_plan_key_finding,reverify)",
+  "workspaceFingerprint": "335c183b6d44ba1dcf5669358a7eb4d754e830526fd942e66e3b99cc79547a12",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-f7e2513e",
+  "createdAt": "2026-10-03T18:35:39.572Z"
+}

@@ -1,0 +1,9 @@
+{
+  "agent": "root-cause-investigator",
+  "objective": "Find the root cause of the failure of task r14-mutation (\"Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.\"): Independent review FAIL: 805 rows were credited by sibling kills (SAMPLED_PAIR) and 3 contract-wizard-party rows survive their own mutation; fix in progress: every ledger name is now mutated and credited only for its own name (exhaustive proof running), then re-review. Do not retry the same approach.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-0153fba7",
+  "createdAt": "2026-10-03T23:34:27.409Z"
+}

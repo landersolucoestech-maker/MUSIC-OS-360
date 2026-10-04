@@ -287,7 +287,7 @@ This repository carries a very large body of internal planning/audit documentati
 
 ## Navigation Guide
 
-- **To add a new catalog field (work/phonogram/artist)**: edit the entity in `apps/api/src/database/entities.ts` (never the module-local stub), add a migration under `apps/api/src/database/migrations/`, update the relevant `*-legacy-alias.util.ts` if a DTO/column rename is involved, and check `docs/backend-v2/field-traceability/` (mapped in a later batch) for downstream contract impact.
+- **To add a new catalog field (work/phonogram/artist)**: edit the entity in `apps/api/src/database/entities.ts` (never the module-local stub), add a migration under `apps/api/src/database/migrations/`, update the relevant `*-legacy-alias.util.ts` if a DTO/column rename is involved, and check `docs/backend-v2/field-traceability/` (a historical record, not the current contract; mapped in a later batch) for downstream contract impact.
 - **To change royalty/rate calculation**: today's real logic is `apps/api/src/modules/financial-rules/financial-rules.service.ts::evaluateRules` — note it is disconnected from `financial/domain/largest-remainder.ts`; reconciling these is a real architectural task, not a simple wire-up.
 - **To modify auth/tenant/RBAC**: everything lives in `apps/api/src/core/{guards,rbac,security}/**`. Changing guard order requires updating `apps/api/src/app.module.ts`'s `APP_GUARD` array and the `guard-chain.integration.spec.ts`.
 - **To add a new reportable entity**: register it in `apps/api/src/modules/reports/report-module-registry.ts` and add a `ReportFormContract` in `form-contracts/report-form-contracts.ts` — being a TypeORM entity alone is not sufficient.

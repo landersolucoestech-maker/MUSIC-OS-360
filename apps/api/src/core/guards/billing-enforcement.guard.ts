@@ -70,9 +70,9 @@ export class BillingEnforcementGuard implements CanActivate {
     // P0-A-R2: blanket-deny-except-allowlist, not an enumerated denylist.
     // The prior SUSPENDED_BLOCKED_PREFIXES list covered ~27 of 87 controller
     // groups (confirmed regression, not intentional tightening — the
-    // frontend's own shipped contract, docs/backend-v2/15-frontend-auth-
-    // permission-contracts.md + App.tsx's BillingGuard, already implements
-    // blanket-deny-except-this-same-allowlist). Any path already past the
+    // frontend's own shipped contract, App.tsx's BillingGuard, already
+    // implements blanket-deny-except-this-same-allowlist; historical record:
+    // docs/backend-v2/15-frontend-auth-permission-contracts.md (historical). Any path already past the
     // ALWAYS_ALLOWED_PREFIXES check above is blocked for a suspended tenant,
     // including routes added after this guard was written — the previous
     // enumerated list could never cover those by construction.

@@ -1,0 +1,12 @@
+{
+  "agent": "qa-engineer",
+  "objective": "Close every survivor and NO_MUTATION_SITE of the mutation proof with a real test or a justified reclassification.",
+  "requirementIds": [],
+  "filesInScope": [
+    "apps/api/src",
+    "apps/web/src"
+  ],
+  "status": "CLOSED",
+  "id": "dele-902e785b",
+  "createdAt": "2026-10-03T15:10:44.697Z"
+}

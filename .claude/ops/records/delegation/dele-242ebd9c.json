@@ -1,0 +1,9 @@
+{
+  "agent": "destructive-change-guard",
+  "objective": "Independently verify that no destructive operation, confirmation token or approval was produced or implied by the closure work and that every package keeps its approval boundary.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-242ebd9c",
+  "createdAt": "2026-10-03T15:49:33.351Z"
+}

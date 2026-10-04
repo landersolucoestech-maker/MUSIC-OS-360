@@ -1,0 +1,9 @@
+{
+  "agent": "dead-code-reviewer",
+  "objective": "Independently verify the removed generator script had no consumer, including dynamic references.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-e26cad28",
+  "createdAt": "2026-10-03T15:49:33.364Z"
+}

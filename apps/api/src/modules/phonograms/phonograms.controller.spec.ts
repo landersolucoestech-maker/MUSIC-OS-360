@@ -9,7 +9,7 @@
  * contracts.controller.spec.ts (C1).
  */
 import 'reflect-metadata';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { PhonogramsController } from './phonograms.controller';
@@ -135,6 +135,15 @@ describe('PhonogramsController — real HTTP contract (C2)', () => {
 
     expect(canonical.body).toEqual(['rock', 'pop']);
     expect(legacyAlias.body).toEqual(canonical.body);
+  });
+
+  // Route metadata: both paths are registered on ONE handler, so removing/renaming the alias (or the canonical path)
+  // fails here independently of the HTTP stack.
+  it('route metadata: distinctMusicGenres is registered at the canonical path and at the temporary alias', () => {
+    const handler = (PhonogramsController.prototype as unknown as Record<string, object>)['distinctMusicGenres'];
+    expect(handler).toBeDefined();
+    expect(Reflect.getMetadata('path', handler)).toEqual(['stats/genres', 'stats/generos']);
+    expect(Reflect.getMetadata('method', handler)).toBe(RequestMethod.GET);
   });
 });
 

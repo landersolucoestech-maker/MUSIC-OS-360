@@ -1,0 +1,9 @@
+{
+  "agent": "documentation-reviewer",
+  "objective": "Independently review the w13 corrections: active documents that presented historical baselines as current, and the six normalized historical labels (diff against b8422ff of docs/INDEX_DOCUMENTATION.md, docs/runbooks/*, docs/CODEBASE_MAP.md, docs/engineering/pack/FINAL_REPORT.md, historical labels).",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-f2c24e84",
+  "createdAt": "2026-10-03T19:01:32.260Z"
+}

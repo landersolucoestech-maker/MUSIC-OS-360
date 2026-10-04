@@ -1,0 +1,653 @@
+{
+ "plan": "orch-e848167d",
+ "workflow": "naming-normalization",
+ "counters": {
+  "ORCHESTRATION_COVERAGE_GAPS": 6,
+  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 10,
+  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 0,
+  "UNREVIEWED_CROSS_LAYER_CHANGES": 0,
+  "UNVALIDATED_IMPLEMENTATIONS": 1
+ },
+ "gaps": [
+  "w14-mutation-proof: bypass task without a completed independent reviewer task",
+  "r14-mutation: READY",
+  "r16-secrets: PENDING",
+  "r17-requirements: PENDING",
+  "r18-frontend-security: PENDING",
+  "r19-frontend-consistency: PENDING"
+ ],
+ "applicableAgents": [
+  {
+   "name": "adversarial-reviewer",
+   "used": "YES",
+   "tasks": "r5-ci-docs",
+   "reason": ""
+  },
+  {
+   "name": "approval-router",
+   "used": "NO",
+   "tasks": "",
+   "reason": "the phase task is WAITING_APPROVAL by design; never granted"
+  },
+  {
+   "name": "architecture-reviewer",
+   "used": "YES",
+   "tasks": "r9b-architecture",
+   "reason": ""
+  },
+  {
+   "name": "backend-engineer",
+   "used": "YES",
+   "tasks": "w10-api-tests",
+   "reason": ""
+  },
+  {
+   "name": "backend-reviewer",
+   "used": "YES",
+   "tasks": "r10-backend",
+   "reason": ""
+  },
+  {
+   "name": "branch-policy-validator",
+   "used": "NO",
+   "tasks": "",
+   "reason": "runs at the final commit"
+  },
+  {
+   "name": "code-reviewer",
+   "used": "YES",
+   "tasks": "r11-ledger",
+   "reason": ""
+  },
+  {
+   "name": "commit-validator",
+   "used": "NO",
+   "tasks": "",
+   "reason": "runs at the final commit"
+  },
+  {
+   "name": "completion-controller",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "config-mapper",
+   "used": "YES",
+   "tasks": "w1-env-trace",
+   "reason": ""
+  },
+  {
+   "name": "database-reviewer",
+   "used": "YES",
+   "tasks": "r6-dossier-db",
+   "reason": ""
+  },
+  {
+   "name": "dead-code-detector",
+   "used": "YES",
+   "tasks": "w12-dead-generator",
+   "reason": ""
+  },
+  {
+   "name": "dead-code-reviewer",
+   "used": "YES",
+   "tasks": "r12-dead",
+   "reason": ""
+  },
+  {
+   "name": "destructive-change-guard",
+   "used": "YES",
+   "tasks": "r6b-dossier-guard",
+   "reason": ""
+  },
+  {
+   "name": "devops-ci-reviewer",
+   "used": "YES",
+   "tasks": "w5-ci-check-exhaustion",
+   "reason": ""
+  },
+  {
+   "name": "documentation-reviewer",
+   "used": "YES",
+   "tasks": "r3-docs,r3b-docs-corrections",
+   "reason": ""
+  },
+  {
+   "name": "domain-boundary-guardian",
+   "used": "NO",
+   "tasks": "",
+   "reason": "canonical-model phase task runs in the final re-audit"
+  },
+  {
+   "name": "domain-boundary-reviewer",
+   "used": "YES",
+   "tasks": "r4-decisions",
+   "reason": ""
+  },
+  {
+   "name": "duplication-detector",
+   "used": "NO",
+   "tasks": "",
+   "reason": "classify phase task runs in the final re-audit"
+  },
+  {
+   "name": "encryption-reviewer",
+   "used": "YES",
+   "tasks": "w7-pii-key-custody",
+   "reason": ""
+  },
+  {
+   "name": "frontend-consistency-reviewer",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "frontend-engineer",
+   "used": "YES",
+   "tasks": "w9-web-fixes",
+   "reason": ""
+  },
+  {
+   "name": "frontend-reviewer",
+   "used": "YES",
+   "tasks": "r9-frontend",
+   "reason": ""
+  },
+  {
+   "name": "frontend-security-reviewer",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "git-auditor",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "human-approval-agent",
+   "used": "NO",
+   "tasks": "",
+   "reason": "the phase task is WAITING_APPROVAL by design; never granted"
+  },
+  {
+   "name": "implementation-engineer",
+   "used": "YES",
+   "tasks": "propagate,w8-env-templates,w11-ledger-gate,w13-doc-corrections",
+   "reason": ""
+  },
+  {
+   "name": "migration-planner",
+   "used": "YES",
+   "tasks": "schema-plan,w6-destructive-dossier",
+   "reason": ""
+  },
+  {
+   "name": "migration-test-engineer",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "music-os-360-orchestrator",
+   "used": "NO",
+   "tasks": "",
+   "reason": "used as the lead session (not a delegated task)"
+  },
+  {
+   "name": "mutation-test-reviewer",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "naming-analyzer",
+   "used": "YES",
+   "tasks": "census,classify,w2-compat-semantic-groups",
+   "reason": ""
+  },
+  {
+   "name": "naming-reviewer",
+   "used": "YES",
+   "tasks": "canonical-model,r2-naming",
+   "reason": ""
+  },
+  {
+   "name": "orphan-detector",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "pii-reviewer",
+   "used": "YES",
+   "tasks": "r7-pii",
+   "reason": ""
+  },
+  {
+   "name": "producer-consumer-tracer",
+   "used": "YES",
+   "tasks": "w4-decisions-trace",
+   "reason": ""
+  },
+  {
+   "name": "protected-file-validator",
+   "used": "YES",
+   "tasks": "r8-protected",
+   "reason": ""
+  },
+  {
+   "name": "qa-engineer",
+   "used": "YES",
+   "tasks": "w15-proof-closure",
+   "reason": ""
+  },
+  {
+   "name": "refactoring-engineer",
+   "used": "NO",
+   "tasks": "",
+   "reason": "the extractions (legacy-reads, legacy-title, signup-metadata, masks, category-import) were executed directly by the orchestrator before delegation was enforced: recorded ORCHESTRATION_BYPASS, independently validated by frontend-reviewer (r9) and regression-reviewer (r15); no further refactor is planned"
+  },
+  {
+   "name": "regression-reviewer",
+   "used": "YES",
+   "tasks": "r15-regression",
+   "reason": ""
+  },
+  {
+   "name": "repo-inspector",
+   "used": "NO",
+   "tasks": "",
+   "reason": "covered by the census phase task when dispatched in the final re-audit"
+  },
+  {
+   "name": "requirements-analyst",
+   "used": "NO",
+   "tasks": "",
+   "reason": "requirements recorded by the orchestrator through ops.mjs; independent requirements-reviewer used instead"
+  },
+  {
+   "name": "requirements-reviewer",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "rollback-planner",
+   "used": "NO",
+   "tasks": "",
+   "reason": "rollback is part of the dossier review; phase task runs in the final re-audit"
+  },
+  {
+   "name": "secrets-reviewer",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  },
+  {
+   "name": "security-reviewer",
+   "used": "YES",
+   "tasks": "r1-env-security",
+   "reason": ""
+  },
+  {
+   "name": "staged-diff-reviewer",
+   "used": "NO",
+   "tasks": "",
+   "reason": "runs at the final commit"
+  },
+  {
+   "name": "stale-code-detector",
+   "used": "YES",
+   "tasks": "w3-historical-trace",
+   "reason": ""
+  },
+  {
+   "name": "test-strategy-engineer",
+   "used": "YES",
+   "tasks": "w14-mutation-proof",
+   "reason": ""
+  },
+  {
+   "name": "verification-controller",
+   "used": "NO",
+   "tasks": "",
+   "reason": ""
+  }
+ ],
+ "applicableSkills": [
+  {
+   "name": "backend-audit",
+   "used": "YES",
+   "tasks": "r10-backend",
+   "reason": ""
+  },
+  {
+   "name": "blast-radius-analysis",
+   "used": "NO",
+   "tasks": "",
+   "reason": "blast radius of each change was traced by the propagate task (producer/consumer tracing) and the regression review r15"
+  },
+  {
+   "name": "branch-policy-check",
+   "used": "YES",
+   "tasks": "w5-ci-check-exhaustion",
+   "reason": ""
+  },
+  {
+   "name": "canonical-naming",
+   "used": "YES",
+   "tasks": "canonical-model,w2-compat-semantic-groups,w11-ledger-gate,r2-naming",
+   "reason": ""
+  },
+  {
+   "name": "change-cluster-consolidator",
+   "used": "NO",
+   "tasks": "",
+   "reason": "applied by the orchestrator at commit time to split the mixed working tree into atomic commits (no separate task: the skill is a commit procedure)"
+  },
+  {
+   "name": "code-review",
+   "used": "NO",
+   "tasks": "",
+   "reason": "covered by the review skill used by r11-ledger and the diff-review skill used by r15/r3b"
+  },
+  {
+   "name": "config-map",
+   "used": "YES",
+   "tasks": "w1-env-trace,w8-env-templates",
+   "reason": ""
+  },
+  {
+   "name": "contract-tracing",
+   "used": "YES",
+   "tasks": "r4-decisions",
+   "reason": ""
+  },
+  {
+   "name": "create-api-tests",
+   "used": "YES",
+   "tasks": "w10-api-tests",
+   "reason": ""
+  },
+  {
+   "name": "create-contract-tests",
+   "used": "YES",
+   "tasks": "w10-api-tests,w15-proof-closure",
+   "reason": ""
+  },
+  {
+   "name": "create-migration-tests",
+   "used": "NO",
+   "tasks": "",
+   "reason": "no new migration beyond the guarded rename, whose spec already exists and was extended with the lock_timeout assertion"
+  },
+  {
+   "name": "create-regression-tests",
+   "used": "YES",
+   "tasks": "w14-mutation-proof,w15-proof-closure",
+   "reason": ""
+  },
+  {
+   "name": "cross-layer-impact",
+   "used": "YES",
+   "tasks": "w4-decisions-trace,w9-web-fixes,r9b-architecture",
+   "reason": ""
+  },
+  {
+   "name": "data-flow-trace",
+   "used": "YES",
+   "tasks": "w4-decisions-trace",
+   "reason": ""
+  },
+  {
+   "name": "data-retention-audit",
+   "used": "YES",
+   "tasks": "w7-pii-key-custody",
+   "reason": ""
+  },
+  {
+   "name": "database-schema-drift",
+   "used": "NO",
+   "tasks": "",
+   "reason": "schema drift is gated by scripts/naming/schema-naming-census.mjs and db:check runs in the final gates; the only schema change is the guarded rename 20261003000001 reviewed in schema-plan"
+  },
+  {
+   "name": "databaseMigrationSafety",
+   "used": "NO",
+   "tasks": "",
+   "reason": "migration safety (locking, backfill, rollback) was applied through migration-audit in the schema-plan task, which covers the same rules"
+  },
+  {
+   "name": "dead-code-analysis",
+   "used": "YES",
+   "tasks": "classify,w12-dead-generator,r12-dead",
+   "reason": ""
+  },
+  {
+   "name": "definition-of-done",
+   "used": "NO",
+   "tasks": "",
+   "reason": "applied by the completion-controller at closure (completion gate)"
+  },
+  {
+   "name": "destructive-change-check",
+   "used": "YES",
+   "tasks": "schema-plan,w6-destructive-dossier,r6b-dossier-guard",
+   "reason": ""
+  },
+  {
+   "name": "diff-review",
+   "used": "YES",
+   "tasks": "w13-doc-corrections,r3-docs,r15-regression,r3b-docs-corrections",
+   "reason": ""
+  },
+  {
+   "name": "dirty-tree-check",
+   "used": "NO",
+   "tasks": "",
+   "reason": "runs at the final commit"
+  },
+  {
+   "name": "duplication-analysis",
+   "used": "YES",
+   "tasks": "classify",
+   "reason": ""
+  },
+  {
+   "name": "encryption-audit",
+   "used": "YES",
+   "tasks": "w7-pii-key-custody",
+   "reason": ""
+  },
+  {
+   "name": "environment-map",
+   "used": "YES",
+   "tasks": "w1-env-trace",
+   "reason": ""
+  },
+  {
+   "name": "evaluate-human-approval",
+   "used": "NO",
+   "tasks": "",
+   "reason": "no human approval was requested or evaluated: approvals stay PENDING and ungranted (category A)"
+  },
+  {
+   "name": "evidence-collection",
+   "used": "NO",
+   "tasks": "",
+   "reason": "evidence is recorded through ops.mjs evidence run/review by the orchestrator"
+  },
+  {
+   "name": "external-action-check",
+   "used": "YES",
+   "tasks": "w5-ci-check-exhaustion",
+   "reason": ""
+  },
+  {
+   "name": "frontend-audit",
+   "used": "YES",
+   "tasks": "r9-frontend",
+   "reason": ""
+  },
+  {
+   "name": "git-safety-check",
+   "used": "NO",
+   "tasks": "",
+   "reason": "runs at the final commit"
+  },
+  {
+   "name": "human-approval-validation",
+   "used": "NO",
+   "tasks": "",
+   "reason": "validated by recording every pending approval as ungranted; no destructive step was executed, so there was no approval to validate"
+  },
+  {
+   "name": "migration-audit",
+   "used": "YES",
+   "tasks": "schema-plan,w6-destructive-dossier,r6-dossier-db",
+   "reason": ""
+  },
+  {
+   "name": "naming-analysis",
+   "used": "YES",
+   "tasks": "census,classify,w2-compat-semantic-groups",
+   "reason": ""
+  },
+  {
+   "name": "orphan-analysis",
+   "used": "NO",
+   "tasks": "",
+   "reason": "applied by the residue phase (orphan-detector)"
+  },
+  {
+   "name": "pii-audit",
+   "used": "YES",
+   "tasks": "w7-pii-key-custody,r7-pii",
+   "reason": ""
+  },
+  {
+   "name": "producer-consumer-trace",
+   "used": "YES",
+   "tasks": "w4-decisions-trace",
+   "reason": ""
+  },
+  {
+   "name": "protected-file-check",
+   "used": "YES",
+   "tasks": "w8-env-templates,r8-protected",
+   "reason": ""
+  },
+  {
+   "name": "quality-gate",
+   "used": "NO",
+   "tasks": "",
+   "reason": "final gates run after the reviews"
+  },
+  {
+   "name": "regression-gates",
+   "used": "NO",
+   "tasks": "",
+   "reason": "final gates run after the reviews"
+  },
+  {
+   "name": "repo-identity-check",
+   "used": "NO",
+   "tasks": "",
+   "reason": "identity verified by the git-guard hook at session start"
+  },
+  {
+   "name": "repo-inspect",
+   "used": "NO",
+   "tasks": "",
+   "reason": "repository state was inspected at the start of the mission and by git-auditor/branch-policy-validator at closure"
+  },
+  {
+   "name": "repository-census",
+   "used": "YES",
+   "tasks": "census",
+   "reason": ""
+  },
+  {
+   "name": "request-human-approval",
+   "used": "NO",
+   "tasks": "",
+   "reason": "the destructive-approval phase creates its mechanical approval request; this mission does not request any additional approval"
+  },
+  {
+   "name": "residue-search",
+   "used": "YES",
+   "tasks": "w3-historical-trace,w12-dead-generator",
+   "reason": ""
+  },
+  {
+   "name": "review",
+   "used": "YES",
+   "tasks": "r5-ci-docs,r11-ledger",
+   "reason": ""
+  },
+  {
+   "name": "rollback-analysis",
+   "used": "YES",
+   "tasks": "w6-destructive-dossier",
+   "reason": ""
+  },
+  {
+   "name": "run-typecheck",
+   "used": "NO",
+   "tasks": "",
+   "reason": "executed as command evidence (pnpm typecheck for api and web) in the final gates"
+  },
+  {
+   "name": "run-unit-tests",
+   "used": "YES",
+   "tasks": "w14-mutation-proof",
+   "reason": ""
+  },
+  {
+   "name": "safe-refactor",
+   "used": "YES",
+   "tasks": "propagate,w9-web-fixes",
+   "reason": ""
+  },
+  {
+   "name": "schema-normalization",
+   "used": "YES",
+   "tasks": "propagate",
+   "reason": ""
+  },
+  {
+   "name": "scope-lock",
+   "used": "YES",
+   "tasks": "w11-ledger-gate",
+   "reason": ""
+  },
+  {
+   "name": "secret-scan",
+   "used": "YES",
+   "tasks": "r1-env-security",
+   "reason": ""
+  },
+  {
+   "name": "security-audit",
+   "used": "YES",
+   "tasks": "r1-env-security",
+   "reason": ""
+  },
+  {
+   "name": "staged-diff-review",
+   "used": "NO",
+   "tasks": "",
+   "reason": "runs at the final commit"
+  },
+  {
+   "name": "stale-code-analysis",
+   "used": "YES",
+   "tasks": "w3-historical-trace,w13-doc-corrections",
+   "reason": ""
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Hand sample of 68 + 30 rows and a full-ledger scripted check: no operational canonical usage hidden, no obsolete row; findings (fixture wording, periodo class, LGPD item text, unwired script) fixed and re-verified; classification verdict PASS (proof counter is a separate gate).",
+  "workspaceFingerprint": "1de75ccf2fbbe31ae0e632fdf61c5a6add7ca67d8d0e4372c27cbb665abf504f",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-488df408",
+  "createdAt": "2026-10-03T15:49:00.844Z"
+}

@@ -1,0 +1,9 @@
+{
+  "action": "human-approval",
+  "requestedBy": "human-approval-agent",
+  "status": "PENDING",
+  "grantedBy": null,
+  "resolvedAt": null,
+  "id": "appr-6570cc2f",
+  "createdAt": "2026-10-03T18:57:45.946Z"
+}

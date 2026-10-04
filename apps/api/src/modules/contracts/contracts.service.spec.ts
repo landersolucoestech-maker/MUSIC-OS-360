@@ -549,3 +549,41 @@ describe('ContractsService — category slug canonicalization (CT1)', () => {
     expect(qb['where']).toHaveBeenCalledWith('c.tenant_id = :tenantId', { tenantId: 'tenant-1' });
   });
 });
+
+describe('ContractsService write payload — canonical name wins over the deprecated spelling (CZ-026)', () => {
+  const canonicalVersions = [{ version: 1, date: '2026-01-01', description: 'canonical-entry' }];
+  const legacyVersions = [{ version: 9, date: '2025-01-01', description: 'legacy-entry' }];
+
+  it('create(): exclusive and versions of the canonical names win when the deprecated names are sent too', async () => {
+    const { svc, repo } = makeServiceC1();
+    await svc.create('tenant-1', 'user-1', {
+      title: 'Contrato X', type: 'gravacao', exclusive: false, exclusivo: true,
+      versions: canonicalVersions, versoes: legacyVersions,
+    } as unknown as CreateContractDto);
+    const row = createdC1(repo);
+    expect(row['exclusive']).toBe(false);
+    const serialized = JSON.stringify(row['versions']);
+    expect(serialized).toContain('canonical-entry');
+    expect(serialized).not.toContain('legacy-entry');
+  });
+
+  it('create(): the deprecated names alone still populate the canonical columns', async () => {
+    const { svc, repo } = makeServiceC1();
+    await svc.create('tenant-1', 'user-1', {
+      title: 'Contrato X', type: 'gravacao', exclusivo: true, versoes: legacyVersions,
+    } as unknown as CreateContractDto);
+    const row = createdC1(repo);
+    expect(row['exclusive']).toBe(true);
+    expect(JSON.stringify(row['versions'])).toContain('legacy-entry');
+  });
+
+  it('update(): the canonical exclusive wins over the deprecated exclusivo; the deprecated one alone is still honored', async () => {
+    const both = makeServiceC1([baseContractRow()]);
+    await both.svc.update('tenant-1', 'user-1', 'contract-1', { exclusive: false, exclusivo: true } as unknown as UpdateContractDto);
+    expect(updatedC1(both.repo)['exclusive']).toBe(false);
+
+    const legacyOnly = makeServiceC1([baseContractRow()]);
+    await legacyOnly.svc.update('tenant-1', 'user-1', 'contract-1', { exclusivo: true } as unknown as UpdateContractDto);
+    expect(updatedC1(legacyOnly.repo)['exclusive']).toBe(true);
+  });
+});

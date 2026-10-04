@@ -526,7 +526,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const usedRows = new Set();
   const record = (surface, key, file, name, count = 1) => {
     const exc = name != null && exceptions.get(file, name, surface);
-    if (exc) usedRows.add(exc);
+    if (exc) { usedRows.add(exc); for (const w of exceptions.wordRows?.(name) ?? []) usedRows.add(w); }
     const bucket = exc ? excepted : debt;
     if (exc) exceptedClass[key] = exc.exceptionClass ?? exc.disposition ?? "UNCLASSIFIED";
     bucket[key] = (bucket[key] ?? 0) + count;

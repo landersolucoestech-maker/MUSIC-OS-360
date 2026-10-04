@@ -25,6 +25,7 @@ import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { isVerificationScript, isTestFile, PROOF_CLASSES } from "./compat-boundary-audit.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(here, "../..");
@@ -34,10 +35,8 @@ const require = createRequire(path.join(REPO, "apps/api/package.json"));
 const ts = require("typescript");
 
 export const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
-/** Opt-in executable checks of the API (they insert legacy-shape rows into a disposable database or smoke a running API): test code, not runtime. */
-export const isVerificationScript = (f) => /^apps\/api\/scripts\/(verify|smoke|reports-smoke)[-.\w]*\.ts$/.test(f);
-export const isTestFile = (f) => /[.-](test|spec|e2e-spec)\.[cm]?[jt]sx?$/.test(f) || /(^|\/)(e2e|__tests__|__fixtures__|fixtures)\//.test(f) || isVerificationScript(f);
-export const PROOF_CLASSES = new Set(["TEMPORARY_MIGRATION_COMPATIBILITY", "LEGACY_DATABASE_COMPATIBILITY", "PUBLIC_API_COMPATIBILITY", "EXTERNAL_CONTRACT", "PROVIDER_DEFINED"]);
+// one definition of "test file" and of the proof classes, shared with the audit: a drift makes the two disagree on what is runtime
+export { isVerificationScript, isTestFile, PROOF_CLASSES };
 
 /** Ledger rows -> [{file, tests[], names:Set, wildcard:boolean}] for runtime files. */
 export function pairsFromLedger(map) {
@@ -69,13 +68,31 @@ function memberName(expr) {
 }
 
 /** Candidate mutations of one source text for the given legacy names. Pure. */
+/**
+ * A route name of the ledger (`/artists/stats/generos`) is written in a controller as the path relative to the controller
+ * prefix (`stats/generos`): the relative forms are aliases of the ledger name, and the mutation keeps the ledger name as its label
+ * so the audit can attribute the kill to the row.
+ */
+export function routeAliases(names) {
+  const out = new Map();
+  for (const n of names) {
+    if (typeof n !== "string" || !n.startsWith("/")) continue;
+    const segs = n.split("/").filter(Boolean);
+    if (segs.length > 1) out.set(segs.slice(1).join("/"), n); // controller prefix = first segment; never a bare last segment (too broad)
+  }
+  return out;
+}
+
 export function findMutations(text, file, names, wildcardWords = null) {
+  const aliases = routeAliases(names);
   const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : undefined);
-  const isLegacy = (n) => n != null && (names.has(n) || (wildcardWords ? wildcardWords(n) : false));
+  const isLegacy = (n) => n != null && (names.has(n) || aliases.has(n) || (wildcardWords ? wildcardWords(n) : false));
+  const labelOf = (n) => aliases.get(n) ?? n;
   const lit = [];
   const swap = [];
   const guard = [];
   const legacyFirst = [];
+  const declarations = [];
   const lineOf = (n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
   const visit = (node) => {
     // CANONICAL_FIRST
@@ -84,7 +101,7 @@ export function findMutations(text, file, names, wildcardWords = null) {
       const r = memberName(node.right);
       const op = node.operatorToken.getText(sf);
       if (isLegacy(r) && !isLegacy(l)) {
-        swap.push({ operator: "CANONICAL_FIRST", line: lineOf(node), start: node.getStart(sf), end: node.getEnd(), replacement: `(${node.right.getText(sf)}) ${op} (${node.left.getText(sf)})` });
+        swap.push({ operator: "CANONICAL_FIRST", line: lineOf(node), start: node.getStart(sf), end: node.getEnd(), label: labelOf(r), labels: [labelOf(r)], replacement: `(${node.right.getText(sf)}) ${op} (${node.left.getText(sf)})` });
       } else if (isLegacy(l) && !isLegacy(r) && r != null) {
         legacyFirst.push({ line: lineOf(node), text: node.getText(sf).slice(0, 120) });
       }
@@ -99,25 +116,30 @@ export function findMutations(text, file, names, wildcardWords = null) {
         const reads = [];
         const collect = (n) => { const m = memberName(n); if (m) reads.push(m); ts.forEachChild(n, collect); };
         collect(rhs);
-        if (reads.some(isLegacy)) guard.push({ operator: "ALIAS_OVERRIDE", line: lineOf(node), start: node.expression.getStart(sf), end: node.expression.getEnd(), replacement: "true" });
+        if (reads.some(isLegacy)) { const legacyReads = [...new Set(reads.filter(isLegacy).map(labelOf))]; guard.push({ operator: "ALIAS_OVERRIDE", line: lineOf(node), start: node.expression.getStart(sf), end: node.expression.getEnd(), label: legacyReads[0], labels: legacyReads, replacement: "true" }); }
       }
+    }
+    // declaration-only occurrences: a legacy name that only names a type, interface, property signature, function or class declaration
+    // has no runtime value to mutate; renaming it breaks every reader at compile time (the monorepo typecheck is the proof)
+    if ((ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node) || ts.isFunctionDeclaration(node) || ts.isClassDeclaration(node) || ts.isEnumDeclaration(node) || ts.isPropertySignature(node) || (ts.isVariableDeclaration(node) && node.initializer && (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer)))) && node.name && (ts.isIdentifier(node.name) || ts.isStringLiteralLike(node.name)) && isLegacy(node.name.text)) {
+      declarations.push({ line: lineOf(node), label: labelOf(node.name.text) });
     }
     // LEGACY_LITERAL
     if (ts.isStringLiteralLike(node) && isLegacy(node.text) && !(node.parent && (ts.isImportDeclaration(node.parent) || ts.isExportDeclaration(node.parent) || ts.isLiteralTypeNode(node.parent) || ts.isImportTypeNode(node.parent)))) {
       const q = text[node.getStart(sf)];
-      if (q === "'" || q === '"' || q === "`") lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.getStart(sf), end: node.getEnd(), replacement: `${q}__mutated__${q}`, label: node.text });
+      if (q === "'" || q === '"' || q === "`") lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.getStart(sf), end: node.getEnd(), replacement: `${q}__mutated__${q}`, label: labelOf(node.text) });
     } else if (ts.isPropertyAssignment(node) && ts.isIdentifier(node.name) && isLegacy(node.name.text)) {
-      lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: "__mutated__", label: node.name.text });
+      lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: "__mutated__", label: labelOf(node.name.text) });
     } else if (ts.isPropertyDeclaration(node) && (ts.isIdentifier(node.name) || ts.isStringLiteralLike(node.name)) && isLegacy(node.name.text)) {
       // a deprecated DTO/entity property (the alias a pre-rename caller still sends)
-      lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: ts.isStringLiteralLike(node.name) ? `'__mutated__'` : "__mutated__", label: node.name.text });
+      lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: ts.isStringLiteralLike(node.name) ? `'__mutated__'` : "__mutated__", label: labelOf(node.name.text) });
     } else if (ts.isPropertyAccessExpression(node) && isLegacy(node.name.text) && !ts.isTypeReferenceNode(node.parent)) {
-      lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: "__mutated__", label: node.name.text });
+      lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.name.getStart(sf), end: node.name.getEnd(), replacement: "__mutated__", label: labelOf(node.name.text) });
     }
     ts.forEachChild(node, visit);
   };
   visit(sf);
-  return { lit, swap, guard, legacyFirst };
+  return { lit, swap, guard, legacyFirst, declarations };
 }
 
 export const apply = (text, m) => text.slice(0, m.start) + m.replacement + text.slice(m.end);
@@ -127,7 +149,7 @@ export function classifyRun(status, output) {
   if (status === 0) return "pass";
   const o = output.replace(/\u001b\[[0-9;]*m/g, "");
   if (/Test suite failed to run|SyntaxError|TSError|Cannot find module|error TS\d+|Transform failed|Failed to resolve import|ERR_MODULE_NOT_FOUND/.test(o) && !/Tests:\s+\d+ failed|Tests\s+\d+ failed/.test(o)) return "inconclusive";
-  if (/Tests:\s+(?:\d+ skipped, )?[1-9]\d* failed|Tests\s+[1-9]\d* failed|# fail [1-9]/.test(o)) return "assertion-failure";
+  if (/Tests:\s+(?:\d+ skipped, )?[1-9]\d* failed|Tests\s+[1-9]\d* failed|# fail [1-9]/.test(o) && /expect\(|Expected|Received|AssertionError|assert\.|toBe|toEqual|toThrow|toHaveBeenCalled|toContain|toMatch/.test(o)) return "assertion-failure";
   return "inconclusive";
 }
 
@@ -168,7 +190,19 @@ export function candidateTests(file, names, limit = 5) {
   return scored.sort((a, b) => b.s - a.s || a.rel.localeCompare(b.rel)).slice(0, limit).map((x) => x.rel);
 }
 
+/** In a --root copy only: ts-jest type diagnostics off, so a mutation that breaks a type (a renamed DTO property) is judged by behavior, not by a compile error. */
+function relaxSandboxDiagnostics() {
+  if (ROOT === REPO) return;
+  const f = path.join(ROOT, "apps/api/jest.config.ts");
+  const text = fs.readFileSync(f, "utf8");
+  if (text.includes("diagnostics: true")) fs.writeFileSync(f, text.replace("diagnostics: true", "diagnostics: false"));
+}
+
+
 async function main() {
+  // the harness rewrites sources: it must never run against the working tree being edited
+  if (ROOT === REPO && !process.argv.includes("--list")) throw new Error("refusing to mutate the working tree: pass --root <copy of the repository> (or --list to only print the pairs)");
+  relaxSandboxDiagnostics();
   const map = JSON.parse(fs.readFileSync(path.join(REPO, "docs/naming/canonical-naming-map.json"), "utf8"));
   const only = arg("--only");
   const out = path.resolve(arg("--out") ?? path.join(REPO, "docs/naming/audit/compat-mutation-proof.json"));
@@ -182,7 +216,10 @@ async function main() {
   if (rebind) {
     // second pass: files whose pair was not PROVEN are retried with the declared tests (new operators) and with other tests that exercise them
     const prev = JSON.parse(fs.readFileSync(path.resolve(rebind), "utf8")).results;
-    const bad = new Set(prev.filter((r) => r.verdict !== "PROVEN").map((r) => r.file));
+    const shaOf = (rel) => (fs.existsSync(path.join(ROOT, rel)) ? sha256(fs.readFileSync(path.join(ROOT, rel), "utf8")) : null);
+    // a file is settled when some record PROVEN is bound to the current sources of the file AND of its test (a later edit makes it unsettled)
+    const settled = new Set(prev.filter((r) => r.verdict === "PROVEN" && r.fileSha256 === shaOf(r.file) && r.testSha256 === shaOf(r.test)).map((r) => r.file));
+    const bad = new Set(pairsFromLedger(map).map((p) => p.file).filter((f) => !settled.has(f)));
     const byFile = new Map();
     for (const p of pairsFromLedger(map)) {
       const e = byFile.get(p.file) ?? { file: p.file, names: new Set(), wildcard: false, tests: new Set() };
@@ -206,6 +243,9 @@ async function main() {
     if (rebind && !declaredFor.get(pair.file)?.has(pair.test) && [...results.values()].some((r) => r.file === pair.file && r.verdict === "PROVEN" && r.fileSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.file), "utf8")))) continue;
     const abs = path.join(ROOT, pair.file);
     const original = fs.readFileSync(abs, "utf8");
+    // resume: a pair already judged against the SAME file and test bytes is not run again (an interrupted run continues where it stopped)
+    const done = results.get(`${pair.file}\u0000${pair.test}`);
+    if (done && done.verdict && done.exhaustive === true && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
     // the hashes bind to the sources that were actually mutated and tested (the --root copy); the audit compares
     // them with the repository, so any later edit of either file makes the result stale
     const realText = original;
@@ -216,24 +256,30 @@ async function main() {
     if (baselineCache.get(pair.test) !== "pass") { rec.verdict = "BASELINE_RED"; results.set(`${pair.file}\u0000${pair.test}`, rec); console.log(`[${i + 1}/${pairs.length}] BASELINE_RED ${pair.file} <= ${pair.test}`); continue; }
     const muts = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null);
     rec.legacyFirst = muts.legacyFirst;
-    // string literals first (they never break compilation), then keys and member names; up to 14 candidates, 8 conclusive attempts
-    const litSorted = [...muts.lit].sort((a, b) => Number(/^['"`]/.test(b.replacement)) - Number(/^['"`]/.test(a.replacement)));
-    const queue = [...muts.swap, ...muts.guard, ...litSorted.slice(0, 14)];
-    let litKilled = false; let litTried = 0;
+    rec.declarations = muts.declarations.map((d) => d.label);
+    // (string literals first, they never break compilation, then keys and member names)
+    // EVERY site of EVERY legacy name (ledger names and, for wildcard rows, every legacy word of the file) is mutated, one defect at a time:
+    // a name is credited only when all of its sites are killed (a survivor at any site blocks it) and never by a sibling's kill.
+    const perNameAll = [...muts.lit].sort((x, y) => Number(/^['"`]/.test(y.replacement)) - Number(/^['"`]/.test(x.replacement)) || x.label.localeCompare(y.label) || x.line - y.line);
+    const perNameChosen = perNameAll;
+    const labelled = new Set([...muts.swap, ...muts.guard].flatMap((m) => m.labels ?? []).concat(perNameAll.map((m) => m.label)));
+    rec.namesWithoutSite = [...pair.names].filter((n) => !labelled.has(n));
+    rec.exhaustive = true;
+    const queue = [...muts.swap, ...muts.guard, ...perNameChosen];
     try {
       for (const m of queue) {
-        if (m.operator === "LEGACY_LITERAL" && (litKilled || litTried >= 8)) continue;
         fs.writeFileSync(abs, apply(original, m));
         const r = runTest(pair.test);
         const c = classifyRun(r.status, r.output);
-        rec.mutations.push({ operator: m.operator, line: m.line, outcome: c === "assertion-failure" ? "KILLED" : c === "pass" ? "SURVIVED" : "INCONCLUSIVE" });
-        if (m.operator === "LEGACY_LITERAL" && c !== "inconclusive") litTried++;
-        if (m.operator === "LEGACY_LITERAL" && c === "assertion-failure") litKilled = true;
+        rec.mutations.push({ operator: m.operator, line: m.line, label: m.label ?? null, labels: m.labels ?? undefined, outcome: c === "assertion-failure" ? "KILLED" : c === "pass" ? "SURVIVED" : "INCONCLUSIVE" });
       }
     } finally { fs.writeFileSync(abs, original); }
+    rec.inconclusive = rec.mutations.filter((m) => m.outcome === "INCONCLUSIVE").length;
+    rec.diagnosticsRelaxed = ROOT !== REPO && pair.test.startsWith("apps/api/");
     const killed = rec.mutations.filter((m) => m.outcome === "KILLED").length;
-    const survivedStrong = rec.mutations.filter((m) => m.outcome === "SURVIVED" && m.operator !== "LEGACY_LITERAL").length;
-    rec.verdict = rec.mutations.length === 0 ? "NO_MUTATION_SITE" : survivedStrong ? "CANONICAL_FIRST_UNENFORCED" : killed ? "PROVEN" : "SURVIVED";
+    const survivedStrong = rec.mutations.some((m) => m.outcome === "SURVIVED" && m.operator !== "LEGACY_LITERAL");
+    const survivedName = rec.mutations.some((m) => m.outcome === "SURVIVED" && m.operator === "LEGACY_LITERAL");
+    rec.verdict = rec.mutations.length === 0 ? (muts.declarations.length > 0 ? "COMPILER_CHECKED" : "NO_MUTATION_SITE") : survivedStrong ? "CANONICAL_FIRST_UNENFORCED" : survivedName ? (killed ? "PARTIAL" : "SURVIVED") : killed ? "PROVEN" : "SURVIVED";
     results.set(`${pair.file}\u0000${pair.test}`, rec);
     console.log(`[${i + 1}/${pairs.length}] ${rec.verdict} ${pair.file} <= ${pair.test} (${rec.mutations.map((m) => `${m.operator}:${m.outcome}`).join(" ") || "-"})`);
     fs.mkdirSync(path.dirname(out), { recursive: true });

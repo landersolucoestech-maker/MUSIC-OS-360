@@ -1,0 +1,9 @@
+{
+  "agent": "regression-reviewer",
+  "objective": "Independently check the tests added to close survivors and the code fixes for regressions of previously working behavior.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-98ab67d2",
+  "createdAt": "2026-10-03T22:07:51.533Z"
+}

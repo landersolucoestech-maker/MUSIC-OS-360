@@ -66,7 +66,6 @@ export function canonicalPriority(value: unknown): Priority {
 }
 
 export const LEGACY_APPROVAL_TO_CANONICAL: Readonly<Record<string, ApprovalStatus>> = {
-  pendente: "pending",
   aprovado: "approved",
   reprovado: "rejected",
   ajustes_solicitados: "revision_requested",
@@ -95,7 +94,6 @@ export function canonicalApproval(value: unknown): ApprovalStatus {
  * lower-cased API value; the Portuguese spellings are accepted on read only.
  */
 export const LEGACY_CAMPAIGN_STATUS_TO_CANONICAL: Readonly<Record<string, CampaignStatus>> = {
-  rascunho: "draft",
   agendada: "scheduled",
   ativa: "active",
   pausada: "paused",

@@ -64,7 +64,8 @@ export function looksLikeRealSecret(value, name = "") {
   if (/eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/.test(v)) return true;
   // a tracked template must not carry a credential-looking value in a credential slot, not even a truncated one:
   // a JWT-prefixed (`eyJ...`) fragment in an anon/service-role slot looks operational and is not (canonical form `<NAME>`)
-  if (JWT_ONLY.test(name)) return /^eyJ/.test(v);
+  // (anywhere in the value, so a `Bearer eyJ...` or `key=eyJ...` form is caught too); the other shape checks still apply to the slot
+  if (JWT_ONLY.test(name) && /eyJ/.test(v)) return true;
   if (/^[0-9a-f]{40,}$/i.test(v)) return true;
   if (/\b(sk|rk|pk)_(live|test)_[A-Za-z0-9]{10,}/.test(v)) return true;
   if (/:\/\/[^/\s:@]+:(?!<)[^/\s@<]{6,}@/.test(v) && !/(PASSWORD|SENHA|TOKEN|<)/.test(v)) return true;

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "mutation-test-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r14: FAIL (delivered hand-back): SAMPLED_PAIR credit proved 805 rows by sibling kills; 3 contract-wizard-party rows survive own mutation; fix: mutate every ledger name, credit own-name kills only",
+  "workspaceFingerprint": "c2cbde25cdd652877040ffa8771048d567f0cfcf1dc8e9d255ab41f7824c09a3",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-74d4b084",
+  "createdAt": "2026-10-03T22:29:14.526Z"
+}

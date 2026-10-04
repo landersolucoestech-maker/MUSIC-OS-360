@@ -10,7 +10,7 @@
  * phonograms.controller.spec.ts (C2).
  */
 import 'reflect-metadata';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, RequestMethod } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { ArtistsController } from './artists.controller';
@@ -90,5 +90,17 @@ describe('ArtistsController — stats route aliases (CZ-020, CZ-024)', () => {
 
     expect(canonical.body).toEqual({ exclusive: 2, partner: 0, independent: 3, total: 5 });
     expect(legacyAlias.body).toEqual(canonical.body);
+  });
+
+  // Route metadata: both paths are registered on ONE handler, so removing/renaming the legacy path (or the canonical
+  // one) fails here even if the HTTP stack is stubbed differently.
+  it.each([
+    ['relationshipStats', 'stats/relationship', 'stats/vinculo'],
+    ['distinctMusicGenres', 'stats/genres', 'stats/generos'],
+  ])('route metadata: %s is registered at the canonical path and at the temporary alias', (handlerName, canonicalPath, aliasPath) => {
+    const handler = (ArtistsController.prototype as unknown as Record<string, object>)[handlerName];
+    expect(handler).toBeDefined();
+    expect(Reflect.getMetadata('path', handler)).toEqual([canonicalPath, aliasPath]);
+    expect(Reflect.getMetadata('method', handler)).toBe(RequestMethod.GET);
   });
 });

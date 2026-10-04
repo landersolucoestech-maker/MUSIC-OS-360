@@ -63,7 +63,7 @@ import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { canonicalReleaseMetadata } from "@/modules/releases/lib/release-metadata";
 import { projectLabel as projectLabelOf, projectTracksForRelease } from "@/modules/releases/lib/legacy-reads";
-import type { TrackData } from "@/modules/projects/utils/track-helpers";
+import type { TrackData } from "@/modules/projects/lib/track-helpers";
 import {
   releaseToFormFields,
   emptyReleaseFormFields,

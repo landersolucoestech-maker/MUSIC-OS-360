@@ -1,0 +1,9 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Phase \"census\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: repo-inspector.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-532a4bb9",
+  "createdAt": "2026-10-03T15:10:44.643Z"
+}

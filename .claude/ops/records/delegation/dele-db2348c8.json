@@ -1,0 +1,12 @@
+{
+  "agent": "encryption-reviewer",
+  "objective": "Exhaust the non-destructive PII work (dual read, redaction, export, logs, key validation, rotation contract, archive, retention, controlled decrypt, scrub prerequisites) and state exactly what the owner must provide for key custody and escrow.",
+  "requirementIds": [],
+  "filesInScope": [
+    "docs/engineering/pii-key-custody-request.md",
+    "apps/api/src/core/security/encryption.service.ts"
+  ],
+  "status": "CLOSED",
+  "id": "dele-db2348c8",
+  "createdAt": "2026-10-03T15:10:44.676Z"
+}

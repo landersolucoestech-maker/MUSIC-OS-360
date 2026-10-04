@@ -1,0 +1,13 @@
+{
+  "agent": "stale-code-detector",
+  "objective": "Validate each of the 115 HISTORICAL_RECORD documents individually (header, frozen body, no executable consumer, no unlabelled normative reference) and find active documents that cite a historical record as current.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/naming/historical-records-audit.mjs",
+    "docs/INDEX_DOCUMENTATION.md",
+    "docs/runbooks/release-baseline-157-80.md"
+  ],
+  "status": "CLOSED",
+  "id": "dele-6e4a377e",
+  "createdAt": "2026-10-03T15:10:44.662Z"
+}

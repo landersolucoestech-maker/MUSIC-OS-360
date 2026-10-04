@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "domain-boundary-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r4 decisions: PASS; 20 claims verified, 3 LOW doc findings fixed after (OPTION_D, GAP-0009 open)",
+  "workspaceFingerprint": "149e761b2e4fa8263b0cf62156e018fb6a6e729361f0a7a5a6162ecd06c631db",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-4f7966e7",
+  "createdAt": "2026-10-03T15:52:53.898Z"
+}

@@ -54,6 +54,8 @@ export function boundaryKind(e) {
   const text = `${e.item} ${e.reason}`;
   if (paths.every((p) => /^(docs|reports)\//.test(p))) return /historical|frozen/i.test(text) ? "HISTORICAL_DOCUMENT_OR_DATA" : "LIVING_REGISTRY";
   if (paths.every((p) => p.startsWith(".claude/"))) return "PACK_TOOLING";
+  // exemption tables of the naming gates themselves: governed by technical-naming-census.test.mjs, which pins each table to exactly one ledger row
+  if (paths.every((p) => p.startsWith("scripts/naming/"))) return "NAMING_TOOLING";
   if (e.exceptionClass === "EXTERNAL_CONTRACT" || e.exceptionClass === "PROVIDER_DEFINED") return "EXTERNAL_PROVIDER_FIELD";
   if (e.exceptionClass === "UX_TEXT") return "USER_FACING_TEXT";
   if (e.exceptionClass === "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION") return "LEGAL_DOMAIN_TERM";
@@ -78,6 +80,7 @@ const KIND_PRODUCER = {
   HISTORICAL_DOCUMENT_OR_DATA: "frozen point-in-time record",
   LIVING_REGISTRY: "the naming registry itself",
   PACK_TOOLING: "engineering pack tooling",
+  NAMING_TOOLING: "exemption table of the naming gates (pinned by technical-naming-census.test.mjs)",
 };
 
 /**
@@ -112,7 +115,7 @@ export function bindingOf(e, readFile) {
     // an opt-in verification script is the check itself, but only counts when a package script wires it
     const scripts = paths.filter(isVerificationScript);
     if (scripts.length) {
-      const wired = scripts.every((s) => ["package.json", "apps/api/package.json"].some((pj) => (readFile(pj) ?? "").includes(path.basename(s))));
+      const wired = scripts.every((s) => ["package.json", "apps/api/package.json"].some((manifestPath) => (readFile(manifestPath) ?? "").includes(path.basename(s))));
       return { tests, bound: wired, via: wired ? "SELF_SCRIPT" : "SCRIPT_NOT_WIRED" };
     }
     return { tests, bound: true, via: "SELF" };
@@ -128,13 +131,29 @@ export function bindingOf(e, readFile) {
 }
 
 /** Mutation evidence of a (runtime file, test) pair, fresh only for the current sources. */
-export function pairEvidence(results, file, test, readFile) {
+export function pairEvidence(results, file, test, readFile, name = "*") {
   const rec = results.get(`${file}\u0000${test}`);
   if (!rec) return { verdict: "NOT_RUN", fresh: false };
   const f = readFile(file);
   const t = readFile(test);
   const fresh = f != null && t != null && sha256(f) === rec.fileSha256 && sha256(t) === rec.testSha256;
-  return { verdict: rec.verdict, fresh, legacyFirst: rec.legacyFirst ?? [] };
+  // a mutation belongs to a name through its label (literal rename) or its labels (canonical-first swap / alias guard that reads the name)
+  const own = name === "*" ? null : (rec.mutations ?? []).filter((m) => m.label === name || (m.labels ?? []).includes(name));
+  const ownKilled = own ? own.some((m) => m.outcome === "KILLED") : false;
+  const ownSurvived = own ? own.some((m) => m.outcome === "SURVIVED") : false;
+  // A named row is credited by ITS OWN mutations only: every site of the name was mutated, at least one kill, no survivor at any site
+  // (INCONCLUSIVE sites, such as a mutation that crashes the module at load time, neither credit nor block). A name that was never mutated
+  // gets no credit from its siblings, from a swap/guard it does not read, or from the verdict of the pair.
+  // COMPILER_CHECKED: the name only appears in declarations (type, interface, property signature, function): a rename breaks the typecheck, there is no runtime value to mutate
+  const declared = rec.verdict === "COMPILER_CHECKED" && name !== "*" && (rec.declarations ?? []).includes(name);
+  // a pair whose baseline is red, whose test file is missing, or that has no mutation site credits no row (a surviving canonical-first swap blocks only the name it reads)
+  const usable = !["BASELINE_RED", "TEST_MISSING", "NO_MUTATION_SITE"].includes(rec.verdict);
+  // wildcard rows (every legacy word of the file): only an exhaustive pair with every word killed and nothing inconclusive credits them
+  const wildcardOk = rec.exhaustive === true && rec.verdict === "PROVEN" && (rec.inconclusive ?? 1) === 0;
+  const proven = declared || (usable && (name === "*" ? wildcardOk : rec.exhaustive === true && ownKilled && !ownSurvived));
+  // the state of THIS name (never the verdict of the pair, which describes other names too)
+  const state = proven ? "PROVEN" : ownSurvived ? "SURVIVED" : ["NO_MUTATION_SITE", "CANONICAL_FIRST_UNENFORCED", "BASELINE_RED", "TEST_MISSING", "COMPILER_CHECKED"].includes(rec.verdict) ? rec.verdict : "NOT_MUTATED";
+  return { verdict: rec.verdict, state, fresh, legacyFirst: rec.legacyFirst ?? [], proven, granularity: name === "*" ? "WILDCARD" : declared ? "COMPILER_CHECKED" : own.length > 0 ? "EXACT_NAME" : "UNMUTATED" };
 }
 
 /** Pure audit over a ledger. */
@@ -147,7 +166,7 @@ export function audit(map, { readFile, unusedRows = [], mutation = { results: []
   for (const e of map.exceptions ?? []) {
     if (e.status === "REMOVED") continue;
     const cat = categoryOf(e, { unused });
-    const needsProof = PROOF_CLASSES.has(e.exceptionClass) && cat.category === "NECESSARY_BOUNDARY" && cat.kind !== "PACK_TOOLING";
+    const needsProof = PROOF_CLASSES.has(e.exceptionClass) && cat.category === "NECESSARY_BOUNDARY" && cat.kind !== "PACK_TOOLING" && cat.kind !== "NAMING_TOOLING";
     const bind = bindingOf(e, readFile);
     const runtimeFiles = pathsOf(e).filter((p) => p !== "*" && !isTestFile(p) && /\.[cm]?[jt]sx?$/.test(p) && !p.startsWith(".claude/"));
     let mutationState = "N/A";
@@ -155,9 +174,9 @@ export function audit(map, { readFile, unusedRows = [], mutation = { results: []
     if (needsProof && runtimeFiles.length) {
       const states = [];
       for (const f of runtimeFiles) {
-        const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile));
+        const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile, e.currentName));
         for (const x of ev) legacyFirst.push(...(x.legacyFirst ?? []).map((l) => ({ file: f, ...l })));
-        states.push(ev.some((x) => x.fresh && x.verdict === "PROVEN") ? "PROVEN" : ev.some((x) => !x.fresh && x.verdict !== "NOT_RUN") ? "STALE" : ev.find((x) => x.verdict !== "NOT_RUN")?.verdict ?? "NOT_RUN");
+        states.push(ev.some((x) => x.fresh && x.proven) ? "PROVEN" : ev.some((x) => !x.fresh && x.verdict !== "NOT_RUN") ? "STALE" : ev.find((x) => x.verdict !== "NOT_RUN")?.state ?? "NOT_RUN");
       }
       mutationState = states.every((s) => s === "PROVEN") ? "PROVEN" : states.find((s) => s !== "PROVEN");
     }

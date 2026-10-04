@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "documentation-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r3 docs: FAIL (generated historical audit report stale, count 115 vs 129); fixed afterwards, re-verification requested",
+  "workspaceFingerprint": "149e761b2e4fa8263b0cf62156e018fb6a6e729361f0a7a5a6162ecd06c631db",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-57046bac",
+  "createdAt": "2026-10-03T15:52:54.710Z"
+}

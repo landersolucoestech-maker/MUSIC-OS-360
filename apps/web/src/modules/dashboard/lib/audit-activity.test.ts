@@ -59,4 +59,36 @@ describe("dashboard audit feed — PT-BR labels with gender agreement", () => {
     expect(describeAuditRow({ action: "artist.updated", entity: "artist", after: { nome_artistico: "Banda Antiga" } }).description).toBe("Banda Antiga");
     expect(describeAuditRow({ action: "transaction.created", entity: "transaction", after: {} }).badge).toBe("Contabilidade");
   });
+
+  it("every legacy plural/PT-BR entity key of older rows resolves to the same view as the canonical key", () => {
+    // static list on purpose: legacy key -> canonical key, noun, gender-agreed participle, badge
+    const legacy: Array<[string, string, string, string]> = [
+      ["artistas", "artist", "Artista removido", "Artista"],
+      ["contratos", "contract", "Contrato removido", "Contrato"],
+      ["lancamentos", "release", "Lançamento removido", "Lançamento"],
+      ["obras", "work", "Obra removida", "Obra"],
+      ["fonogramas", "phonogram", "Fonograma removido", "Fonograma"],
+      ["clientes", "client", "Cliente removido", "CRM"],
+      ["transacoes", "transaction", "Transação removida", "Contabilidade"],
+      ["eventos", "event", "Agenda removida", "Agenda"],
+    ];
+    for (const [alias, canonical, label, badge] of legacy) {
+      expect(describeAuditAction("delete", alias)).toBe(label);
+      expect(describeAuditAction("delete", alias.toUpperCase())).toBe(label);
+      const legacyView = describeAuditRow({ action: "delete", entity: alias, after: {} });
+      expect(legacyView).toEqual(describeAuditRow({ action: "delete", entity: canonical, after: {} }));
+      expect(legacyView.entityKey).toBe(canonical);
+      expect(legacyView.badge).toBe(badge);
+    }
+  });
+
+  it("reads the historical 'nome' snapshot key, and the canonical keys win over it", () => {
+    const description = (after: Record<string, unknown>) => describeAuditRow({ action: "client.updated", entity: "client", after }).description;
+    expect(description({ nome: "Cliente Antigo" })).toBe("Cliente Antigo");
+    expect(description({ name: "Novo", nome: "Antigo" })).toBe("Novo");
+    expect(description({ title: "T", name: "N", nome: "Antigo" })).toBe("T");
+    expect(description({ stage_name: "Palco", nome_artistico: "Antigo", nome: "Antigo2" })).toBe("Palco");
+    expect(description({ name: "  ", nome: "Antigo" })).toBe("Antigo");
+    expect(description({ nome: "  " })).toBe("Cliente");
+  });
 });

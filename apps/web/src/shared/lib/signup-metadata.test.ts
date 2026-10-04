@@ -29,4 +29,9 @@ describe("signup consent contract: register form -> Supabase metadata -> provisi
   it("an absent consent key is forwarded as undefined, not invented", () => {
     expect(buildProvisionWorkspacePayload({ workspace_slug: "x" })["acceptedLgpd"]).toBeUndefined();
   });
+  it("KNOWN GAP (find-8fb21cf0, product decision pending): the chosen plan id is stored as activation_plan_id but is not forwarded, because the API takes a plan code (requestedPlan, max 30 chars) and the form holds a plan id", () => {
+    const metadata = buildSignupMetadata({ ...form, activationPlanId: "3f1c2d1e-8a53-4c53-9a0f-3f0b8a0d9c11" });
+    expect(metadata["activation_plan_id"]).toBe("3f1c2d1e-8a53-4c53-9a0f-3f0b8a0d9c11");
+    expect(buildProvisionWorkspacePayload(metadata)["requestedPlan"]).toBeUndefined();
+  });
 });

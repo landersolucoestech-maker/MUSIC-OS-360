@@ -118,3 +118,51 @@ describe('ContactsService (facade) — correctly forwards tenant to ClientsServi
     await expect(timeline.list('tenant-a', contactB)).rejects.toThrow();
   });
 });
+
+/**
+ * Legacy "Contact" facade contract: the facade still ACCEPTS the pre-canonical Contact payload keys and still
+ * RETURNS the legacy Contact shape (documentType CPF|CNPJ, country, documentNumber). Each assertion below fails
+ * when the matching legacy name/value is renamed or its precedence is swapped.
+ */
+describe('ContactsService (facade) — legacy Contact payload/response contract', () => {
+  const clientsMock = () => ({
+    list: jest.fn(),
+    findById: jest.fn(async (_t: string, _id: string) => ({})),
+    create: jest.fn(async (_t: string, _u: string, dto: Record<string, unknown>) => ({ id: 'c1', ...dto })),
+    update: jest.fn(async (_t: string, _u: string, _id: string, dto: Record<string, unknown>) => ({ id: 'c1', ...dto })),
+    remove: jest.fn(),
+  });
+
+  it('maps the legacy payload keys (cidade, cep, ...) to the canonical client DTO', async () => {
+    const clients = clientsMock();
+    const contacts = new ContactsService(clients as any);
+    await contacts.create('t1', {
+      nome: 'Maria', telefone: '11', endereco: 'Rua A', cidade: 'Santos', estado: 'SP', cep: '01000-000',
+      observacoes: 'n', document_number: '123',
+    });
+    expect(clients.create.mock.calls[0][2]).toEqual({
+      name: 'Maria', phone: '11', address: 'Rua A', city: 'Santos', state: 'SP', zip_code: '01000-000',
+      notes: 'n', cpf_cnpj: '123',
+    });
+  });
+
+  it('when a canonical and a legacy payload key are both sent the canonical one wins (city, zip_code)', async () => {
+    const clients = clientsMock();
+    const contacts = new ContactsService(clients as any);
+    await contacts.create('t1', { city: 'Canonical', cidade: 'Legacy', zip_code: '11111-111', cep: '22222-222' });
+    expect(clients.create.mock.calls[0][2]).toEqual({ city: 'Canonical', zip_code: '11111-111' });
+  });
+
+  it('returns the legacy Contact shape: documentType CPF for an individual, CNPJ otherwise, documentNumber from cpf_cnpj, country Brasil', async () => {
+    const clients = clientsMock();
+    const contacts = new ContactsService(clients as any);
+    clients.findById.mockResolvedValueOnce({ id: 'c1', person_type: 'individual', cpf_cnpj: '111.222.333-44' });
+    await expect(contacts.getById('t1', 'c1')).resolves.toMatchObject({
+      documentType: 'CPF', documentNumber: '111.222.333-44', country: 'Brasil',
+    });
+    clients.findById.mockResolvedValueOnce({ id: 'c2', person_type: 'company', cpf_cnpj: '12.345.678/0001-00' });
+    await expect(contacts.getById('t1', 'c2')).resolves.toMatchObject({
+      documentType: 'CNPJ', documentNumber: '12.345.678/0001-00', country: 'Brasil',
+    });
+  });
+});

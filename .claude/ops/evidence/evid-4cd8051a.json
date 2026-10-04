@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Specialist re-ran the census, validator and comparative audit after the fixes: debt only the 8695 frozen historical-doc lines, 0 stale rows, 0 uncovered; differences with the committed summary are the window's changes (summary regeneration pending).",
+  "workspaceFingerprint": "1de75ccf2fbbe31ae0e632fdf61c5a6add7ca67d8d0e4372c27cbb665abf504f",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-4cd8051a",
+  "createdAt": "2026-10-03T15:49:00.369Z"
+}

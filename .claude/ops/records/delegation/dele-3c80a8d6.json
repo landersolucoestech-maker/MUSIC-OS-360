@@ -1,0 +1,12 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Audit every ledger exception row semantically (concept, legacy alias, canonical field, module, producer, consumer, boundary, reason, removal condition) and classify NECESSARY_BOUNDARY, OBSOLETE_BOUNDARY, MISCLASSIFIED_OPERATIONAL_USAGE or HISTORICAL_ONLY.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/naming/compat-boundary-audit.mjs",
+    "docs/naming/canonical-naming-map.json"
+  ],
+  "status": "CLOSED",
+  "id": "dele-3c80a8d6",
+  "createdAt": "2026-10-03T15:10:44.658Z"
+}

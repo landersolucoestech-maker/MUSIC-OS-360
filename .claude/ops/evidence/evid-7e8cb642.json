@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "migration-planner",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Dossier checked against the drafts: five factual errors found (archive names of 53, no archive for 46/48, 48/49 order, PII lock claim) fixed and re-verified; 10 of 11 findings FIXED, residual LOW wording of the measured table fixed afterwards.",
+  "workspaceFingerprint": "1de75ccf2fbbe31ae0e632fdf61c5a6add7ca67d8d0e4372c27cbb665abf504f",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-7e8cb642",
+  "createdAt": "2026-10-03T15:49:01.947Z"
+}

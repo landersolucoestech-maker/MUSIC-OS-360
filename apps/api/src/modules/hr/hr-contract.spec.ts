@@ -5,7 +5,7 @@ import { HrService } from './hr.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { CreatePayrollEntryDto } from './dto/create-payroll-entry.dto';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
-import { CONTRACT_TYPES, LEAVE_TYPES, LEGACY_CONTRACT_TYPES, LEGACY_LEAVE_TYPES } from './hr-legacy-fields';
+import { CONTRACT_TYPES, LEAVE_TYPES, LEGACY_CONTRACT_TYPES, LEGACY_LEAVE_TYPES, canonicalContractType } from './hr-legacy-fields';
 
 /**
  * CZ-030: the HR request contract is English. Before it, the web payroll and
@@ -112,5 +112,36 @@ describe('HR request contract (CZ-030)', () => {
     const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
     expect(row).toMatchObject({ job_title: 'Dev', department: 'TI', contract_type: 'internship', salary: '3000', phone_encrypted: 'enc(11)' });
     expect(row['hired_at']).toBeInstanceOf(Date);
+  });
+
+  it.each(Object.entries(LEGACY_CONTRACT_TYPES))('createEmployee maps the deprecated contract type %j to %j before persistence', async (legacy, canonical) => {
+    const { service, repo } = makeService();
+    await service.createEmployee('tenant-1', 'user-1', { name: 'A', tipo_contrato: legacy } as never);
+    expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['contract_type']).toBe(canonical);
+  });
+
+  it('the legacy contract types CLT and autonomo are mapped explicitly (clt, freelancer); a canonical value passes through', () => {
+    expect(LEGACY_CONTRACT_TYPES['CLT']).toBe('clt');
+    expect(LEGACY_CONTRACT_TYPES['autonomo']).toBe('freelancer');
+    expect(canonicalContractType('CLT')).toBe('clt');
+    expect(canonicalContractType('autonomo')).toBe('freelancer');
+    expect(canonicalContractType('clt')).toBe('clt');
+    expect(canonicalContractType('unknown-regime')).toBe('unknown-regime');
+  });
+
+  it('payroll: the deprecated arquivo_url is persisted as file_url; the canonical file_url wins when both are sent', async () => {
+    const legacyOnly = makeService();
+    await legacyOnly.service.createPayroll('tenant-1', { ...LEGACY_WEB_PAYROLL, arquivo_url: 'https://a.com/legacy.pdf' } as never);
+    const row = legacyOnly.repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row['file_url']).toBe('https://a.com/legacy.pdf');
+    expect(row).not.toHaveProperty('arquivo_url');
+
+    const both = makeService();
+    await both.service.createPayroll('tenant-1', {
+      ...LEGACY_WEB_PAYROLL, file_url: 'https://a.com/canonical.pdf', arquivo_url: 'https://a.com/legacy.pdf',
+    } as never);
+    const bothRow = both.repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(bothRow['file_url']).toBe('https://a.com/canonical.pdf');
+    expect(bothRow).not.toHaveProperty('arquivo_url');
   });
 });

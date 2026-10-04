@@ -34,6 +34,14 @@ describe('canonicalImportValue', () => {
     expect(canonicalImportValue('works', 'is_instrumental', 'nao')).toBe(false);
   });
 
+  it('the legacy sim/nao instrumental flag is matched trimmed and case-insensitively; a canonical boolean and unknown text pass through', () => {
+    expect(canonicalImportValue('works', 'is_instrumental', ' SIM ')).toBe(true);
+    expect(canonicalImportValue('works', 'is_instrumental', 'Nao')).toBe(false);
+    expect(canonicalImportValue('works', 'is_instrumental', true)).toBe(true);
+    expect(canonicalImportValue('works', 'is_instrumental', false)).toBe(false);
+    expect(canonicalImportValue('works', 'is_instrumental', 'talvez')).toBe('talvez');
+  });
+
   it('maps pre-CZ-041 transaction values (type, counterparty, payment) to canonical', () => {
     expect(canonicalImportValue('transactions', 'type', 'despesa')).toBe('expense');
     expect(canonicalImportValue('transactions', 'type', 'receita')).toBe('revenue');

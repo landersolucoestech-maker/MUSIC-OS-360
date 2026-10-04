@@ -49,4 +49,21 @@ describe("ReleaseViewModal track credit lists with legacy compositores/produtore
     expect(screen.getByText("Carla Composer")).toBeTruthy();
     expect(screen.getByText("Paulo Producer")).toBeTruthy();
   });
+
+  it("when both spellings are present the canonical credits win and the legacy ones are not shown", () => {
+    renderWithTracks([{ title: "Faixa", composers: ["Canon Composer"], compositores: ["Legacy Composer"], producers: ["Canon Producer"], produtores: ["Legacy Producer"] }]);
+    expect(screen.getByText("Canon Composer")).toBeTruthy();
+    expect(screen.getByText("Canon Producer")).toBeTruthy();
+    expect(screen.queryByText("Legacy Composer")).toBeNull();
+    expect(screen.queryByText("Legacy Producer")).toBeNull();
+  });
+
+  it("legacy-only credit lists of several tracks are aggregated without duplicates", () => {
+    renderWithTracks([
+      { title: "Faixa 1", compositores: ["Carla Composer", "Dora Composer"], produtores: ["Paulo Producer"] },
+      { title: "Faixa 2", compositores: ["Carla Composer"], produtores: ["Paulo Producer", "Rui Producer"] },
+    ]);
+    expect(screen.getByText("Carla Composer, Dora Composer")).toBeTruthy();
+    expect(screen.getByText("Paulo Producer, Rui Producer")).toBeTruthy();
+  });
 });

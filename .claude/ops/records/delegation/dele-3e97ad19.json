@@ -1,0 +1,9 @@
+{
+  "agent": "mutation-test-reviewer",
+  "objective": "Independently review the mutation proof harness and compat audit: operators sound, kill criterion not satisfiable by compile errors, hashes bind the proof to sources, rows cannot be proven by a false green.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-3e97ad19",
+  "createdAt": "2026-10-03T22:07:51.530Z"
+}

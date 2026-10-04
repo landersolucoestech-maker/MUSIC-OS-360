@@ -3,7 +3,13 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { ReleasesService } from './releases.service';
 import { CreateReleaseDto, QueryReleaseDto } from './dto/releases.dto';
-import { RELEASE_DEPRECATED_FIELDS } from './release-legacy-fields';
+import {
+  RELEASE_ASSET_DEPRECATED_KEYS,
+  RELEASE_DEPRECATED_FIELDS,
+  RELEASE_SCHEDULE_DEPRECATED_KEYS,
+  canonicalReleaseType,
+  canonicalizeReleaseInput,
+} from './release-legacy-fields';
 
 /**
  * CZ-038: release fields, type values and jsonb keys are English.
@@ -156,5 +162,79 @@ describe('Release request contract (CZ-038)', () => {
       const found = await svc.findById('tenant-1', 'r1');
       expect(found.metadata).toEqual({ tracks: [{ title: 't', composers: ['a'] }], copyrightReleaseYear: '2024' });
     });
+  });
+});
+
+// ─── Exhaustive pins of every legacy name of release-legacy-fields.ts (explicit static tables, not derived from the module) ───
+type Row2 = ReadonlyArray<readonly [string, string]>;
+const X_RELEASE_FIELDS: Row2 = [
+  ['notas_internas', 'internal_notes'],
+  ['gravadora', 'record_label'],
+  ['idioma', 'language'],
+  ['cronograma', 'schedule'],
+];
+
+const X_RELEASE_SCHEDULE_KEYS: Row2 = [
+  ['data_gravacao', 'recording_date'],
+  ['data_mix_master', 'mix_master_date'],
+  ['data_entrega_distribuidora', 'distributor_delivery_date'],
+];
+
+const X_RELEASE_ASSET_KEYS: Row2 = [
+  ['capa_url', 'cover_url'],
+  ['video_clipe_url', 'music_video_url'],
+  ['letra', 'lyrics'],
+  ['ficha_tecnica', 'credits'],
+];
+
+const X_RELEASE_TYPES: Row2 = [
+  ['compilacao', 'compilation'],
+  ['compilação', 'compilation'],
+  ['outro', 'other'],
+  ['álbum', 'album'],
+  ['lp', 'album'],
+  ['clipe', 'video'],
+  ['vídeo', 'video'],
+  ['videoclipe', 'video'],
+];
+
+describe('release legacy names: every deprecated field, jsonb key and type value, one by one', () => {
+  it('the exported alias tables declare exactly the expected pairs', () => {
+    expect({ ...RELEASE_DEPRECATED_FIELDS }).toEqual(Object.fromEntries(X_RELEASE_FIELDS));
+    expect({ ...RELEASE_SCHEDULE_DEPRECATED_KEYS }).toEqual(Object.fromEntries(X_RELEASE_SCHEDULE_KEYS));
+    expect({ ...RELEASE_ASSET_DEPRECATED_KEYS }).toEqual(Object.fromEntries(X_RELEASE_ASSET_KEYS));
+  });
+
+  it.each(X_RELEASE_FIELDS.filter(([legacy]) => legacy !== 'cronograma'))('field %s -> %s: legacy-only moves, the CANONICAL value wins when both are sent', (legacy, canonical) => {
+    expect(canonicalizeReleaseInput({ [legacy]: 'legacy-value' })).toEqual({ [canonical]: 'legacy-value' });
+    expect(canonicalizeReleaseInput({ [legacy]: 'legacy-value', [canonical]: 'canonical-value' })).toEqual({ [canonical]: 'canonical-value' });
+  });
+
+  it('field cronograma -> schedule: legacy-only moves (its keys canonicalised), the CANONICAL schedule wins when both are sent', () => {
+    expect(canonicalizeReleaseInput({ cronograma: { data_gravacao: 'd' } })).toEqual({ schedule: { recording_date: 'd' } });
+    expect(canonicalizeReleaseInput({ cronograma: { data_gravacao: 'old' }, schedule: { recording_date: 'new' } })).toEqual({ schedule: { recording_date: 'new' } });
+  });
+
+  it.each(X_RELEASE_SCHEDULE_KEYS)('schedule key %s -> %s: legacy-only moves, canonical wins when both are present', (legacy, canonical) => {
+    expect(canonicalizeReleaseInput({ schedule: { [legacy]: 'legacy-value' } })).toEqual({ schedule: { [canonical]: 'legacy-value' } });
+    expect(canonicalizeReleaseInput({ schedule: { [legacy]: 'legacy-value', [canonical]: 'canonical-value' } })).toEqual({ schedule: { [canonical]: 'canonical-value' } });
+  });
+
+  it.each(X_RELEASE_ASSET_KEYS)('asset key %s -> %s: legacy-only moves, canonical wins when both are present', (legacy, canonical) => {
+    expect(canonicalizeReleaseInput({ assets: { [legacy]: 'legacy-value', epk_url: 'e' } })).toEqual({ assets: { [canonical]: 'legacy-value', epk_url: 'e' } });
+    expect(canonicalizeReleaseInput({ assets: { [legacy]: 'legacy-value', [canonical]: 'canonical-value' } })).toEqual({ assets: { [canonical]: 'canonical-value' } });
+  });
+
+  it.each(X_RELEASE_TYPES)('type %s -> %s (trimmed, case-insensitive); the canonical type is unchanged', (legacy, canonical) => {
+    expect(canonicalReleaseType(legacy)).toBe(canonical);
+    expect(canonicalReleaseType(`  ${legacy.toUpperCase()} `)).toBe(canonical);
+    expect(canonicalizeReleaseInput({ type: legacy })).toEqual({ type: canonical });
+    expect(canonicalReleaseType(canonical)).toBe(canonical);
+  });
+
+  it('unknown and non-string types are kept; non-object schedule/assets are untouched', () => {
+    expect(canonicalReleaseType('custom-type')).toBe('custom-type');
+    expect(canonicalReleaseType(7)).toBe(7);
+    expect(canonicalizeReleaseInput({ schedule: 'x', assets: ['y'] })).toEqual({ schedule: 'x', assets: ['y'] });
   });
 });

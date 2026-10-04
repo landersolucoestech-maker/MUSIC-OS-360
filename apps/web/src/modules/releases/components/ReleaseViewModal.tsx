@@ -89,11 +89,11 @@ function LinkField({ label, value }: { label: string; value?: string | null }) {
 }
 
 
-/** `legacyKey`: the Portuguese spelling of release.metadata tracks not yet backfilled. */
-function aggregateField(tracks: any[], key: string, legacyKey?: string): string {
+/** Reads one credit field of the tracks; legacy spellings are already renamed by `canonicalReleaseMetadata` before this runs. */
+function aggregateField(tracks: any[], key: string): string {
   const values = tracks
     .flatMap((f) => {
-      const value = f[key] ?? (legacyKey ? f[legacyKey] : undefined);
+      const value = f[key];
       if (Array.isArray(value)) return value;
       return String(value ?? "").split(",");
     })
@@ -192,9 +192,9 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
       producers: participantNames(phonogram, "phonographic_producers"),
     }));
   const tracks = trackMetadata.length > 0 ? trackMetadata : catalogTracks;
-  const composers = aggregateField(tracks, "composers", "compositores");
+  const composers = aggregateField(tracks, "composers");
   const performers = aggregateField(tracks, "performers");
-  const producers = aggregateField(tracks, "producers", "produtores");
+  const producers = aggregateField(tracks, "producers");
   const hasAssets = Object.values(assets).some(Boolean) || Boolean(coverUrl);
   const hasSchedule = Object.values(schedule).some(Boolean);
   const hasNotes = Boolean(release.notes || release.internal_notes);

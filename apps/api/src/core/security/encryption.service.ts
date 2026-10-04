@@ -82,10 +82,12 @@ export class EncryptionService {
         ? ciphertext.slice(PREFIX.length)
         : ciphertext;
       const payload = Buffer.from(raw, 'base64');
+      // A payload shorter than iv + tag cannot be a valid value (a truncated tag must never be accepted).
+      if (payload.length < IV_LENGTH + TAG_LENGTH) return '[encrypted]';
       const iv      = payload.subarray(0, IV_LENGTH);
       const tag     = payload.subarray(IV_LENGTH, IV_LENGTH + TAG_LENGTH);
       const data    = payload.subarray(IV_LENGTH + TAG_LENGTH);
-      const decipher = crypto.createDecipheriv(ALGORITHM, this.key, iv);
+      const decipher = crypto.createDecipheriv(ALGORITHM, this.key, iv, { authTagLength: TAG_LENGTH });
       decipher.setAuthTag(tag);
       return decipher.update(data) + decipher.final('utf8');
     } catch {

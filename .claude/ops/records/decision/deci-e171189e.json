@@ -1,0 +1,8 @@
+{
+  "topic": "Root cause of the r14 mutation proof false green",
+  "decision": "Proximate: a row's PROVEN state came from the pair verdict instead of a kill of its own name (first-kill stop, sampling, sibling credit, fallback state leaking the pair verdict). Systemic: the invariant 'a row is proven only by evidence about its own name' was not an executable property. Fix: every site of every legacy name is mutated, swap/guard mutations are labelled with the names they read, a named row needs an exhaustive record plus an own-name kill and no survivor at any site, wildcard rows need an exhaustive PROVEN pair with 0 inconclusive, never-mutated names are NOT_MUTATED; unit tests incl. a producer/consumer test on real findMutations output; contract-wizard-party.test.ts rewritten with a pinned literal key table. Accepted limits: any-assertion kill criterion, hashes not transitive over test helpers.",
+  "decidedBy": "root-cause-investigator",
+  "rationale": "Established by the independent root-cause review (af4ed755...), re-verified PASS after the fixes",
+  "id": "deci-e171189e",
+  "createdAt": "2026-10-03T23:46:35.125Z"
+}

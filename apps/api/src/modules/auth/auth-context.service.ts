@@ -6,7 +6,8 @@ import { canonicalPlanFeatures } from '../../common/compat/plan-features';
 
 /** Deprecated alias for one release window: web builds older than migration 20260930000024 still read `moduleRh`. Remove after old web builds are gone. */
 function withLegacyHrFeatureAlias(features: Record<string, unknown>): Record<string, unknown> {
-  return 'moduleHr' in features && !('moduleRh' in features) ? { ...features, moduleRh: features['moduleHr'] } : features;
+  // canonicalPlanFeatures never emits `moduleRh` (it renames it to `moduleHr`), so the alias is only ever added, never overwritten.
+  return 'moduleHr' in features ? { ...features, moduleRh: features['moduleHr'] } : features;
 }
 
 interface AuthClaims {

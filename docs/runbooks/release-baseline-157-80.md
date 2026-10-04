@@ -24,7 +24,7 @@ The documents below are historical and must not guide the execution of a release
 - STAGE 3B.1 - Supabase-Compatible Mirror Report (session report, not versioned)
 
 The technical decision that closes the 3B/3B.1 impasse is recorded in section 6 of
-`docs/STAGE_4_CANONICAL_BASELINE_157_80.md`.
+`docs/STAGE_4_CANONICAL_BASELINE_157_80.md` (historical record, not the current contract).
 
 Explicit block:
 
@@ -76,7 +76,7 @@ Validate:
 - `public.musicos360_migrations = 80`
 - no unexpected pending migrations
 - consistent migrations registry
-- schema compatible with `docs/STAGE_4_CANONICAL_BASELINE_157_80.md`
+- schema compatible with `docs/STAGE_4_CANONICAL_BASELINE_157_80.md` (historical record, not the current contract)
 
 Allowed command, only against staging/mirror:
 

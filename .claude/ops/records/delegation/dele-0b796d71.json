@@ -1,0 +1,12 @@
+{
+  "agent": "test-strategy-engineer",
+  "objective": "Build the mutation proof of the compatibility boundaries (legacy literal removal, canonical-first swap, alias override) bound to source hashes, and the compat-boundary audit with unit tests.",
+  "requirementIds": [],
+  "filesInScope": [
+    "scripts/naming/compat-mutation-proof.mjs",
+    "scripts/naming/compat-boundary-audit.mjs"
+  ],
+  "status": "CLOSED",
+  "id": "dele-0b796d71",
+  "createdAt": "2026-10-03T15:10:44.695Z"
+}

@@ -66,6 +66,24 @@ describe('canonicalMenuOption / canonicalTemplate', () => {
     expect(canonicalTemplate({ id: 'financeiro', title: 'Financeiro' })).toEqual({ id: 'finance', title: 'Financeiro' });
   });
 
+  it.each([
+    ['producao', 'music_production'],
+    ['editora', 'publishing_distribution'],
+    ['financeiro', 'finance'],
+    ['conteudo', 'content'],
+    ['outros', 'other'],
+    ['engano', 'wrong_contact'],
+  ])('maps the deprecated default menu option id %j to %j (option id, response template id and template id)', (legacy, canonical) => {
+    expect(canonicalMenuOption({ id: legacy, responseTemplateId: legacy })).toEqual({ id: canonical, responseTemplateId: canonical });
+    expect(canonicalTemplate({ id: legacy })).toEqual({ id: canonical });
+  });
+
+  it.each([
+    ['baixa', 'low'], ['media', 'medium'], ['alta', 'high'], ['critica', 'critical'],
+  ])('maps the deprecated priority %j to %j', (legacy, canonical) => {
+    expect(canonicalMenuOption({ id: 'x', responseTemplateId: 'x', priority: legacy }).priority).toBe(canonical);
+  });
+
   it('keeps custom ids, canonical values and a missing priority as they are', () => {
     expect(canonicalMenuOption({ id: 'opcao-1700000000000', responseTemplateId: 'shows', priority: 'high' }))
       .toEqual({ id: 'opcao-1700000000000', responseTemplateId: 'shows', priority: 'high' });
@@ -165,6 +183,27 @@ describe('MusicChatAutomationService (CZ-045 values)', () => {
     const routing = Object.fromEntries(created.menu_options.map((o) => [o.id, [o.queue, o.sector]]));
     expect(routing['other']).toEqual(['Atendimento', 'Suporte']);
     expect(routing['wrong_contact']).toEqual(['Atendimento', 'Triagem']);
+  });
+
+  it('the default menu pins the full queue/sector/tags/label/priority routing of every option (Comercial and Financeiro included)', async () => {
+    const { svc, settingsRepo } = makeService();
+    Object.assign(settingsRepo, {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => v),
+    });
+    settingsRepo.findOne.mockResolvedValueOnce(null);
+    const created = (await svc.getSettings('t-new')) as unknown as {
+      menu_options: Array<{ id: string; label: string; queue: string; sector: string; tags: string[]; priority: string }>;
+      templates: Array<{ id: string; title: string }>;
+    };
+    const byId = Object.fromEntries(created.menu_options.map((o) => [o.id, o]));
+    expect(byId['shows']).toMatchObject({ label: 'Contratação de Shows', queue: 'Comercial', sector: 'Shows', tags: ['Show', 'Comercial'], priority: 'high' });
+    expect(byId['finance']).toMatchObject({ label: 'Financeiro', queue: 'Financeiro', sector: 'Financeiro', tags: ['Financeiro'], priority: 'high' });
+    expect(byId['content']).toMatchObject({ queue: 'Marketing', sector: 'Conteúdo', tags: ['Conteúdo'] });
+    expect(created.menu_options.map((o) => o.id)).toEqual([
+      'shows', 'music_production', 'publishing_distribution', 'design', 'finance', 'content', 'other', 'wrong_contact',
+    ]);
+    expect(created.templates.find((t) => t.id === 'finance')).toMatchObject({ title: 'Financeiro' });
   });
 
   it('escalation only scans conversations still waiting (canonical statuses)', async () => {

@@ -1,0 +1,9 @@
+{
+  "agent": "database-reviewer",
+  "objective": "Independently review the destructive approval dossier against the real drafts, preflight tool and rehearsal specs: fields true, lock estimate reasoning sound, nothing executed, READY NO justified.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-c4e02edb",
+  "createdAt": "2026-10-03T15:49:33.350Z"
+}

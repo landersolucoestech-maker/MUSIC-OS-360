@@ -1,0 +1,9 @@
+{
+  "agent": "domain-boundary-reviewer",
+  "objective": "Independently review the five product decision packages: facts true against the code, domain separations preserved (Project/Release/Distribution/Registry/Phonogram/Work, internal vs external finance), no invented decision, exact owner question.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-6e9693f3",
+  "createdAt": "2026-10-03T15:49:33.346Z"
+}

@@ -7,6 +7,8 @@ import {
   LEGACY_CALCULATION_METHODS,
   LEGACY_RULE_TYPES,
   RULE_TYPES,
+  canonicalCalculationMethod,
+  canonicalRuleType,
   normalizeFinancialRuleInput,
 } from './financial-rule-legacy.mapper';
 
@@ -38,6 +40,32 @@ describe('financial rule legacy compatibility (migration 20260927000001)', () =>
     expect(normalizeFinancialRuleInput({ condicoes: { x: 1 } })).toEqual({ conditions: { x: 1 } });
     expect(normalizeFinancialRuleInput({ calculo: 'fixo' })).toEqual({ calculation_method: 'fixed' });
     expect(normalizeFinancialRuleInput({ conditions: {}, condicoes: { x: 1 } })['conditions']).toEqual({});
+  });
+
+  it.each([
+    ['percentual', 'percentage'],
+    ['fixo', 'fixed'],
+    ['faixa', 'tiered'],
+  ])('maps the deprecated calculation method %j to %j (function and payload)', (legacy, canonical) => {
+    expect(canonicalCalculationMethod(legacy)).toBe(canonical);
+    expect(normalizeFinancialRuleInput({ calculation_method: legacy })).toEqual({ calculation_method: canonical });
+    expect(normalizeFinancialRuleInput({ calculo: legacy })).toEqual({ calculation_method: canonical });
+  });
+
+  it.each([
+    ['imposto', 'tax'],
+    ['comissao', 'commission'],
+    ['desconto', 'discount'],
+    ['taxa', 'fee'],
+    ['outros', 'other'],
+  ])('maps the deprecated rule type %j to %j (function and payload)', (legacy, canonical) => {
+    expect(canonicalRuleType(legacy)).toBe(canonical);
+    expect(normalizeFinancialRuleInput({ type: legacy })).toEqual({ type: canonical });
+  });
+
+  it('the deprecated vocabulary is exactly the accepted legacy set (no key can disappear unnoticed)', () => {
+    expect(Object.keys(LEGACY_CALCULATION_METHODS).sort()).toEqual(['faixa', 'fixo', 'percentual']);
+    expect(Object.keys(LEGACY_RULE_TYPES).sort()).toEqual(['comissao', 'desconto', 'imposto', 'outros', 'taxa']);
   });
 
   it('leaves canonical input unchanged', () => {

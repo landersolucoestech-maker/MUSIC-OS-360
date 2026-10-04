@@ -28,6 +28,23 @@ test("PII packages mark key custody as a human decision and other packages as no
   assert.match(render([pkg()], { sizes: null, generatedFrom: "t" }), /KEY_CUSTODY: NOT_APPLICABLE/);
 });
 
+test("the committed dossier states the facts the independent review corrected", () => {
+  const text = fs.readFileSync("docs/engineering/destructive-approval-dossier.md", "utf8");
+  const block = (name) => text.split(/^## /m).find((b) => b.startsWith(name)) ?? "";
+  assert.match(block("package 53"), /ARCHIVE_PLAN: employees_pii_legacy_archive_20260930/);
+  assert.match(block("package 46"), /ARCHIVE_PLAN: NO archive table/);
+  assert.match(block("package 48"), /ARCHIVE_PLAN: NO archive/);
+  assert.match(block("package 49"), /DEPENDENCIES: package 48 applied first/);
+  assert.match(block("package 53"), /DIVERGENCES: NO machine check/);
+  for (const n of ["PII backfill", "PII scrub"]) { assert.match(block(n), /LOCK_ESTIMATE: no table lock/); assert.doesNotMatch(block(n), /SHARE ROW EXCLUSIVE on artists/); }
+  assert.doesNotMatch(block("package 48"), /EXTERNAL_REQUIREMENT: release B0 \(entity\/reader\/writer removal\) and release A deployed and green/);
+  assert.match(block("package 48"), /LOCK_ESTIMATE: up\(\): SET LOCAL lock_timeout 15s, then LOCK TABLE invoices IN SHARE ROW EXCLUSIVE MODE first[\s\S]*ALTER COLUMN legacy_amount DROP NOT NULL/);
+  assert.doesNotMatch(block("package 48"), /ACCESS EXCLUSIVE at the final DROP/);
+  assert.doesNotMatch(block("package 46"), /ACCESS EXCLUSIVE at the final DROP/);
+  assert.match(text, /BACKFILL_PURGE_CONFIRM[\s\S]*LEGACY_ARCHIVE_RETIRE_CONFIRM/);
+  assert.match(text, /re-timestamped AFTER 20261002000002 and 20261002000003/);
+});
+
 test("the committed dossier covers the 11 required packages and passes", () => {
   const text = fs.readFileSync("docs/engineering/destructive-approval-dossier.md", "utf8");
   const r = checkDossier(text);

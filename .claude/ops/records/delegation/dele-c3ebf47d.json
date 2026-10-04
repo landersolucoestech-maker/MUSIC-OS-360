@@ -1,0 +1,9 @@
+{
+  "agent": "pii-reviewer",
+  "objective": "Independently review the PII key custody request and rotation contract against EncryptionService and the PII drafts.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-c3ebf47d",
+  "createdAt": "2026-10-03T15:49:33.353Z"
+}

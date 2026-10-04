@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r5 re-verification: PASS; compat gate open state documented, not part of CI",
+  "workspaceFingerprint": "41f6f30a8a7f2c3a494cf51092cc07cfd0b7a56a9c763c3590f0c6099efd0b63",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-62158e0f",
+  "createdAt": "2026-10-03T18:46:04.077Z"
+}

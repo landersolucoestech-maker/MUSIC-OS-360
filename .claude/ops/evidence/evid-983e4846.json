@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r5:FAIL(naming-gates-mutation_test_red_due_to_pj_param;fixed_after,reverify)",
+  "workspaceFingerprint": "848f2c481739df895cd7487f573a95a57ded000676a3dd6f70afb228f91acfad",
+  "fingerprintStatus": "BOUND",
+  "head": "9ba6428d7b8e1ad1980e2ac1061e8490895a4596",
+  "id": "evid-983e4846",
+  "createdAt": "2026-10-03T18:43:40.985Z"
+}
