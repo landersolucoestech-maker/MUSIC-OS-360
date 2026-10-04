@@ -84,7 +84,7 @@ function normalizeMetadata(metadata: Record<string, unknown>): Record<string, un
     if (out[canonical] === undefined) out[canonical] = out[legacy];
     delete out[legacy];
   }
-  if (typeof out['category'] === 'string') out['category'] = LEGACY_GOAL_CATEGORIES[out['category']] ?? out['category'];
+  if (typeof out['category'] === 'string') out['category'] = legacyOrSame(LEGACY_GOAL_CATEGORIES, out['category']);
   return out;
 }
 
@@ -93,15 +93,20 @@ function normalizeMetadata(metadata: Record<string, unknown>): Record<string, un
  * field name moves to its canonical name (the canonical field wins when both
  * are sent) and deprecated values and metadata keys are mapped.
  */
+/** Own-property lookup: prototype keys such as `constructor` are never legacy values. */
+function legacyOrSame(map: Readonly<Record<string, string>>, value: string): string {
+  return Object.prototype.hasOwnProperty.call(map, value) ? map[value] : value;
+}
+
 export function normalizeArtistGoalInput(input: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...input };
   if (out['periodo'] !== undefined) {
     if (out['period'] === undefined) out['period'] = out['periodo'];
     delete out['periodo'];
   }
-  if (typeof out['period'] === 'string') out['period'] = LEGACY_GOAL_PERIODS[out['period']] ?? out['period'];
-  if (typeof out['type'] === 'string') out['type'] = LEGACY_GOAL_TYPES[out['type']] ?? out['type'];
-  if (typeof out['status'] === 'string') out['status'] = LEGACY_GOAL_STATUSES[out['status']] ?? out['status'];
+  if (typeof out['period'] === 'string') out['period'] = legacyOrSame(LEGACY_GOAL_PERIODS, out['period']);
+  if (typeof out['type'] === 'string') out['type'] = legacyOrSame(LEGACY_GOAL_TYPES, out['type']);
+  if (typeof out['status'] === 'string') out['status'] = legacyOrSame(LEGACY_GOAL_STATUSES, out['status']);
   if (out['metadata'] && typeof out['metadata'] === 'object' && !Array.isArray(out['metadata'])) {
     out['metadata'] = normalizeMetadata(out['metadata'] as Record<string, unknown>);
   }

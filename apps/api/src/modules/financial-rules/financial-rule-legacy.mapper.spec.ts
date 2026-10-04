@@ -102,4 +102,11 @@ describe('financial rule legacy compatibility (migration 20260927000001)', () =>
       );
     });
   });
+
+  it('never treats prototype keys as legacy values', () => {
+    for (const key of ['constructor', 'toString', 'hasOwnProperty', '__proto__']) {
+      expect(canonicalCalculationMethod(key)).toBe(key);
+      expect(canonicalRuleType(key)).toBe(key);
+    }
+  });
 });

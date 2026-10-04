@@ -6,7 +6,6 @@ import {
   type ExportQueryParams,
 } from './export.types';
 import {
-  contractEncryptedFields,
   contractLegacyPlaintextColumns,
   contractMetadataFields,
   contractMetadataLegacyKeys,
@@ -62,7 +61,6 @@ export class ExportQueryBuilderService {
       ? def.exportableColumns.filter((column) => params.columns!.includes(column))
       : [...def.exportableColumns];
     const contract = getReportFormContract(def.tableName);
-    const encryptedFields = contract ? contractEncryptedFields(contract) : {};
     const legacyPlaintext = contract ? contractLegacyPlaintextColumns(contract) : {};
     const metadataFields = contract ? contractMetadataFields(contract) : {};
     const metadataLegacyKeys = contract ? contractMetadataLegacyKeys(contract) : {};
@@ -73,7 +71,8 @@ export class ExportQueryBuilderService {
         if (field.storage !== 'metadata' && field.physical && field.physical !== field.key) logicalAliases[field.key] = field.physical;
       }
     }
-    const physicalAliasFields = { ...logicalAliases, ...encryptedFields };
+    // encrypted fields are covered by logicalAliases (storage !== 'metadata', physical !== key): a separate encrypted map was redundant
+    const physicalAliasFields = logicalAliases;
     const physical = (logical: string): string => physicalAliasFields[logical] ?? logical;
 
     const selectParts = columns.map((column) => {

@@ -1,65 +1,70 @@
 {
- "schemaVersion": 1,
- "exemptions": [
-  {
-   "file": "apps/api/src/modules/transactions/validators/transaction.validator.ts",
-   "text": "canonicalTransactionSlug(data.category)",
-   "reason": "Equivalent mutant: validateConditionalByType is private and runs only after z.preprocess(canonicalizeTransactionInput) already applied canonicalTransactionSlug; the function is idempotent over every map key and value (verified), so applying it twice cannot change any reachable value."
-  },
-  {
-   "file": "apps/api/src/modules/transactions/validators/transaction.validator.ts",
-   "text": "canonicalTransactionSlug(data.subcategory ?? '')",
-   "reason": "Equivalent mutant: validateConditionalByType is private and runs only after z.preprocess(canonicalizeTransactionInput) already applied canonicalTransactionSlug; the function is idempotent over every map key and value (verified), so applying it twice cannot change any reachable value."
-  },
-  {
-   "file": "apps/web/src/modules/artist/components/ArtistFormModal.tsx",
-   "text": "emptyPreservedInput()",
-   "reason": "Equivalent mutant: the initial value of the preserved-input state is never observable; the open effect hydrates it (create: hydrateForm(null); edit: from the fetched artist) before any submit can read it, and nothing submits while closed."
-  },
-  {
-   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
-   "text": "toAgendaRow({\n        title: e.title,\n        type: getBackendEventTypeLabel(e.type),\n        status: statusLabelPtBr(\"e",
-   "reason": "Unreachable: handleExcelExport is unreferenced (no button or input wires it, excelInputRef is never attached). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (see product-decision-packages D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
-   "text": "getBackendEventTypeLabel(e.type)",
-   "reason": "Unreachable: inside the unwired handleExcelExport (no reference anywhere in the JSX). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
-   "text": "readAgendaCell(row, column)",
-   "reason": "Unreachable: inside the unwired handleExcelImport (no reference anywhere in the JSX). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
-   "text": "normalizeToBackendType(rawType, granularToBackendType)",
-   "reason": "Unreachable: inside the unwired handleExcelImport (no reference anywhere in the JSX). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
-   "text": "getBackendEventTypeLabel(event.type)",
-   "reason": "Dead property: the type property of schedulerEvents is never read by its only consumer (the calendarEvents map reads id, title, dates, artist, status, allDay). Owner decision pending together with D-06."
-  },
-  {
-   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
-   "text": "normalizeUserStatus(member.status)",
-   "reason": "Unreachable: the user status filter state can only be set to all-status (clearUserFilters), no UI setter exists, so the right-hand side of matchesStatus is never evaluated. Owner decision pending: add the status filter UI or remove the dead filter state (D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
-   "text": "canonicalVariableCategory(a.category)",
-   "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
-   "text": "canonicalVariableCategory(b.category)",
-   "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
-  },
-  {
-   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
-   "text": "canonicalEntityType(entityType)",
-   "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
-  }
- ]
+  "schemaVersion": 1,
+  "exemptions": [
+    {
+      "file": "apps/api/src/modules/transactions/validators/transaction.validator.ts",
+      "text": "canonicalTransactionSlug(data.category)",
+      "reason": "Equivalent mutant: validateConditionalByType is private and runs only after z.preprocess(canonicalizeTransactionInput) already applied canonicalTransactionSlug; the function is idempotent over every map key and value (verified), so applying it twice cannot change any reachable value."
+    },
+    {
+      "file": "apps/api/src/modules/transactions/validators/transaction.validator.ts",
+      "text": "canonicalTransactionSlug(data.subcategory ?? '')",
+      "reason": "Equivalent mutant: validateConditionalByType is private and runs only after z.preprocess(canonicalizeTransactionInput) already applied canonicalTransactionSlug; the function is idempotent over every map key and value (verified), so applying it twice cannot change any reachable value."
+    },
+    {
+      "file": "apps/web/src/modules/artist/components/ArtistFormModal.tsx",
+      "text": "emptyPreservedInput()",
+      "reason": "Equivalent mutant: the initial value of the preserved-input state is never observable; the open effect hydrates it (create: hydrateForm(null); edit: from the fetched artist) before any submit can read it, and nothing submits while closed."
+    },
+    {
+      "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+      "text": "toAgendaRow({\n        title: e.title,\n        type: getBackendEventTypeLabel(e.type),\n        status: statusLabelPtBr(\"e",
+      "reason": "Unreachable: handleExcelExport is unreferenced (no button or input wires it, excelInputRef is never attached). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (see product-decision-packages D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+      "text": "getBackendEventTypeLabel(e.type)",
+      "reason": "Unreachable: inside the unwired handleExcelExport (no reference anywhere in the JSX). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+      "text": "readAgendaCell(row, column)",
+      "reason": "Unreachable: inside the unwired handleExcelImport (no reference anywhere in the JSX). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+      "text": "normalizeToBackendType(rawType, granularToBackendType)",
+      "reason": "Unreachable: inside the unwired handleExcelImport (no reference anywhere in the JSX). Owner decision pending: wire the spreadsheet import/export UI or delete the dead handlers (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+      "text": "getBackendEventTypeLabel(event.type)",
+      "reason": "Dead property: the type property of schedulerEvents is never read by its only consumer (the calendarEvents map reads id, title, dates, artist, status, allDay). Owner decision pending together with D-06."
+    },
+    {
+      "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+      "text": "normalizeUserStatus(member.status)",
+      "reason": "Unreachable: the user status filter state can only be set to all-status (clearUserFilters), no UI setter exists, so the right-hand side of matchesStatus is never evaluated. Owner decision pending: add the status filter UI or remove the dead filter state (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+      "text": "canonicalVariableCategory(a.category)",
+      "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+      "text": "canonicalVariableCategory(b.category)",
+      "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+      "text": "canonicalEntityType(entityType)",
+      "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
+    },
+    {
+      "file": "apps/web/src/modules/artist/components/ArtistFormModal.tsx",
+      "text": "emptyArtistFormValues()",
+      "reason": "Equivalent mutant: this is only the initial react-hook-form defaultValues; the open effect calls hydrateForm(null) (create) or hydrateForm(fresh artist) (edit), which reset() the whole form before any field is shown or submitted, and reset(emptyArtistFormValues()) on close is a separate call site that is proven by its own test."
+    }
+  ]
 }

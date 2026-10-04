@@ -1108,13 +1108,13 @@
   {
    "file": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
    "test": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.legacy-compat.spec.ts",
-   "fileSha256": "06a20f7f211658c924730ce71663633e2f1b23037ed0d50d0023c69baa9a8e91",
+   "fileSha256": "deda28a3d81137ae3e683f6643084ed61a1cb87d85369d4edf4ac8a3810e15f8",
    "testSha256": "b117b0219c1193edcfdc130b57f63e63dc77c1fe9447b191ab63efbc0c7de2fd",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "ALIAS_OVERRIDE",
-     "line": 99,
+     "line": 104,
      "label": "periodo",
      "labels": [
       "periodo"
@@ -1123,19 +1123,19 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 98,
+     "line": 103,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 99,
+     "line": 104,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 100,
+     "line": 105,
      "label": "periodo",
      "outcome": "KILLED"
     },
@@ -1321,11 +1321,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -1334,18 +1329,25 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
    "test": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.spec.ts",
-   "fileSha256": "06a20f7f211658c924730ce71663633e2f1b23037ed0d50d0023c69baa9a8e91",
-   "testSha256": "f60ca0ecfc0f20fd8306ee7ec64b8aff19b1cf9cc48725ba51aaff4f1c9c058d",
+   "fileSha256": "deda28a3d81137ae3e683f6643084ed61a1cb87d85369d4edf4ac8a3810e15f8",
+   "testSha256": "002462b23ac47eb6bf2aab0a8553868f0b2a6967fabb32b59e8642b41ade31c0",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "ALIAS_OVERRIDE",
-     "line": 99,
+     "line": 104,
      "label": "periodo",
      "labels": [
       "periodo"
@@ -1354,29 +1356,24 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 98,
+     "line": 103,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 99,
+     "line": 104,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 100,
+     "line": 105,
      "label": "periodo",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -1387,7 +1384,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/artist-goals/dto/create-artist-goal.dto.ts",
@@ -5067,7 +5070,7 @@
    "file": "apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts",
    "test": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.spec.ts",
    "fileSha256": "1f8aca6960ea4e6e2762312696f46877594d0e9c1e1c2071a7ce0bb26d904d8c",
-   "testSha256": "0c7c7be859f52fd150a3adcf6802c531c08c9d1cbc10b9ebb5b705fa8d63e535",
+   "testSha256": "659513c4a6abed2d69e621bbf262e68eca8eec4600b89b883a80112889923fe4",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -5084,11 +5087,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -5099,12 +5097,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
    "test": "apps/api/src/database/transaction-financial-rule-vocabulary-check.migration.spec.ts",
-   "fileSha256": "379c90500daf67ec902bedf88d19dbdc4d31b33860be185f8123016d260e8fde",
+   "fileSha256": "01b9395a7bb798e6c7d332c48560b8fbe71ff455607edc10ac1c46f874af3f5a",
    "testSha256": "6781501570bf9dbacd1a4b5f19cae04d8e86fb06be4ebdbfe15fd1a4585731a0",
    "verdict": "PROVEN",
    "mutations": [
@@ -5212,11 +5216,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -5225,13 +5224,20 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
    "test": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.spec.ts",
-   "fileSha256": "379c90500daf67ec902bedf88d19dbdc4d31b33860be185f8123016d260e8fde",
-   "testSha256": "0c7c7be859f52fd150a3adcf6802c531c08c9d1cbc10b9ebb5b705fa8d63e535",
+   "fileSha256": "01b9395a7bb798e6c7d332c48560b8fbe71ff455607edc10ac1c46f874af3f5a",
+   "testSha256": "659513c4a6abed2d69e621bbf262e68eca8eec4600b89b883a80112889923fe4",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -5290,11 +5296,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -5306,7 +5307,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",

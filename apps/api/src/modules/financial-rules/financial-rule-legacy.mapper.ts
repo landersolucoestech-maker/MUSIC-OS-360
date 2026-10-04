@@ -38,11 +38,11 @@ export const ACCEPTED_CALCULATION_METHODS = [...CALCULATION_METHODS, ...Object.k
 export const ACCEPTED_RULE_TYPES = [...RULE_TYPES, ...Object.keys(LEGACY_RULE_TYPES)];
 
 export function canonicalCalculationMethod(value: string): string {
-  return LEGACY_CALCULATION_METHODS[value] ?? value;
+  return Object.prototype.hasOwnProperty.call(LEGACY_CALCULATION_METHODS, value) ? LEGACY_CALCULATION_METHODS[value] : value;
 }
 
 export function canonicalRuleType(value: string): string {
-  return LEGACY_RULE_TYPES[value] ?? value;
+  return Object.prototype.hasOwnProperty.call(LEGACY_RULE_TYPES, value) ? LEGACY_RULE_TYPES[value] : value;
 }
 
 /**

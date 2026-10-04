@@ -81,4 +81,12 @@ describe('artist goal legacy compatibility (migration 20260928000001)', () => {
       expect(errorsFor({ ...base, type: 'likes' })).toContain('type');
     });
   });
+
+  it('never treats prototype keys as legacy values', () => {
+    for (const key of ['constructor', 'toString', 'hasOwnProperty']) {
+      expect(
+        normalizeArtistGoalInput({ category: key, period: key, type: key, status: key }),
+      ).toEqual({ category: key, period: key, type: key, status: key });
+    }
+  });
 });

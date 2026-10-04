@@ -11,7 +11,7 @@
    "testsSha256": "424b2c702fc6378861fa85026af6f1c26179f639601058ac163d7496169555f6",
    "testDir": "apps/api/src/core/guards",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -47,7 +47,7 @@
    "testsSha256": "ca7b469a74f7cff862475c9562af00013a06e4e0abd2a59d233703c88b7248cb",
    "testDir": "apps/api/src/core/rbac",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -80,10 +80,10 @@
    "text": "operationalStableKey(item.kind, item.slug)",
    "target": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
    "fileSha256": "06c0caf26e2768d9886850142f670d9273405a07f1f75185353aa2b55a535cbd",
-   "testsSha256": "9287dd0bc0f4cc0ce6a8bc3cecb27a1500d0b0516c8949500bd8073387ff5770",
-   "testDir": "apps/api/src/database/migrations",
+   "testsSha256": "529a21acea813c2d39eda026e17bf91343bd14de0e3d5d7d80e9735651eeb41f",
+   "testDir": "apps/api/src/database",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -92,10 +92,10 @@
    "text": "legacyOperationalSlugs(item.kind, item.slug)",
    "target": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
    "fileSha256": "06c0caf26e2768d9886850142f670d9273405a07f1f75185353aa2b55a535cbd",
-   "testsSha256": "9287dd0bc0f4cc0ce6a8bc3cecb27a1500d0b0516c8949500bd8073387ff5770",
-   "testDir": "apps/api/src/database/migrations",
+   "testsSha256": "529a21acea813c2d39eda026e17bf91343bd14de0e3d5d7d80e9735651eeb41f",
+   "testDir": "apps/api/src/database",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -104,10 +104,10 @@
    "text": "legacyOperationalSlugs(item.kind, item.slug)",
    "target": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
    "fileSha256": "06c0caf26e2768d9886850142f670d9273405a07f1f75185353aa2b55a535cbd",
-   "testsSha256": "9287dd0bc0f4cc0ce6a8bc3cecb27a1500d0b0516c8949500bd8073387ff5770",
-   "testDir": "apps/api/src/database/migrations",
+   "testsSha256": "529a21acea813c2d39eda026e17bf91343bd14de0e3d5d7d80e9735651eeb41f",
+   "testDir": "apps/api/src/database",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -116,10 +116,10 @@
    "text": "operationalStableKey(item.kind, item.slug)",
    "target": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
    "fileSha256": "06c0caf26e2768d9886850142f670d9273405a07f1f75185353aa2b55a535cbd",
-   "testsSha256": "9287dd0bc0f4cc0ce6a8bc3cecb27a1500d0b0516c8949500bd8073387ff5770",
-   "testDir": "apps/api/src/database/migrations",
+   "testsSha256": "529a21acea813c2d39eda026e17bf91343bd14de0e3d5d7d80e9735651eeb41f",
+   "testDir": "apps/api/src/database",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -152,7 +152,7 @@
    "text": "normalizeArtistGoalInput({ ...dto })",
    "target": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
    "fileSha256": "7ad4ad94d55c15e08d455c6e33c3227a9268683b92ede950470be277ddd5431a",
-   "testsSha256": "fa200bb4d96ce22291a0d8a91c7f2d24acdf61275e6f0ac1d37921dba218878f",
+   "testsSha256": "14e91dd997dda07e1a94877ba95102bd9165a4cc42a15b23ab523ad14be81279",
    "testDir": "apps/api/src/modules/artist-goals",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -164,7 +164,7 @@
    "text": "normalizeArtistGoalInput({ ...dto })",
    "target": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
    "fileSha256": "7ad4ad94d55c15e08d455c6e33c3227a9268683b92ede950470be277ddd5431a",
-   "testsSha256": "fa200bb4d96ce22291a0d8a91c7f2d24acdf61275e6f0ac1d37921dba218878f",
+   "testsSha256": "14e91dd997dda07e1a94877ba95102bd9165a4cc42a15b23ab523ad14be81279",
    "testDir": "apps/api/src/modules/artist-goals",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -221,7 +221,7 @@
    "testsSha256": "1e96614a087e30c80fcc54f875c70e251684860324a865a6a1961902623ce0fd",
    "testDir": "apps/api/src/modules/artists",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -278,7 +278,7 @@
    "text": "canonicalAssetType(rawAssetType)",
    "target": "apps/api/src/common/compat/asset-type.ts",
    "fileSha256": "1608e82f54b271d70d717198d944bb584de27c8863520860e99cdba6488792aa",
-   "testsSha256": "bdb0855f03ca7d53934a7ddf9f9c705c1c329cea9637188318b3b097c0c2733b",
+   "testsSha256": "ca62b9a7db9a54364a5b8b60d821bbb28923c03fc386d5b091a8afafa6d7a215",
    "testDir": "apps/api/src/modules/assets",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -516,7 +516,7 @@
    "text": "joinContractPartyRefs(this.repo!.createQueryBuilder('c'))",
    "target": "apps/api/src/modules/contracts/contract-party-refs.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -528,7 +528,7 @@
    "text": "toContractResponse(result)",
    "target": "apps/api/src/modules/contracts/contract-party-refs.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -540,7 +540,7 @@
    "text": "canonicalContractVersions((dto['versions'] ?? dto['versoes'] ?? []) as unknown[])",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -552,7 +552,7 @@
    "text": "resolveContractAliases(rest)",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -564,7 +564,7 @@
    "text": "canonicalContractCategorySlug(normalized['type'])",
    "target": "apps/api/src/modules/contracts/contract-category-slugs.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -576,7 +576,7 @@
    "text": "resolveContractAliases(restFields)",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -588,7 +588,7 @@
    "text": "canonicalContractCategorySlug(normalized['type'])",
    "target": "apps/api/src/modules/contracts/contract-category-slugs.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -600,7 +600,7 @@
    "text": "resolveContractQueryAliases(q)",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -612,7 +612,7 @@
    "text": "joinContractPartyRefs(this.repo!.createQueryBuilder('c'))",
    "target": "apps/api/src/modules/contracts/contract-party-refs.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -624,7 +624,7 @@
    "text": "contractCategorySlugVariants(resolvedQuery.type)",
    "target": "apps/api/src/modules/contracts/contract-category-slugs.ts",
    "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testsSha256": "80fac3066457a2050c5ca76818ddf07682b2e55381d0a770db7641b337234e36",
+   "testsSha256": "4ada35117204ba644692936915871d789cae9eca5b49c06d6d07464ecd931ce5",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -675,7 +675,7 @@
    "testsSha256": "a56d4bfa63996e4f2a847c82924dd31e355f075e91e6bce35ecb9153cce1f096",
    "testDir": "apps/api/src/modules/conversations",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -687,7 +687,7 @@
    "testsSha256": "a56d4bfa63996e4f2a847c82924dd31e355f075e91e6bce35ecb9153cce1f096",
    "testDir": "apps/api/src/modules/conversations",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -699,7 +699,7 @@
    "testsSha256": "a56d4bfa63996e4f2a847c82924dd31e355f075e91e6bce35ecb9153cce1f096",
    "testDir": "apps/api/src/modules/conversations",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "file": "apps/api/src/modules/events/events.service.ts",
@@ -718,7 +718,7 @@
    "text": "canonicalRuleType(query.type)",
    "target": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
    "fileSha256": "d7fe126d5d2c92aa173e2b06bf7f003118369023593ed2e5a16b9e91ae277f43",
-   "testsSha256": "a655e624ecd7662bd0b877480952a7a5adcb7c37708775bbd469209dc43d2884",
+   "testsSha256": "8d6e55b0d203dadedc014ab47d52dffaeb8a5da2b207de5dfaa31f59c61ab0b2",
    "testDir": "apps/api/src/modules/financial-rules",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -730,7 +730,7 @@
    "text": "normalizeFinancialRuleInput({ ...dto })",
    "target": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
    "fileSha256": "d7fe126d5d2c92aa173e2b06bf7f003118369023593ed2e5a16b9e91ae277f43",
-   "testsSha256": "a655e624ecd7662bd0b877480952a7a5adcb7c37708775bbd469209dc43d2884",
+   "testsSha256": "8d6e55b0d203dadedc014ab47d52dffaeb8a5da2b207de5dfaa31f59c61ab0b2",
    "testDir": "apps/api/src/modules/financial-rules",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -742,7 +742,7 @@
    "text": "normalizeFinancialRuleInput({ ...dto })",
    "target": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
    "fileSha256": "d7fe126d5d2c92aa173e2b06bf7f003118369023593ed2e5a16b9e91ae277f43",
-   "testsSha256": "a655e624ecd7662bd0b877480952a7a5adcb7c37708775bbd469209dc43d2884",
+   "testsSha256": "8d6e55b0d203dadedc014ab47d52dffaeb8a5da2b207de5dfaa31f59c61ab0b2",
    "testDir": "apps/api/src/modules/financial-rules",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1010,7 +1010,7 @@
    "text": "canonicalMarketingAiSuggestion(record.metadata ?? {})",
    "target": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
    "fileSha256": "b6ffa7683084d8e06cbf6a81a037870ab13a96ee9b2b93b6df4113f57303acdb",
-   "testsSha256": "b3e1a45bfec946ce8b754b960dd22a9abdb5962ff2c11822fbcda3e8c3434d40",
+   "testsSha256": "7c529610d4a6a09ec06026a7cc79a0fb935ce986dc4969ec77abd078d20cd124",
    "testDir": "apps/api/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1022,7 +1022,7 @@
    "text": "canonicalMarketingAiSuggestion(rawSuggestion)",
    "target": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
    "fileSha256": "b6ffa7683084d8e06cbf6a81a037870ab13a96ee9b2b93b6df4113f57303acdb",
-   "testsSha256": "b3e1a45bfec946ce8b754b960dd22a9abdb5962ff2c11822fbcda3e8c3434d40",
+   "testsSha256": "7c529610d4a6a09ec06026a7cc79a0fb935ce986dc4969ec77abd078d20cd124",
    "testDir": "apps/api/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1112,31 +1112,34 @@
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
    "line": 109,
    "text": "applyDeprecatedFieldAliases(raw, PHONOGRAM_DEPRECATED_FIELDS)",
    "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
-   "testsSha256": "bed98a9e266291806ed7813864b83293155e8862ff6f3f12fd0a2f49c2f9ed29",
+   "testsSha256": "00eee679c0c10144698925d47f6709a059390b8ed06c2966561cb21a876bfa84",
    "testDir": "apps/api/src/modules/phonograms",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
    "line": 72,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, PHONOGRAM_PARTICIPATION_DEPRECATED_KEYS)",
    "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
-   "testsSha256": "bed98a9e266291806ed7813864b83293155e8862ff6f3f12fd0a2f49c2f9ed29",
+   "testsSha256": "00eee679c0c10144698925d47f6709a059390b8ed06c2966561cb21a876bfa84",
    "testDir": "apps/api/src/modules/phonograms",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
    "line": 77,
    "text": "applyDeprecatedFieldAliases(item as Record<string, unknown>, PHONOGRAM_PARTICIPANT_DEPRECATED_FIELDS)",
    "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
-   "testsSha256": "bed98a9e266291806ed7813864b83293155e8862ff6f3f12fd0a2f49c2f9ed29",
+   "testsSha256": "00eee679c0c10144698925d47f6709a059390b8ed06c2966561cb21a876bfa84",
    "testDir": "apps/api/src/modules/phonograms",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1286,27 +1289,29 @@
    "text": "canonicalReleaseMetadata(columns.metadata)",
    "target": "apps/api/src/common/compat/release-metadata.ts",
    "fileSha256": "c9673536ebd227091352912ec035d3606880025848679185c14c2d2ebb8c3ccc",
-   "testsSha256": "19f73a2f1438531e709fcc9389f4d33e46aa3dc47eac2bed635e413f0aa79293",
+   "testsSha256": "43aa1c781ad92c6a9050ca26a1960f8210c0df170a4446feb3875af82e6067d9",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
    "line": 54,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, aliases)",
    "fileSha256": "52ca5ca3479385aebe5c9f8cecdb7c6bdd7e60feee88f8070aecd652358b4d53",
-   "testsSha256": "19f73a2f1438531e709fcc9389f4d33e46aa3dc47eac2bed635e413f0aa79293",
+   "testsSha256": "43aa1c781ad92c6a9050ca26a1960f8210c0df170a4446feb3875af82e6067d9",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
    "line": 59,
    "text": "applyDeprecatedFieldAliases(input as Record<string, unknown>, RELEASE_DEPRECATED_FIELDS)",
    "fileSha256": "52ca5ca3479385aebe5c9f8cecdb7c6bdd7e60feee88f8070aecd652358b4d53",
-   "testsSha256": "19f73a2f1438531e709fcc9389f4d33e46aa3dc47eac2bed635e413f0aa79293",
+   "testsSha256": "43aa1c781ad92c6a9050ca26a1960f8210c0df170a4446feb3875af82e6067d9",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1318,7 +1323,7 @@
    "text": "canonicalReleaseMetadata(out['metadata'])",
    "target": "apps/api/src/common/compat/release-metadata.ts",
    "fileSha256": "52ca5ca3479385aebe5c9f8cecdb7c6bdd7e60feee88f8070aecd652358b4d53",
-   "testsSha256": "19f73a2f1438531e709fcc9389f4d33e46aa3dc47eac2bed635e413f0aa79293",
+   "testsSha256": "43aa1c781ad92c6a9050ca26a1960f8210c0df170a4446feb3875af82e6067d9",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1402,7 +1407,7 @@
    "text": "projectTrackSoloFeatLabel(track.solo_feat)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1414,7 +1419,7 @@
    "text": "projectTrackOriginalRemixLabel(track.original_remix)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1426,7 +1431,7 @@
    "text": "projectTrackInstrumentalLabel(track.instrumental)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1438,7 +1443,7 @@
    "text": "projectTrackLanguageLabel(track.language)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1453,7 +1458,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1462,7 +1467,7 @@
    "text": "canonicalReleaseTrack(t)",
    "target": "apps/api/src/common/compat/release-metadata.ts",
    "fileSha256": "b82a09bc4987a06af406578ce7d6d71a3a4761765513ab06561f3060f4b929b9",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1474,10 +1479,10 @@
    "text": "getReportFormContract(entity.tableName)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "129c03c2b63b488fe60be133a6a09ad29d7f6c08a44db98ce912df59ac22ead8",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1486,10 +1491,10 @@
    "text": "getReportFormContract(entity.tableName)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "129c03c2b63b488fe60be133a6a09ad29d7f6c08a44db98ce912df59ac22ead8",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1498,10 +1503,10 @@
    "text": "contractDirectColumns(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "129c03c2b63b488fe60be133a6a09ad29d7f6c08a44db98ce912df59ac22ead8",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1513,7 +1518,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1522,10 +1527,10 @@
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "60cb5d3f63428ca4a47a44990623fc0f3fff95153220458a0039d29fadb29e8c",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1534,7 +1539,7 @@
    "text": "contractEncryptedFields(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "60cb5d3f63428ca4a47a44990623fc0f3fff95153220458a0039d29fadb29e8c",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1546,7 +1551,7 @@
    "text": "contractLegacyPlaintextColumns(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "60cb5d3f63428ca4a47a44990623fc0f3fff95153220458a0039d29fadb29e8c",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1558,7 +1563,7 @@
    "text": "getFieldLabelPtBr(key)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "0a3c8b9cc224db95ab34d14d8294d3edd56adc57806934b9f55cca261484492c",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1566,10 +1571,22 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
-   "line": 102,
+   "line": 101,
    "text": "transactionSlugVariants(value)",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
-   "fileSha256": "8f80ee883c25bb9afd126bde729e7742aaf80a46ca54fce42399ca710e0bb2e3",
+   "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
+   "testDir": "apps/api/src/modules/reports",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "kind": "CONSUMER",
+   "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
+   "line": 63,
+   "text": "getReportFormContract(def.tableName)",
+   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
+   "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
@@ -1579,9 +1596,9 @@
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
    "line": 64,
-   "text": "getReportFormContract(def.tableName)",
+   "text": "contractLegacyPlaintextColumns(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8f80ee883c25bb9afd126bde729e7742aaf80a46ca54fce42399ca710e0bb2e3",
+   "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
@@ -1591,97 +1608,25 @@
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
    "line": 65,
-   "text": "contractEncryptedFields(contract)",
+   "text": "contractMetadataFields(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8f80ee883c25bb9afd126bde729e7742aaf80a46ca54fce42399ca710e0bb2e3",
+   "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
    "line": 66,
-   "text": "contractLegacyPlaintextColumns(contract)",
-   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8f80ee883c25bb9afd126bde729e7742aaf80a46ca54fce42399ca710e0bb2e3",
-   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
-   "testDir": "apps/api/src/modules/reports",
-   "operator": "CALL_BYPASS",
-   "verdict": "KILLED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
-   "line": 67,
-   "text": "contractMetadataFields(contract)",
-   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8f80ee883c25bb9afd126bde729e7742aaf80a46ca54fce42399ca710e0bb2e3",
-   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
-   "testDir": "apps/api/src/modules/reports",
-   "operator": "CALL_BYPASS",
-   "verdict": "KILLED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/api/src/modules/reports/export/export-query-builder.service.ts",
-   "line": 68,
    "text": "contractMetadataLegacyKeys(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8f80ee883c25bb9afd126bde729e7742aaf80a46ca54fce42399ca710e0bb2e3",
+   "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/api/src/modules/reports/form-contracts/artists.form-contract.ts",
-   "line": 17,
-   "text": "contractExportableColumns(ARTISTS)",
-   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "beaf5705f5990806335f68e5d4674f5d18096df9bec855147cdfa980776be5a5",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
-   "testDir": "apps/api/src/modules/reports",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/api/src/modules/reports/form-contracts/artists.form-contract.ts",
-   "line": 19,
-   "text": "contractDirectColumns(ARTISTS)",
-   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "beaf5705f5990806335f68e5d4674f5d18096df9bec855147cdfa980776be5a5",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
-   "testDir": "apps/api/src/modules/reports",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/api/src/modules/reports/form-contracts/artists.form-contract.ts",
-   "line": 21,
-   "text": "contractEncryptedFields(ARTISTS)",
-   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "beaf5705f5990806335f68e5d4674f5d18096df9bec855147cdfa980776be5a5",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
-   "testDir": "apps/api/src/modules/reports",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/api/src/modules/reports/form-contracts/artists.form-contract.ts",
-   "line": 23,
-   "text": "contractMetadataFields(ARTISTS)",
-   "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "beaf5705f5990806335f68e5d4674f5d18096df9bec855147cdfa980776be5a5",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
-   "testDir": "apps/api/src/modules/reports",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
   },
   {
    "kind": "CONSUMER",
@@ -1690,7 +1635,7 @@
    "text": "tryGetFieldLabelPtBr(columnKey)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "5e2254bc7b30dcaed920020d3810af42d0fa0394ec34798249f7acac3d880a36",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1705,7 +1650,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1717,7 +1662,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1729,7 +1674,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1741,7 +1686,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1753,7 +1698,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1765,7 +1710,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1777,7 +1722,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1789,7 +1734,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1801,7 +1746,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1813,7 +1758,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1825,7 +1770,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1837,7 +1782,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1849,7 +1794,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1861,7 +1806,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1873,7 +1818,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1885,7 +1830,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1897,7 +1842,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1909,7 +1854,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1921,7 +1866,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -1933,7 +1878,7 @@
    "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
-   "verdict": "BASELINE_RED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -2086,7 +2031,7 @@
    "text": "canonicalizeDeprecatedColumnId(tableName, params.sort)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "e3f5c0e0fa31353186141cd1b97d2add1c216156d8bedb6a63902ccf65334e23",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2098,7 +2043,7 @@
    "text": "canonicalizeDeprecatedColumnId(tableName, column)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "e3f5c0e0fa31353186141cd1b97d2add1c216156d8bedb6a63902ccf65334e23",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2110,7 +2055,7 @@
    "text": "canonicalizeDeprecatedColumnId(tableName, key)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "e3f5c0e0fa31353186141cd1b97d2add1c216156d8bedb6a63902ccf65334e23",
-   "testsSha256": "298d1f79f610cd4012b4734eafd26d812db54266ff759b4bc35afcbd05a2aef5",
+   "testsSha256": "9a19868b448e56cd882e4ada4933fd3f6caf2944f3690db900b67c4494234a94",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2232,17 +2177,18 @@
    "text": "withLastPayment(contract.metadata, { at: paidAt, amount: amountText, by: paidBy })",
    "target": "apps/api/src/common/compat/contract-last-payment.ts",
    "fileSha256": "854363a4bc941234fd404c3628f362a1d379b4318de719599074e7822a7dbeca",
-   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testsSha256": "e0b4f10629e14c3712c4bc8d30651ad2f83ec95dcba62df5582e9c58442285bb",
    "testDir": "apps/api/src/modules/transactions",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/transactions/transaction-legacy-fields.ts",
    "line": 73,
    "text": "applyDeprecatedFieldAliases(input as Record<string, unknown>, TRANSACTION_DEPRECATED_FIELDS)",
    "fileSha256": "057e23037b70da448001cbacb031fe5d542392cd595364a62511b8363ccf079c",
-   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testsSha256": "e0b4f10629e14c3712c4bc8d30651ad2f83ec95dcba62df5582e9c58442285bb",
    "testDir": "apps/api/src/modules/transactions",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2254,7 +2200,7 @@
    "text": "canonicalTransactionSlug(out[key])",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
    "fileSha256": "057e23037b70da448001cbacb031fe5d542392cd595364a62511b8363ccf079c",
-   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testsSha256": "e0b4f10629e14c3712c4bc8d30651ad2f83ec95dcba62df5582e9c58442285bb",
    "testDir": "apps/api/src/modules/transactions",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2349,7 +2295,7 @@
    "text": "canonicalTransactionSlug(data.category)",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
    "fileSha256": "4c7c4447c6dd9aeb80a399896097a59c714a8dc7f7ddf3e05b777cc335825b13",
-   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testsSha256": "e0b4f10629e14c3712c4bc8d30651ad2f83ec95dcba62df5582e9c58442285bb",
    "testDir": "apps/api/src/modules/transactions",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -2361,7 +2307,7 @@
    "text": "canonicalTransactionSlug(data.subcategory ?? '')",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
    "fileSha256": "4c7c4447c6dd9aeb80a399896097a59c714a8dc7f7ddf3e05b777cc335825b13",
-   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testsSha256": "e0b4f10629e14c3712c4bc8d30651ad2f83ec95dcba62df5582e9c58442285bb",
    "testDir": "apps/api/src/modules/transactions",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -2475,41 +2421,45 @@
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
    "line": 125,
    "text": "applyDeprecatedFieldAliases(raw, WORK_DEPRECATED_FIELDS)",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testsSha256": "99e77006f376e0ece140070ffdda40a9ba6ea0e315607d5bb0489e6ac39af832",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
    "line": 144,
    "text": "applyDeprecatedFieldAliases(query as Record<string, unknown>, { tipo_obra: 'work_origin' })",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testsSha256": "99e77006f376e0ece140070ffdda40a9ba6ea0e315607d5bb0489e6ac39af832",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
    "line": 86,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, WORK_AI_ELEMENT_DEPRECATED_FIELDS)",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testsSha256": "99e77006f376e0ece140070ffdda40a9ba6ea0e315607d5bb0489e6ac39af832",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
   {
+   "kind": "HELPER",
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
    "line": 91,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, WORK_PARTICIPANT_DEPRECATED_FIELDS)",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testsSha256": "99e77006f376e0ece140070ffdda40a9ba6ea0e315607d5bb0489e6ac39af832",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2569,7 +2519,7 @@
    "text": "legacyRoutes()",
    "target": "apps/web/src/app/routes/legacy-redirects.tsx",
    "fileSha256": "6228ce73daea908d9f61d0f391d2b1823397bf4232fd959e07754b3b6f6871dc",
-   "testsSha256": "2b93655b730de2e47ba43c6623eeb6d1cd00749dc1ed153e57d400f05fd80d88",
+   "testsSha256": "d39818ecc42c98f60974331d1e5ac87e2d0854caa15ff5efbe84a18be0e9649b",
    "testDir": "apps/web/src",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2605,7 +2555,7 @@
    "text": "canonicalInvoicePaymentMethod(invoice.payment_method)",
    "target": "apps/web/src/modules/accounting/constants/invoice-payment-methods.ts",
    "fileSha256": "14aeb9953ab3d26fc3c2f8e7afdb33476921e72da78fb5db10ea7da95ace7c15",
-   "testsSha256": "e683173437714ad64a314f2a0ef229f650ca07d749b9322410093495be340c91",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2617,7 +2567,7 @@
    "text": "invoicePaymentMethodLabel(invoice.payment_method)",
    "target": "apps/web/src/modules/accounting/constants/invoice-payment-methods.ts",
    "fileSha256": "87ba75c8ed8a00b6c493bc5823030668114b569125b53dfa465b4d96172bafeb",
-   "testsSha256": "0a0bde5b3c1e3cc34022f8b214c3cd4b7cf614b44f5d7a2e23643c553037bc8d",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2692,7 +2642,7 @@
    "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3012,8 +2962,8 @@
    "line": 419,
    "text": "canonicalTransactionSlug(value)",
    "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3024,8 +2974,8 @@
    "line": 507,
    "text": "canonicalTransactionSlug(category)",
    "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3036,8 +2986,8 @@
    "line": 578,
    "text": "canonicalTransactionSlug(rawCategory)",
    "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3048,8 +2998,8 @@
    "line": 639,
    "text": "canonicalTransactionSlug(subcategory)",
    "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3060,20 +3010,8 @@
    "line": 644,
    "text": "canonicalTransactionSlug(subcategory)",
    "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
-   "testDir": "apps/web/src/modules/accounting",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
-   "line": 649,
-   "text": "canonicalTransactionSlug(subcategory)",
-   "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3081,35 +3019,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
-   "line": 654,
-   "text": "canonicalTransactionSlug(subcategory)",
-   "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
-   "testDir": "apps/web/src/modules/accounting",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
-   "line": 659,
-   "text": "canonicalTransactionSlug(subcategory)",
-   "target": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
-   "testDir": "apps/web/src/modules/accounting",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
-   "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
-   "line": 714,
+   "line": 699,
    "text": "formatCategoryLabel(text.replace(/-/g, \"_\"))",
    "target": "apps/web/src/shared/lib/category-labels.ts",
-   "fileSha256": "debaa701332bcb606f223ff2a19bc92cd0f3b23957675dbcc20cf1c0e23b08ce",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "fileSha256": "c3f89fd2d1a2e528af6bf36a80bf5d66c1abaf6bc28a4752f5328cf27b620626",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3169,7 +3083,7 @@
    "text": "canonicalTransactionCategory(str(t.category))",
    "target": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
    "fileSha256": "b82a6a5a6255e86c0a595a5fd39d6533d011b82c4f38a3ef0ac8c1a0b8ce668c",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3181,7 +3095,7 @@
    "text": "canonicalTransactionCategory(str(t.subcategory))",
    "target": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
    "fileSha256": "b82a6a5a6255e86c0a595a5fd39d6533d011b82c4f38a3ef0ac8c1a0b8ce668c",
-   "testsSha256": "7d257939396e177d62695d5bfb4728a7cd48b5a4a0cdd43d4262362e82814ac7",
+   "testsSha256": "c29d3464a6bc93d9ae2f102dfaad52b6620fb4f7f670214f76ee274b5a34856e",
    "testDir": "apps/web/src/modules/accounting",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3217,7 +3131,7 @@
    "text": "isOtherDistributorId(dist.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3229,7 +3143,7 @@
    "text": "isOtherDistributorId(dist.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3241,7 +3155,7 @@
    "text": "isOtherDistributorId(d.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3253,7 +3167,7 @@
    "text": "emptyPreservedInput()",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -3265,10 +3179,10 @@
    "text": "emptyArtistFormValues()",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
-   "verdict": "KILLED"
+   "verdict": "SURVIVED"
   },
   {
    "kind": "CONSUMER",
@@ -3277,7 +3191,7 @@
    "text": "artistToFormValues(source)",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3289,7 +3203,7 @@
    "text": "artistToPreservedInput(source)",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3301,7 +3215,7 @@
    "text": "emptyArtistFormValues()",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3313,7 +3227,7 @@
    "text": "formValuesToArtistPayload(allValues, preserved)",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3325,7 +3239,7 @@
    "text": "isOtherDistributorId(distId)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3337,7 +3251,7 @@
    "text": "isOtherDistributorId(d.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "0cb2c581d1c45008e798296db263e957dbf89acc348449a62e8640aea6e913e8",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3349,7 +3263,7 @@
    "text": "releaseStatusLabel(resolveReleaseStatus(release))",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3361,7 +3275,7 @@
    "text": "resolveReleaseStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3373,7 +3287,7 @@
    "text": "transactionCategoryLabel(t.category)",
    "target": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3385,7 +3299,7 @@
    "text": "getBackendEventTypeLabel(e.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3397,7 +3311,7 @@
    "text": "statusLabel(key)",
    "target": "apps/web/src/shared/components/StatusBadge.tsx",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3409,7 +3323,7 @@
    "text": "getBackendEventTypeLabel(ev.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3421,7 +3335,7 @@
    "text": "matchesNatureBucket(b, t.category)",
    "target": "apps/web/src/modules/artist/lib/revenue-nature.ts",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3433,7 +3347,7 @@
    "text": "matchesNatureBucket(b, t.category)",
    "target": "apps/web/src/modules/artist/lib/revenue-nature.ts",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3445,7 +3359,7 @@
    "text": "matchesContractTypeFilter(contractFilter, c.type)",
    "target": "apps/web/src/modules/artist/lib/contract-type-filters.ts",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3457,7 +3371,7 @@
    "text": "isOtherDistributorId(distId)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "ea096c717d2fc5b825037f3706bfc112398f6eb86fa724ee4b12b7d62f0003e6",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3469,7 +3383,7 @@
    "text": "isOtherDistributorId(dist.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "ea096c717d2fc5b825037f3706bfc112398f6eb86fa724ee4b12b7d62f0003e6",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3481,7 +3395,7 @@
    "text": "isOtherDistributorId(dist.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "ea096c717d2fc5b825037f3706bfc112398f6eb86fa724ee4b12b7d62f0003e6",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3493,7 +3407,7 @@
    "text": "canonicalContractCategorySlug(lower)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "e179a8da41821b68b98be10bda02c62a5eb6eeb73d4089af7a5838a3f54523b7",
-   "testsSha256": "e5109f5f651402e58018d64c3962850fe72c6d32f88003ead6aece700ffc8b91",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3505,7 +3419,7 @@
    "text": "isOtherDistributorId(id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "b3d369b20a5454c521ab5cd8f4a8c49c342a504a10fe5e02ad59eb2b80b98540",
-   "testsSha256": "e5109f5f651402e58018d64c3962850fe72c6d32f88003ead6aece700ffc8b91",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3517,7 +3431,7 @@
    "text": "canonicalTransactionCategory(raw)",
    "target": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
    "fileSha256": "8dfc820f572cf742c98a0217a883c9e2386ab96a486d7f2b7ed945ce0b7f4b81",
-   "testsSha256": "89ce5ab64f3c34aa34a32f3dec04b893e115c27caf3d6e40c32170b9eec1c879",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3529,7 +3443,7 @@
    "text": "parseArtistImportRow(row)",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "fdfc737fe0dc9fa0f1f3948ff4ee8b6f6e099db70a5373e41d856c470326cae3",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3541,7 +3455,7 @@
    "text": "formValuesToArtistPayload(values)",
    "target": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "fileSha256": "fdfc737fe0dc9fa0f1f3948ff4ee8b6f6e099db70a5373e41d856c470326cae3",
-   "testsSha256": "675a975a993138e84a5084f462646ef42cb67aed38a22143c3c976d9f8f04f25",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3553,7 +3467,7 @@
    "text": "canonicalDistributorId(d.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "503397585adb38c5d1a5ef1278c9784a9e4c490b9a077caa7bc207dffc0b5551",
-   "testsSha256": "34b4fcad802242e60aab832a068112767148243aba56f9f343a117d0e526f05b",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3565,7 +3479,7 @@
    "text": "canonicalDistributorId(d.id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "503397585adb38c5d1a5ef1278c9784a9e4c490b9a077caa7bc207dffc0b5551",
-   "testsSha256": "34b4fcad802242e60aab832a068112767148243aba56f9f343a117d0e526f05b",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3577,7 +3491,7 @@
    "text": "canonicalDistributorId(id)",
    "target": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "fileSha256": "503397585adb38c5d1a5ef1278c9784a9e4c490b9a077caa7bc207dffc0b5551",
-   "testsSha256": "34b4fcad802242e60aab832a068112767148243aba56f9f343a117d0e526f05b",
+   "testsSha256": "35788bed68e21277b63c777331d7c0c4038ba6690afa0186d67e7522ae34cbc5",
    "testDir": "apps/web/src/modules/artist",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3613,10 +3527,10 @@
    "text": "phonogramToFormFields(phonogram)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "500c6103ff0415395adb1bd0af28e65bf08f7c27c030fde8e28b6d79d978cb78",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3625,10 +3539,10 @@
    "text": "phonogramToFormFields(phonogram)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "500c6103ff0415395adb1bd0af28e65bf08f7c27c030fde8e28b6d79d978cb78",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3637,10 +3551,10 @@
    "text": "formToPhonogramPayload({\n      title: finalTitle,\n      status,\n      workId: linkedWork && typeof linkedWork.id === \"st",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "500c6103ff0415395adb1bd0af28e65bf08f7c27c030fde8e28b6d79d978cb78",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3649,10 +3563,10 @@
    "text": "joinIsrc({\n      countryCode: isrcCountryCode,\n      registrantCode: isrcRegistrantCode,\n      year: isrcYear,\n      des",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "500c6103ff0415395adb1bd0af28e65bf08f7c27c030fde8e28b6d79d978cb78",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3661,10 +3575,10 @@
    "text": "phonogramToFormFields(phonogram)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "10aaf6d2b355bd413f8e70995a985fb56dc3bf99c368c22b386f7a54eb7725c0",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3673,10 +3587,10 @@
    "text": "workToFormFields(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "d0933613b612c4d1d53e585c2cfbc205a078f457bb00bfb5cd38857d0928cbf9",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3685,10 +3599,10 @@
    "text": "workToFormFields(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "d0933613b612c4d1d53e585c2cfbc205a078f457bb00bfb5cd38857d0928cbf9",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3697,10 +3611,10 @@
    "text": "formToWorkPayload({\n      title: workTitleValue,\n      musicGenre,\n      language,\n      iswc,\n      ecadCode,\n      soc",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "d0933613b612c4d1d53e585c2cfbc205a078f457bb00bfb5cd38857d0928cbf9",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3709,10 +3623,10 @@
    "text": "workAlternativeTitles(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3721,10 +3635,10 @@
    "text": "workRelatedReferences(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3733,10 +3647,10 @@
    "text": "workLyrics(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3745,10 +3659,10 @@
    "text": "workAiUsed(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3757,10 +3671,10 @@
    "text": "workAiUsageLevel(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3769,10 +3683,10 @@
    "text": "workAiHarmony(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3781,10 +3695,10 @@
    "text": "workAiMelody(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3793,10 +3707,10 @@
    "text": "workAiLyrics(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3805,10 +3719,10 @@
    "text": "workToParticipants(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3817,10 +3731,10 @@
    "text": "workIsInstrumental(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3829,10 +3743,10 @@
    "text": "parseDurationText(work.duration_text)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3841,10 +3755,10 @@
    "text": "projectToWorkSeed(project, tracks[0] ?? null)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "3fb75fd79daa311d8635f4d0d442de02d88ffe85f36ee5c1538918ad5236bef8",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3853,7 +3767,7 @@
    "text": "canonicalTrackInstrumental(track?.instrumental)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "94bdabd58269c7223b521bbf7ccb260726308107fa984a745f0a624f58e35cfd",
-   "testsSha256": "c95be7a360390f151d6dfa1b56a02961aff7ce92d6f0ea60de22e07c21417a43",
+   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3865,10 +3779,10 @@
    "text": "sameContractCategory(c.value, raw)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "9a4d0d96860607c0a0f576fe201f6f126102b1e4300af9cdaad3e24f93ee2b24",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3877,10 +3791,10 @@
    "text": "findServiceTypeByCategory(allServiceTypes, serviceTypeValue)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "9a4d0d96860607c0a0f576fe201f6f126102b1e4300af9cdaad3e24f93ee2b24",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3889,10 +3803,10 @@
    "text": "isWizardSignerRecord(s)",
    "target": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
    "fileSha256": "9a4d0d96860607c0a0f576fe201f6f126102b1e4300af9cdaad3e24f93ee2b24",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3901,10 +3815,10 @@
    "text": "canonicalSignerRole(s.role)",
    "target": "apps/web/src/modules/contracts/schemas/contract-schema.ts",
    "fileSha256": "9a4d0d96860607c0a0f576fe201f6f126102b1e4300af9cdaad3e24f93ee2b24",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3913,10 +3827,10 @@
    "text": "formatCategoryLabel(contract.type)",
    "target": "apps/web/src/shared/lib/category-labels.ts",
    "fileSha256": "40f073e39b2520f984b9e5fe1dadbbf81f9ec68a75b168f5dc7cfafcb870c764",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3925,10 +3839,10 @@
    "text": "isNonPartyGroup(group)",
    "target": "apps/web/src/modules/contracts/lib/contract-placeholders.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3937,10 +3851,10 @@
    "text": "isPartyEntityField(f)",
    "target": "apps/web/src/modules/contracts/lib/contract-placeholders.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3949,10 +3863,10 @@
    "text": "canonicalPlaceholderField(field)",
    "target": "apps/web/src/modules/contracts/lib/contract-placeholders.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3961,10 +3875,10 @@
    "text": "partyKeyForPlaceholderField(canonicalField)",
    "target": "apps/web/src/modules/contracts/lib/contract-placeholders.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3973,10 +3887,10 @@
    "text": "maritalStatusDocumentText(value)",
    "target": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3985,10 +3899,10 @@
    "text": "normalizeSavedParty(savedParty)",
    "target": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -3997,10 +3911,10 @@
    "text": "normalizeWizardSignerRecord(s, i)",
    "target": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
    "fileSha256": "3634df57646386399a50a4e21894458e20504394ef53a91c73a2cb527bae5a68",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4009,7 +3923,7 @@
    "text": "sameContractCategory(c.value, slug)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "f47b41c8028c660cfe6a3c17854797ca8a8c8e579c25390f1bcbf9a565768dd1",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4021,7 +3935,7 @@
    "text": "canonicalContractCategorySlug(c.value)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "f47b41c8028c660cfe6a3c17854797ca8a8c8e579c25390f1bcbf9a565768dd1",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4033,10 +3947,10 @@
    "text": "canonicalizeStoredParticipants(parseJson<Participant[]>(row.participants, []))",
    "target": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
    "fileSha256": "b4ca11964e1d9dac7904b7f4569877a97af419d622de2d0f6ac39ea9e0e86e8c",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4045,10 +3959,10 @@
    "text": "canonicalizeStoredVariables(parseJson<ContractVariable[]>(row.variables, []))",
    "target": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
    "fileSha256": "b4ca11964e1d9dac7904b7f4569877a97af419d622de2d0f6ac39ea9e0e86e8c",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4057,10 +3971,10 @@
    "text": "canonicalizeStoredMusicWork(parseJson<MusicWork | null>(row.music_work, null))",
    "target": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
    "fileSha256": "b4ca11964e1d9dac7904b7f4569877a97af419d622de2d0f6ac39ea9e0e86e8c",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4069,10 +3983,10 @@
    "text": "normalizePaymentFrequency(row.financial_payment_frequency)",
    "target": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
    "fileSha256": "b4ca11964e1d9dac7904b7f4569877a97af419d622de2d0f6ac39ea9e0e86e8c",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4081,10 +3995,10 @@
    "text": "normalizeClientTypes(row.client_types)",
    "target": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
    "fileSha256": "b4ca11964e1d9dac7904b7f4569877a97af419d622de2d0f6ac39ea9e0e86e8c",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4093,10 +4007,10 @@
    "text": "normalizeFinancialModel(row.financial_model)",
    "target": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
    "fileSha256": "b4ca11964e1d9dac7904b7f4569877a97af419d622de2d0f6ac39ea9e0e86e8c",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4105,7 +4019,7 @@
    "text": "canonicalContractCategorySlug(slug)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "215bdae90c72722304a7609e1c330067db03c43b21a3ffb01eee36284dc3b4ce",
-   "testsSha256": "5cb87e5b8f2a1dcfb3496e404ae23e5f03daf8b0ce815570ddd8eb759225b95d",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4117,7 +4031,7 @@
    "text": "canonicalContractCategorySlug(t.slug)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "215bdae90c72722304a7609e1c330067db03c43b21a3ffb01eee36284dc3b4ce",
-   "testsSha256": "5cb87e5b8f2a1dcfb3496e404ae23e5f03daf8b0ce815570ddd8eb759225b95d",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4129,7 +4043,7 @@
    "text": "canonicalContractCategorySlug(slug)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "215bdae90c72722304a7609e1c330067db03c43b21a3ffb01eee36284dc3b4ce",
-   "testsSha256": "5cb87e5b8f2a1dcfb3496e404ae23e5f03daf8b0ce815570ddd8eb759225b95d",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4141,7 +4055,7 @@
    "text": "formatCategoryLabel(value)",
    "target": "apps/web/src/shared/lib/category-labels.ts",
    "fileSha256": "215bdae90c72722304a7609e1c330067db03c43b21a3ffb01eee36284dc3b4ce",
-   "testsSha256": "5cb87e5b8f2a1dcfb3496e404ae23e5f03daf8b0ce815570ddd8eb759225b95d",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4153,10 +4067,10 @@
    "text": "formatCategoryLabel(contract.type)",
    "target": "apps/web/src/shared/lib/category-labels.ts",
    "fileSha256": "00843aeb899a010906c4cef2d7557c3174fdfb829323baca9e7927056fcc9f66",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4165,10 +4079,10 @@
    "text": "isSemanticContractCategory(template.service_type)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "c9a383d9c666a2d96830da0088a81a6dabfbce8aff3631778d747fbdd81715de",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4177,10 +4091,10 @@
    "text": "isSemanticContractCategory(template.service_type)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "c9a383d9c666a2d96830da0088a81a6dabfbce8aff3631778d747fbdd81715de",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4189,10 +4103,10 @@
    "text": "isSemanticContractCategory(template.service_type)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "c9a383d9c666a2d96830da0088a81a6dabfbce8aff3631778d747fbdd81715de",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4201,10 +4115,10 @@
    "text": "isSemanticContractCategory(template.service_type)",
    "target": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "fileSha256": "c9a383d9c666a2d96830da0088a81a6dabfbce8aff3631778d747fbdd81715de",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4213,7 +4127,7 @@
    "text": "canonicalVariableCategory(a.category)",
    "target": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
    "fileSha256": "2885d7b7c130a74db58e74795989ec5ca4789d330eb5bb8379992c018a18bf64",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4225,7 +4139,7 @@
    "text": "canonicalVariableCategory(b.category)",
    "target": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
    "fileSha256": "2885d7b7c130a74db58e74795989ec5ca4789d330eb5bb8379992c018a18bf64",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4237,7 +4151,7 @@
    "text": "canonicalEntityType(entityType)",
    "target": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
    "fileSha256": "2885d7b7c130a74db58e74795989ec5ca4789d330eb5bb8379992c018a18bf64",
-   "testsSha256": "e79dbdbc650d95927e4268f2a7b6b9f060cb96ea5c3c7c8c9e83d677fd6f7edc",
+   "testsSha256": "0a9d627ca5e1919cc6377e0d05e417a53b3d96b63d00d6e40e98baee99d02943",
    "testDir": "apps/web/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4249,10 +4163,10 @@
    "text": "ensureProfileOption(getProfiles(state.personType, state.category), state.profile)",
    "target": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4261,10 +4175,10 @@
    "text": "getProfiles(state.personType, state.category)",
    "target": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4273,10 +4187,10 @@
    "text": "fetchAddressByCEP(digits)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4285,10 +4199,10 @@
    "text": "addressFromPostalLookup(data, prev)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4297,10 +4211,10 @@
    "text": "maskCPF(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4309,10 +4223,10 @@
    "text": "maskPhone(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4321,10 +4235,10 @@
    "text": "maskCNPJ(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4333,10 +4247,10 @@
    "text": "maskPhone(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4345,10 +4259,10 @@
    "text": "maskCEP(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4357,10 +4271,10 @@
    "text": "maskPhone(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "922a081240a3bb11a45f0975610c93ee7e9e46f3539de8568c2f98231cc7084a",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4369,10 +4283,10 @@
    "text": "profileLabel(contact.profile ?? \"\", contact.personType, contact.category)",
    "target": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
    "fileSha256": "132cff09e42f4e34731919b40c54521d6d0a3811ca5f2a37deaa8f9287cf6779",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4381,10 +4295,10 @@
    "text": "personTypeLabel(contact.personType)",
    "target": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
    "fileSha256": "132cff09e42f4e34731919b40c54521d6d0a3811ca5f2a37deaa8f9287cf6779",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4393,7 +4307,7 @@
    "text": "canonicalContactProfile(c.profile)",
    "target": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
    "fileSha256": "1d2cc1cdc6e9cc7947a74dd8d9e1dc12e42704a3393cf928c20a3bf6c2eafc01",
-   "testsSha256": "a2a17c9d039eb88a0fc97787d31498190468e86ef9f02eb1ee4070b78d0485d5",
+   "testsSha256": "e1a99d7166d5c285905835f8cdf1134c29a21fe416343ce5336be70bb19f77c4",
    "testDir": "apps/web/src/modules/crm-relationships",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4453,10 +4367,10 @@
    "text": "legacyTitle(event)",
    "target": "apps/web/src/shared/lib/legacy-title.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4465,10 +4379,10 @@
    "text": "canonicalEventCategory(event?.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4477,10 +4391,10 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4489,10 +4403,10 @@
    "text": "buildGranularToBackendTypeMap(getItemsByKind(\"event_type\"))",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4501,10 +4415,10 @@
    "text": "canonicalEventCategory(formData.eventType || event?.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4513,10 +4427,10 @@
    "text": "eventCategoryToBackendType(type, granularToBackendType)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4525,10 +4439,10 @@
    "text": "getBackendEventTypeLabel(event.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "18c289c892c2c797ceebc5f763745dfdb0ff0431db9aa49f1893f054c4770301",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4537,7 +4451,7 @@
    "text": "canonicalOperationalSlug(\"event_type\", normalized)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
    "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4549,10 +4463,10 @@
    "text": "canonicalOperationalSlug(\"event_type\", v)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
    "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4561,7 +4475,7 @@
    "text": "legacyOperationalSlugs(\"event_type\", item.slug)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
    "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4573,10 +4487,10 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4585,10 +4499,10 @@
    "text": "buildGranularToBackendTypeMap(getItemsByKind(\"event_type\"))",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4597,10 +4511,10 @@
    "text": "normalizeToBackendType(value, granularToBackendType)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4609,7 +4523,7 @@
    "text": "toAgendaRow({\n        title: e.title,\n        type: getBackendEventTypeLabel(e.type),\n        status: statusLabelPtBr(\"e",
    "target": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4621,7 +4535,7 @@
    "text": "getBackendEventTypeLabel(e.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4633,7 +4547,7 @@
    "text": "readAgendaCell(row, column)",
    "target": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4645,7 +4559,7 @@
    "text": "normalizeToBackendType(rawType, granularToBackendType)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4657,7 +4571,7 @@
    "text": "getBackendEventTypeLabel(event.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "774ded6688e1f20feff0d59ca1923cebddbd9976d3d1cbf039e7b097915b9bde",
+   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4669,10 +4583,10 @@
    "text": "maskCPF(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "38f597e1db4dafec821361448c6e6aa7c5d24b848c20ac159effdaff2d5eedf3",
-   "testsSha256": "ab9bf6064448e151eb0d853c1944432826350aff73fd95a82e13484a53e357c3",
+   "testsSha256": "33abf683ebff56d048243de1cda5019250870b39cbf3fb25510e28dfa987dc7d",
    "testDir": "apps/web/src/modules/hr",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4681,10 +4595,10 @@
    "text": "maskPhone(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "38f597e1db4dafec821361448c6e6aa7c5d24b848c20ac159effdaff2d5eedf3",
-   "testsSha256": "ab9bf6064448e151eb0d853c1944432826350aff73fd95a82e13484a53e357c3",
+   "testsSha256": "33abf683ebff56d048243de1cda5019250870b39cbf3fb25510e28dfa987dc7d",
    "testDir": "apps/web/src/modules/hr",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4693,10 +4607,10 @@
    "text": "useNfeStatus()",
    "target": "apps/web/src/modules/integrations/hooks/useNfe.ts",
    "fileSha256": "35da6b77c98e04653952d1e432c28ccc19c1fa0e226c2928b4715c69cf6711ae",
-   "testsSha256": "36a2b29fb773a498a2eedc0f99b25964cb675b65b8a79e38c311f8ff44f2d0ab",
+   "testsSha256": "4e16d8f48b0d12137817d8ea92bfd11056e94594193ef9ce76f826ac4834ed86",
    "testDir": "apps/web/src/modules/integrations",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4705,10 +4619,10 @@
    "text": "useNfeSaveCredentials()",
    "target": "apps/web/src/modules/integrations/hooks/useNfe.ts",
    "fileSha256": "35da6b77c98e04653952d1e432c28ccc19c1fa0e226c2928b4715c69cf6711ae",
-   "testsSha256": "36a2b29fb773a498a2eedc0f99b25964cb675b65b8a79e38c311f8ff44f2d0ab",
+   "testsSha256": "4e16d8f48b0d12137817d8ea92bfd11056e94594193ef9ce76f826ac4834ed86",
    "testDir": "apps/web/src/modules/integrations",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4717,10 +4631,10 @@
    "text": "useNfeDeleteCredentials()",
    "target": "apps/web/src/modules/integrations/hooks/useNfe.ts",
    "fileSha256": "35da6b77c98e04653952d1e432c28ccc19c1fa0e226c2928b4715c69cf6711ae",
-   "testsSha256": "36a2b29fb773a498a2eedc0f99b25964cb675b65b8a79e38c311f8ff44f2d0ab",
+   "testsSha256": "4e16d8f48b0d12137817d8ea92bfd11056e94594193ef9ce76f826ac4834ed86",
    "testDir": "apps/web/src/modules/integrations",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4729,10 +4643,10 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "58c5e917f51f2777c3c7a6374b9f4d475a70e93aa0362683d97ff5828a640208",
-   "testsSha256": "8246ab9f1cc5457d113b030cbff75245b47ed6ba1490d942af16bd59b534a050",
+   "testsSha256": "25b7076bd51a1e497dc2d8e4b77183e12268e0359f7887478b153e21c00b5211",
    "testDir": "apps/web/src/modules/leads",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4741,10 +4655,10 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "6dcfb89e071528811752d97cdd95e28c159139055f76383885fff672edfd3cce",
-   "testsSha256": "8246ab9f1cc5457d113b030cbff75245b47ed6ba1490d942af16bd59b534a050",
+   "testsSha256": "25b7076bd51a1e497dc2d8e4b77183e12268e0359f7887478b153e21c00b5211",
    "testDir": "apps/web/src/modules/leads",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4753,10 +4667,10 @@
    "text": "maskPhone(e.target.value)",
    "target": "apps/web/src/shared/lib/masks.ts",
    "fileSha256": "6dcfb89e071528811752d97cdd95e28c159139055f76383885fff672edfd3cce",
-   "testsSha256": "8246ab9f1cc5457d113b030cbff75245b47ed6ba1490d942af16bd59b534a050",
+   "testsSha256": "25b7076bd51a1e497dc2d8e4b77183e12268e0359f7887478b153e21c00b5211",
    "testDir": "apps/web/src/modules/leads",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4765,10 +4679,10 @@
    "text": "isPendingValue(value)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/pending.ts",
    "fileSha256": "b452c20a33ddee8d1e115baf5923486195b40ec5c0932eb61e505da4016e6c23",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4777,10 +4691,10 @@
    "text": "isPendingValue(value)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/pending.ts",
    "fileSha256": "b452c20a33ddee8d1e115baf5923486195b40ec5c0932eb61e505da4016e6c23",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4789,7 +4703,7 @@
    "text": "parseCampaignBuilderNotes(campaign?.notes)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "c3c150f16fa5520e89ad77acb3a081532f889f7f144461a05ec22354da8c3f9e",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4801,10 +4715,10 @@
    "text": "canonicalCampaignPhase(saved?.phase)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "c3c150f16fa5520e89ad77acb3a081532f889f7f144461a05ec22354da8c3f9e",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4813,10 +4727,10 @@
    "text": "canonicalBudgetStrategy(savedBudget?.strategy)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "c3c150f16fa5520e89ad77acb3a081532f889f7f144461a05ec22354da8c3f9e",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4825,10 +4739,10 @@
    "text": "expectedRatio(creative.placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "ba811dd11c34f0202ba08c06c1dd84dadcf4121b9b75b6f72f410d59a3a580f6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4837,10 +4751,10 @@
    "text": "createDefaultCampaignState(campaign)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "ba811dd11c34f0202ba08c06c1dd84dadcf4121b9b75b6f72f410d59a3a580f6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4849,10 +4763,10 @@
    "text": "createDefaultCampaignState(campaign)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "ba811dd11c34f0202ba08c06c1dd84dadcf4121b9b75b6f72f410d59a3a580f6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4861,10 +4775,10 @@
    "text": "validateCampaignStep(state, step)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "ba811dd11c34f0202ba08c06c1dd84dadcf4121b9b75b6f72f410d59a3a580f6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4873,10 +4787,10 @@
    "text": "validateCampaignStep(state, LAST_STEP)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "ba811dd11c34f0202ba08c06c1dd84dadcf4121b9b75b6f72f410d59a3a580f6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4885,10 +4799,10 @@
    "text": "toMarketingCampaignInput(state)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "ba811dd11c34f0202ba08c06c1dd84dadcf4121b9b75b6f72f410d59a3a580f6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4897,10 +4811,10 @@
    "text": "validateCampaignStep(state, step)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "e0b4e41f76d6a3c6f1a6e3033377b9f082d6d3b4fbec8aa13c9b4e2bfee50ac3",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4909,10 +4823,10 @@
    "text": "estimateCampaignResults(state)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "e0b4e41f76d6a3c6f1a6e3033377b9f082d6d3b4fbec8aa13c9b4e2bfee50ac3",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4921,10 +4835,10 @@
    "text": "getRequiredPlacements(platforms)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4933,10 +4847,10 @@
    "text": "getRequiredPlacements(state.platforms)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4945,10 +4859,10 @@
    "text": "expectedRatio(placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4957,10 +4871,10 @@
    "text": "placementPlatform(placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4969,10 +4883,10 @@
    "text": "expectedRatio(p as CampaignPlacement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4981,10 +4895,10 @@
    "text": "expectedRatio(p)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -4993,10 +4907,10 @@
    "text": "expectedRatio(creative.placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5005,10 +4919,10 @@
    "text": "buildUtmUrl(creative)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5017,10 +4931,10 @@
    "text": "validateCampaignStep(state, 9)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5029,10 +4943,10 @@
    "text": "expectedRatio(placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5041,10 +4955,10 @@
    "text": "expectedRatio(placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5053,10 +4967,10 @@
    "text": "expectedRatio(creative.placement)",
    "target": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
    "fileSha256": "c0f31bc69b19e966880cfb28f9a9a85204fb171380e7e140e05b0b7008d4e8f5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5065,10 +4979,10 @@
    "text": "canonicalSourceDepartment(asset.sourceDepartment ?? metadata.sourceDepartment)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "ef04ea8e687a8eba9b8ee1f378f2f5a8ac241aab0a37c63bcd7e1a2191ca6ddb",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5077,10 +4991,10 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "8931379be349e586848f9f480d6af9bfa1e0fbc09f8e894f0226b972073de70e",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5089,10 +5003,10 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "8cf2e37600a380d4867760811491bf7c5dbe3c75c22171707756ebaa7ff6d1e5",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5101,7 +5015,7 @@
    "text": "canonicalAssetCategory(category)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "3be5d596e5196e4e21ba336684ca134979d9068de268d2c6d57b29bdc36c90d3",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5113,7 +5027,7 @@
    "text": "canonicalAssetCategory(storedCategory)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "3be5d596e5196e4e21ba336684ca134979d9068de268d2c6d57b29bdc36c90d3",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5125,7 +5039,7 @@
    "text": "canonicalProjectStatus(uiStatus)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "5abaa354bac4b7026889c9c16412cea72d94adeef4de59dd76331e43bcdf1a2a",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5137,7 +5051,7 @@
    "text": "canonicalProjectType(rawType)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "5abaa354bac4b7026889c9c16412cea72d94adeef4de59dd76331e43bcdf1a2a",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5149,7 +5063,7 @@
    "text": "canonicalProjectStatus(rawStatus)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "5abaa354bac4b7026889c9c16412cea72d94adeef4de59dd76331e43bcdf1a2a",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5161,7 +5075,7 @@
    "text": "canonicalProjectType(uiType)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "5abaa354bac4b7026889c9c16412cea72d94adeef4de59dd76331e43bcdf1a2a",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5173,7 +5087,7 @@
    "text": "canonicalMarketingTarget(payload.promotedEntityType)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5185,7 +5099,7 @@
    "text": "canonicalCampaignType(payload.type ?? meta.type)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5197,7 +5111,7 @@
    "text": "canonicalContentChannels(payload.platforms)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5209,7 +5123,7 @@
    "text": "canonicalCampaignStatus(row.status ?? payload.status)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5221,7 +5135,7 @@
    "text": "canonicalContentChannels(meta.channels)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5233,7 +5147,7 @@
    "text": "canonicalApproval([row.approval, meta.approval].find((v) => v !== null && v !== undefined && v !== \"\"))",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5245,7 +5159,7 @@
    "text": "canonicalBriefingType(meta.type)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5257,7 +5171,7 @@
    "text": "canonicalContentChannels(meta.channels)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5269,7 +5183,7 @@
    "text": "canonicalMarketingTarget(meta.targetType)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5281,7 +5195,7 @@
    "text": "canonicalTaskType(meta.uiType ?? row.kind ?? \"other\")",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5293,10 +5207,10 @@
    "text": "canonicalMarketingSector(meta.sector)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5305,10 +5219,10 @@
    "text": "canonicalAutomationFlowId(meta.automationFlowId)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5317,10 +5231,10 @@
    "text": "canonicalSourceDepartment(meta.sourceDepartment)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5329,7 +5243,7 @@
    "text": "canonicalAiTaskKind(item.kind)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5341,7 +5255,7 @@
    "text": "canonicalMarketingTarget(item.targetType)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5353,7 +5267,7 @@
    "text": "canonicalContentChannels(item.channels)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5365,7 +5279,7 @@
    "text": "canonicalPriority(row.priority)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5377,7 +5291,7 @@
    "text": "canonicalContentChannels(meta.channels)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "b8212b8e30ec4c8c97fe2c3afee7700fe03a0f43f4e94c63ec2caa82e2b96b8d",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5389,10 +5303,10 @@
    "text": "audioLevelLabel(context.audioAnalysis.energy)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/audioVocabulary.ts",
    "fileSha256": "876dd4a79cdc1152ed8a6c0d5afa4f804e4988585fa0254b132222264df99f6b",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5401,10 +5315,10 @@
    "text": "lyricsSentimentLabel(context.lyricsAnalysis.sentiment)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
    "fileSha256": "876dd4a79cdc1152ed8a6c0d5afa4f804e4988585fa0254b132222264df99f6b",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5413,7 +5327,7 @@
    "text": "audioLevelLabel(audio.energy)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/audioVocabulary.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5425,7 +5339,7 @@
    "text": "lyricsSentimentLabel(lyrics.sentiment)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5437,7 +5351,7 @@
    "text": "normalizeAudioLevel(audio.energy)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/audioVocabulary.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5449,7 +5363,7 @@
    "text": "normalizeLyricsSentiment(lyrics.sentiment)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5461,10 +5375,10 @@
    "text": "isPendingValue(audio.mood)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/pending.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5473,7 +5387,7 @@
    "text": "normalizeAudioLevel(energy)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/audioVocabulary.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5485,10 +5399,10 @@
    "text": "isPendingValue(audio.mood)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/pending.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5497,7 +5411,7 @@
    "text": "lyricsSentimentLabel(lyrics.sentiment)",
    "target": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
    "fileSha256": "8145f147b509db76b4f420f62d989d00caae91cb4c8161b69b6ade65eae4be53",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5509,7 +5423,7 @@
    "text": "canonicalMarketingTarget(target)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "488e9150dc07ae1c9dde1d0e60bc840a93f5fefdc01a4b87985e516eb0da1cf6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5521,7 +5435,7 @@
    "text": "canonicalMarketingTarget(value)",
    "target": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "fileSha256": "488e9150dc07ae1c9dde1d0e60bc840a93f5fefdc01a4b87985e516eb0da1cf6",
-   "testsSha256": "8896ed5800047aac52e1160d1d8aa2739e7c8f8e62bbe073132daa1d9ac23512",
+   "testsSha256": "62985efdfd0cc981803c2f5f8e3834e2c9014bc3e505edad6b3b3da536a8cbd8",
    "testDir": "apps/web/src/modules/marketing",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5533,10 +5447,10 @@
    "text": "statusLabel(catalog.status, \"work\")",
    "target": "apps/web/src/shared/components/StatusBadge.tsx",
    "fileSha256": "cd883e35b81e9bbc085d593f7eafbdc33040225efa07f92cb6d430c4d3dee1bd",
-   "testsSha256": "dd74c21e220f054c3a2e217daed21425eff2832ced0a15f8db6065728d9e4512",
+   "testsSha256": "64e06fb75e648f43d360800c92c04bdb7ccedb9ef18f0043996d6ed4fdff391a",
    "testDir": "apps/web/src/modules/monitoring",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5581,7 +5495,7 @@
    "text": "canonicalTrackLanguage(m.language)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "24576437b4843fc1fcebfe5fe2e438646f354b406cf69d576ad9d1ac1eee532a",
-   "testsSha256": "ee45ecfc6a793b8456d5880545acf2da485ee0eba2208c64bf7b61bf3c087499",
+   "testsSha256": "02a122819b8ad81713f981ac71ec3c4ca7d91b314c415d45506c44fbee722031",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5593,7 +5507,7 @@
    "text": "canonicalTrackInstrumental(m.instrumental)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "24576437b4843fc1fcebfe5fe2e438646f354b406cf69d576ad9d1ac1eee532a",
-   "testsSha256": "ee45ecfc6a793b8456d5880545acf2da485ee0eba2208c64bf7b61bf3c087499",
+   "testsSha256": "02a122819b8ad81713f981ac71ec3c4ca7d91b314c415d45506c44fbee722031",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5605,10 +5519,10 @@
    "text": "projectLabelOf(p as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5617,10 +5531,10 @@
    "text": "releaseStatusLabel(resolveReleaseStatus(release))",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5629,10 +5543,10 @@
    "text": "resolveReleaseStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5641,10 +5555,10 @@
    "text": "projectLabelOf(selectedProject as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5653,10 +5567,10 @@
    "text": "canonicalReleaseMetadata(release ? (release as Record<string, unknown>)[\"metadata\"] : {})",
    "target": "apps/web/src/modules/releases/lib/release-metadata.ts",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5665,7 +5579,7 @@
    "text": "projectTracksForRelease(project as { tracks?: TrackData[]; description?: string | null })",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5677,7 +5591,7 @@
    "text": "canonicalReleaseMetadata(enrichedMeta)",
    "target": "apps/web/src/modules/releases/lib/release-metadata.ts",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5689,7 +5603,7 @@
    "text": "canonicalReleaseMetadata((release as Record<string, unknown>)[\"metadata\"])",
    "target": "apps/web/src/modules/releases/lib/release-metadata.ts",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5701,10 +5615,10 @@
    "text": "resolvePlatformStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5713,10 +5627,10 @@
    "text": "releaseStatusBadge(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5725,10 +5639,10 @@
    "text": "releaseStatusLabel(resolveReleaseStatus(release))",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5737,10 +5651,10 @@
    "text": "resolveReleaseStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5749,10 +5663,10 @@
    "text": "releaseStatusBadge(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5761,10 +5675,10 @@
    "text": "platformStatusBadge(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5773,10 +5687,10 @@
    "text": "trackTitle(f as Record<string, unknown>, idx + 1)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5785,10 +5699,10 @@
    "text": "trackArtist(f as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "58e7cd5bb25a7e9125168e4719f01493960331d4b71e27749a6689fbcb272a80",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5797,10 +5711,10 @@
    "text": "holderPercentage(h as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "8f83790e2ea35413811471365db9e4a8e948a896f105b6a9c9cd308b6de05fce",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5809,10 +5723,10 @@
    "text": "holderPercentage(h as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "8f83790e2ea35413811471365db9e4a8e948a896f105b6a9c9cd308b6de05fce",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5821,10 +5735,10 @@
    "text": "resolveStatusFromRawStatus(row.status)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "290fc2803b6b04318fd0c77a71bc180b927589adae51b3f1c3d5ccb5ab20fc89",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5833,10 +5747,10 @@
    "text": "cardStatusClasses(release, mode)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "6e23d0c85e682cfcd526342f916d050db208d57d733b340d3ac1ff01fd8c2418",
-   "testsSha256": "1b9dc029c14777830a6f542b6a7254dc5c39329e79c8062f33d617ef82c20790",
+   "testsSha256": "e04b376d30038f9c8d4154d96f9b15f879086377d9110e96ae4b7046c092b3c3",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5845,7 +5759,7 @@
    "text": "normalizeUserStatus(member?.status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "e462f54ef240b99afe88a1d9da3a9acf5ba17865c78407652a1f0c9ae07e7778",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5857,7 +5771,7 @@
    "text": "normalizeUserStatus(member.status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "99ff385b8e8840649f0d2461770a4a362e0a0db3f2a1a7e35a5ed4e6928b540d",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5869,7 +5783,7 @@
    "text": "normalizeUserStatus(status, \"inactive\")",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "5bd97a7c61aaed386ac467e9a60490398937fb22cf1c1b05626c6a870c8717c7",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5881,7 +5795,7 @@
    "text": "userStatusLabel(status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "5bd97a7c61aaed386ac467e9a60490398937fb22cf1c1b05626c6a870c8717c7",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5893,7 +5807,7 @@
    "text": "canonicalAllowedServiceSlugs(item.metadata)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
    "fileSha256": "2e26286645cb889e19224c97843b0ecc4e73d16f5435091a35fd2848393508a3",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5905,7 +5819,7 @@
    "text": "migrateLegacyDefaultItem(item, DEFAULT_OPERATIONAL_LISTS)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
    "fileSha256": "2e26286645cb889e19224c97843b0ecc4e73d16f5435091a35fd2848393508a3",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5917,7 +5831,7 @@
    "text": "normalizeUserStatus(status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "0cd51939cfd10063adfbc4a4e0d5009c8041a61ef172b2772bb700a1194a5d55",
-   "testsSha256": "0706438ef703d24134dbf3d451adbbe73445b842b17ba63a78600aa0d2802bde",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5929,10 +5843,10 @@
    "text": "useUserSettings()",
    "target": "apps/web/src/modules/settings/hooks/useUserSettings.ts",
    "fileSha256": "0d0775618fd2dffabbf86608075fd3b3addc1014a3b5f188ff1e8ec65d8ebae7",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5941,10 +5855,10 @@
    "text": "useUserSettings()",
    "target": "apps/web/src/modules/settings/hooks/useUserSettings.ts",
    "fileSha256": "69f0741b99e51f82ae7e44e652ccd3688aa15f2c982965fffb35d402606fb2de",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5953,10 +5867,10 @@
    "text": "normalizeUserStatus(u.status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "69f0741b99e51f82ae7e44e652ccd3688aa15f2c982965fffb35d402606fb2de",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5965,10 +5879,10 @@
    "text": "normalizeUserStatus(member.status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "69f0741b99e51f82ae7e44e652ccd3688aa15f2c982965fffb35d402606fb2de",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5977,10 +5891,10 @@
    "text": "useNfeStatus()",
    "target": "apps/web/src/modules/integrations/hooks/useNfe.ts",
    "fileSha256": "69f0741b99e51f82ae7e44e652ccd3688aa15f2c982965fffb35d402606fb2de",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -5989,7 +5903,7 @@
    "text": "normalizeUserStatus(member.status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "69f0741b99e51f82ae7e44e652ccd3688aa15f2c982965fffb35d402606fb2de",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -6001,10 +5915,10 @@
    "text": "userStatusLabel(member.status)",
    "target": "apps/web/src/modules/settings/lib/user-status.ts",
    "fileSha256": "04945b85a1f83ddbad52ad9499f91cc5823dd7c2976dd5541d1fcc9e9832f11f",
-   "testsSha256": "cb8ef3b6b912a2acae5138c99482626f668480f695073fa9e648adca1c32d879",
+   "testsSha256": "7d701e87279bba80d86044cca0b8edd85dfa6edadd1ecbcfaa04ed621b22cff5",
    "testDir": "apps/web/src/modules/settings",
    "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -6020,23 +5934,11 @@
   },
   {
    "kind": "CONSUMER",
-   "file": "apps/web/src/shared/hooks/useCanAccess.ts",
-   "line": 39,
-   "text": "permissionKeyEquivalents(`${resource}:${a}`)",
-   "target": "apps/web/src/shared/lib/permission-map.ts",
-   "fileSha256": "cd2f19f7b8447a0b98d65b3b1aaa30209302b0037df3b454ad21ed26d37466b0",
-   "testsSha256": "61971bc035f2c4a1a165af2e8ce40f523748f7b5d3a7a921af107c73ffa7b807",
-   "testDir": "apps/web/src/shared/hooks",
-   "operator": "CALL_BYPASS",
-   "verdict": "SURVIVED"
-  },
-  {
-   "kind": "CONSUMER",
    "file": "apps/web/src/shared/hooks/useIsAdmin.ts",
    "line": 11,
    "text": "useCurrentRole()",
    "target": "apps/web/src/shared/hooks/useHasRole.ts",
-   "fileSha256": "47032e5b90bfea104ecfafaec7c389a15bb0775139e107d294900ec98bb72931",
+   "fileSha256": "4b29993c2c3aa88c2d6b57881e180d429a51fec2a9cce9eb2befe87c617141b7",
    "testsSha256": "0e27e7969c0f9f22ccf1da26ce621456fa0ae09006aa88dfcf93324e3c9ff66f",
    "testDir": "apps/web/src/shared/hooks",
    "operator": "CALL_BYPASS",
@@ -6049,10 +5951,10 @@
    "text": "expandPermissionAliases(permissionKeys ?? [])",
    "target": "apps/web/src/shared/lib/permission-map.ts",
    "fileSha256": "380e2071773d2f81271a7dfe1e7f1c84e6f2fcf85d2d87a2edb1b5279d795aa8",
-   "testsSha256": "61971bc035f2c4a1a165af2e8ce40f523748f7b5d3a7a921af107c73ffa7b807",
+   "testsSha256": "0e27e7969c0f9f22ccf1da26ce621456fa0ae09006aa88dfcf93324e3c9ff66f",
    "testDir": "apps/web/src/shared/hooks",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
@@ -6061,10 +5963,10 @@
    "text": "tenantModulePermissionKeys(module, action)",
    "target": "apps/web/src/shared/lib/permission-map.ts",
    "fileSha256": "380e2071773d2f81271a7dfe1e7f1c84e6f2fcf85d2d87a2edb1b5279d795aa8",
-   "testsSha256": "61971bc035f2c4a1a165af2e8ce40f523748f7b5d3a7a921af107c73ffa7b807",
+   "testsSha256": "0e27e7969c0f9f22ccf1da26ce621456fa0ae09006aa88dfcf93324e3c9ff66f",
    "testDir": "apps/web/src/shared/hooks",
    "operator": "CALL_BYPASS",
-   "verdict": "INCONCLUSIVE"
+   "verdict": "KILLED"
   },
   {
    "kind": "CONSUMER",
