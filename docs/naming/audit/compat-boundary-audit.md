@@ -8,7 +8,7 @@ Rows: 3325. Semantic groups: 741.
 
 | Counter | Value |
 |---|---:|
-| COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF | 1349 |
+| COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF | 87 |
 | OBSOLETE_BOUNDARIES | 0 |
 | MISCLASSIFIED_OPERATIONAL_USAGE | 0 |
 | LEGACY_FIRST_READS | 0 |
@@ -44,10 +44,10 @@ Rows: 3325. Semantic groups: 741.
 
 | Proof | Rows |
 |---|---:|
-| NOT_MUTATED | 1324 |
+| NOT_MUTATED | 22 |
 | NOT_REQUIRED | 293 |
-| PROVEN | 1683 |
-| STALE | 25 |
+| PROVEN | 2945 |
+| SURVIVED | 65 |
 
 Proof states: `PROVEN` (binding plus a fresh mutation kill, or binding only where the row is a test), `NOT_REQUIRED` (permanent vocabulary, user-facing text, registry, pack tooling, history), anything else is an open counter.
 

@@ -100,6 +100,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -273,6 +277,12 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [
+    "rh"
+   ],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -300,6 +310,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -575,6 +589,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -598,6 +616,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -1699,6 +1721,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2057,7 +2082,7 @@
    "test": "apps/api/src/modules/artists/dto/create-artist.dto.spec.ts",
    "fileSha256": "0a71d7f5fb267aa4bbb72eecd58939595a70ca0b36d6f16e606c485a792f06a8",
    "testSha256": "0da7c7979585bcdf202fd8a863df8577c7525606b24c47d211ffca12449a8ada",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -2067,24 +2092,16 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 141,
-     "label": "documentos_pessoais_url",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
      "line": 138,
      "label": "foto_url",
      "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 139,
-     "label": "galeria_urls",
-     "outcome": "SURVIVED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2119,6 +2136,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2163,6 +2184,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2186,6 +2211,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2203,6 +2232,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2676,6 +2709,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -2705,6 +2742,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -3109,6 +3150,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -3183,6 +3228,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 4,
    "diagnosticsRelaxed": true
   },
   {
@@ -3347,6 +3396,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -3575,13 +3628,19 @@
     {
      "operator": "CANONICAL_FIRST",
      "line": 146,
-     "label": null,
+     "label": "exclusivo",
+     "labels": [
+      "exclusivo"
+     ],
      "outcome": "KILLED"
     },
     {
      "operator": "CANONICAL_FIRST",
      "line": 151,
-     "label": null,
+     "label": "versoes",
+     "labels": [
+      "versoes"
+     ],
      "outcome": "KILLED"
     },
     {
@@ -3598,6 +3657,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -3627,6 +3690,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4062,18 +4129,16 @@
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 18,
-     "label": "calculo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
      "line": 26,
      "label": "condicoes",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4091,12 +4156,16 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 26,
-     "label": "condicoes",
+     "line": 20,
+     "label": "calculo",
      "outcome": "SURVIVED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4323,7 +4392,7 @@
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "17cc56add06cb7c3f29ef0d3a28327cc6a83b092d8706fef4ed3e06eca77e7cb",
    "testSha256": "42ec8303782ad8b566b8580b4cbd0ecdfc154838bfa73c6ae6709c728a650dac",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -4339,18 +4408,6 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 25,
-     "label": "departamento",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 28,
-     "label": "salario",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
      "line": 27,
      "label": "telefone",
      "outcome": "KILLED"
@@ -4363,6 +4420,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4380,6 +4441,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4486,14 +4551,8 @@
    "test": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.legacy-compat.spec.ts",
    "fileSha256": "2e701047e34367d699a0861e10529445c50d9f2741bbdc01db0441179b5345b3",
    "testSha256": "26dd80abdea9300e1edc5c9b673ce5bb945839ff15e85c9c971d55545df64d74",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 12,
-     "label": "competencia",
-     "outcome": "SURVIVED"
-    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 42,
@@ -4502,6 +4561,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4807,6 +4870,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4824,6 +4891,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -4835,19 +4906,13 @@
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 205,
-     "label": "coautores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 204,
-     "label": "compositor",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
      "line": 207,
+     "label": "duracao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 249,
      "label": "duracao",
      "outcome": "KILLED"
     },
@@ -4859,18 +4924,16 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 206,
-     "label": "genero",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 203,
-     "label": "titulo",
+     "line": 256,
+     "label": "editora",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -5338,6 +5401,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -6098,8 +6165,8 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 45,
-     "label": "moeda",
+     "line": 70,
+     "label": "midia_destino",
      "outcome": "SURVIVED"
     },
     {
@@ -6122,6 +6189,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -7597,6 +7668,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -8449,6 +8524,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -8848,6 +8926,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -8905,14 +8986,8 @@
    "test": "apps/api/src/modules/releases/release-contract.spec.ts",
    "fileSha256": "562661fe41bd24b07da5d4ade62d57078691cc084206d2c07199787c1d5acc0e",
    "testSha256": "876b610e59e7ebab626b1b8020ef327f0636dfe34e91afdf419496e92911aea8",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 85,
-     "label": "artistas",
-     "outcome": "SURVIVED"
-    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 47,
@@ -8940,6 +9015,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -8960,6 +9038,9 @@
    "declarations": [
     "artistas"
    ],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -10447,6 +10528,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -10494,6 +10578,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -11084,6 +11171,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -12460,6 +12551,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -12478,6 +12572,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -12886,6 +12983,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -12933,6 +13033,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -12968,6 +13072,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -13825,6 +13933,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -13919,7 +14031,7 @@
    "test": "apps/web/src/modules/artist/components/ArtistVision360Modal.legacy-compat.test.tsx",
    "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
    "testSha256": "50a95b91f7f221322495edef3ef7e81f3445bd7a4150fe46fdc1885e51ffe90f",
-   "verdict": "PROVEN",
+   "verdict": "PARTIAL",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -13947,6 +14059,12 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 1635,
+     "label": "financeiro",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 1636,
      "label": "gestor",
      "outcome": "KILLED"
@@ -13959,6 +14077,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14073,7 +14195,7 @@
    "test": "apps/web/src/modules/artist/lib/contract-type-filters.test.ts",
    "fileSha256": "e179a8da41821b68b98be10bda02c62a5eb6eeb73d4089af7a5838a3f54523b7",
    "testSha256": "b5d20d6f0a230f8559a1e18c637fda14886b4b52d54b2207c4f13bc57d2a80a9",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -14092,15 +14214,13 @@
      "line": 27,
      "label": "nao_exclusivo",
      "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 29,
-     "label": "servicos",
-     "outcome": "SURVIVED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14304,6 +14424,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14333,6 +14457,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14356,6 +14484,13 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [
+    "nome",
+    "produtores"
+   ],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14373,6 +14508,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14380,7 +14519,7 @@
    "test": "apps/web/src/modules/contracts/components/ContractFormModal.legacy-compat.test.tsx",
    "fileSha256": "1f9f5ea2f50651b86c255dd2e21df4e1e1b00dbb9c1aae18ba7a9282c79cfe53",
    "testSha256": "72c63ac97d1ace5b802e1d97f338b696a911e834ed5fbd513ed8d5b550e68b62",
-   "verdict": "PROVEN",
+   "verdict": "PARTIAL",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -14390,9 +14529,27 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 85,
+     "label": "agenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 92,
+     "label": "agenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 80,
      "label": "distribuicao",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 98,
+     "label": "distribuicao",
+     "outcome": "SURVIVED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -14414,12 +14571,172 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 100,
+     "label": "gestao",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 81,
      "label": "licenciamento",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 87,
+     "label": "licenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 94,
+     "label": "licenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 99,
+     "label": "licenciamento",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 81,
+     "label": "outros",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 90,
+     "label": "outros",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 97,
+     "label": "outros",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 101,
+     "label": "outros",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 108,
+     "label": "outros",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 81,
+     "label": "parceria",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 80,
+     "label": "producao_audiovisual",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 80,
+     "label": "producao_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 86,
+     "label": "producao_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 88,
+     "label": "producao_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 93,
+     "label": "producao_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 95,
+     "label": "producao_musical",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 81,
+     "label": "publicidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 89,
+     "label": "publicidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 96,
+     "label": "publicidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 79,
+     "label": "suporte_financeiro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 87,
+     "label": "cessao_direitos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 85,
+     "label": "exclusividade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 86,
+     "label": "gravacao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 88,
+     "label": "producao",
+     "outcome": "SURVIVED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 89,
+     "label": "publicitario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 90,
+     "label": "semantico",
+     "outcome": "SURVIVED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14617,6 +14934,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14739,6 +15060,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -14896,20 +15221,8 @@
    "test": "apps/web/src/modules/contracts/lib/contract-wizard-party.legacy-compat.test.ts",
    "fileSha256": "1aba3a9b1a205f0d496ae2b7f92a9b6c6684e60fe3e28d07d4e169b504f63627",
    "testSha256": "1fe80ecc7f58f297605d87e1e3b8b53e973a107b03f8bacdabf9cff8415c97d0",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 66,
-     "label": "casado",
-     "outcome": "SURVIVED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 67,
-     "label": "divorciado",
-     "outcome": "SURVIVED"
-    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 120,
@@ -14933,9 +15246,19 @@
      "line": 103,
      "label": "artista",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 82,
+     "label": "nome",
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -15130,6 +15453,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -15438,6 +15765,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -15576,10 +15907,37 @@
      "line": 62,
      "label": "eventos",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "fonogramas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 53,
+     "label": "lancamentos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "obras",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 60,
+     "label": "transacoes",
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -15650,14 +16008,8 @@
    "test": "apps/web/src/modules/events/lib/agenda-spreadsheet.test.ts",
    "fileSha256": "2f9957e20ce70922f16ff2a2239a6dc3cb078a485222b9b12aea4e04e7c63bc3",
    "testSha256": "fd856d5271d31d8fe42a766bca6ca77929b16cad8aa782e9bfcde7727cf8e81a",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 36,
-     "label": "horario",
-     "outcome": "SURVIVED"
-    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 36,
@@ -15672,6 +16024,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -15764,6 +16120,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17027,6 +17387,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17077,6 +17440,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17094,6 +17461,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17117,6 +17488,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17124,13 +17499,25 @@
    "test": "apps/web/src/modules/releases/components/ReleaseFormModal.legacy-compat.test.tsx",
    "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
    "testSha256": "f90debd5df639f03a91a2383b57f7ad03e1be238e2c2ecbb9e76e8bda56324c1",
-   "verdict": "PROVEN",
+   "verdict": "PARTIAL",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
      "line": 99,
      "label": "eletronica",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 100,
+     "label": "eletronica",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 101,
+     "label": "eletronica",
+     "outcome": "SURVIVED"
     },
     {
      "operator": "LEGACY_LITERAL",
@@ -17146,6 +17533,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17836,6 +18227,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17937,6 +18332,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -17954,6 +18353,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18040,6 +18443,12 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 19,
+     "label": "agencia",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 23,
      "label": "artista",
      "outcome": "KILLED"
@@ -18052,7 +18461,19 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 19,
+     "label": "artista_banda",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 25,
+     "label": "campanha",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 26,
      "label": "campanha",
      "outcome": "KILLED"
     },
@@ -18067,9 +18488,217 @@
      "line": 37,
      "label": "contact_pf_classification",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 26,
+     "label": "conteudo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 18,
+     "label": "contratante_show",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 19,
+     "label": "contratante_show",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 22,
+     "label": "corporativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "design_grafico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "distribuicao_digital",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "em_contato",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 23,
+     "label": "empresa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "ensaios",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "entrevistas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 22,
+     "label": "eventos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "fechado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "gestao_artistica",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 18,
+     "label": "gravadora_selo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 18,
+     "label": "influenciador",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "licenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 18,
+     "label": "marca_empresa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 19,
+     "label": "marca_empresa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "masterizacao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "mixagem",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "novo_lead",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "outro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "perdido",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "producao_audiovisual",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "producao_conteudo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "producao_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 18,
+     "label": "produtora_eventos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "programas_tv",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 23,
+     "label": "projeto_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "proposta_enviada",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "qualificado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "reunioes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "sessoes_estudio",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "sessoes_fotos",
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18127,14 +18756,8 @@
    "test": "apps/web/src/modules/settings/lib/user-status.test.ts",
    "fileSha256": "a53b7c5ba28fc44691772bdbd061969102daa33896f95189874f6a9f6bbf8a7d",
    "testSha256": "b89b6e165a486fe05037dbcf38430561764dea6180a8b49bb808b6bd2e060fd0",
-   "verdict": "PARTIAL",
+   "verdict": "PROVEN",
    "mutations": [
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 17,
-     "label": "ativo",
-     "outcome": "SURVIVED"
-    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 19,
@@ -18143,6 +18766,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18184,6 +18811,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18228,9 +18859,97 @@
      "line": 48,
      "label": "ativa",
      "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 48,
+     "label": "ativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 53,
+     "label": "atrasado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "concluida",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 50,
+     "label": "conectado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "em_analise",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "em_producao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 48,
+     "label": "inativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 49,
+     "label": "pago",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 51,
+     "label": "pausado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "planejamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "producao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 49,
+     "label": "publicado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "rejeitado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "revisao",
+     "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18278,6 +18997,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18449,6 +19172,9 @@
    ],
    "legacyFirst": [],
    "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18545,7 +19271,10 @@
     {
      "operator": "CANONICAL_FIRST",
      "line": 12,
-     "label": null,
+     "label": "titulo",
+     "labels": [
+      "titulo"
+     ],
      "outcome": "KILLED"
     },
     {
@@ -18556,6 +19285,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18570,6 +19303,12 @@
     "ViaCEPResponse",
     "fetchAddressByCEP"
    ],
+   "namesWithoutSite": [
+    "ViaCEPResponse",
+    "fetchAddressByCEP"
+   ],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18587,6 +19326,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": false
   },
   {
@@ -18672,6 +19415,17 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [
+    "ARTISTA",
+    "COLABORADOR",
+    "COMERCIAL",
+    "JURIDICO",
+    "PRODUTOR",
+    "RH_MANAGER"
+   ],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -18689,6 +19443,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   },
   {
@@ -18736,6 +19494,10 @@
     }
    ],
    "legacyFirst": [],
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "inconclusive": 0,
    "diagnosticsRelaxed": true
   }
  ]
