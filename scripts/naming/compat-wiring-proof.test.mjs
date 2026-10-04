@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { wiringSites, unprovenSites, siteKey, moduleDirOf, HELPERS } from "./compat-wiring-proof.mjs";
+import { wiringSites, unprovenSites, siteKey, moduleDirOf, HELPERS, classifyWiring, isUnwiredDraft, staleExemptions, validExemption } from "./compat-wiring-proof.mjs";
 
 const SERVICE = `import { applyDeprecatedFieldAliases } from "../x";
 export class S {
@@ -78,4 +78,37 @@ test("moduleDirOf covers web modules, shared, app and the root files that are mo
   assert.equal(moduleDirOf("apps/web/src/shared/hooks/useHasRole.ts"), "apps/web/src/shared/hooks");
   assert.equal(moduleDirOf("apps/web/src/app/providers/TenantContext.tsx"), "apps/web/src/app/providers");
   assert.equal(moduleDirOf("apps/web/src/App.tsx"), "apps/web/src");
+});
+
+test("classifyWiring: a failing test in a suite that loaded is a kill (a thrown error counts); load, compile and resolve errors are inconclusive; green is a survivor", () => {
+  assert.equal(classifyWiring(0, "Tests: 5 passed"), "pass");
+  assert.equal(classifyWiring(1, "Tests:       2 failed, 3 passed, 5 total\nTypeError: Cannot read properties of undefined"), "assertion-failure");
+  assert.equal(classifyWiring(1, " Tests  1 failed | 4 passed (5)"), "assertion-failure");
+  assert.equal(classifyWiring(1, "Test suite failed to run\n  Cannot find module './x'"), "inconclusive");
+  assert.equal(classifyWiring(1, "SyntaxError: Unexpected token"), "inconclusive");
+  assert.equal(classifyWiring(1, "error TS2322: Type"), "inconclusive");
+  assert.equal(classifyWiring(1, "nothing recognizable"), "inconclusive");
+});
+
+test("gated draft migrations are not production consumers; migrations and seeds are judged by the specs beside them", () => {
+  assert.equal(isUnwiredDraft("apps/api/src/database/migration-drafts/2026_X.ts"), true);
+  assert.equal(isUnwiredDraft("apps/api/src/database/migrations/2026_X.ts"), false);
+  assert.equal(moduleDirOf("apps/api/src/database/migrations/2026_X.ts"), "apps/api/src/database");
+  assert.equal(moduleDirOf("apps/api/src/database/seeds/index.ts"), "apps/api/src/database");
+  const files = new Map([["apps/api/src/database/migration-drafts/d.ts", "import { f } from '../../modules/m/vocab';\nf(x);"], ["apps/api/src/modules/m/vocab.ts", "export const f = (x) => x;"]]);
+  assert.deepEqual(wiringSites(files, new Set(["apps/api/src/modules/m/vocab.ts"])), []);
+});
+
+test("exemptions: an equivalent mutant needs file, exact text and a substantive reason; one that matches no site any more is stale", () => {
+  const site = { file: "apps/api/src/m/v.ts", line: 3, text: "canon(x)" };
+  const run = (ex) => unprovenSites([site], [], () => "F", () => "T", ex).length;
+  const good = { file: site.file, text: site.text, reason: "second canonicalization after a preprocess step: the value is already canonical for every reachable input" };
+  assert.equal(run([good]), 0);
+  assert.equal(run([{ ...good, reason: "too short" }]), 1, "a short reason does not exempt");
+  assert.equal(run([{ ...good, text: "other(x)" }]), 1, "the exact call text must match");
+  assert.equal(run([{ ...good, file: "apps/api/src/m/w.ts" }]), 1);
+  assert.deepEqual(staleExemptions([site], [good]), []);
+  assert.equal(staleExemptions([], [good]).length, 1);
+  assert.equal(staleExemptions([site], [{ ...good, reason: "x" }]).length, 1, "an invalid exemption is reported");
+  assert.equal(validExemption(good), true);
 });

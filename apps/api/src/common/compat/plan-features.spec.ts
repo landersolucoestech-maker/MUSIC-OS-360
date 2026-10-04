@@ -24,3 +24,14 @@ describe('canonicalPlanFeatures', () => {
     expect(Object.keys(out)).toEqual(['moduleHr']);
   });
 });
+
+describe('canonicalPlanFeatures: prototype-pollution guard', () => {
+  it('a __proto__ key from parsed JSON is dropped, never assigned: the result keeps the plain Object prototype', () => {
+    const hostile = JSON.parse('{"__proto__":{"polluted":true},"moduleHr":true}') as Record<string, unknown>;
+    const out = canonicalPlanFeatures(hostile);
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect((out as { polluted?: unknown }).polluted).toBeUndefined();
+    expect(Object.keys(out)).toEqual(['moduleHr']);
+    expect(({} as { polluted?: unknown }).polluted).toBeUndefined();
+  });
+});

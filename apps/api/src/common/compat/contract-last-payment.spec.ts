@@ -14,3 +14,21 @@ describe('contract last-payment metadata keys', () => {
     expect(readLastPayment(undefined)).toEqual({ at: undefined, amount: undefined, by: undefined });
   });
 });
+
+describe('readLastPayment: the canonical key wins over the legacy key, field by field', () => {
+  const PAIRS: ReadonlyArray<readonly [field: 'at' | 'amount' | 'by', canonical: string, legacy: string]> = [
+    ['at', 'last_payment_at', 'ultimo_pagamento_em'],
+    ['amount', 'last_payment_amount', 'ultimo_pagamento_valor'],
+    ['by', 'last_payment_by', 'ultimo_pagamento_por'],
+  ];
+
+  it.each(PAIRS)('%s: both spellings with different values -> the canonical one', (field, canonical, legacy) => {
+    expect(readLastPayment({ [legacy]: 'legacy-value', [canonical]: 'canonical-value' })[field]).toBe('canonical-value');
+    expect(readLastPayment({ [canonical]: 'canonical-value', [legacy]: 'legacy-value' })[field]).toBe('canonical-value');
+  });
+
+  it.each(PAIRS)('%s: a canonical null is a real value and still wins; the legacy one is only a fallback when the canonical is absent', (field, canonical, legacy) => {
+    expect(readLastPayment({ [canonical]: null, [legacy]: 'legacy-value' })[field]).toBeNull();
+    expect(readLastPayment({ [legacy]: 'legacy-value' })[field]).toBe('legacy-value');
+  });
+});

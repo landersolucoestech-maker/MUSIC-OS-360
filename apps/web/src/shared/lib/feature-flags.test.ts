@@ -28,3 +28,13 @@ describe("feature flag keys", () => {
     expect(Object.keys(out)).toEqual(["moduleHr"]);
   });
 });
+
+describe("canonicalFeatureKeys: prototype guard", () => {
+  it("a __proto__ key from a parsed response is dropped: the result keeps the plain Object prototype and no flag is inherited", () => {
+    const hostile = JSON.parse('{"__proto__":{"moduleBilling":true},"moduleHr":true}') as Record<string, unknown>;
+    const out = canonicalFeatureKeys(hostile);
+    expect(Object.getPrototypeOf(out)).toBe(Object.prototype);
+    expect((out as { moduleBilling?: unknown }).moduleBilling).toBeUndefined();
+    expect(Object.keys(out)).toEqual(["moduleHr"]);
+  });
+});

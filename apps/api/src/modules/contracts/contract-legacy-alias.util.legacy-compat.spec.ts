@@ -150,3 +150,30 @@ describe('legacy pair aliases (tipo, data_inicio, data_fim, arquivo_url, valor):
   });
 });
 
+
+describe('contract legacy alias resolver: null clearing and strict date typing (guards of the pair resolver)', () => {
+  it.each([
+    [{ data_inicio: null }, { start_date: null }, ['data_inicio']],
+    [{ data_fim: null }, { end_date: null }, ['data_fim']],
+    [{ valor: null }, { fixed_value: null }, ['valor']],
+  ])('a lone legacy alias sent as null clears the canonical field: %j', (input, normalized, used) => {
+    const r = resolveContractAliases(input);
+    expect(r.normalized).toEqual(normalized);
+    expect(r.legacyAliasesUsed).toEqual(used);
+  });
+
+  it('the title has its own resolver: a null title is invalid, on both spellings', () => {
+    expect(() => resolveContractAliases({ titulo: null })).toThrow(BadRequestException);
+    expect(() => resolveContractAliases({ title: null })).toThrow(BadRequestException);
+  });
+
+  it.each([0, 1_000_000_000_000, true, {}, ['2026-01-01']])('a date that is not a string is invalid on every spelling (%j), never converted through Date()', (value) => {
+    for (const key of ['start_date', 'data_inicio', 'startsAt', 'end_date', 'data_fim', 'expiresAt']) {
+      expect(() => resolveContractAliases({ [key]: value })).toThrow(BadRequestException);
+    }
+  });
+
+  it('a string date still passes and is normalized to ISO', () => {
+    expect(resolveContractAliases({ data_inicio: '2026-01-01' }).normalized).toEqual({ start_date: '2026-01-01' });
+  });
+});

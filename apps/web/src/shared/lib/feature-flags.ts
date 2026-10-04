@@ -189,6 +189,7 @@ export const LEGACY_FEATURE_KEYS: Readonly<Record<string, string>> = { moduleRh:
 export function canonicalFeatureKeys(features: Record<string, unknown> | null | undefined): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(features ?? {})) {
+    if (key === "__proto__") continue; // never assign the prototype of the result (same guard as the API twin)
     const canonical = Object.prototype.hasOwnProperty.call(LEGACY_FEATURE_KEYS, key) ? LEGACY_FEATURE_KEYS[key] : key;
     if (canonical !== key && Object.prototype.hasOwnProperty.call(features, canonical)) continue;
     out[canonical] = value;

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "mutation-test-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "r14 third review (HEAD 9dafda6): name-level proof sound (1349 recomputed, 0 mismatches; 25 pairs/208 mutations killed by hand; 43/43 helper wiring killed). FAIL: BLOCKER M1 consumer wiring of credited boundaries unproven and undocumented (App.tsx legacyRoutes mount, TenantContext canonicalFeatureKeys, ContractWizard normalizeSavedParty/normalizeWizardSignerRecord, useMarketingAssets canonicalSourceDepartment, asset-linking canonicalAssetType, import-parser resolveDeprecatedImportHeader survive with suites green). MAJOR M2: contract-last-payment canonical precedence, plan-features __proto__ guard, contract-legacy-alias.util guards. Minor: exemption text equal to legacy name accepted, COMPILER_CHECKED counted as mutation, docs/gate wiring.",
+  "workspaceFingerprint": "baa5faf63e0e7bbe55c9f5088bafda1f6b26e1d3cb988eabbfaca33d38a694d2",
+  "fingerprintStatus": "BOUND",
+  "head": "28ca098ad512bed34f4bd64abc490b15a5039f4f",
+  "id": "evid-6de2b222",
+  "createdAt": "2026-10-04T13:46:40.462Z"
+}
