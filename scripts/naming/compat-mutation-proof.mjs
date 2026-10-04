@@ -83,10 +83,35 @@ export function routeAliases(names) {
   return out;
 }
 
-export function findMutations(text, file, names, wildcardWords = null) {
+/**
+ * The predicate of a wildcard row (`*`: every legacy word of the file). A token (no whitespace, letters, `/ : . * - @ # ? & =`, accents)
+ * with a Portuguese word is a site, so route paths (`/contratos-v2/*`), accented labels (`Estágio`) and short words (`pj`) are covered. A string with
+ * spaces is a site only in NAME position (object key, element-access argument, case label, operand of `===`/`!==`, array element):
+ * sentences (messages, descriptions) are not names. URLs are never sites.
+ */
+export function makeWildcardPredicate(ptWords) {
+  const TOKEN = /^[\p{L}\p{N}_\-.\/:*@#?&=]+$/u;
+  const SPACED = /^[\p{L}\p{N}_\-.\/:*@#?&=() ]+$/u;
+  return (n, namePosition = false) => typeof n === "string" && n.length >= 2 && !n.includes("://") && /\p{L}/u.test(n)
+    && (TOKEN.test(n) || (namePosition && SPACED.test(n))) && ptWords(n).length > 0;
+}
+
+/** True when a string literal is used as a NAME: object key, element-access argument, case label, equality operand or array element. */
+function inNamePosition(node) {
+  const p = node.parent;
+  if (!p) return false;
+  if (ts.isPropertyAssignment(p) && p.name === node) return true;
+  if (ts.isElementAccessExpression(p) && p.argumentExpression === node) return true;
+  if (ts.isCaseClause(p) && p.expression === node) return true;
+  if (ts.isBinaryExpression(p) && [ts.SyntaxKind.EqualsEqualsEqualsToken, ts.SyntaxKind.ExclamationEqualsEqualsToken, ts.SyntaxKind.EqualsEqualsToken, ts.SyntaxKind.ExclamationEqualsToken].includes(p.operatorToken.kind)) return true;
+  if (ts.isArrayLiteralExpression(p)) return true;
+  return false;
+}
+
+export function findMutations(text, file, names, wildcardWords = null, opts = {}) {
   const aliases = routeAliases(names);
   const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : undefined);
-  const isLegacy = (n) => n != null && (names.has(n) || aliases.has(n) || (wildcardWords ? wildcardWords(n) : false));
+  const isLegacy = (n, pos = false) => n != null && (names.has(n) || aliases.has(n) || (wildcardWords ? wildcardWords(n, pos) : false));
   const labelOf = (n) => aliases.get(n) ?? n;
   const lit = [];
   const swap = [];
@@ -125,7 +150,7 @@ export function findMutations(text, file, names, wildcardWords = null) {
       declarations.push({ line: lineOf(node), label: labelOf(node.name.text) });
     }
     // LEGACY_LITERAL
-    if (ts.isStringLiteralLike(node) && isLegacy(node.text) && !(node.parent && (ts.isImportDeclaration(node.parent) || ts.isExportDeclaration(node.parent) || ts.isLiteralTypeNode(node.parent) || ts.isImportTypeNode(node.parent)))) {
+    if (ts.isStringLiteralLike(node) && isLegacy(node.text, inNamePosition(node)) && !(node.parent && (ts.isImportDeclaration(node.parent) || ts.isExportDeclaration(node.parent) || ts.isLiteralTypeNode(node.parent) || ts.isImportTypeNode(node.parent)))) {
       const q = text[node.getStart(sf)];
       if (q === "'" || q === '"' || q === "`") lit.push({ operator: "LEGACY_LITERAL", line: lineOf(node), start: node.getStart(sf), end: node.getEnd(), replacement: `${q}__mutated__${q}`, label: labelOf(node.text) });
     } else if (ts.isPropertyAssignment(node) && ts.isIdentifier(node.name) && isLegacy(node.name.text)) {
@@ -163,7 +188,42 @@ export function findMutations(text, file, names, wildcardWords = null) {
     };
     fallback(sf);
   }
-  return { lit, swap, guard, legacyFirst, declarations };
+  return { lit, swap, guard, legacyFirst, declarations, census: buildCensus(sf, text, names, wildcardWords, opts.ptWords, [...lit, ...swap, ...guard]) };
+}
+
+/**
+ * CENSUS of what the mutation did NOT reach, computed from the same source text (never from the mutation result):
+ *  - unmutatedPtSites (wildcard rows only): every string, key, member name or template part with a Portuguese word that is not a mutation site;
+ *  - unmutatedNameSites (named rows): occurrences of a ledger name in syntactic forms the operators do not mutate (shorthand property,
+ *    binding element, JSX attribute, method name, template part).
+ * The audit refuses to credit a row while its census has a site that no ledger exemption (with a reason) accounts for.
+ */
+export function buildCensus(sf, text, names, wildcardWords, ptWords, sites) {
+  const siteStarts = new Set(sites.map((m) => m.start));
+  const lineOf = (n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
+  const unmutatedPtSites = [];
+  const unmutatedNameSites = [];
+  const plain = [...names].filter((n) => typeof n === "string" && n !== "*" && !n.startsWith("/"));
+  const wholeWord = (t, n) => new RegExp(`(^|[^\\p{L}\\p{N}_])${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}\\p{N}_]|$)`, "u").test(t);
+  const excludedParent = (n) => n.parent && (ts.isImportDeclaration(n.parent) || ts.isExportDeclaration(n.parent) || ts.isLiteralTypeNode(n.parent) || ts.isImportTypeNode(n.parent));
+  const visit = (node) => {
+    if (wildcardWords && ptWords) {
+      if (ts.isStringLiteralLike(node) && !excludedParent(node) && ptWords(node.text).length > 0 && !siteStarts.has(node.getStart(sf))) unmutatedPtSites.push({ line: lineOf(node), kind: "string", text: node.text.slice(0, 80) });
+      else if ((ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) && ptWords(node.text).length > 0) unmutatedPtSites.push({ line: lineOf(node), kind: "template-part", text: node.text.slice(0, 80) });
+      else if ((ts.isPropertyAssignment(node) || ts.isPropertyDeclaration(node)) && ts.isIdentifier(node.name) && ptWords(node.name.text).length > 0 && !siteStarts.has(node.name.getStart(sf))) unmutatedPtSites.push({ line: lineOf(node), kind: "key", text: node.name.text });
+      else if (ts.isPropertyAccessExpression(node) && ptWords(node.name.text).length > 0 && !siteStarts.has(node.name.getStart(sf))) unmutatedPtSites.push({ line: lineOf(node), kind: "member", text: node.name.text });
+    }
+    for (const n of plain) {
+      if (ts.isShorthandPropertyAssignment(node) && node.name.text === n) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "shorthand", text: n });
+      else if (ts.isBindingElement(node) && ((node.propertyName && ts.isIdentifier(node.propertyName) ? node.propertyName.text : ts.isIdentifier(node.name) ? node.name.text : null) === n)) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "binding", text: n });
+      else if (ts.isJsxAttribute(node) && node.name.getText(sf) === n) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "jsx-attribute", text: n });
+      else if (ts.isMethodDeclaration(node) && (ts.isIdentifier(node.name) || ts.isStringLiteralLike(node.name)) && node.name.text === n) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "method", text: n });
+      else if ((ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) && wholeWord(node.text, n)) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "template-part", text: node.text.slice(0, 80) });
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return { version: 1, names: [...names].filter((n) => typeof n === "string").sort(), wildcard: Boolean(wildcardWords), siteCount: sites.length, unmutatedPtSites, unmutatedNameSites };
 }
 
 export const apply = (text, m) => text.slice(0, m.start) + m.replacement + text.slice(m.end);
@@ -225,14 +285,31 @@ function relaxSandboxDiagnostics() {
 
 async function main() {
   // the harness rewrites sources: it must never run against the working tree being edited
-  if (ROOT === REPO && !process.argv.includes("--list")) throw new Error("refusing to mutate the working tree: pass --root <copy of the repository> (or --list to only print the pairs)");
+  if (ROOT === REPO && !process.argv.includes("--list") && !process.argv.includes("--census-only")) throw new Error("refusing to mutate the working tree: pass --root <copy of the repository> (or --list to only print the pairs)");
   relaxSandboxDiagnostics();
   const map = JSON.parse(fs.readFileSync(path.join(REPO, "docs/naming/canonical-naming-map.json"), "utf8"));
   const only = arg("--only");
   const out = path.resolve(arg("--out") ?? path.join(REPO, "docs/naming/audit/compat-mutation-proof.json"));
   const { ptWords } = await import("./pt-lexicon.mjs");
-  const wildcardWords = (n) => /^[A-Za-z_][\w-]*$/.test(n) && n.length > 2 && ptWords(n).length > 0;
+  const wildcardWords = makeWildcardPredicate(ptWords);
   let pairs = pairsFromLedger(map).filter((p) => !only || (p.file + p.test).includes(only));
+  if (process.argv.includes("--census-only")) {
+    // attaches the census to the records already judged against the SAME file bytes; no mutation, no test run, nothing else changes
+    const prior0 = fs.existsSync(out) ? JSON.parse(fs.readFileSync(out, "utf8")) : { schemaVersion: 1, results: [] };
+    const byKey = new Map(prior0.results.map((r) => [`${r.file}\u0000${r.test}`, r]));
+    let n = 0, stale = 0;
+    for (const pair of pairs) {
+      const rec = byKey.get(`${pair.file}\u0000${pair.test}`);
+      if (!rec) continue;
+      const text = fs.readFileSync(path.join(ROOT, pair.file), "utf8");
+      if (sha256(text) !== rec.fileSha256) { stale++; continue; }
+      rec.census = findMutations(text, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census;
+      n++;
+    }
+    fs.writeFileSync(out, JSON.stringify({ schemaVersion: 1, results: [...byKey.values()].sort((a, b) => (a.file + a.test).localeCompare(b.file + b.test)) }, null, 1) + "\n");
+    console.log(`census attached to ${n} records (${stale} stale records skipped)`);
+    return;
+  }
   const shard = arg("--shard"); // "i/n": this process handles the pairs whose index modulo n equals i (n sandboxes in parallel)
   if (shard && !arg("--rebind")) { const [i, n] = shard.split("/").map(Number); pairs = pairs.filter((_, k) => k % n === i); }
   const rebind = arg("--rebind");
@@ -269,7 +346,7 @@ async function main() {
     const original = fs.readFileSync(abs, "utf8");
     // resume: a pair already judged against the SAME file and test bytes is not run again (an interrupted run continues where it stopped)
     const done = results.get(`${pair.file}\u0000${pair.test}`);
-    if (done && done.verdict && done.exhaustive === true && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
+    if (done && done.verdict && done.exhaustive === true && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !(pair.wildcard && done.wildcardPredicate !== 2) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { done.census = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census; console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
     // the hashes bind to the sources that were actually mutated and tested (the --root copy); the audit compares
     // them with the repository, so any later edit of either file makes the result stale
     const realText = original;
@@ -279,6 +356,8 @@ async function main() {
     const rec = { file: pair.file, test: pair.test, fileSha256: sha256(realText), testSha256: sha256(fs.readFileSync(testAbs, "utf8")), verdict: "", mutations: [], legacyFirst: [] };
     if (baselineCache.get(pair.test) !== "pass") { rec.verdict = "BASELINE_RED"; results.set(`${pair.file}\u0000${pair.test}`, rec); console.log(`[${i + 1}/${pairs.length}] BASELINE_RED ${pair.file} <= ${pair.test}`); continue; }
     const muts = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null);
+    rec.census = muts.census;
+    if (pair.wildcard) rec.wildcardPredicate = 2;
     rec.legacyFirst = muts.legacyFirst;
     rec.declarations = muts.declarations.map((d) => d.label);
     // (string literals first, they never break compilation, then keys and member names)

@@ -32,7 +32,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "contrato",
+     "guia",
+     "videoclipe"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/common/compat/contract-last-payment.ts",
@@ -83,7 +95,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "ultimo_pagamento_em",
+     "ultimo_pagamento_por",
+     "ultimo_pagamento_valor"
+    ],
+    "wildcard": false,
+    "siteCount": 6,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/common/compat/plan-features.ts",
@@ -104,7 +128,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "moduleRh"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/common/compat/release-metadata.ts",
@@ -215,7 +249,32 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "artistasAdicionais",
+     "artistasAdicionaisAlbum",
+     "compositores",
+     "copyrightDataGravacao",
+     "copyrightDataLancamento",
+     "faixas",
+     "generoSecundario",
+     "idioma",
+     "instrumento",
+     "isVersionAlternativa",
+     "letra",
+     "nome",
+     "produtores",
+     "tipoVersao",
+     "variosArtistas"
+    ],
+    "wildcard": false,
+    "siteCount": 16,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/automation/copywriting.automation.ts",
@@ -236,7 +295,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "assessoria"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/rbac/rbac.service.ts",
@@ -342,7 +411,29 @@
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "ARTISTA",
+     "COLABORADOR",
+     "COMERCIAL",
+     "JURIDICO",
+     "PRODUTOR",
+     "rh"
+    ],
+    "wildcard": false,
+    "siteCount": 15,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": [
+     {
+      "name": "rh",
+      "line": 58,
+      "kind": "template-part",
+      "text": "rh:"
+     }
+    ]
+   }
   },
   {
    "file": "apps/api/src/core/rbac/rbac.service.ts",
@@ -373,7 +464,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "RH_MANAGER"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
@@ -443,7 +544,21 @@
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "ARTISTA",
+     "COLABORADOR",
+     "COMERCIAL",
+     "JURIDICO",
+     "PRODUTOR"
+    ],
+    "wildcard": false,
+    "siteCount": 9,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
@@ -470,7 +585,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "RH_MANAGER"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/workflow/definitions/contracts.workflow.ts",
@@ -497,7 +622,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "juridico"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/workflow/definitions/leads.workflow.ts",
@@ -554,7 +689,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "comercial"
+    ],
+    "wildcard": false,
+    "siteCount": 7,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/workflow/definitions/projects.workflow.ts",
@@ -581,7 +726,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "produtor"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/core/workflow/definitions/releases.workflow.ts",
@@ -614,7 +769,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "produtor"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/database/migration-drafts/20260930000030_CanonicalizeRoleSlugsInPlaceAndBackfillMembers.ts",
@@ -653,7 +818,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "colaborador",
+     "comercial",
+     "produtor",
+     "rh_manager"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/database/migration-drafts/20260930000030_CanonicalizeRoleSlugsInPlaceAndBackfillMembers.ts",
@@ -680,7 +858,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "juridico"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/database/migration-drafts/20261002000002_EncryptArtistsAndClientsPiiBackfill.ts",
@@ -785,7 +974,27 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "banco",
+     "celular",
+     "chave_pix",
+     "conta",
+     "data_nascimento",
+     "documento",
+     "endereco",
+     "manager_contato",
+     "telefone",
+     "titular_conta"
+    ],
+    "wildcard": false,
+    "siteCount": 15,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/database/seeds/04_rbac_seed.ts",
@@ -824,7 +1033,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "colaborador",
+     "comercial",
+     "produtor",
+     "rh_manager"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/database/seeds/04_rbac_seed.ts",
@@ -857,7 +1079,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "juridico"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
@@ -1079,7 +1312,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 34,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
@@ -1121,7 +1362,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "periodo"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artist-goals/dto/create-artist-goal.dto.ts",
@@ -1159,7 +1410,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "periodo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/artist-input-sanitizer.ts",
@@ -1240,7 +1501,27 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "banco",
+     "celular",
+     "chave_pix",
+     "conta",
+     "data_nascimento",
+     "documento",
+     "endereco",
+     "manager_contato",
+     "telefone",
+     "titular_conta"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
@@ -1747,7 +2028,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 82,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/artists.controller.ts",
@@ -1784,7 +2073,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "/artists/stats/generos",
+     "/artists/stats/vinculo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/artists.service.ts",
@@ -1814,7 +2114,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "vinculo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/dto/create-artist.dto.ts",
@@ -2135,7 +2445,67 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "agencia_booking",
+     "apple_music_albuns_url",
+     "banco",
+     "chave_pix",
+     "conta",
+     "contatos_equipe",
+     "contatos_vinculados",
+     "data_nascimento",
+     "deezer_fas",
+     "distribuidoras_emails",
+     "distribuidoras_empresa_emails",
+     "distribuidoras_empresa_selecionadas",
+     "distribuidoras_gerais",
+     "distribuidoras_selecionadas",
+     "documentos_pessoais_url",
+     "empresario_email",
+     "empresario_id",
+     "empresario_nome",
+     "empresario_telefone",
+     "endereco",
+     "especialidades",
+     "fase_carreira",
+     "galeria_urls",
+     "genero",
+     "gravadora_email",
+     "gravadora_id",
+     "gravadora_nome",
+     "gravadora_responsavel_email",
+     "gravadora_responsavel_id",
+     "gravadora_responsavel_nome",
+     "gravadora_responsavel_telefone",
+     "gravadora_telefone",
+     "instagram_seguidores",
+     "label_parceira",
+     "manager_contato",
+     "manager_nome",
+     "nome_artistico",
+     "nome_civil",
+     "notas_internas",
+     "produtor_executivo",
+     "relacionamentos",
+     "slug_artistico",
+     "soundcloud_seguidores_url",
+     "spotify_ouvintes",
+     "tags_musicais",
+     "telefone",
+     "tiktok_seguidores",
+     "tipo_perfil",
+     "titular_conta",
+     "youtube_inscritos"
+    ],
+    "wildcard": false,
+    "siteCount": 51,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/dto/create-artist.dto.ts",
@@ -2162,7 +2532,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "contrato_id",
+     "foto_url"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/artists/dto/query-artist.dto.ts",
@@ -2200,7 +2581,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "vinculo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/audiovisual/dto/audiovisual.dto.ts",
@@ -2227,7 +2618,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "videomaker"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/auth/auth-context.service.ts",
@@ -2248,7 +2649,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "moduleRh"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/auth/organization-industry.ts",
@@ -2275,7 +2686,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "escritorio",
+     "produtora"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/auth/organization-industry.ts",
@@ -2296,7 +2718,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "gravadora"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/auth/organization-industry.ts",
@@ -2335,7 +2767,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "distribuidora",
+     "editora",
+     "outro"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
@@ -2752,7 +3197,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "interacoes",
+     "tipo_pessoa"
+    ],
+    "wildcard": true,
+    "siteCount": 69,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -2773,7 +3229,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "gravadora_selo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -2806,7 +3272,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cartorio",
+     "compositor",
+     "empresario_artistico"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -2833,7 +3311,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "inpi",
+     "outros"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -3100,7 +3589,58 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "advogado",
+     "agencia",
+     "agencia_de_booking",
+     "agencia_de_modelos",
+     "agencia_de_publicidade",
+     "artista_banda",
+     "banco",
+     "construtora",
+     "contador",
+     "contratante_show",
+     "curador_musical",
+     "diretor",
+     "diretor_de_video",
+     "distribuidora_digital",
+     "empresa",
+     "empresa_de_ia",
+     "empresa_de_internet",
+     "empresa_de_som",
+     "engenheiro_de_som",
+     "estudio",
+     "fotografo",
+     "fundo_de_investimento",
+     "gateway_de_pagamento",
+     "influenciador",
+     "investidor",
+     "jornalista",
+     "marca",
+     "masterizador",
+     "oficina_mecanica",
+     "operador_de_camera",
+     "parceiro_comercial",
+     "parceiros",
+     "patrocinador",
+     "plataforma_digital",
+     "prefeitura",
+     "produtor_executivo",
+     "produtor_musical",
+     "produtora_audiovisual",
+     "produtora_de_eventos",
+     "programador",
+     "psicologo",
+     "sala_de_ensaio"
+    ],
+    "wildcard": false,
+    "siteCount": 42,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contacts/contacts.service.ts",
@@ -3187,7 +3727,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 12,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -3214,7 +3762,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "unico",
+     "valor_fixo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -3247,7 +3806,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "mensal",
+     "recorrente",
+     "trimestral"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -3292,7 +3863,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "anual",
+     "artista",
+     "misto",
+     "pessoa_fisica",
+     "pessoa_juridica"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contract-service-types/dto/create-contract-service-type.dto.ts",
@@ -3319,7 +3904,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "conteudo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contract-templates/dto/create-contract-template.dto.ts",
@@ -3364,7 +3959,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "conteudo",
+     "tipo_servico"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
@@ -3439,7 +4045,26 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "distribuicao",
+     "exclusividade",
+     "gestao",
+     "gravacao",
+     "licenciamento",
+     "outro",
+     "outros",
+     "producao",
+     "publicitario",
+     "semantico"
+    ],
+    "wildcard": false,
+    "siteCount": 10,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
@@ -3460,7 +4085,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cessao_direitos"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
@@ -3577,7 +4212,36 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 17,
+    "unmutatedPtSites": [
+     {
+      "line": 84,
+      "kind": "template-part",
+      "text": "Campos conflitantes: \""
+     },
+     {
+      "line": 84,
+      "kind": "template-part",
+      "text": "\" e o alias legado \""
+     },
+     {
+      "line": 93,
+      "kind": "template-part",
+      "text": "Campo \""
+     },
+     {
+      "line": 93,
+      "kind": "template-part",
+      "text": "\" inválido."
+     }
+    ],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
@@ -3640,7 +4304,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/contract-party-refs.ts",
@@ -3676,7 +4350,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/contracts.service.ts",
@@ -3721,7 +4403,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "exclusivo",
+     "versoes"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/dto/contract-party-ref.dto.ts",
@@ -3754,7 +4447,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 3,
+    "unmutatedPtSites": [
+     {
+      "line": 43,
+      "kind": "string",
+      "text": "Deprecated alias of `client` (+ `nome`) for web builds older than the English em"
+     }
+    ],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/dto/create-contract.dto.ts",
@@ -3864,7 +4571,24 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "arquivo_url",
+     "data_fim",
+     "data_inicio",
+     "exclusivo",
+     "tipo",
+     "titulo",
+     "valor",
+     "versoes"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/contracts/dto/query-contract.dto.ts",
@@ -3902,7 +4626,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "tipo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
@@ -3983,7 +4717,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "Atendimento",
+     "Comercial",
+     "Financeiro",
+     "Suporte",
+     "Triagem"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/conversations/musicchat-vocabulary.ts",
@@ -4088,7 +4836,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 15,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/events/dto/events.dto.ts",
@@ -4151,7 +4907,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "contato_local",
+     "endereco",
+     "participantes",
+     "publico_esperado"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/finance-category-rules/dto/finance-category-rules.dto.ts",
@@ -4178,7 +4947,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts",
@@ -4199,7 +4976,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "condicoes"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts",
@@ -4226,7 +5013,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "calculo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
@@ -4343,7 +5140,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 16,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
@@ -4412,7 +5217,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "calculo",
+     "condicoes"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
@@ -4445,7 +5261,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "data_demissao",
+     "departamento",
+     "salario"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
@@ -4484,7 +5312,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cargo",
+     "data_admissao",
+     "telefone",
+     "tipo_contrato"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -4505,7 +5346,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "documento_url"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -4526,7 +5377,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "motivo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -4571,7 +5432,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "aprovado_por",
+     "dias_totais",
+     "funcionario_id",
+     "observacoes"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -4604,7 +5478,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "arquivo_url",
+     "competencia"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -4625,7 +5510,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "pago_em"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -4706,7 +5601,23 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "data_pagamento",
+     "descontos",
+     "funcionario_id",
+     "mes_referencia",
+     "observacoes",
+     "salario_bruto",
+     "salario_liquido"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/hr-legacy-fields.ts",
@@ -4913,7 +5824,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 44,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/hr.controller.ts",
@@ -4934,7 +5853,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "setor"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/hr/hr.controller.ts",
@@ -4955,7 +5884,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "competencia"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
@@ -4994,7 +5933,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "duracao",
+     "editora"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
@@ -5069,7 +6019,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "coautores",
+     "compositor",
+     "genero",
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 10,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/inventory/dto/inventory.dto.ts",
@@ -5126,7 +6089,22 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "data_entrada",
+     "local_compra",
+     "localizacao",
+     "quantidade",
+     "responsavel",
+     "setor"
+    ],
+    "wildcard": false,
+    "siteCount": 7,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/inventory/inventory-legacy-fields.ts",
@@ -5225,7 +6203,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 14,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/invoices/dto/invoices.dto.ts",
@@ -5246,7 +6232,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "venda_id"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/invoices/dto/invoices.dto.ts",
@@ -5321,7 +6317,25 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "codigo_servico",
+     "condicao_pagamento",
+     "data_emissao",
+     "forma_pagamento",
+     "itens",
+     "numero",
+     "quantidade",
+     "tomador_razao_social",
+     "vencimento"
+    ],
+    "wildcard": false,
+    "siteCount": 10,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/invoices/invoice-legacy-fields.ts",
@@ -5426,7 +6440,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 15,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/leads/dto/leads.dto.ts",
@@ -5465,7 +6487,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "dadosInternosCRM",
+     "empresa",
+     "nomeArtistico",
+     "payloadServico"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/leads/lead-vocabulary.ts",
@@ -6163,7 +7198,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 106,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
@@ -6202,7 +7245,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "moeda",
+     "obra_musical",
+     "tipo_uso"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
@@ -6253,7 +7309,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cliente",
+     "midia_destino",
+     "projeto",
+     "territorio",
+     "valor"
+    ],
+    "wildcard": false,
+    "siteCount": 6,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
@@ -6494,7 +7564,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 29,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
@@ -7664,7 +8742,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 172,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
@@ -7732,7 +8818,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "contact_pf_classification"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
@@ -7999,7 +9095,53 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "artista",
+     "artista_banda",
+     "campanha",
+     "consultoria",
+     "conteudo",
+     "contratante_show",
+     "corporativo",
+     "design_grafico",
+     "distribuicao_digital",
+     "em_contato",
+     "empresa",
+     "ensaios",
+     "entrevistas",
+     "eventos",
+     "fechado",
+     "gestao_artistica",
+     "gravadora_selo",
+     "influenciador",
+     "licenciamento",
+     "marca_empresa",
+     "masterizacao",
+     "mixagem",
+     "novo_lead",
+     "outro",
+     "perdido",
+     "producao_audiovisual",
+     "producao_conteudo",
+     "producao_musical",
+     "produtora_eventos",
+     "programas_tv",
+     "projeto_musical",
+     "proposta_enviada",
+     "qualificado",
+     "reunioes",
+     "sessoes_estudio",
+     "sessoes_fotos"
+    ],
+    "wildcard": false,
+    "siteCount": 42,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
@@ -8170,7 +9312,42 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agregadora",
+     "arquivo_audio",
+     "classificacao",
+     "cod_entidade",
+     "criada_por_ia",
+     "data_lancamento",
+     "duracao_min",
+     "duracao_seg",
+     "emissao",
+     "gravacao_original",
+     "gravadora",
+     "interprete",
+     "isrc_ano",
+     "isrc_designacao",
+     "isrc_pais",
+     "isrc_registrante",
+     "midia",
+     "musicoAcompanhante",
+     "nacional",
+     "pais_origem",
+     "pais_publicacao",
+     "participacao",
+     "percentual",
+     "produtorFonografico",
+     "pub_simultanea",
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 26,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
@@ -8250,7 +9427,31 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 8,
+    "unmutatedPtSites": [
+     {
+      "line": 61,
+      "kind": "string",
+      "text": "Campos conflitantes."
+     },
+     {
+      "line": 70,
+      "kind": "string",
+      "text": "Registro vinculado inválido. Selecione um registro existente."
+     },
+     {
+      "line": 79,
+      "kind": "string",
+      "text": "title inválido."
+     }
+    ],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.ts",
@@ -8313,7 +9514,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
@@ -8556,7 +9767,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "duracao_min",
+     "duracao_seg",
+     "participacao"
+    ],
+    "wildcard": true,
+    "siteCount": 39,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/phonograms/phonograms.controller.ts",
@@ -8587,7 +9810,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "/phonograms/stats/generos"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
@@ -8614,7 +9847,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/projects/dto/projects.dto.ts",
@@ -8795,7 +10038,26 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "compositores",
+     "duracaoMin",
+     "duracaoSeg",
+     "genero",
+     "idioma",
+     "interpretes",
+     "letra",
+     "musicas",
+     "orcamento",
+     "produtores"
+    ],
+    "wildcard": false,
+    "siteCount": 12,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/projects/dto/projects.dto.ts",
@@ -8928,7 +10190,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "nao",
+     "sim"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/registry/payloads/society-payload-builder.service.ts",
@@ -8989,7 +10262,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cantor",
+     "produtor"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
@@ -9039,7 +10323,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artistas"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/releases/dto/releases.dto.ts",
@@ -9078,7 +10372,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cronograma",
+     "gravadora",
+     "idioma",
+     "notas_internas"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/releases/release-artist-ref.ts",
@@ -9101,7 +10408,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
@@ -9200,7 +10515,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 15,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
@@ -9335,7 +10658,31 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "artistasAdicionaisAlbum",
+     "compositores",
+     "copyrightDataGravacao",
+     "copyrightDataLancamento",
+     "faixa_idioma",
+     "generoSecundario",
+     "isVersionAlternativa",
+     "letra",
+     "nome",
+     "nome_ep_album",
+     "status_projeto",
+     "tipoVersao",
+     "tipo_lancamento",
+     "variosArtistas"
+    ],
+    "wildcard": false,
+    "siteCount": 20,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
@@ -10358,7 +11705,184 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "agenciaBooking",
+     "agregadora",
+     "appleMusicAlbunsUrl",
+     "arquivoAudio",
+     "arquivoUrl",
+     "artista",
+     "bairro",
+     "banco",
+     "baseCalculo",
+     "cargo",
+     "categoria",
+     "chavePix",
+     "cidade",
+     "classificacao",
+     "cliente",
+     "codEntidade",
+     "codigoMunicipio",
+     "codigoServico",
+     "codigoServicoMunicipal",
+     "complemento",
+     "compositor",
+     "compositores",
+     "condicaoPagamento",
+     "conta",
+     "contatoLocal",
+     "contatosEquipe",
+     "contatosVinculados",
+     "conteudo",
+     "contratoId",
+     "criadaPorIa",
+     "dataAdmissao",
+     "dataDemissao",
+     "dataEmissao",
+     "dataEntrada",
+     "dataFim",
+     "dataIdentificacao",
+     "dataInicio",
+     "dataLancamento",
+     "dataNascimento",
+     "deezerFas",
+     "departamento",
+     "descricao",
+     "distribuidorasEmails",
+     "distribuidorasEmpresaEmails",
+     "distribuidorasEmpresaSelecionadas",
+     "distribuidorasGerais",
+     "distribuidorasSelecionadas",
+     "documentosPessoaisUrl",
+     "duracaoMin",
+     "duracaoSeg",
+     "editora",
+     "emissao",
+     "empresa",
+     "empresarioEmail",
+     "empresarioId",
+     "empresarioNome",
+     "empresarioTelefone",
+     "endereco",
+     "enderecoCompleto",
+     "especialidades",
+     "estado",
+     "evidencias",
+     "exclusivo",
+     "faseCarreira",
+     "formaPagamento",
+     "foto",
+     "fotoUrl",
+     "funcao",
+     "galeriaUrls",
+     "genero",
+     "gravacaoOriginal",
+     "gravadora",
+     "gravadoraEmail",
+     "gravadoraId",
+     "gravadoraNome",
+     "gravadoraResponsavelEmail",
+     "gravadoraResponsavelId",
+     "gravadoraResponsavelNome",
+     "gravadoraResponsavelTelefone",
+     "gravadoraTelefone",
+     "iaHarmonia",
+     "iaLetra",
+     "iaMelodia",
+     "idioma",
+     "instagramSeguidores",
+     "interpretes",
+     "isrcAno",
+     "isrcDesignacao",
+     "isrcPais",
+     "isrcRegistrante",
+     "issRetido",
+     "labelParceira",
+     "letra",
+     "letraCompleta",
+     "letristas",
+     "logradouro",
+     "managerContato",
+     "managerNome",
+     "midia",
+     "midiaDestino",
+     "moeda",
+     "motivo",
+     "nacional",
+     "naturezaOperacao",
+     "nome",
+     "nomeArtistico",
+     "nomeCivil",
+     "notasInternas",
+     "numero",
+     "numeroNotaFiscal",
+     "obraAfetada",
+     "obraMusical",
+     "observacao",
+     "orcamento",
+     "outrosTitulos",
+     "paisOrigem",
+     "paisPublicacao",
+     "participacao",
+     "participantes",
+     "percentual",
+     "perfil",
+     "periodo",
+     "plataforma",
+     "prioridade",
+     "prioridadeContato",
+     "produtorExecutivo",
+     "produtores",
+     "projeto",
+     "pubSimultanea",
+     "publicoEsperado",
+     "quantidade",
+     "razaoSocial",
+     "referenciasConexas",
+     "relacionamentos",
+     "responsavel",
+     "responsavelCargo",
+     "responsavelEmail",
+     "responsavelNome",
+     "responsavelTelefone",
+     "salario",
+     "slugArtistico",
+     "soundcloudSeguidoresUrl",
+     "spotifyOuvintes",
+     "statusCadastro",
+     "tagsMusicais",
+     "telefone",
+     "territorio",
+     "tiktokSeguidores",
+     "tipoContrato",
+     "tipoIa",
+     "tipoNota",
+     "tipoObra",
+     "tipoPerfil",
+     "tipoPessoa",
+     "tipoUso",
+     "titularConta",
+     "tomadorCep",
+     "tomadorInscricaoEstadual",
+     "tomadorInscricaoMunicipal",
+     "tomadorRazaoSocial",
+     "tomadorUf",
+     "urlInfracao",
+     "valor",
+     "vencimento",
+     "versoes",
+     "videomaker",
+     "youtubeInscritos"
+    ],
+    "wildcard": false,
+    "siteCount": 168,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/reports/import/import-mapper.service.ts",
@@ -10591,7 +12115,22 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "compositores",
+     "faixa_idioma",
+     "letra",
+     "letristas",
+     "nome"
+    ],
+    "wildcard": false,
+    "siteCount": 6,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
@@ -10641,7 +12180,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/shares/dto/shares.dto.ts",
@@ -10716,7 +12263,26 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "acordo_notas",
+     "acordo_url",
+     "artista_externo",
+     "artista_project_id",
+     "data_prevista",
+     "historico",
+     "origem_acordo",
+     "pagador",
+     "pagador_contato",
+     "versao"
+    ],
+    "wildcard": false,
+    "siteCount": 10,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/shares/share-legacy-fields.ts",
@@ -11013,7 +12579,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 47,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/takedowns/dto/takedowns.dto.ts",
@@ -11094,7 +12668,24 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "data_identificacao",
+     "evidencias",
+     "motivo",
+     "obra_afetada",
+     "plataforma",
+     "prioridade",
+     "url_infracao"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/takedowns/takedown-legacy-fields.ts",
@@ -11187,7 +12778,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 13,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -11214,7 +12813,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "outros"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -11235,7 +12844,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "pro_labore"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -11292,7 +12911,23 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "design-grafico",
+     "direitos-autorais",
+     "participacao-show-evento",
+     "recebimentos-externos-streaming",
+     "receitas-musicais",
+     "servicos",
+     "show-evento"
+    ],
+    "wildcard": false,
+    "siteCount": 7,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -12027,7 +13662,136 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "acessorios",
+     "adiantamento",
+     "administrativo",
+     "agua",
+     "alimentacao",
+     "aluguel",
+     "anuncios",
+     "aplicacao",
+     "apoio-cultural",
+     "ar-condicionado",
+     "armazenamento",
+     "assessoria-imprensa",
+     "assessoria-juridica",
+     "automacao",
+     "beats-avulsos",
+     "bonus-incentivo",
+     "bonus-premiacao",
+     "brindes-promocionais",
+     "cenografia-pirotecnia",
+     "certificacao",
+     "comissao",
+     "computador",
+     "consultoria",
+     "contabil-fiscal",
+     "correios-logistica",
+     "criacao-site",
+     "curso-gestao",
+     "curso-marketing",
+     "curso-mixagem",
+     "curso-producao",
+     "direitos-conexos",
+     "eletrica",
+     "ensaio",
+     "entre-contas",
+     "equipamentos",
+     "evento-lancamento",
+     "evento-networking",
+     "fee-administrativo",
+     "fone-ouvido",
+     "formacao",
+     "fotografia",
+     "fotografia-audiovisual",
+     "gestao-redes-sociais",
+     "gravacao-estudio",
+     "hora-extra",
+     "hospedagem",
+     "ia",
+     "iluminacao",
+     "impostos",
+     "infraestrutura",
+     "instrumento-musical",
+     "juros",
+     "licenca-software",
+     "licenciamento",
+     "licenciamento-fonograma",
+     "licenciamento-obra",
+     "licenciamento-obras",
+     "locacao-equipamentos",
+     "locacao-estudio",
+     "luz",
+     "marketing-divulgacao",
+     "marketing-trafego-pr",
+     "masterizacao",
+     "material-promocional",
+     "mentoria",
+     "mesa-som",
+     "microfone",
+     "mixagem",
+     "mobiliario",
+     "monitor-referencia",
+     "multa-contratual",
+     "multas",
+     "pagamento-diaria",
+     "passagens",
+     "patrocinio",
+     "pesquisa-mercado",
+     "prestador-autonomo",
+     "pro-labore",
+     "producao-audiovisual",
+     "producao-musical",
+     "produtos",
+     "publicidade",
+     "receitas-contratuais",
+     "receitas-internas",
+     "redes-sociais",
+     "reembolso",
+     "reembolso-alimentacao",
+     "reembolso-hospedagem",
+     "reembolso-materiais",
+     "reembolso-recebido",
+     "reembolso-transporte",
+     "reforma-escritorio",
+     "reforma-estudio",
+     "remuneracao",
+     "repasse-contrato",
+     "resgate",
+     "salario",
+     "seguranca",
+     "servicos-cloud",
+     "servicos-pf",
+     "sessao-producao",
+     "simples-nacional",
+     "sincronizacao",
+     "suporte-financeiro",
+     "tarifas-plataformas",
+     "taxas-bancarias",
+     "tecnologia",
+     "telefonia",
+     "ti-desenvolvimento-saas",
+     "trafego-pago",
+     "transporte",
+     "tratamento-acustico",
+     "venda-beats",
+     "venda-merchandising",
+     "venda-nfts",
+     "venda-produtos-digitais",
+     "venda-produtos-fisicos",
+     "venda-show-fechado",
+     "viagens",
+     "videoclipe"
+    ],
+    "wildcard": false,
+    "siteCount": 120,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-legacy-fields.ts",
@@ -12488,7 +14252,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 43,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/works/dto/create-work.dto.ts",
@@ -12569,7 +14341,27 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "compositor",
+     "editora",
+     "ia_melodia",
+     "idioma",
+     "letra_completa",
+     "letristas",
+     "outros_titulos",
+     "participantes",
+     "referencias_conexas",
+     "tipo_ia",
+     "tipo_obra"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/works/dto/create-work.dto.ts",
@@ -12614,7 +14406,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "cod_entidade",
+     "compositores",
+     "criada_por_ia",
+     "ia_harmonia",
+     "ia_letra"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/works/dto/query-work.dto.ts",
@@ -12635,7 +14441,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "tipo_obra"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
@@ -13015,7 +14831,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "idioma",
+     "participantes"
+    ],
+    "wildcard": true,
+    "siteCount": 70,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/api/src/modules/works/works.controller.ts",
@@ -13046,7 +14873,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "/works/stats/generos"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/app/routes/legacy-redirects.tsx",
@@ -13097,7 +14934,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 51,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/accounting/constants/invoice-payment-methods.ts",
@@ -13136,7 +14981,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "cartao_credito",
+     "cartao_debito",
+     "dinheiro",
+     "transferencia"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
@@ -13187,7 +15045,22 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "das",
+     "icms",
+     "iptu",
+     "ipva",
+     "irrf",
+     "pro_labore"
+    ],
+    "wildcard": false,
+    "siteCount": 6,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
@@ -13976,7 +15849,144 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "acessorios",
+     "adiantamento",
+     "administrativo",
+     "agua",
+     "alimentacao",
+     "aluguel",
+     "anuncios",
+     "aplicacao",
+     "apoio-cultural",
+     "ar-condicionado",
+     "armazenamento",
+     "assessoria-imprensa",
+     "assessoria-juridica",
+     "automacao",
+     "beats-avulsos",
+     "bonus-incentivo",
+     "bonus-premiacao",
+     "brindes-promocionais",
+     "cenografia-pirotecnia",
+     "certificacao",
+     "comissao",
+     "computador",
+     "consultoria",
+     "contabil-fiscal",
+     "correios-logistica",
+     "criacao-site",
+     "curso-gestao",
+     "curso-marketing",
+     "curso-mixagem",
+     "curso-producao",
+     "design-grafico",
+     "direitos-autorais",
+     "direitos-conexos",
+     "eletrica",
+     "ensaio",
+     "entre-contas",
+     "equipamentos",
+     "evento-lancamento",
+     "evento-networking",
+     "fee-administrativo",
+     "fone-ouvido",
+     "formacao",
+     "fotografia",
+     "fotografia-audiovisual",
+     "gestao-redes-sociais",
+     "gravacao-estudio",
+     "hora-extra",
+     "hospedagem",
+     "ia",
+     "iluminacao",
+     "impostos",
+     "infraestrutura",
+     "instrumento-musical",
+     "juros",
+     "licenca-software",
+     "licenciamento",
+     "licenciamento-fonograma",
+     "licenciamento-obra",
+     "licenciamento-obras",
+     "locacao-equipamentos",
+     "locacao-estudio",
+     "luz",
+     "marketing-divulgacao",
+     "marketing-trafego-pr",
+     "masterizacao",
+     "material-promocional",
+     "mentoria",
+     "mesa-som",
+     "microfone",
+     "mixagem",
+     "mobiliario",
+     "monitor-referencia",
+     "multa-contratual",
+     "multas",
+     "outros",
+     "pagamento-diaria",
+     "participacao-show-evento",
+     "passagens",
+     "patrocinio",
+     "pesquisa-mercado",
+     "prestador-autonomo",
+     "pro-labore",
+     "producao-audiovisual",
+     "producao-musical",
+     "produtos",
+     "publicidade",
+     "recebimentos-externos-streaming",
+     "receitas-contratuais",
+     "receitas-internas",
+     "receitas-musicais",
+     "redes-sociais",
+     "reembolso",
+     "reembolso-alimentacao",
+     "reembolso-hospedagem",
+     "reembolso-materiais",
+     "reembolso-recebido",
+     "reembolso-transporte",
+     "reforma-escritorio",
+     "reforma-estudio",
+     "remuneracao",
+     "repasse-contrato",
+     "resgate",
+     "salario",
+     "seguranca",
+     "servicos",
+     "servicos-cloud",
+     "servicos-pf",
+     "sessao-producao",
+     "show-evento",
+     "simples-nacional",
+     "sincronizacao",
+     "suporte-financeiro",
+     "tarifas-plataformas",
+     "taxas-bancarias",
+     "tecnologia",
+     "telefonia",
+     "ti-desenvolvimento-saas",
+     "trafego-pago",
+     "transporte",
+     "tratamento-acustico",
+     "venda-beats",
+     "venda-merchandising",
+     "venda-nfts",
+     "venda-produtos-digitais",
+     "venda-produtos-fisicos",
+     "venda-show-fechado",
+     "viagens",
+     "videoclipe"
+    ],
+    "wildcard": false,
+    "siteCount": 129,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
@@ -13997,7 +16007,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "pro_labore"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/accounting/utils/financialRules.utils.ts",
@@ -14084,7 +16104,34 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "Artista",
+     "Contrato",
+     "Despesa",
+     "Empresa",
+     "Evento",
+     "Governo",
+     "Imposto",
+     "Investimento",
+     "Pessoa",
+     "Projeto",
+     "Receita"
+    ],
+    "wildcard": false,
+    "siteCount": 12,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": [
+     {
+      "name": "Contrato",
+      "line": 313,
+      "kind": "template-part",
+      "text": "Contrato referente a: "
+     }
+    ]
+   }
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
@@ -14141,7 +16188,23 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "assessoria",
+     "contador",
+     "editora_musical",
+     "empresario",
+     "financeiro",
+     "gestor",
+     "juridico"
+    ],
+    "wildcard": false,
+    "siteCount": 7,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
@@ -14221,7 +16284,24 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "data_nascimento",
+     "documentos_pessoais_url",
+     "genero_musical",
+     "nome_artistico",
+     "nome_civil",
+     "notas_internas",
+     "observacoes",
+     "tipo_perfil"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/artist/lib/contract-type-filters.ts",
@@ -14248,7 +16328,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "representacao",
+     "servicos"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/artist/lib/contract-type-filters.ts",
@@ -14281,7 +16372,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "exclusivo",
+     "nao_exclusivo",
+     "parceria"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/artist/lib/distributor-id.ts",
@@ -14302,7 +16405,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "outros"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/artist/lib/revenue-nature.ts",
@@ -14370,7 +16483,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "anuncio",
+     "licenc",
+     "patroc",
+     "publi"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/auth/constants/organization-industry.ts",
@@ -14415,7 +16541,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "distribuidora",
+     "gravadora",
+     "outro",
+     "produtora"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/auth/constants/organization-industry.ts",
@@ -14488,7 +16628,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "editora",
+     "escritorio"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/auth/services/activation-plans.service.ts",
@@ -14521,7 +16672,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "/ano",
+     "anual",
+     "mensal"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
@@ -14551,7 +16714,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "nome",
+     "produtores"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
@@ -14572,7 +16746,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/components/ContractFormModal.tsx",
@@ -14767,7 +16951,32 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "agenciamento",
+     "cessao_direitos",
+     "distribuicao",
+     "edicao",
+     "empresariamento",
+     "exclusividade",
+     "gestao",
+     "gravacao",
+     "licenciamento",
+     "outros",
+     "parceria",
+     "producao_audiovisual",
+     "producao_musical",
+     "publicidade",
+     "publicitario",
+     "suporte_financeiro"
+    ],
+    "wildcard": false,
+    "siteCount": 30,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
@@ -14912,7 +17121,27 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "cessao_direitos",
+     "distribuicao",
+     "exclusividade",
+     "gestao",
+     "gravacao",
+     "licenciamento",
+     "outro",
+     "outros",
+     "producao",
+     "publicitario",
+     "semantico"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
@@ -14968,7 +17197,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "CPF_REPRESENTANTE",
+     "NACIONALIDADE",
+     "PROFISSAO"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-placeholders.ts",
@@ -15067,7 +17308,30 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "CELULAR",
+     "ENDERECO",
+     "ESTADO_CIVIL",
+     "NOME",
+     "NOME_ARTISTICO",
+     "NOME_CIVIL",
+     "OBRA",
+     "OBRA_MUSICAL",
+     "PRAZO",
+     "RAZAO_SOCIAL",
+     "REPRESENTANTE_LEGAL",
+     "RG_REPRESENTANTE",
+     "TELEFONE",
+     "VIGENCIA"
+    ],
+    "wildcard": false,
+    "siteCount": 14,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
@@ -15094,7 +17358,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "anual",
+     "mensal"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
@@ -15157,7 +17432,24 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "misto",
+     "pessoa_fisica",
+     "pessoa_juridica",
+     "recorrente",
+     "trimestral",
+     "unico",
+     "valor_fixo"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
@@ -15244,7 +17536,28 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "assinatura",
+     "exclusiva",
+     "financeiro",
+     "licenca",
+     "nao_exclusiva",
+     "obra_musical",
+     "participantes",
+     "personalizada",
+     "pessoa_fisica",
+     "pessoa_juridica",
+     "sistema",
+     "vigencia"
+    ],
+    "wildcard": false,
+    "siteCount": 12,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
@@ -15289,7 +17602,20 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "nome",
+     "obrigatorio",
+     "ordem"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
@@ -15454,7 +17780,38 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artistas",
+     "casado",
+     "cpf_representante",
+     "divorciado",
+     "endereco",
+     "endereco_representante",
+     "estado_civil",
+     "estado_civil_representante",
+     "nacionalidade",
+     "nacionalidade_representante",
+     "nome_artistico",
+     "nome_civil",
+     "pf",
+     "profissao",
+     "profissao_representante",
+     "razao_social",
+     "representante_legal",
+     "rg_representante",
+     "solteiro",
+     "telefone",
+     "uniao_estavel",
+     "viuvo"
+    ],
+    "wildcard": false,
+    "siteCount": 25,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/contracts/schemas/contract-schema.ts",
@@ -15487,7 +17844,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "empresario",
+     "produtor"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
@@ -15766,7 +18135,60 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "advogado",
+     "agencia",
+     "agencia_de_booking",
+     "agencia_de_modelos",
+     "agencia_de_publicidade",
+     "artista_banda",
+     "banco",
+     "compositor",
+     "construtora",
+     "contador",
+     "contratante_show",
+     "curador_musical",
+     "diretor",
+     "diretor_de_video",
+     "distribuidora_digital",
+     "empresa",
+     "empresa_de_ia",
+     "empresa_de_internet",
+     "empresa_de_som",
+     "empresario_artistico",
+     "engenheiro_de_som",
+     "estudio",
+     "fotografo",
+     "fundo_de_investimento",
+     "gateway_de_pagamento",
+     "influenciador",
+     "investidor",
+     "jornalista",
+     "marca",
+     "masterizador",
+     "oficina_mecanica",
+     "operador_de_camera",
+     "parceiro_comercial",
+     "parceiros",
+     "patrocinador",
+     "plataforma_digital",
+     "prefeitura",
+     "produtor_executivo",
+     "produtor_musical",
+     "produtora_audiovisual",
+     "produtora_de_eventos",
+     "programador",
+     "psicologo",
+     "sala_de_ensaio"
+    ],
+    "wildcard": false,
+    "siteCount": 44,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
@@ -15799,7 +18221,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "cartorio",
+     "gravadora_selo",
+     "outros"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/dashboard/lib/audit-activity.ts",
@@ -15968,7 +18402,26 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artistas",
+     "clientes",
+     "contratos",
+     "eventos",
+     "fonogramas",
+     "lancamentos",
+     "nome",
+     "nome_artistico",
+     "obras",
+     "transacoes"
+    ],
+    "wildcard": false,
+    "siteCount": 10,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
@@ -16031,7 +18484,24 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "capacidade",
+     "descricao",
+     "horario",
+     "horario_fim",
+     "observacoes",
+     "participantes",
+     "tipo_evento",
+     "valor_cache"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
@@ -16058,7 +18528,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "horario_inicio",
+     "publico_esperado"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/events/lib/event-type.ts",
@@ -16133,7 +18614,25 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "entrevista",
+     "evento_corporativo",
+     "gravacao",
+     "gravacoes",
+     "lancamento",
+     "reuniao",
+     "rodeio",
+     "show_teatro",
+     "turne"
+    ],
+    "wildcard": false,
+    "siteCount": 10,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/integrations/hooks/useNfe.ts",
@@ -16154,7 +18653,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "proprio"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
@@ -16223,7 +18732,25 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "alcance",
+     "captacao_leads",
+     "conversao",
+     "conversoes",
+     "crescimento_seguidores",
+     "engajamento",
+     "seguidores",
+     "visualizacao_video",
+     "visualizacoes"
+    ],
+    "wildcard": false,
+    "siteCount": 9,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/audioVocabulary.ts",
@@ -16262,7 +18789,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "alta",
+     "baixa"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
@@ -16301,7 +18839,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "direto",
+     "misto"
+    ],
+    "wildcard": false,
+    "siteCount": 4,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
@@ -16346,7 +18895,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "melancolico",
+     "narrativo",
+     "positivo"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/pending.ts",
@@ -16367,7 +18928,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "pendente"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
@@ -17360,7 +19931,15 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [],
+    "wildcard": true,
+    "siteCount": 166,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
@@ -17393,7 +19972,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "conteudo"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
@@ -17414,7 +20003,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "operacoes"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/musicchat/components/TriageMenuBuilder.tsx",
@@ -17441,7 +20040,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "Atendimento",
+     "Triagem"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/musicchat/pages/MusicChatAutomationSettings.tsx",
@@ -17468,7 +20078,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "Atendimento",
+     "Triagem"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/musicchat/services/conversations.service.ts",
@@ -17489,7 +20110,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "assunto"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
@@ -17516,7 +20147,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "nao",
+     "sim"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
@@ -17561,7 +20203,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "electronico",
+     "eletronica",
+     "eletronico"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
@@ -18105,7 +20759,23 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "compositores",
+     "letra",
+     "nome",
+     "percentual",
+     "produtores",
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 17,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/releases/lib/release-metadata.ts",
@@ -18228,7 +20898,33 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "artistasAdicionais",
+     "artistasAdicionaisAlbum",
+     "compositores",
+     "copyrightDataGravacao",
+     "copyrightDataLancamento",
+     "faixas",
+     "generoSecundario",
+     "genero_secundario",
+     "idioma",
+     "instrumento",
+     "isVersionAlternativa",
+     "letra",
+     "nome",
+     "produtores",
+     "tipoVersao",
+     "variosArtistas"
+    ],
+    "wildcard": false,
+    "siteCount": 18,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/releases/lib/release-status.tsx",
@@ -18255,7 +20951,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "rejeitado",
+     "remocao"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/releases/types/index.ts",
@@ -18323,7 +21030,17 @@
    ],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "percentual"
+    ],
+    "wildcard": false,
+    "siteCount": 0,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/releases/types/index.ts",
@@ -18360,7 +21077,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "ar_gestao",
+     "financeiro_contabil"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
@@ -18381,7 +21109,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "contact-individual-videomaker"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/settings/hooks/useUserSettings.ts",
@@ -18450,7 +21188,25 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "auto_alerta_financeiro",
+     "auto_lembrete_renovacao",
+     "auto_notificar_vencimento",
+     "auto_relatorio_semanal",
+     "cargo",
+     "notify_contratos",
+     "notify_financeiro",
+     "notify_lancamentos",
+     "setor"
+    ],
+    "wildcard": false,
+    "siteCount": 9,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
@@ -18723,7 +21479,54 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "agencia",
+     "artista",
+     "artista_banda",
+     "campanha",
+     "consultoria",
+     "contact_pf_classification",
+     "conteudo",
+     "contratante_show",
+     "corporativo",
+     "design_grafico",
+     "distribuicao_digital",
+     "em_contato",
+     "empresa",
+     "ensaios",
+     "entrevistas",
+     "eventos",
+     "fechado",
+     "gestao_artistica",
+     "gravadora_selo",
+     "influenciador",
+     "licenciamento",
+     "marca_empresa",
+     "masterizacao",
+     "mixagem",
+     "novo_lead",
+     "outro",
+     "perdido",
+     "producao_audiovisual",
+     "producao_conteudo",
+     "producao_musical",
+     "produtora_eventos",
+     "programas_tv",
+     "projeto_musical",
+     "proposta_enviada",
+     "qualificado",
+     "reunioes",
+     "sessoes_estudio",
+     "sessoes_fotos"
+    ],
+    "wildcard": false,
+    "siteCount": 43,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/settings/lib/user-status.ts",
@@ -18773,7 +21576,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "ativo",
+     "inativo",
+     "pendente"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/modules/settings/lib/user-status.ts",
@@ -18794,7 +21609,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "suspenso"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/components/StatusBadge.tsx",
@@ -18839,7 +21664,21 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "cancelado",
+     "concluido",
+     "em_andamento",
+     "pendente",
+     "rascunho"
+    ],
+    "wildcard": false,
+    "siteCount": 5,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/components/StatusBadge.tsx",
@@ -18974,7 +21813,36 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "agendada",
+     "agendado",
+     "analise",
+     "aprovado",
+     "arquivado",
+     "ativa",
+     "ativo",
+     "atrasado",
+     "concluida",
+     "conectado",
+     "em_analise",
+     "em_producao",
+     "inativo",
+     "pago",
+     "pausado",
+     "planejamento",
+     "producao",
+     "publicado",
+     "rejeitado",
+     "revisao"
+    ],
+    "wildcard": false,
+    "siteCount": 20,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/hooks/useHasRole.ts",
@@ -19025,7 +21893,22 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "artista",
+     "colaborador",
+     "comercial",
+     "juridico",
+     "produtor",
+     "rh_manager"
+    ],
+    "wildcard": false,
+    "siteCount": 6,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/lib/category-labels.ts",
@@ -19199,7 +22082,19 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "producao_audiovisual",
+     "publicitario",
+     "semantico"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/lib/category-labels.ts",
@@ -19262,7 +22157,24 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "cessao_direitos",
+     "distribuicao",
+     "edicao",
+     "gestao",
+     "gravacao",
+     "juridico",
+     "producao",
+     "producao_musical"
+    ],
+    "wildcard": false,
+    "siteCount": 8,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/lib/feature-flags.ts",
@@ -19283,7 +22195,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "moduleRh"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/lib/legacy-title.ts",
@@ -19313,7 +22235,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "titulo"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/lib/masks.ts",
@@ -19333,7 +22265,18 @@
    ],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "ViaCEPResponse",
+     "fetchAddressByCEP"
+    ],
+    "wildcard": false,
+    "siteCount": 0,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "apps/web/src/shared/lib/permission-map.ts",
@@ -19354,7 +22297,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false
+   "diagnosticsRelaxed": false,
+   "census": {
+    "version": 1,
+    "names": [
+     "rh"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "packages/auth/src/permissions.ts",
@@ -19381,7 +22334,18 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "RH",
+     "rh"
+    ],
+    "wildcard": false,
+    "siteCount": 2,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "packages/auth/src/permissions.ts",
@@ -19480,7 +22444,27 @@
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "ARTISTA",
+     "COLABORADOR",
+     "COMERCIAL",
+     "JURIDICO",
+     "PRODUTOR",
+     "RH_MANAGER",
+     "artista",
+     "colaborador",
+     "comercial",
+     "produtor",
+     "rh_manager"
+    ],
+    "wildcard": false,
+    "siteCount": 11,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "packages/types/src/enums.ts",
@@ -19501,7 +22485,17 @@
    "namesWithoutSite": [],
    "exhaustive": true,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "juridico"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   },
   {
    "file": "packages/types/src/role-slugs.ts",
@@ -19553,7 +22547,22 @@
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true
+   "diagnosticsRelaxed": true,
+   "census": {
+    "version": 1,
+    "names": [
+     "ARTISTA",
+     "COLABORADOR",
+     "COMERCIAL",
+     "JURIDICO",
+     "PRODUTOR",
+     "RH_MANAGER"
+    ],
+    "wildcard": false,
+    "siteCount": 6,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   }
   }
  ]
 }

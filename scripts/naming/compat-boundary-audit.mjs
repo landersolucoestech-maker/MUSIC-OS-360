@@ -131,7 +131,7 @@ export function bindingOf(e, readFile) {
 }
 
 /** Mutation evidence of a (runtime file, test) pair, fresh only for the current sources. */
-export function pairEvidence(results, file, test, readFile, name = "*") {
+export function pairEvidence(results, file, test, readFile, name = "*", exemptions = []) {
   const rec = results.get(`${file}\u0000${test}`);
   if (!rec) return { verdict: "NOT_RUN", fresh: false };
   const f = readFile(file);
@@ -150,10 +150,28 @@ export function pairEvidence(results, file, test, readFile, name = "*") {
   const usable = !["BASELINE_RED", "TEST_MISSING", "NO_MUTATION_SITE"].includes(rec.verdict);
   // wildcard rows (every legacy word of the file): only an exhaustive pair with every word killed and nothing inconclusive credits them
   const wildcardOk = rec.exhaustive === true && rec.verdict === "PROVEN" && (rec.inconclusive ?? 1) === 0;
-  const proven = declared || (usable && (name === "*" ? wildcardOk : rec.exhaustive === true && ownKilled && !ownSurvived));
+  const baseProven = declared || (usable && (name === "*" ? wildcardOk : rec.exhaustive === true && ownKilled && !ownSurvived));
+  // CENSUS (computed by the harness from the same source text): a credit needs every site it could not mutate to be accounted for.
+  // A wildcard row is a whole-file claim, so every Portuguese string/key/member/template part of the file must be a mutated site or carry a ledger exemption
+  // with a reason; a named row must have no occurrence in a form the operators skip (shorthand, binding element, JSX attribute, method, template part).
+  const census = rec.census;
+  const valid = (exemptions ?? []).filter((x) => x && typeof x.text === "string" && String(x.reason ?? "").trim().length >= 12);
+  let censusState = null;
+  let matched = [];
+  if (!declared && baseProven) {
+    if (!census) censusState = "CENSUS_MISSING";
+    else if (name === "*" ? census.wildcard !== true : !(census.names ?? []).includes(name)) censusState = "CENSUS_STALE";
+    else if (!Number.isInteger(census.siteCount) || (rec.mutations?.length ?? 0) < census.siteCount) censusState = "SITES_NOT_MUTATED"; // the harness sees more sites than the record mutated (e.g. a predicate widened after the run)
+    else {
+      const sites = name === "*" ? census.unmutatedPtSites ?? [] : (census.unmutatedNameSites ?? []).filter((x) => x.name === name);
+      matched = [...new Set(sites.filter((x) => valid.some((v) => v.text === x.text)).map((x) => x.text))];
+      if (sites.some((x) => !valid.some((v) => v.text === x.text))) censusState = "UNMUTATED_SITES";
+    }
+  }
+  const proven = baseProven && !censusState;
   // the state of THIS name (never the verdict of the pair, which describes other names too)
-  const state = proven ? "PROVEN" : ownSurvived ? "SURVIVED" : ["NO_MUTATION_SITE", "CANONICAL_FIRST_UNENFORCED", "BASELINE_RED", "TEST_MISSING", "COMPILER_CHECKED"].includes(rec.verdict) ? rec.verdict : "NOT_MUTATED";
-  return { verdict: rec.verdict, state, fresh, legacyFirst: rec.legacyFirst ?? [], proven, granularity: name === "*" ? "WILDCARD" : declared ? "COMPILER_CHECKED" : own.length > 0 ? "EXACT_NAME" : "UNMUTATED" };
+  const state = proven ? "PROVEN" : censusState ? censusState : ownSurvived ? "SURVIVED" : ["NO_MUTATION_SITE", "CANONICAL_FIRST_UNENFORCED", "BASELINE_RED", "TEST_MISSING", "COMPILER_CHECKED"].includes(rec.verdict) ? rec.verdict : "NOT_MUTATED";
+  return { verdict: rec.verdict, state, fresh, legacyFirst: rec.legacyFirst ?? [], proven, matched, granularity: name === "*" ? "WILDCARD" : declared ? "COMPILER_CHECKED" : own.length > 0 ? "EXACT_NAME" : "UNMUTATED" };
 }
 
 /** Pure audit over a ledger. */
@@ -173,12 +191,17 @@ export function audit(map, { readFile, unusedRows = [], mutation = { results: []
     let legacyFirst = [];
     if (needsProof && runtimeFiles.length) {
       const states = [];
+      const matchedAll = new Set();
       for (const f of runtimeFiles) {
-        const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile, e.currentName));
+        const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile, e.currentName, e.proofExemptions));
+        for (const x of ev) for (const m of x.matched ?? []) matchedAll.add(m);
         for (const x of ev) legacyFirst.push(...(x.legacyFirst ?? []).map((l) => ({ file: f, ...l })));
         states.push(ev.some((x) => x.fresh && x.proven) ? "PROVEN" : ev.some((x) => !x.fresh && x.verdict !== "NOT_RUN") ? "STALE" : ev.find((x) => x.verdict !== "NOT_RUN")?.state ?? "NOT_RUN");
       }
       mutationState = states.every((s) => s === "PROVEN") ? "PROVEN" : states.find((s) => s !== "PROVEN");
+      // an exemption that matches no census site any more is stale (the code changed): it must be removed, never kept as a blanket allowance
+      const staleEx = (e.proofExemptions ?? []).filter((x) => !matchedAll.has(x?.text));
+      if (mutationState === "PROVEN" && staleEx.length) mutationState = "STALE_EXEMPTION";
     }
     const proof = !needsProof ? "NOT_REQUIRED" : !bind.bound ? bind.via : mutationState === "N/A" || mutationState === "PROVEN" ? "PROVEN" : mutationState;
     const names = e.currentName === "*" ? [] : [e.currentName];
@@ -214,6 +237,9 @@ export function counters(rows) {
   const proofRows = rows.filter((r) => r.needsProof);
   c.COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF = proofRows.filter((r) => r.proof !== "PROVEN").length;
   c.COMPATIBILITY_BOUNDARIES_REQUIRING_PROOF = proofRows.length;
+  // rows whose path is only a test file (a legacy literal used as a fixture) or a script: credited by binding (the file exists and names the literal), never by mutation
+  c.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY = proofRows.filter((r) => r.proof === "PROVEN" && r.mutationState === "N/A").length;
+  c.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION = proofRows.filter((r) => r.proof === "PROVEN" && r.mutationState === "PROVEN").length;
   c.OBSOLETE_BOUNDARIES = rows.filter((r) => r.category === "OBSOLETE_BOUNDARY").length;
   c.MISCLASSIFIED_OPERATIONAL_USAGE = rows.filter((r) => r.category === "MISCLASSIFIED_OPERATIONAL_USAGE").length;
   c.LEGACY_FIRST_READS = rows.reduce((n, r) => n + r.legacyFirst.length, 0);
@@ -255,6 +281,8 @@ function main() {
       "| Counter | Value |", "|---|---:|",
       ...open.map((k) => `| ${k} | ${cnt[k]} |`),
       `| COMPATIBILITY_BOUNDARIES_REQUIRING_PROOF | ${cnt.COMPATIBILITY_BOUNDARIES_REQUIRING_PROOF} |`,
+      `| COMPATIBILITY_ROWS_PROVEN_BY_MUTATION | ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION} |`,
+      `| COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY | ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY} |`,
       "",
       "## Rows by category", "", "| Category | Rows |", "|---|---:|",
       ...Object.entries(cnt.byCategory).sort().map(([k, v]) => `| ${k} | ${v} |`),
@@ -276,6 +304,7 @@ function main() {
     return;
   }
   console.log(`compat-boundary audit: ${cnt.rows} rows, ${groups.length} groups, ${JSON.stringify(Object.fromEntries(open.map((k) => [k, cnt[k]])))}`);
+  console.log(`  proof basis: ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION} rows by mutation, ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY} rows by binding only (legacy literal used as a test fixture or script): binding is not behavioral proof`);
   const bad = rows.filter((r) => (r.needsProof && r.proof !== "PROVEN") || ["OBSOLETE_BOUNDARY", "MISCLASSIFIED_OPERATIONAL_USAGE"].includes(r.category) || r.legacyFirst.length);
   for (const r of bad.slice(0, 60)) console.error(`  ${r.category} ${r.proof} ${r.row.exceptionClass} ${r.row.path} :: ${r.row.currentName}${r.why ? ` (${r.why})` : ""}${r.legacyFirst.length ? ` legacy-first at ${r.legacyFirst.map((l) => `${l.file}:${l.line}`).join(",")}` : ""}`);
   if (bad.length > 60) console.error(`  ... ${bad.length - 60} more`);

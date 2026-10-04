@@ -158,13 +158,13 @@ describe("normalizeSavedParty: pinned legacy key table (literal keys, independen
   ];
 
   it.each(PINNED)("a draft saved with the deprecated key %s is read as %s", (legacyKey, canonicalKey) => {
-    const out = normalizeSavedParty({ type: "individual", origin: "manual", [legacyKey]: "stored value" }) as Record<string, unknown>;
+    const out = normalizeSavedParty({ type: "individual", origin: "manual", [legacyKey]: "stored value" }) as unknown as Record<string, unknown>;
     expect(out[canonicalKey]).toBe("stored value");
     expect(out).not.toHaveProperty(legacyKey);
   });
 
   it("the canonical key wins when a draft carries both spellings", () => {
-    const out = normalizeSavedParty({ type: "individual", origin: "manual", estado_civil: "legacy", marital_status: "canonical" }) as Record<string, unknown>;
+    const out = normalizeSavedParty({ type: "individual", origin: "manual", estado_civil: "legacy", marital_status: "canonical" }) as unknown as Record<string, unknown>;
     expect(out["marital_status"]).toBe("canonical");
   });
 

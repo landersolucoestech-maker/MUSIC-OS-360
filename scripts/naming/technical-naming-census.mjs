@@ -33,7 +33,7 @@
  * Not scanned: user-facing strings (JSX text, labels, messages — never token-shaped),
  * vendored third-party bundles, published migrations (immutable history: their class
  * names are recorded in the migrations table), mission bookkeeping (.claude/ops) and generated
- * audit evidence (docs/naming/audit, checked against its generators by render-naming-docs --check).
+ * the generated mutation-proof evidence file (docs/naming/audit/compat-mutation-proof.json).
  *
  * Baseline = known, classified debt (technical-naming-baseline.json), keyed by
  * path + kind + name so each entry is traceable. Names registered in the
@@ -160,8 +160,9 @@ export const UX_ARGUMENT_CALLEES = new Set(["handleConcurrencyConflict", "report
 export const EXTERNAL_TOOL_NAMES = new Set(["Cargo.lock", "Cargo.toml"]);
 /** Published migrations are immutable history (class names are tracked in musicos360_migrations). */
 export const isMigration = (f) => /(^|\/)migrations\//.test(f);
-/** Mission bookkeeping and generated EVIDENCE (docs/naming/audit/*: the mutation proof records the legacy names it mutated, which is evidence about a boundary, not a product surface). */
-export const isBookkeeping = (f) => f.startsWith(".claude/ops/") || f.startsWith("docs/naming/audit/");
+/** Mission bookkeeping and generated EVIDENCE: the mutation proof records the legacy names it mutated (evidence about a boundary, not a product surface). Only that one generated file is exempt; any other file under docs/naming/audit is scanned. */
+export const GENERATED_EVIDENCE = new Set(["docs/naming/audit/compat-mutation-proof.json"]);
+export const isBookkeeping = (f) => f.startsWith(".claude/ops/") || GENERATED_EVIDENCE.has(f);
 
 export const layerOf = (f) => (f.startsWith("apps/web") ? "web" : f.startsWith("apps/api") ? "api" : f.startsWith("packages") ? "packages" : "scripts");
 const TECHNICAL_NAME = /^[a-z0-9][a-z0-9_.:-]*$/; // event/queue/job/i18n-key shaped (never a UX label)

@@ -8,6 +8,8 @@ const sha = (s) => createHash("sha256").update(s).digest("hex");
 const row = (o) => ({ item: "x", path: "apps/api/src/modules/a/a.service.ts", currentName: "legacyfield", surface: "identifier", exceptionClass: "TEMPORARY_MIGRATION_COMPATIBILITY", reason: "Legacy reader.", consumer: "web", owner: "o", removalCondition: "remove after release", status: "ACTIVE", coveringTest: "apps/api/src/modules/a/a.service.spec.ts", ...o });
 const files = { "apps/api/src/modules/a/a.service.ts": "export const a = r.canonicalfield ?? r.legacyfield;", "apps/api/src/modules/a/a.service.spec.ts": "it('legacyfield', () => {})" };
 const readFile = (p) => files[p] ?? null;
+// a clean census (nothing unmutated) for the synthetic records; `names` lists every legacy name used by these tests
+const CENSUS = (extra = {}) => ({ version: 1, siteCount: 0, names: ["legacyfield", "killed_name", "swap_only", "multi", "legacyTitle", "otherName", "survived_name", "guard_name", "plain", "x"], wildcard: true, unmutatedPtSites: [], unmutatedNameSites: [], ...extra });
 
 test("moduleOf / boundaryKind are deterministic", () => {
   assert.equal(moduleOf("apps/web/src/modules/leads/x.ts"), "web:leads");
@@ -41,7 +43,7 @@ test("a compatibility row is PROVEN only with a fresh mutation kill; stale or ab
   const map = { exceptions: [row()], concepts: [] };
   const src = files["apps/api/src/modules/a/a.service.ts"];
   const tst = files["apps/api/src/modules/a/a.service.spec.ts"];
-  const rec = (over) => ({ results: [{ file: "apps/api/src/modules/a/a.service.ts", test: "apps/api/src/modules/a/a.service.spec.ts", fileSha256: sha(src), testSha256: sha(tst), verdict: "PROVEN", exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "legacyfield", outcome: "KILLED" }], ...over }] });
+  const rec = (over) => ({ results: [{ file: "apps/api/src/modules/a/a.service.ts", test: "apps/api/src/modules/a/a.service.spec.ts", fileSha256: sha(src), testSha256: sha(tst), verdict: "PROVEN", census: CENSUS(), exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "legacyfield", outcome: "KILLED" }], ...over }] });
   assert.equal(counters(audit(map, { readFile, mutation: rec({}) })).COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF, 0);
   assert.equal(counters(audit(map, { readFile, mutation: { results: [] } })).COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF, 1);
   assert.equal(counters(audit(map, { readFile, mutation: rec({ fileSha256: sha("changed") }) })).COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF, 1, "an edited runtime file makes the proof stale");
@@ -104,7 +106,7 @@ test("a proof is bound to BOTH sources and to the declared pair: a changed test,
   const map = { exceptions: [row()], concepts: [] };
   const F = "apps/api/src/modules/a/a.service.ts";
   const T = "apps/api/src/modules/a/a.service.spec.ts";
-  const base = { file: F, test: T, fileSha256: sha(files[F]), testSha256: sha(files[T]), verdict: "PROVEN", exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "legacyfield", outcome: "KILLED" }] };
+  const base = { file: F, test: T, fileSha256: sha(files[F]), testSha256: sha(files[T]), verdict: "PROVEN", census: CENSUS(), exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "legacyfield", outcome: "KILLED" }] };
   const open = (r) => counters(audit(map, { readFile, mutation: { results: [r] } })).COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF;
   assert.equal(open(base), 0);
   assert.equal(open({ ...base, testSha256: sha("edited test") }), 1, "an edited covering test makes the proof stale");
@@ -120,7 +122,7 @@ test("a failed count without any assertion marker (a load-time TypeError, a time
 test("per-name proof: a name whose own mutation survived is never proven by another name's kill; a PARTIAL pair proves only the killed names", () => {
   const F = "apps/api/src/modules/a/a.service.ts";
   const T = "apps/api/src/modules/a/a.service.spec.ts";
-  const mk = (verdict, mutations) => ({ results: [{ file: F, test: T, fileSha256: sha(files[F]), testSha256: sha(files[T]), verdict, exhaustive: true, mutations }] });
+  const mk = (verdict, mutations) => ({ results: [{ file: F, test: T, fileSha256: sha(files[F]), testSha256: sha(files[T]), verdict, census: CENSUS(), exhaustive: true, mutations }] });
   const ledger = { exceptions: [row({ currentName: "legacyTitle" }), row({ currentName: "otherName" })], concepts: [] };
   const partial = mk("PARTIAL", [{ operator: "LEGACY_LITERAL", label: "legacyTitle", outcome: "KILLED" }, { operator: "LEGACY_LITERAL", label: "otherName", outcome: "SURVIVED" }]);
   const rows = audit({ ...ledger, exceptions: ledger.exceptions.map((e) => ({ ...e, coveringTest: T })) }, { readFile: (p) => (p === T ? "legacyTitle otherName" : readFile(p)), mutation: { results: [{ ...partial.results[0], testSha256: sha("legacyTitle otherName") }] } });
@@ -154,7 +156,7 @@ test("declaration-only names are COMPILER_CHECKED by the harness and proven by t
   const T = "apps/web/src/modules/releases/lib/legacy-reads.test.ts";
   const text = { [F]: src, [T]: "it('x', () => {})" };
   const sha = (t) => createHash("sha256").update(t).digest("hex");
-  const rec = { file: F, test: T, fileSha256: sha(text[F]), testSha256: sha(text[T]), verdict: "COMPILER_CHECKED", mutations: [], declarations: ["percentual"] };
+  const rec = { file: F, test: T, fileSha256: sha(text[F]), testSha256: sha(text[T]), verdict: "COMPILER_CHECKED", census: CENSUS(), mutations: [], declarations: ["percentual"] };
   const ev = pairEvidence(new Map([[`${F}\u0000${T}`, rec]]), F, T, (p) => text[p] ?? null, "percentual");
   assert.equal(ev.proven, true);
   assert.equal(pairEvidence(new Map([[`${F}\u0000${T}`, rec]]), F, T, (p) => text[p] ?? null, "never_declared").proven, false);
@@ -165,7 +167,7 @@ test("a name that was never mutated gets no credit from its siblings (r14 findin
   const T = "apps/web/src/modules/contracts/lib/contract-wizard-party.test.ts";
   const text = { [F]: "x", [T]: "y" };
   const sha = (t) => createHash("sha256").update(t).digest("hex");
-  const base = { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: "PROVEN", exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "killed_name", outcome: "KILLED" }] };
+  const base = { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: "PROVEN", census: CENSUS(), census: CENSUS(), exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "killed_name", outcome: "KILLED" }] };
   const results = (rec) => new Map([[`${F}\u0000${T}`, rec]]);
   const read = (p) => text[p] ?? null;
   const proven = (rec, name) => pairEvidence(results(rec), F, T, read, name).proven;
@@ -199,7 +201,7 @@ test("producer and consumer agree: records built from the REAL findMutations out
   const files = { [F]: src, [T]: "spec" };
   const read = (p) => files[p] ?? null;
   const build = (survives) => ({
-    file: F, test: T, fileSha256: sha(src), testSha256: sha("spec"), verdict: "PARTIAL", exhaustive: true, inconclusive: 0,
+    file: F, test: T, fileSha256: sha(src), testSha256: sha("spec"), verdict: "PARTIAL", census: muts.census, exhaustive: true, inconclusive: 0,
     mutations: [...muts.swap, ...muts.guard, ...muts.lit].map((m) => ({ operator: m.operator, line: m.line, label: m.label, labels: m.labels, outcome: survives.includes(m.label) ? "SURVIVED" : "KILLED" })),
   });
   const ev = (rec, name) => pairEvidence(new Map([[`${F}\u0000${T}`, rec]]), F, T, read, name).proven;
@@ -231,4 +233,84 @@ test("proof fallback: a legacy namespace prefix is mutated for a name without or
   assert.equal(prefixMutations.length, 2);
   assert.ok(apply(src, prefixMutations[0]).includes("'__mutated__:read'"));
   assert.ok(apply(src, prefixMutations[1]).includes("`__mutated__:${k}`"));
+});
+
+test("proof basis: a mutation-killed runtime row and a binding-only test-fixture row are counted apart", () => {
+  const src = files["apps/api/src/modules/a/a.service.ts"];
+  const tst = files["apps/api/src/modules/a/a.service.spec.ts"];
+  const results = [{ file: "apps/api/src/modules/a/a.service.ts", test: "apps/api/src/modules/a/a.service.spec.ts", fileSha256: sha(src), testSha256: sha(tst), verdict: "PROVEN", census: CENSUS(), exhaustive: true, mutations: [{ operator: "LEGACY_LITERAL", label: "legacyfield", outcome: "KILLED" }] }];
+  const fixture = row({ path: "apps/api/src/modules/a/a.service.spec.ts", coveringTest: undefined, reason: "Test fixture asserting the legacy value is still mapped." });
+  const c = counters(audit({ exceptions: [row(), fixture], concepts: [] }, { readFile, mutation: { results } }));
+  assert.equal(c.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION, 1);
+  assert.equal(c.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY, 1);
+  assert.equal(c.COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF, 0);
+});
+
+// ---- census (r14 BLOCKER: a wildcard credit must cover EVERY Portuguese site of the file, not only the ones the predicate happened to see) ----
+import { makeWildcardPredicate, buildCensus } from "./compat-mutation-proof.mjs";
+import { ptWords } from "./pt-lexicon.mjs";
+
+test("wildcard predicate: route paths, accented labels and short words are sites; sentences, URLs and unknown words are not", () => {
+  const wc = makeWildcardPredicate(ptWords);
+  for (const s of ["/rh", "/auditoria", "/configuracoes/billing", "/contratos-v2/*", "/registro-musicas", "Estágio", "pj", "não_informado", "cessao_direitos"]) assert.equal(wc(s), true, s);
+  for (const s of ["Campos conflitantes.", "https://x.com/a", "a/b", "2024-01", "application/json"]) assert.equal(wc(s), false, s);
+  // a string with spaces is a NAME only in name position (key, element access, case label, equality operand, array element)
+  assert.equal(wc("licença médica"), false);
+  assert.equal(wc("licença médica", true), true);
+});
+
+test("harness: every `from` of a legacy route table becomes a mutation site and the census of that file is empty", () => {
+  const src = 'export const R = [ { from: "/rh", to: "/hr" }, { from: "/auditoria", to: "/audit" }, { from: "/contratos-v2/*", to: "/contracts/*" } ];';
+  const wc = makeWildcardPredicate(ptWords);
+  const m = findMutations(src, "r.tsx", new Set(), wc, { ptWords });
+  assert.deepEqual(m.lit.map((x) => x.label).sort(), ["/auditoria", "/contratos-v2/*", "/rh"]);
+  assert.equal(m.census.unmutatedPtSites.length, 0);
+});
+
+test("census: unmutated Portuguese sites (template parts, sentences) and skipped syntactic forms of a named legacy field are reported", () => {
+  const wc = makeWildcardPredicate(ptWords);
+  const src = 'const msg = `Campos conflitantes: ${x}`; const e = new Error("Registro inválido."); const { obra } = dto; const o = { obra };';
+  const m = findMutations(src, "a.ts", new Set(["obra"]), wc, { ptWords });
+  const texts = m.census.unmutatedPtSites.map((x) => x.text);
+  assert.ok(texts.some((t) => t.startsWith("Campos conflitantes")), "template part is reported");
+  assert.ok(texts.includes("Registro inválido."), "a sentence is reported (never a site)");
+  assert.deepEqual(m.census.unmutatedNameSites.map((x) => x.kind).sort(), ["binding", "shorthand"]);
+});
+
+test("audit: a credit needs a coherent, empty census; exemptions need a reason and must stay in use", () => {
+  const F = "apps/web/src/app/routes/r.tsx";
+  const T = "apps/web/src/app/routes/r.test.tsx";
+  const files = { [F]: "x", [T]: "y" };
+  const read = (p) => files[p] ?? null;
+  const rec = (census) => new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations: [{ operator: "LEGACY_LITERAL", label: "a", outcome: "KILLED" }], census }]]);
+  const clean = { version: 1, names: ["a"], wildcard: true, siteCount: 1, unmutatedPtSites: [], unmutatedNameSites: [] };
+  const dirty = { ...clean, unmutatedPtSites: [{ line: 3, kind: "string", text: "/auditoria" }] };
+  assert.equal(pairEvidence(rec(clean), F, T, read, "*").proven, true);
+  assert.equal(pairEvidence(rec(undefined), F, T, read, "*").state, "CENSUS_MISSING");
+  assert.equal(pairEvidence(rec({ ...clean, wildcard: false }), F, T, read, "*").state, "CENSUS_STALE", "a census built for named rows does not close a wildcard row");
+  assert.equal(pairEvidence(rec({ ...clean, names: ["b"] }), F, T, read, "a").state, "CENSUS_STALE", "a name added to the ledger after the census is not covered");
+  const d = pairEvidence(rec(dirty), F, T, read, "*");
+  assert.equal(d.proven, false);
+  assert.equal(d.state, "UNMUTATED_SITES");
+  assert.equal(pairEvidence(rec(dirty), F, T, read, "*", [{ text: "/auditoria", reason: "x" }]).proven, false, "an exemption without a real reason does not count");
+  const ok = pairEvidence(rec(dirty), F, T, read, "*", [{ text: "/auditoria", reason: "UX route label that is not a legacy name" }]);
+  assert.equal(ok.proven, true);
+  assert.deepEqual(ok.matched, ["/auditoria"]);
+  assert.equal(pairEvidence(rec({ ...clean, siteCount: 5 }), F, T, read, "*").state, "SITES_NOT_MUTATED", "the record mutated fewer sites than the harness now sees (r14: 6 of 51 in legacy-redirects)");
+  assert.equal(pairEvidence(rec({ ...clean, siteCount: undefined }), F, T, read, "*").state, "SITES_NOT_MUTATED");
+  const named = { ...clean, wildcard: false, unmutatedNameSites: [{ name: "a", line: 1, kind: "shorthand", text: "a" }] };
+  assert.equal(pairEvidence(rec(named), F, T, read, "a").state, "UNMUTATED_SITES");
+});
+
+test("audit: an exemption that matches no census site any more makes its row STALE_EXEMPTION", () => {
+  const F = "apps/web/src/app/routes/r.tsx";
+  const T = "apps/web/src/app/routes/r.test.tsx";
+  const files = { [F]: "x", [T]: "y" };
+  const readFile2 = (p) => files[p] ?? null;
+  const census = { version: 1, names: [], wildcard: true, siteCount: 1, unmutatedPtSites: [{ line: 1, kind: "string", text: "msg" }], unmutatedNameSites: [] };
+  const results = [{ file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations: [{ operator: "LEGACY_LITERAL", label: "a", outcome: "KILLED" }], census }];
+  const mk = (proofExemptions) => ({ ...row({ path: F, currentName: "*", coveringTest: T, reason: "Legacy route redirects.", proofExemptions }) });
+  const exr = [{ text: "msg", reason: "UX message, not a legacy name" }, { text: "gone", reason: "removed from the code long ago" }];
+  assert.equal(audit({ exceptions: [mk(exr)], concepts: [] }, { readFile: readFile2, mutation: { results } })[0].mutationState, "STALE_EXEMPTION");
+  assert.equal(audit({ exceptions: [mk([exr[0]])], concepts: [] }, { readFile: readFile2, mutation: { results } })[0].mutationState, "PROVEN");
 });

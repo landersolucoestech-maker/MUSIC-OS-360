@@ -636,4 +636,5 @@ test("evidence: generated audit evidence and mission bookkeeping are not product
   assert.equal(isBookkeeping("docs/naming/canonical-naming-map.json"), false);
   assert.equal(isBookkeeping("apps/api/src/data/seed.json"), false);
   assert.equal(isBookkeeping("docs/naming/auditoria/x.json"), false);
+  assert.equal(isBookkeeping("docs/naming/audit/other-evidence.json"), false);
 });
