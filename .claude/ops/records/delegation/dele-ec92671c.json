@@ -3,7 +3,7 @@
   "objective": "Independently review web edits touching consent, signup payload, postal-code provider fetch and rendered credit lists for XSS, unsafe URLs, token handling and client-only authorization.",
   "requirementIds": [],
   "filesInScope": [],
-  "status": "OPEN",
+  "status": "CLOSED",
   "id": "dele-ec92671c",
   "createdAt": "2026-10-04T23:17:43.138Z"
 }

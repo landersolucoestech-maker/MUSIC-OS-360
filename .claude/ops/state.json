@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-04T23:19:37.434Z",
+  "updatedAt": "2026-10-04T23:20:08.285Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -800,6 +800,20 @@
       "createdAt": "2026-10-04T23:13:26.646Z",
       "justification": "Pre-existing and outside this mission scope; not enforced in CI; the doc files are frozen historical records. Reported to the owner in the final report.",
       "resolvedAt": "2026-10-04T23:13:26.769Z"
+    },
+    {
+      "id": "find-e2f87ce3",
+      "category": "E",
+      "severity": "LOW",
+      "file": "apps/web/src/modules/integrations/hooks/useNfe.ts",
+      "line": null,
+      "summary": "r18 pre-existing LOW/INFO frontend items outside this mission scope: NFe provider_token and Deezer credentials kept in sessionStorage (useNfe.ts, useDeezer.ts); media src bound to API data without safeMediaSrc in about 8 components; API-supplied checkout/OAuth URLs navigated without safeExternalUrl (Billing.tsx, Settings.tsx, useGoogleAds.ts, OAuthPopupPage.tsx); operational-vocabulary.ts outer-map lookup lacks an own-property check on kind (not exploitable).",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-04T23:19:53.359Z",
+      "justification": "Pre-existing, not introduced by the diff, no CRITICAL/HIGH/MEDIUM; scope-control: adjacent debt is recorded, not fixed; listed in the final report for the owner.",
+      "resolvedAt": "2026-10-04T23:19:53.480Z"
     }
   ],
   "evidenceIds": [
@@ -1324,7 +1338,9 @@
     "evid-a1839392",
     "evid-2e084b0b",
     "evid-d3a21770",
-    "evid-2abf3639"
+    "evid-2abf3639",
+    "evid-b3d1e0a6",
+    "evid-4412276a"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
