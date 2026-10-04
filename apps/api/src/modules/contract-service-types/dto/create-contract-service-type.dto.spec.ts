@@ -125,3 +125,36 @@ describe('UpdateContractServiceTypeDto legacy-input normalizer', () => {
     expect(Object.keys(dto).sort()).toEqual(['name']);
   });
 });
+
+describe('legacy spellings as literal inputs (a rename of one table entry must fail an assertion, not only throw)', () => {
+  it.each([
+    ['artista', 'artist'],
+    ['pessoa_fisica', 'individual'],
+    ['pessoa_juridica', 'company'],
+  ])('client_types member %j is accepted and persisted as %j', async (legacy, canonical) => {
+    await expect(validate(CreateContractServiceTypeDto, { ...base, client_types: [legacy] })).resolves.toMatchObject({ client_types: [canonical] });
+  });
+
+  it.each([
+    ['valor_fixo', 'fixed_value'],
+    ['misto', 'mixed'],
+    ['recorrente', 'recurring'],
+  ])('financial_model %j is accepted and persisted as %j', async (legacy, canonical) => {
+    await expect(validate(CreateContractServiceTypeDto, { ...base, financial_model: legacy })).resolves.toMatchObject({ financial_model: canonical });
+  });
+
+  it.each([
+    ['unico', 'one_time'],
+    ['mensal', 'monthly'],
+    ['trimestral', 'quarterly'],
+    ['anual', 'yearly'],
+  ])('financial_payment_frequency %j is persisted as %j', async (legacy, canonical) => {
+    await expect(validate(CreateContractServiceTypeDto, { ...base, financial_payment_frequency: legacy })).resolves.toMatchObject({ financial_payment_frequency: canonical });
+  });
+
+  it('all three deprecated client types together on PATCH', async () => {
+    await expect(
+      validate(UpdateContractServiceTypeDto, { client_types: ['artista', 'pessoa_fisica', 'pessoa_juridica'] }),
+    ).resolves.toMatchObject({ client_types: ['artist', 'individual', 'company'] });
+  });
+});

@@ -5,7 +5,7 @@ import { HrService } from './hr.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { CreatePayrollEntryDto } from './dto/create-payroll-entry.dto';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
-import { CONTRACT_TYPES, LEAVE_TYPES, LEGACY_CONTRACT_TYPES, LEGACY_LEAVE_TYPES, canonicalContractType } from './hr-legacy-fields';
+import { CONTRACT_TYPES, LEAVE_TYPES, LEGACY_CONTRACT_TYPES, LEGACY_LEAVE_TYPES, canonicalContractType, canonicalLeaveType } from './hr-legacy-fields';
 
 /**
  * CZ-030: the HR request contract is English. Before it, the web payroll and
@@ -143,5 +143,133 @@ describe('HR request contract (CZ-030)', () => {
     const bothRow = both.repo.create.mock.calls[0][0] as Record<string, unknown>;
     expect(bothRow['file_url']).toBe('https://a.com/canonical.pdf');
     expect(bothRow).not.toHaveProperty('arquivo_url');
+  });
+});
+
+/**
+ * Per-alias proof of hr-legacy-fields.ts: every deprecated key and every deprecated type label is fed through the real
+ * HrService and the canonical persisted column / value is asserted. Literal keys (not Object.keys of the table under test),
+ * so renaming one entry of the table cannot rename the input with it.
+ */
+describe('HR legacy vocabulary, one assertion per deprecated name (read-compat)', () => {
+  it('employee: every deprecated field is persisted under its canonical column', async () => {
+    const { service, repo } = makeService();
+    await service.createEmployee('tenant-1', 'user-1', {
+      name: 'A',
+      cargo: 'Dev',
+      departamento: 'TI',
+      tipo_contrato: 'CLT',
+      telefone: '11',
+      salario: '3000',
+      data_admissao: '2026-01-01',
+      data_demissao: '2026-12-31',
+      observacoes: 'nota legada',
+      vinculo_usuario_id: 'user-link-1',
+    } as never);
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row).toMatchObject({
+      job_title: 'Dev', department: 'TI', contract_type: 'clt', phone_encrypted: 'enc(11)', salary: '3000',
+      notes: 'nota legada', linked_user_id: 'user-link-1',
+    });
+    expect(row['hired_at']).toEqual(new Date('2026-01-01'));
+    expect(row['terminated_at']).toEqual(new Date('2026-12-31'));
+    for (const legacy of ['cargo', 'departamento', 'tipo_contrato', 'telefone', 'salario', 'data_admissao', 'data_demissao', 'observacoes', 'vinculo_usuario_id']) {
+      expect(row).not.toHaveProperty(legacy);
+    }
+  });
+
+  it('payroll: every deprecated field (competencia included) is persisted under its canonical column', async () => {
+    const { service, repo } = makeService();
+    await expect(service.createPayroll('tenant-1', {
+      funcionario_id: EMPLOYEE_ID,
+      competencia: '2026-08',
+      salario_bruto: 5000,
+      descontos: 500,
+      salario_liquido: 4700,
+      data_pagamento: '2026-09-05',
+      pago_em: '2026-09-06',
+      arquivo_url: 'https://a.com/folha.pdf',
+      observacoes: 'agosto',
+    } as never)).resolves.toBeDefined();
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row).toMatchObject({
+      employee_id: EMPLOYEE_ID, reference_month: '2026-08', gross_salary: '5000', deductions: '500', net_salary: '4700',
+      payment_date: '2026-09-05', file_url: 'https://a.com/folha.pdf', notes: 'agosto',
+    });
+    expect(row['paid_at']).toEqual(new Date('2026-09-06'));
+    for (const legacy of ['funcionario_id', 'competencia', 'salario_bruto', 'descontos', 'salario_liquido', 'data_pagamento', 'pago_em', 'arquivo_url', 'observacoes']) {
+      expect(row).not.toHaveProperty(legacy);
+    }
+  });
+
+  it('payroll: mes_referencia is the second deprecated spelling of reference_month', async () => {
+    const { service, repo } = makeService();
+    await expect(service.createPayroll('tenant-1', { ...LEGACY_WEB_PAYROLL, mes_referencia: '2026-07' } as never)).resolves.toBeDefined();
+    expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['reference_month']).toBe('2026-07');
+  });
+
+  it('leave: every deprecated field is persisted under its canonical column', async () => {
+    const { service, repo } = makeService();
+    await expect(service.createLeaveRequest('tenant-1', 'user-1', {
+      funcionario_id: EMPLOYEE_ID,
+      type: 'vacation',
+      start_date: '2026-10-01',
+      end_date: '2026-10-10',
+      dias_totais: 10,
+      motivo: 'descanso merecido',
+      aprovado_por: 'Ana',
+      documento_url: 'https://a.com/atestado.pdf',
+      observacoes: 'obs legada',
+    } as never)).resolves.toBeDefined();
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row).toMatchObject({
+      employee_id: EMPLOYEE_ID, total_days: 10, reason: 'descanso merecido', approved_by: 'Ana',
+      document_url: 'https://a.com/atestado.pdf', notes: 'obs legada',
+    });
+    for (const legacy of ['funcionario_id', 'dias_totais', 'motivo', 'aprovado_por', 'documento_url', 'observacoes']) {
+      expect(row).not.toHaveProperty(legacy);
+    }
+  });
+
+  it.each([
+    ['CLT', 'clt'],
+    ['PJ', 'pj'],
+    ['Freelancer', 'freelancer'],
+    ['autonomo', 'freelancer'],
+    ['Estágio', 'internship'],
+    ['estagio', 'internship'],
+    ['Temporário', 'temporary'],
+    ['temporario', 'temporary'],
+  ])('contract type label %j is persisted as %j', async (label, canonical) => {
+    const { service, repo } = makeService();
+    await service.createEmployee('tenant-1', 'user-1', { name: 'A', tipo_contrato: label } as never);
+    expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['contract_type']).toBe(canonical);
+    expect(canonicalContractType(label)).toBe(canonical);
+  });
+
+  it('the canonical contract types are exactly the values the legacy labels may map to', () => {
+    expect([...CONTRACT_TYPES]).toEqual(['clt', 'pj', 'freelancer', 'internship', 'temporary']);
+    expect(Object.values(LEGACY_CONTRACT_TYPES).sort()).toEqual(['clt', 'freelancer', 'freelancer', 'internship', 'internship', 'pj', 'temporary', 'temporary']);
+  });
+
+  it.each([
+    ['férias', 'vacation'],
+    ['ferias', 'vacation'],
+    ['licença médica', 'sick_leave'],
+    ['licença maternidade', 'maternity_leave'],
+    ['licença paternidade', 'paternity_leave'],
+    ['falta justificada', 'excused_absence'],
+    ['falta injustificada', 'unexcused_absence'],
+    ['day off', 'day_off'],
+    ['folga compensatória', 'compensatory_time_off'],
+  ])('leave type label %j is persisted as %j', async (label, canonical) => {
+    const { service, repo } = makeService();
+    await expect(service.createLeaveRequest('tenant-1', 'user-1', { ...LEGACY_WEB_LEAVE, type: label } as never)).resolves.toBeDefined();
+    expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['type']).toBe(canonical);
+    expect(canonicalLeaveType(label)).toBe(canonical);
+  });
+
+  it('canonical leave types pass through unchanged', () => {
+    for (const t of LEAVE_TYPES) expect(canonicalLeaveType(t)).toBe(t);
   });
 });

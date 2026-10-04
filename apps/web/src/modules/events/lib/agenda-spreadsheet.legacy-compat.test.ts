@@ -10,6 +10,7 @@ const LEGACY_HEADERS: ReadonlyArray<readonly [string, AgendaColumn]> = [
   ["valor_cache", "feeAmount"],
   ["descricao", "description"],
   ["observacoes", "notes"],
+  ["horario", "startTime"],
 ];
 
 describe("agenda spreadsheet legacy headers (import accepts, export never writes)", () => {

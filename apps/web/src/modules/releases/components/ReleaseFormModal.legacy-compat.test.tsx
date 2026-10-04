@@ -42,6 +42,7 @@ describe("ReleaseFormModal project seed: genre alias", () => {
     ["eletronico"],
     ["electronico"],
     ["eletronica"],
+    ["electronica"],
   ])("project genre %s pre-selects the canonical Eletrônica option", async (genre) => {
     await selectProject({ id: "p1", title: "Proj", artist_id: "a1", music_genre: genre, type: "single" });
     await waitFor(() => expect(screen.getByTestId("select-genre").textContent).toContain("Eletrônica"));

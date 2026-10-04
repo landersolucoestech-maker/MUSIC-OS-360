@@ -293,4 +293,12 @@ describe('PII backfill helpers', () => {
     expect(documentOf({ cnpj: '', cpf: ' 1 ', document: '9' })).toBe('1');
     expect(documentOf({ telefone: '1' })).toBeNull();
   });
+
+  it('documentOf reads the legacy `documento` key (any case/spacing), after the canonical keys and before `document`', () => {
+    expect(documentOf({ documento: ' 123.456.789-00 ' })).toBe('123.456.789-00');
+    expect(documentOf({ Documento: '5' })).toBe('5');
+    expect(documentOf({ documento: '7', document: '9' })).toBe('7');
+    expect(documentOf({ cpf: '1', documento: '7' })).toBe('1');
+    expect(documentOf({ documento: '   ' })).toBeNull();
+  });
 });

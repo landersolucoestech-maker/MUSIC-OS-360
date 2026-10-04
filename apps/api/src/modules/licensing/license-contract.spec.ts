@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { LicenseStatus } from '@music-os-360/types';
 import { LicensingService } from './licensing.service';
-import { CreateLicenseDto } from './dto/licensing.dto';
+import { CreateLicenseDto, QueryLicenseDto } from './dto/licensing.dto';
 
 /**
  * CZ-035: the license contract is English. LEGACY_WEB_LICENSE is the payload a
@@ -91,5 +91,18 @@ describe('License request contract (CZ-035)', () => {
     await service.list('tenant-1', { status: 'negociacao,proposal', midia_destino: 'tv' } as never);
     expect(qb.andWhere).toHaveBeenCalledWith('l.status IN (:...statuses)', { statuses: ['negotiation', 'proposal'] });
     expect(qb.andWhere).toHaveBeenCalledWith('l.target_media ILIKE :media', { media: '%tv%' });
+  });
+});
+
+describe('QueryLicenseDto: deprecated `midia_destino` filter', () => {
+  const strict = (plain: Record<string, unknown>) =>
+    validateSync(plainToInstance(QueryLicenseDto, plain), { whitelist: true, forbidNonWhitelisted: true }).map((e) => e.property);
+
+  it('declares midia_destino (not rejected by whitelist + forbidNonWhitelisted)', () => {
+    expect(strict({ midia_destino: 'tv' })).toEqual([]);
+  });
+
+  it('keeps midia_destino a string', () => {
+    expect(strict({ midia_destino: { a: 1 } })).toEqual(['midia_destino']);
   });
 });

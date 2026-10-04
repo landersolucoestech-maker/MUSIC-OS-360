@@ -9,7 +9,7 @@ const LEGACY_IMPORT_HEADERS: ReadonlyArray<readonly [string, keyof ArtistFormAll
   ["observacoes", "biography", "biografia legada", "biografia legada"],
   ["nome_civil", "fullName", "Nome Civil Legado", "Nome Civil Legado"],
   ["data_nascimento", "birthDate", "1990-05-17", "1990-05-17"],
-  ["tipo_perfil", "profileType", "Artista", "independent"],
+  ["tipo_perfil", "profileType", "Gravadora", "record_label"],
   ["notas_internas", "internalNotes", "nota legada", "nota legada"],
 ];
 

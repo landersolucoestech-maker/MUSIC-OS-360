@@ -80,6 +80,11 @@ const STORED_TEMPLATE_SLUGS: ReadonlyArray<readonly [string, string]> = [
   ["rights_assignment", "licenciamento"],
   ["advertising", "publicidade"],
   ["semantic", "outros"],
+  ["production", "producao_musical"],
+  ["distribution", "distribuicao"],
+  ["licensing", "licenciamento"],
+  ["management", "gestao"],
+  ["other", "outros"],
   // registry slug with numeric suffix
   ["empresariamento_360", "empresariamento"],
 ];

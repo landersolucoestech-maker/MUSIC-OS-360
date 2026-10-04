@@ -40,3 +40,20 @@ describe('legacy @IsUrl() DTOs now use the shared http/storage rule (S2-7)', () 
     expect(await badProps(SyncPlatformProfileDto, { profileUrl: 'https://open.spotify.com/artist/abc' })).not.toContain('profileUrl');
   });
 });
+
+describe('CreatePayrollEntryDto: deprecated `competencia` stands in for reference_month', () => {
+  const base = { employee_id: '223e4567-e89b-12d3-a456-426614174000', gross_salary: '5000', net_salary: '4700' };
+  const strict = (plain: Record<string, unknown>) => validate(plainToInstance(CreatePayrollEntryDto, plain), { whitelist: true, forbidNonWhitelisted: true });
+
+  it('accepts competencia in place of reference_month (declared property, requirement waived)', async () => {
+    expect(await strict({ ...base, competencia: '2025-03' })).toEqual([]);
+  });
+
+  it('still requires one of reference_month / competencia / mes_referencia', async () => {
+    expect((await strict(base)).map((e) => e.property)).toContain('reference_month');
+  });
+
+  it('validates competencia as a string', async () => {
+    expect((await strict({ ...base, competencia: 202503 })).map((e) => e.property)).toContain('competencia');
+  });
+});

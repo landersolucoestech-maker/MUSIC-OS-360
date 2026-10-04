@@ -6,6 +6,8 @@ import { ALL_MIGRATIONS } from './migrations';
 import {
   LEGACY_TRANSACTION_CATEGORY_SLUGS,
   UNCHANGED_TRANSACTION_CATEGORY_SLUGS,
+  isUncategorizedCategory,
+  transactionSlugVariants,
 } from '../modules/transactions/transaction-category-slugs';
 
 type Call = { sql: string; params?: unknown[] };
@@ -128,5 +130,25 @@ describe('BackfillTransactionTaxonomyToEnglish20260930000018', () => {
       expect(u.sql).toMatch(/t\."(category|subcategory)" = l\."canonical_value"/);
       expect(u.sql).toContain('SET "' + (u.sql.includes('"subcategory" = l."legacy_value"') ? 'subcategory' : 'category') + '" = l."legacy_value"');
     }
+  });
+});
+
+describe('the deprecated "outros" placeholder is still found in stored rows (uncategorized in either spelling)', () => {
+  it('treats the legacy spelling `outros` (any case, padded) and the canonical `other` as uncategorized', () => {
+    expect(isUncategorizedCategory('outros')).toBe(true);
+    expect(isUncategorizedCategory('  Outros ')).toBe(true);
+    expect(isUncategorizedCategory('other')).toBe(true);
+  });
+
+  it('does not treat a real category, an empty value or a non-string as uncategorized', () => {
+    expect(isUncategorizedCategory('services')).toBe(false);
+    expect(isUncategorizedCategory('servicos')).toBe(false);
+    expect(isUncategorizedCategory('')).toBe(false);
+    expect(isUncategorizedCategory(null)).toBe(false);
+  });
+
+  it('the filter expansion of `other` includes the stored legacy spelling `outros`', () => {
+    expect(transactionSlugVariants('other')).toEqual(['other', 'outros']);
+    expect(transactionSlugVariants('outros')).toEqual(['other', 'outros']);
   });
 });

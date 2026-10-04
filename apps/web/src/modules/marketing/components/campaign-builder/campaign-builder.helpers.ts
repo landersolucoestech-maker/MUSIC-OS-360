@@ -151,7 +151,6 @@ export const ALL_PROMOTED_ENTITY_TYPES: PromotedEntityType[] = [
 function normalizeCampaignObjective(value?: string): CampaignObjective {
   if (value && value in OBJECTIVE_LABEL) return value as CampaignObjective;
   if (["alcance", "awareness", "visualizacao_video", "visualizacoes"].includes(value ?? "")) return "REACH";
-  if (["trafego", "TRAFFIC"].includes(value ?? "")) return "TRAFFIC";
   if (["engajamento", "seguidores", "crescimento_seguidores", "remarketing"].includes(value ?? "")) return "ENGAGEMENT";
   if (["conversao", "conversoes", "pre_save", "captacao_leads"].includes(value ?? "")) return "CONVERSIONS";
   return "TRAFFIC";

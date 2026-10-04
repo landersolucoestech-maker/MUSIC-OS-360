@@ -91,4 +91,17 @@ describe('04_rbac_seed canonical-first grants', () => {
     expect(alias!.level).toBe(legacy!.level);
     expect(alias!.assignable).toBe(false);
   });
+
+  it('persists the legacy `artista` alias row with its legacy display name, the canonical artist level, and inert grants', async () => {
+    const { roleInserts, grants } = await runSeed();
+    const row = roleInserts.find((r) => r.slug === 'artista');
+    expect(row).toBeDefined();
+    expect(row!.name).toBe('Artista (legado)');
+    expect(row!.name).not.toBe('artista');
+    expect(row!.level).toBe(ROLE_HIERARCHY['artista']);
+    expect(grants.has('artista')).toBe(false);
+    // the canonical `artist` row keeps its own display name and (unlike the alias) carries the grants
+    expect(roleInserts.find((r) => r.slug === 'artist')!.name).toBe('Artista');
+    expect(grants.has('artist')).toBe(true);
+  });
 });

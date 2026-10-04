@@ -89,3 +89,14 @@ describe('Takedown request contract (CZ-034)', () => {
     expect(qb.andWhere).toHaveBeenCalledWith('t.status = :status', { status: 'pending' });
   });
 });
+
+describe('QueryTakedownDto: deprecated `plataforma` filter', () => {
+  it('declares plataforma (not rejected by whitelist + forbidNonWhitelisted)', () => {
+    expect(errorsFor(QueryTakedownDto, { plataforma: 'youtube' })).toEqual([]);
+  });
+
+  it('still rejects unknown filters next to plataforma', () => {
+    expect(errorsFor(QueryTakedownDto, { plataforma: 'youtube', plataform: 'youtube' })).toEqual(['plataform']);
+    expect(errorsFor(QueryTakedownDto, { plataform: 'youtube' })).toEqual(['plataform']);
+  });
+});

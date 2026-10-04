@@ -3,7 +3,14 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { CreateClientDto, CreateClientTimelineEntryDto, QueryClientDto, UpdateClientDto } from './dto/clients.dto';
 import { ClientsService } from './clients.service';
-import { METADATA_PII_KEYS, canonicalizeClientInput, canonicalizeClientQuery } from './client-legacy-fields';
+import {
+  CLIENT_DEPRECATED_FIELDS,
+  METADATA_PII_KEYS,
+  canonicalClientPersonType,
+  canonicalClientPriority,
+  canonicalizeClientInput,
+  canonicalizeClientQuery,
+} from './client-legacy-fields';
 
 /**
  * CZ-043: the client (CRM contact) contract is snake_case English = columns.
@@ -232,6 +239,23 @@ describe('client legacy address/document names: cep, complemento, cpf, cnpj (CZ-
   });
 });
 
+describe('client legacy tipo_pessoa on EDIT: the unreadable default is dropped (CZ-043 deploy skew)', () => {
+  it('a top-level tipo_pessoa from a pre-CZ-043 edit never overwrites the stored person_type', () => {
+    expect(canonicalizeClientInput({ name: 'Novo', tipo_pessoa: 'pessoa_juridica' } as never, { update: true })).toEqual({ name: 'Novo' });
+    expect(canonicalizeClientInput({ name: 'Novo', type: 'company' } as never, { update: true })).toEqual({ name: 'Novo' });
+  });
+
+  it('the same top-level tipo_pessoa on CREATE is a real choice: mapped to person_type', () => {
+    expect(canonicalizeClientInput({ name: 'Novo', tipo_pessoa: 'pessoa_juridica' } as never)).toEqual({ name: 'Novo', person_type: 'company' });
+    expect(canonicalizeClientInput({ name: 'Novo', tipo_pessoa: 'pessoa_fisica' } as never)).toEqual({ name: 'Novo', person_type: 'individual' });
+  });
+
+  it('a tipo_pessoa carried only in the legacy metadata copy of an EDIT is dropped and not unfolded', () => {
+    expect(canonicalizeClientInput({ name: 'Novo', metadata: { tipo_pessoa: 'pessoa_juridica', razao_social: 'ACME' } } as never, { update: true }))
+      .toEqual({ name: 'Novo', legal_name: 'ACME' });
+  });
+});
+
 describe('clients.profile vocabulary (PV1): deprecated Portuguese slugs are accepted and canonicalized', () => {
   const dto = (cls: new () => object, payload: object) => plainToInstance(cls as never, payload) as Record<string, unknown>;
 
@@ -271,3 +295,106 @@ describe('clients.profile vocabulary (PV1): deprecated Portuguese slugs are acce
     }
   });
 });
+
+// ─── Exhaustive pins of every legacy name of client-legacy-fields.ts (explicit static tables, not derived from the module) ───
+type Json = Record<string, unknown>;
+const canonClient = (input: Json, options: { update?: boolean } = {}): Json => canonicalizeClientInput(input as never, options) as Json;
+
+/** [deprecated top-level key, canonical key] */
+const X_CLIENT_FIELDS: ReadonlyArray<readonly [string, string]> = [
+  ['type', 'person_type'], ['document', 'cpf_cnpj'], ['avatarUrl', 'photo_url'], ['zipCode', 'zip_code'], ['responsible', 'responsible_name'],
+  ['nome', 'name'], ['tipo_pessoa', 'person_type'], ['categoria', 'category'], ['perfil', 'profile'], ['foto', 'photo_url'],
+  ['razao_social', 'legal_name'], ['nome_fantasia', 'trade_name'], ['nome_pf', 'individual_name'], ['funcao', 'job_title'],
+  ['logradouro', 'street'], ['numero', 'street_number'], ['complemento', 'address_complement'], ['bairro', 'neighborhood'],
+  ['cidade', 'city'], ['estado', 'state'], ['cep', 'zip_code'], ['endereco_completo', 'address'], ['prioridade_contato', 'priority'],
+  ['responsavel_nome', 'responsible_name'], ['responsavel_cargo', 'responsible_job_title'], ['responsavel_email', 'responsible_email'],
+  ['responsavel_telefone', 'responsible_phone'], ['telefone', 'phone'], ['observacoes', 'notes'], ['interacoes', 'interactions'],
+];
+
+describe('client legacy top-level names: every deprecated key, one by one', () => {
+  it('the exported alias table declares exactly the expected pairs', () => {
+    expect({ ...CLIENT_DEPRECATED_FIELDS }).toEqual(Object.fromEntries(X_CLIENT_FIELDS));
+  });
+
+  it.each(X_CLIENT_FIELDS)('%s -> %s: legacy-only moves, the CANONICAL value wins when both are sent, the legacy key is removed', (legacy, canonical) => {
+    const only = canonClient({ [legacy]: 'legacy-value' });
+    expect(only[canonical]).toBe('legacy-value');
+    expect(only).not.toHaveProperty(legacy);
+    const both = canonClient({ [legacy]: 'legacy-value', [canonical]: 'canonical-value' });
+    expect(both[canonical]).toBe('canonical-value');
+    expect(both).not.toHaveProperty(legacy);
+  });
+});
+
+describe('client legacy payloadOperacional metadata copy: every form key is unfolded into its column and stripped', () => {
+  // [metadata key, canonical column, sample value valid under the DTO rules, expected canonical value]
+  const FORM_KEYS: ReadonlyArray<readonly [string, string, unknown, unknown]> = [
+    ['tipo_pessoa', 'person_type', 'pessoa_juridica', 'company'],
+    ['perfil', 'profile', 'produtora', 'produtora'],
+    ['razao_social', 'legal_name', 'ACME LTDA', 'ACME LTDA'],
+    ['nome_fantasia', 'trade_name', 'Acme', 'Acme'],
+    ['funcao', 'job_title', 'Diretora', 'Diretora'],
+    ['foto', 'photo_url', 'https://x.example/f.png', 'https://x.example/f.png'],
+    ['cep', 'zip_code', '01000-000', '01000-000'],
+    ['logradouro', 'street', 'Rua A', 'Rua A'],
+    ['numero', 'street_number', '10', '10'],
+    ['complemento', 'address_complement', 'Sala 2', 'Sala 2'],
+    ['bairro', 'neighborhood', 'Centro', 'Centro'],
+    ['responsavel_nome', 'responsible_name', 'Joana', 'Joana'],
+    ['responsavel_email', 'responsible_email', 'j@x.com', 'j@x.com'],
+    ['responsavel_telefone', 'responsible_phone', '11 99999-0000', '11 99999-0000'],
+    ['responsavel_cargo', 'responsible_job_title', 'Gerente', 'Gerente'],
+    ['interacoes', 'interactions', [{ type: 'ligacao', descricao: 'oi' }], [{ type: 'call', description: 'oi' }]],
+  ];
+
+  it.each(FORM_KEYS)('metadata.%s is unfolded into %s on create and never stays in metadata', (key, column, sample, expected) => {
+    expect(() => canonClient({ name: 'A', metadata: { [key]: sample, keep: 1 } })).not.toThrow();
+    const out = canonClient({ name: 'A', metadata: { [key]: sample, keep: 1 } });
+    expect(out[column]).toEqual(expected);
+    expect(out['metadata']).toEqual({ keep: 1 });
+    // the top-level canonical value always wins over the metadata copy
+    const topValue = column === 'person_type' ? 'individual' : column === 'interactions' ? [{ type: 'note' }] : 'TOP';
+    const top = canonClient({ name: 'A', [column]: topValue, metadata: { [key]: sample, keep: 1 } });
+    expect(top[column]).toEqual(topValue);
+    expect(top['metadata']).toEqual({ keep: 1 });
+  });
+
+  it('an invalid unfolded plaintext document (over the 50 character column) is dropped, a valid one is kept', () => {
+    expect(canonClient({ name: 'A', metadata: { cpf: '1'.repeat(51) } })).not.toHaveProperty('cpf_cnpj');
+    expect(canonClient({ name: 'A', metadata: { cnpj: '1'.repeat(51) } })).not.toHaveProperty('cpf_cnpj');
+    expect(canonClient({ name: 'A', metadata: { cpf: '1'.repeat(50) } })).toHaveProperty('cpf_cnpj', '1'.repeat(50));
+  });
+
+  it('on EDIT the legacy copy drops the unreadable defaults: an empty interacoes list never becomes interactions', () => {
+    expect(() => canonClient({ name: 'N', metadata: { interacoes: [] } }, { update: true })).not.toThrow();
+    expect(canonClient({ name: 'N', metadata: { interacoes: [] } }, { update: true })).toEqual({ name: 'N' });
+    expect(() => canonClient({ name: 'N', metadata: { interacoes: [{ type: 'ligacao' }] } }, { update: true })).not.toThrow();
+    expect(canonClient({ name: 'N', metadata: { interacoes: [{ type: 'ligacao' }] } }, { update: true })).toEqual({ name: 'N', interactions: [{ type: 'call' }] });
+  });
+});
+
+describe('client legacy VALUES: person types and priorities', () => {
+  it.each([
+    ['person', 'individual'], ['pessoa_fisica', 'individual'], ['pessoa_juridica', 'company'], ['Pessoa_Juridica', 'company'], [' pessoa_juridica ', 'company'],
+  ])('person type %s -> %s (exported mapper, create input and legacy query); canonical values are unchanged', (legacy, canonical) => {
+    expect(canonicalClientPersonType(legacy)).toBe(canonical);
+    expect(canonClient({ person_type: legacy })).toEqual({ person_type: canonical });
+    expect(canonicalizeClientQuery({ type: legacy } as never)).toEqual({ person_type: canonical });
+    expect(canonicalClientPersonType(canonical)).toBe(canonical);
+  });
+
+  it.each([
+    ['baixa', 'low'], ['media', 'medium'], ['média', 'medium'], ['alta', 'high'], ['estrategica', 'strategic'], ['estratégica', 'strategic'],
+    ['ALTA', 'high'], [' Baixa ', 'low'],
+  ])('priority %s -> %s; the canonical value is unchanged', (legacy, canonical) => {
+    expect(canonicalClientPriority(legacy)).toBe(canonical);
+    expect(canonicalClientPriority(canonical)).toBe(canonical);
+  });
+
+  it('a non-text value or an unknown text is returned untouched', () => {
+    expect(canonicalClientPriority(5)).toBe(5);
+    expect(canonicalClientPriority('urgente')).toBe('urgente');
+    expect(canonicalClientPersonType(null)).toBeNull();
+  });
+});
+

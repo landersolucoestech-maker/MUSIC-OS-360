@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalizeLyricsTone, lyricsToneLabel } from "./lyricsVocabulary";
+import { normalizeLyricsTone, lyricsToneLabel, normalizeLyricsSentiment, lyricsSentimentLabel } from "./lyricsVocabulary";
 
 describe("lyrics tone legacy alias", () => {
   it.each([
@@ -15,6 +15,25 @@ describe("lyrics tone legacy alias", () => {
     expect(lyricsToneLabel("direto")).toBe(lyricsToneLabel("direct"));
     expect(normalizeLyricsTone("sarcastic")).toBeUndefined();
     expect(lyricsToneLabel("sarcastic")).toBe("sarcastic");
+  });
+});
+
+describe("lyrics sentiment legacy alias and display copy", () => {
+  it.each([
+    ["misto", "mixed"],
+    ["  Misto ", "mixed"],
+    ["mixed", "mixed"],
+    ["positivo", "positive"],
+    ["melancolico", "melancholic"],
+  ])("normalizes %j to %s", (input, canonical) => {
+    expect(normalizeLyricsSentiment(input)).toBe(canonical);
+  });
+
+  it("renders the mixed sentiment with its fixed PT-BR label, from either spelling", () => {
+    expect(lyricsSentimentLabel("mixed")).toBe("misto");
+    expect(lyricsSentimentLabel("misto")).toBe("misto");
+    expect(lyricsSentimentLabel("positivo")).toBe("positivo");
+    expect(normalizeLyricsSentiment("irônico")).toBeUndefined();
   });
 });
 

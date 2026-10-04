@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { InventoryStatus } from '@music-os-360/types';
 import { InventoryService } from './inventory.service';
-import { CreateInventoryItemDto } from './dto/inventory.dto';
+import { CreateInventoryItemDto, QueryInventoryDto } from './dto/inventory.dto';
 import { INVENTORY_STATUSES, LEGACY_INVENTORY_STATUSES } from './inventory-legacy-fields';
 
 /**
@@ -94,5 +94,59 @@ describe('Inventory request contract (CZ-032)', () => {
     await service.list('tenant-1', { status: 'em_uso', localizacao: 'Estoque' } as never);
     expect(qb.andWhere).toHaveBeenCalledWith('i.status = :status', { status: InventoryStatus.IN_USE });
     expect(qb.andWhere).toHaveBeenCalledWith('i.storage_location = :storageLocation', { storageLocation: 'Estoque' });
+  });
+});
+
+describe('Inventory legacy vocabulary, one assertion per deprecated name (read-compat)', () => {
+  it.each([
+    ['disponivel', InventoryStatus.AVAILABLE],
+    ['em_uso', InventoryStatus.IN_USE],
+    ['emprestado', InventoryStatus.ON_LOAN],
+    ['manutencao', InventoryStatus.MAINTENANCE],
+    ['danificado', InventoryStatus.DAMAGED],
+    ['descartado', InventoryStatus.DISCARDED],
+    ['reservado', InventoryStatus.RESERVED],
+  ])('legacy status slug %j is accepted by the DTO and persisted as %j', async (slug, canonical) => {
+    expect(errorsFor({ name: 'X', status: slug })).toEqual([]);
+    const { service, repo } = makeService();
+    await service.create('tenant-1', 'user-1', { name: 'X', status: slug } as never);
+    expect((repo.create.mock.calls[0][0] as Record<string, unknown>)['status']).toBe(canonical);
+  });
+
+  it.each([
+    ['disponivel', InventoryStatus.AVAILABLE],
+    ['em_uso', InventoryStatus.IN_USE],
+    ['emprestado', InventoryStatus.ON_LOAN],
+    ['manutencao', InventoryStatus.MAINTENANCE],
+    ['danificado', InventoryStatus.DAMAGED],
+    ['descartado', InventoryStatus.DISCARDED],
+    ['reservado', InventoryStatus.RESERVED],
+  ])('list maps the legacy status filter %j to %j', async (slug, canonical) => {
+    const { service, qb } = makeService();
+    await service.list('tenant-1', { status: slug } as never);
+    expect(qb.andWhere).toHaveBeenCalledWith('i.status = :status', { status: canonical });
+  });
+
+  it.each([
+    ['quantidade', 'quantity', 4],
+    ['localizacao', 'storage_location', 'Sala 2'],
+    ['responsavel', 'responsible_person', 'Bia'],
+    ['setor', 'sector', 'Estúdio'],
+    ['data_entrada', 'entry_date', '2026-01-02'],
+    ['local_compra', 'purchase_location', 'Loja Y'],
+  ])('create: the deprecated field %s is persisted as %s alone', async (legacy, canonical, value) => {
+    expect(errorsFor({ name: 'X', [legacy]: value })).toEqual([]);
+    const { service, repo } = makeService();
+    await service.create('tenant-1', 'user-1', { name: 'X', [legacy]: value } as never);
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row[canonical]).toBe(value);
+    expect(row).not.toHaveProperty(legacy);
+  });
+
+  it('QueryInventoryDto declares the deprecated localizacao filter (not rejected by whitelist) and keeps it a string', () => {
+    const strict = (plain: Record<string, unknown>) =>
+      validateSync(plainToInstance(QueryInventoryDto, plain), { whitelist: true, forbidNonWhitelisted: true }).map((e) => e.property);
+    expect(strict({ localizacao: 'Estoque' })).toEqual([]);
+    expect(strict({ localizacao: 5 })).toEqual(['localizacao']);
   });
 });

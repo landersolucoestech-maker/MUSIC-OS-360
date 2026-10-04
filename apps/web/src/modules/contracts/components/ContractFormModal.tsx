@@ -78,16 +78,14 @@ const ContractForm = ({
     const CST_VALID = new Set([
       "empresariamento","suporte_financeiro","gestao","agenciamento","edicao",
       "distribuicao","marketing","producao_musical","producao_audiovisual",
-      "licenciamento","publicidade","parceria","shows","outros",
+      "licenciamento","publicidade","parceria","shows",
     ]);
     if (CST_VALID.has(slug)) return slug;
     const MAP: Record<string, string> = {
       exclusividade: "agenciamento",
       gravacao: "producao_musical",
       cessao_direitos: "licenciamento",
-      producao: "producao_musical",
       publicitario: "publicidade",
-      semantico: "outros",
       // Canonical spellings written by the API (platform-owned categories).
       exclusivity: "agenciamento",
       recording: "producao_musical",

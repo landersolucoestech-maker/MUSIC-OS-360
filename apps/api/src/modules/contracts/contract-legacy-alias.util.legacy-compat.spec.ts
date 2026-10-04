@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import {
   canonicalContractVersions,
   LEGACY_CONTRACT_VERSION_KEYS,
@@ -51,3 +52,101 @@ describe('contract legacy alias resolver (legacy in, canonical out)', () => {
     expect(b).toEqual({ version: 2 });
   });
 });
+
+// ─── Every branch of the legacy names: accepted, reported, and named in the error body ───
+type Body = { code: string; fields?: Array<{ canonical: string; legacy?: string }> };
+/** The 400 body of a resolver call; a call that does NOT throw fails the assertion. */
+const bodyOf = (fn: () => unknown): Body => {
+  let outcome: unknown = null;
+  try { fn(); } catch (e) { outcome = e; }
+  expect(outcome).toBeInstanceOf(BadRequestException);
+  return (outcome as BadRequestException).getResponse() as Body;
+};
+
+describe('legacy title alias "titulo": every branch of the resolver', () => {
+  it('titulo alone resolves to title and is reported as used', () => {
+    expect(() => resolveContractAliases({ titulo: 'T' })).not.toThrow();
+    const r = resolveContractAliases({ titulo: 'T' });
+    expect(r.normalized).toEqual({ title: 'T' });
+    expect(r.legacyAliasesUsed).toEqual(['titulo']);
+  });
+
+  it('a blank / non-string / null titulo alone is rejected, naming titulo as the legacy field', () => {
+    for (const bad of ['  ', 5, null]) {
+      const body = bodyOf(() => resolveContractAliases({ titulo: bad }));
+      expect(body.code).toBe('CONTRACT_TITLE_INVALID');
+      expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    }
+  });
+
+  it('title and titulo equal (after trim): resolves with the title value and reports titulo as used', () => {
+    expect(() => resolveContractAliases({ title: 'A', titulo: ' A ' })).not.toThrow();
+    const r = resolveContractAliases({ title: 'A', titulo: ' A ' });
+    expect(r.normalized).toEqual({ title: 'A' });
+    expect(r.legacyAliasesUsed).toEqual(['titulo']);
+  });
+
+  it('title valid + invalid titulo names titulo; invalid title + valid titulo names only title', () => {
+    const legacyBad = bodyOf(() => resolveContractAliases({ title: 'A', titulo: '  ' }));
+    expect(legacyBad.code).toBe('CONTRACT_TITLE_INVALID');
+    expect(legacyBad.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    const canonicalBad = bodyOf(() => resolveContractAliases({ title: '  ', titulo: 'A' }));
+    expect(canonicalBad.code).toBe('CONTRACT_TITLE_INVALID');
+    expect(canonicalBad.fields).toEqual([{ canonical: 'title', legacy: undefined }]);
+  });
+
+  it('title and titulo that differ conflict, naming titulo', () => {
+    const body = bodyOf(() => resolveContractAliases({ title: 'A', titulo: 'B' }));
+    expect(body.code).toBe('CONTRACT_ALIAS_CONFLICT');
+    expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+  });
+});
+
+describe('legacy pair aliases (tipo, data_inicio, data_fim, arquivo_url, valor): both-present, conflict and invalid-value branches name the legacy key', () => {
+  it.each([
+    ['type', 'tipo', 'service', 'other'],
+    ['start_date', 'data_inicio', '2026-01-01', '2027-01-01'],
+    ['end_date', 'data_fim', '2026-12-31', '2027-12-31'],
+    ['file_url', 'arquivo_url', 'https://a/1.pdf', 'https://a/2.pdf'],
+    ['fixed_value', 'valor', 10, 20],
+  ])('%s / %s', (canonical, legacy, a, b) => {
+    // legacy alone: accepted, reported, moved
+    expect(() => resolveContractAliases({ [legacy]: a })).not.toThrow();
+    const only = resolveContractAliases({ [legacy]: a });
+    expect(only.legacyAliasesUsed).toEqual([legacy]);
+    expect(Object.keys(only.normalized)).toEqual([canonical]);
+    // both present and equivalent: resolves and still reports the legacy key
+    expect(() => resolveContractAliases({ [canonical]: a, [legacy]: a })).not.toThrow();
+    const same = resolveContractAliases({ [canonical]: a, [legacy]: a });
+    expect(same.legacyAliasesUsed).toEqual([legacy]);
+    // both present and different: a conflict naming the legacy key
+    const conflict = bodyOf(() => resolveContractAliases({ [canonical]: a, [legacy]: b }));
+    expect(conflict.code).toBe('CONTRACT_ALIAS_CONFLICT');
+    expect(conflict.fields).toEqual([{ canonical, legacy }]);
+    // legacy null + canonical value: conflict naming the legacy key; both null: resolves to null and reports the legacy key
+    const nullConflict = bodyOf(() => resolveContractAliases({ [canonical]: a, [legacy]: null }));
+    expect(nullConflict.fields).toEqual([{ canonical, legacy }]);
+    expect(() => resolveContractAliases({ [canonical]: null, [legacy]: null })).not.toThrow();
+    expect(resolveContractAliases({ [canonical]: null, [legacy]: null }).legacyAliasesUsed).toEqual([legacy]);
+  });
+
+  it.each([
+    ['data_inicio', 'start_date', 'CONTRACT_DATE_INVALID', 'not-a-date'],
+    ['data_fim', 'end_date', 'CONTRACT_DATE_INVALID', 'not-a-date'],
+    ['valor', 'fixed_value', 'CONTRACT_VALUE_INVALID', 'abc'],
+  ])('an invalid %s is rejected as %s naming the legacy key (alone, and next to a valid canonical)', (legacy, canonical, code, bad) => {
+    const alone = bodyOf(() => resolveContractAliases({ [legacy]: bad }));
+    expect(alone.code).toBe(code);
+    expect(alone.fields).toEqual([{ canonical, legacy }]);
+    const valid = canonical === 'fixed_value' ? 10 : '2026-01-01';
+    const next = bodyOf(() => resolveContractAliases({ [canonical]: valid, [legacy]: bad }));
+    expect(next.code).toBe(code);
+    expect(next.fields).toEqual([{ canonical, legacy }]);
+  });
+
+  it('the query resolver names tipo as the legacy key of type', () => {
+    expect(bodyOf(() => resolveContractQueryAliases({ type: 'a', tipo: 'b' })).fields).toEqual([{ canonical: 'type', legacy: 'tipo' }]);
+    expect(resolveContractQueryAliases({ tipo: 'a' }).legacyAliasesUsed).toEqual(['tipo']);
+  });
+});
+

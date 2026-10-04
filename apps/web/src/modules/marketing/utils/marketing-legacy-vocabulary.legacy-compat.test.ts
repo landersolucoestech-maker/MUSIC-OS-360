@@ -4,6 +4,7 @@ import {
   LEGACY_CAMPAIGN_TYPE_TO_CANONICAL,
   canonicalBriefingType,
   canonicalCampaignType,
+  canonicalSourceDepartment,
 } from "./marketing-legacy-vocabulary";
 
 describe("legacy `conteudo` spelling", () => {
@@ -16,5 +17,12 @@ describe("legacy `conteudo` spelling", () => {
   it("briefing type conteudo is read as content", () => {
     expect(LEGACY_BRIEFING_TYPE_TO_CANONICAL.conteudo).toBe("content");
     expect(canonicalBriefingType("conteudo")).toBe("content");
+  });
+
+  it("asset source department conteudo is read as content, and an unknown value is untouched", () => {
+    expect(canonicalSourceDepartment("conteudo")).toBe("content");
+    expect(canonicalSourceDepartment("operacoes")).toBe("operations");
+    expect(canonicalSourceDepartment("content")).toBe("content");
+    expect(canonicalSourceDepartment("custom dept")).toBe("custom dept");
   });
 });

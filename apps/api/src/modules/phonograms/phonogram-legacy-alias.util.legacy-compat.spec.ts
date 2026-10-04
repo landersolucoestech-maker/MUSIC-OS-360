@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { resolvePhonogramAliases, resolvePhonogramQueryAliases } from './phonogram-legacy-alias.util';
 
 describe('phonogram legacy input mapper (legacy in, canonical out)', () => {
@@ -33,3 +34,53 @@ describe('phonogram legacy input mapper (legacy in, canonical out)', () => {
     expect(r.normalized).toEqual({ work_id: W, artist_id: A });
   });
 });
+
+// ─── Every branch of the legacy names: accepted, reported, and named in the error body ───
+type Body = { code: string; fields?: Array<{ canonical: string; legacy?: string }> };
+/** The 400 body of a resolver call; a call that does NOT throw fails the assertion. */
+const bodyOf = (fn: () => unknown): Body => {
+  let outcome: unknown = null;
+  try { fn(); } catch (e) { outcome = e; }
+  expect(outcome).toBeInstanceOf(BadRequestException);
+  return (outcome as BadRequestException).getResponse() as Body;
+};
+
+describe('legacy title alias "titulo": every branch of the resolver', () => {
+  it('titulo alone resolves to title and is reported as used', () => {
+    expect(() => resolvePhonogramAliases({ titulo: 'T' })).not.toThrow();
+    const r = resolvePhonogramAliases({ titulo: 'T' });
+    expect(r.normalized).toEqual({ title: 'T' });
+    expect(r.legacyAliasesUsed).toEqual(['titulo']);
+  });
+
+  it('a blank / non-string / null titulo alone is rejected, naming titulo as the legacy field', () => {
+    for (const bad of ['  ', 5, null]) {
+      const body = bodyOf(() => resolvePhonogramAliases({ titulo: bad }));
+      expect(body.code).toBe('PHONOGRAM_TITLE_INVALID');
+      expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    }
+  });
+
+  it('title and titulo equal (after trim): resolves with the title value and reports titulo as used', () => {
+    expect(() => resolvePhonogramAliases({ title: 'A', titulo: ' A ' })).not.toThrow();
+    const r = resolvePhonogramAliases({ title: 'A', titulo: ' A ' });
+    expect(r.normalized).toEqual({ title: 'A' });
+    expect(r.legacyAliasesUsed).toEqual(['titulo']);
+  });
+
+  it('title valid + invalid titulo names titulo; invalid title + valid titulo names only title', () => {
+    const legacyBad = bodyOf(() => resolvePhonogramAliases({ title: 'A', titulo: '  ' }));
+    expect(legacyBad.code).toBe('PHONOGRAM_TITLE_INVALID');
+    expect(legacyBad.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    const canonicalBad = bodyOf(() => resolvePhonogramAliases({ title: '  ', titulo: 'A' }));
+    expect(canonicalBad.code).toBe('PHONOGRAM_TITLE_INVALID');
+    expect(canonicalBad.fields).toEqual([{ canonical: 'title', legacy: undefined }]);
+  });
+
+  it('title and titulo that differ conflict, naming titulo', () => {
+    const body = bodyOf(() => resolvePhonogramAliases({ title: 'A', titulo: 'B' }));
+    expect(body.code).toBe('PHONOGRAM_ALIAS_CONFLICT');
+    expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+  });
+});
+

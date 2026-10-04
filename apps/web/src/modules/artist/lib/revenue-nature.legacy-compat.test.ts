@@ -9,6 +9,17 @@ describe("revenue nature legacy Portuguese category keywords", () => {
     expect(matchesNatureBucket(bucket("Royalties"), category)).toBe(false);
   });
 
+  // Free-text stored categories are not rewritten by canonicalTransactionCategory, so only the
+  // legacy Portuguese keyword stem can bucket them (no English keyword is a substring of these).
+  it.each([
+    ["Licenciamentos", "licenciado-x"],
+    ["Publicidade", "patrocinado-x"],
+    ["Publicidade", "publi-post"],
+  ])("free-text legacy category in bucket %s: %j is matched by its Portuguese stem", (label, category) => {
+    expect(matchesNatureBucket(bucket(label), category)).toBe(true);
+    expect(matchesNatureBucket(bucket("Royalties"), category)).toBe(false);
+  });
+
   it("canonical English categories still match their bucket", () => {
     expect(matchesNatureBucket(bucket("Publicidade"), "sponsorship")).toBe(true);
   });

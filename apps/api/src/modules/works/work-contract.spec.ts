@@ -311,3 +311,14 @@ describe('work legacy names: every deprecated field, nested key and value, one b
     expect(canon({ criada_por_ia: false, tipo_obra: 'referencia', participantes: [] })).toEqual({ ai_used: false, work_origin: 'reference', participants: [] });
   });
 });
+
+describe('work legacy participantes on UPDATE: the empty list is dropped, a filled one is honoured', () => {
+  it('an empty legacy participantes list on update never reaches the output, and the call does not throw', () => {
+    expect(() => canon({ title: 'T', participantes: [] }, { update: true })).not.toThrow();
+    expect(canon({ title: 'T', participantes: [] }, { update: true })).toEqual({ title: 'T' });
+    expect(() => canon({ title: 'T', participantes: [{ nome: 'A' }] }, { update: true })).not.toThrow();
+    expect(canon({ title: 'T', participantes: [{ nome: 'A' }] }, { update: true })).toEqual({ title: 'T', participants: [{ name: 'A' }] });
+    expect(() => canon({ title: 'T', participantes: 'not-a-list' }, { update: true })).not.toThrow();
+    expect(canon({ title: 'T', participantes: [] })).toEqual({ title: 'T', participants: [] });
+  });
+});

@@ -98,6 +98,45 @@ describe("marital status vocabulary", () => {
   });
 });
 
+describe("normalizeSavedParty: pinned legacy values (literals, independent of the maps under test)", () => {
+  it.each([
+    ["pf", "individual"],
+    ["pj", "company"],
+    ["artista", "artist"],
+  ])("a draft saved with the deprecated party type %s is read as %s", (legacy, canonical) => {
+    expect(normalizeSavedParty({ type: legacy, origin: "crm" }).type).toBe(canonical);
+  });
+
+  it("a draft saved with the deprecated origin artistas is read as artists", () => {
+    expect(normalizeSavedParty({ type: "individual", origin: "artistas" }).origin).toBe("artists");
+  });
+
+  it.each([
+    ["solteiro", "single"],
+    ["casado", "married"],
+    ["divorciado", "divorced"],
+    ["viuvo", "widowed"],
+    ["uniao_estavel", "stable_union"],
+  ])("a deprecated marital status %s is read as %s on both marital fields", (legacy, canonical) => {
+    const out = normalizeSavedParty({
+      type: "individual",
+      origin: "manual",
+      estado_civil: legacy,
+      estado_civil_representante: legacy,
+    });
+    expect(out.marital_status).toBe(canonical);
+    expect(out.legal_representative_marital_status).toBe(canonical);
+  });
+
+  it("the deprecated value tables are exactly the pinned lists", () => {
+    expect(Object.entries(LEGACY_PARTY_TYPES).sort()).toEqual([["artista", "artist"], ["pf", "individual"], ["pj", "company"]]);
+    expect(Object.entries(LEGACY_PARTY_ORIGINS)).toEqual([["artistas", "artists"]]);
+    expect(Object.entries(LEGACY_MARITAL_STATUSES).sort()).toEqual(
+      [["casado", "married"], ["divorciado", "divorced"], ["solteiro", "single"], ["uniao_estavel", "stable_union"], ["viuvo", "widowed"]],
+    );
+  });
+});
+
 describe("normalizeSavedParty: pinned legacy key table (literal keys, independent of the map under test)", () => {
   const PINNED: ReadonlyArray<readonly [string, string]> = [
     ["nome", "name"],

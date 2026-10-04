@@ -14,6 +14,16 @@ describe("user status legacy aliases", () => {
     expect(userStatusLabel(input)).toBe(userStatusLabel(canonical));
   });
 
+  it.each([
+    ["ativo", "active"],
+    ["inativo", "inactive"],
+    ["suspenso", "suspended"],
+    ["pendente", "invited"],
+  ] as const)("a stored legacy value %j resolves to %s even when the fallback differs", (legacy, canonical) => {
+    const fallback = canonical === "suspended" ? "inactive" : "suspended";
+    expect(normalizeUserStatus(legacy, fallback)).toBe(canonical);
+  });
+
   it("falls back for unknown or non-string values", () => {
     expect(normalizeUserStatus("bogus", "inactive")).toBe("inactive");
     expect(normalizeUserStatus(42)).toBe("active");

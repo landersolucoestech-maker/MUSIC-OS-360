@@ -89,6 +89,13 @@ describe('financial rule legacy compatibility (migration 20260927000001)', () =>
       expect(errorsFor({ name: 'ISS', type: 'tax', value: 5 })).toContain('calculation_method');
     });
 
+    it('the deprecated calculo is a declared property that keeps its IsIn validation', () => {
+      const strict = (plain: Record<string, unknown>) =>
+        validateSync(plainToInstance(CreateFinancialRuleDto, plain), { whitelist: true, forbidNonWhitelisted: true }).map((e) => e.property);
+      expect(strict({ name: 'ISS', type: 'tax', calculo: 'percentual', value: 5 })).toEqual([]);
+      expect(strict({ name: 'ISS', type: 'tax', calculo: 'progressivo', value: 5 })).toEqual(['calculo']);
+    });
+
     it('rejects an unknown calculation method', () => {
       expect(errorsFor({ name: 'ISS', type: 'tax', calculation_method: 'progressive', value: 5 })).toContain(
         'calculation_method',

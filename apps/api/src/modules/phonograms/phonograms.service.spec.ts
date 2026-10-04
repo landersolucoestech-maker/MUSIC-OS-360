@@ -175,6 +175,67 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
     });
   });
 
+  describe('create() — missing title names the legacy alias', () => {
+    it('the PHONOGRAM_TITLE_REQUIRED body points at title with titulo as the legacy field', async () => {
+      const outcome = await service.create(TENANT, 'u1', {} as any).then(() => null, (e: unknown) => e);
+      expect(outcome).toBeInstanceOf(BadRequestException);
+      expect((outcome as BadRequestException).getResponse()).toEqual({
+        code: 'PHONOGRAM_TITLE_REQUIRED',
+        message: 'Título é obrigatório.',
+        fields: [{ canonical: 'title', legacy: 'titulo' }],
+      });
+    });
+  });
+
+  describe('create() — legacy title alias "titulo" through the real resolver (every branch)', () => {
+    type Body = { code: string; fields: Array<{ canonical: string; legacy?: string }> };
+    /** The 400 body of a rejected create; a create that does NOT reject fails the assertion. */
+    const rejectionBody = async (dto: Record<string, unknown>): Promise<Body> => {
+      const outcome = await service.create(TENANT, 'u1', dto as any).then(() => null, (e: unknown) => e);
+      expect(outcome).toBeInstanceOf(BadRequestException);
+      return (outcome as BadRequestException).getResponse() as Body;
+    };
+    const tituloWarnings = (spy: jest.SpyInstance) => spy.mock.calls.map((c) => String(c[0])).filter((m) => m.includes('alias=titulo'));
+
+    it('titulo alone resolves (does not reject) and is persisted as title, reporting one used alias', async () => {
+      const warnSpy = jest.spyOn((service as any).logger, 'warn');
+      await expect(service.create(TENANT, 'u1', { titulo: 'So legado' } as any)).resolves.toBeDefined();
+      expect(mockDs._repo.create).toHaveBeenCalledWith(expect.objectContaining({ title: 'So legado' }));
+      expect(tituloWarnings(warnSpy)).toHaveLength(1);
+    });
+
+    it('a blank titulo alone is rejected with PHONOGRAM_TITLE_INVALID naming titulo', async () => {
+      const body = await rejectionBody({ titulo: '   ' });
+      expect(body.code).toBe('PHONOGRAM_TITLE_INVALID');
+      expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+      expect(mockDs._repo.create).not.toHaveBeenCalled();
+    });
+
+    it('title and titulo equal: resolves, persists title and still reports titulo as a used alias', async () => {
+      const warnSpy = jest.spyOn((service as any).logger, 'warn');
+      await expect(service.create(TENANT, 'u1', { title: 'Igual', titulo: ' Igual ' } as any)).resolves.toBeDefined();
+      expect(mockDs._repo.create).toHaveBeenCalledWith(expect.objectContaining({ title: 'Igual' }));
+      expect(tituloWarnings(warnSpy)).toHaveLength(1);
+    });
+
+    it('title valid + blank titulo names titulo; blank title + valid titulo names only title', async () => {
+      const legacyBad = await rejectionBody({ title: 'Ok', titulo: '  ' });
+      expect(legacyBad.code).toBe('PHONOGRAM_TITLE_INVALID');
+      expect(legacyBad.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+      const canonicalBad = await rejectionBody({ title: '  ', titulo: 'Ok' });
+      expect(canonicalBad.code).toBe('PHONOGRAM_TITLE_INVALID');
+      expect(canonicalBad.fields).toEqual([{ canonical: 'title', legacy: undefined }]);
+      expect(mockDs._repo.create).not.toHaveBeenCalled();
+    });
+
+    it('title and titulo that differ conflict, and the conflict names titulo', async () => {
+      const body = await rejectionBody({ title: 'A', titulo: 'B' });
+      expect(body.code).toBe('PHONOGRAM_ALIAS_CONFLICT');
+      expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+      expect(mockDs._repo.create).not.toHaveBeenCalled();
+    });
+  });
+
   describe('create() — PT/EN resolution via normalizer (C2)', () => {
     it('titulo (PT legacy) alone is persisted to title', async () => {
       await service.create(TENANT, 'u1', { titulo: 'Nome PT' } as any);

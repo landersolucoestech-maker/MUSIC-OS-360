@@ -587,3 +587,61 @@ describe('ContractsService write payload — canonical name wins over the deprec
     expect(updatedC1(legacyOnly.repo)['exclusive']).toBe(true);
   });
 });
+
+describe('ContractsService.create — legacy title alias "titulo" through the real resolver (every branch, legacy in, canonical out)', () => {
+  const create = (svc: ContractsService, dto: Record<string, unknown>) =>
+    svc.create('tenant-1', 'user-1', dto as unknown as CreateContractDto);
+  const aliasWarnings = (spy: jest.SpyInstance) => spy.mock.calls.map((c) => String(c[0])).filter((m) => m.includes('alias=titulo'));
+  type Body = { code: string; fields: Array<{ canonical: string; legacy?: string }> };
+  /** The 400 body of a rejected create; a create that does NOT reject fails the assertion. */
+  const rejectionBody = async (promise: Promise<unknown>): Promise<Body> => {
+    const outcome = await promise.then(() => null, (e: unknown) => e);
+    expect(outcome).toBeInstanceOf(BadRequestException);
+    return (outcome as BadRequestException).getResponse() as Body;
+  };
+
+  it('titulo alone resolves (does not throw), is persisted as title and reported as a used legacy alias', async () => {
+    const { svc, repo } = makeServiceC1();
+    const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    await expect(create(svc, { titulo: 'So legado' })).resolves.toBeDefined();
+    expect(createdC1(repo)['title']).toBe('So legado');
+    expect(aliasWarnings(warnSpy)).toHaveLength(1);
+    warnSpy.mockRestore();
+  });
+
+  it('a blank titulo alone is rejected with CONTRACT_TITLE_INVALID naming titulo as the legacy field', async () => {
+    const { svc, repo } = makeServiceC1();
+    const body = await rejectionBody(create(svc, { titulo: '   ' }));
+    expect(body.code).toBe('CONTRACT_TITLE_INVALID');
+    expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    expect(repo.create).not.toHaveBeenCalled();
+  });
+
+  it('title and titulo equal: resolves, persists title and still reports titulo as a used legacy alias', async () => {
+    const { svc, repo } = makeServiceC1();
+    const warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    await expect(create(svc, { title: 'Igual', titulo: ' Igual ' })).resolves.toBeDefined();
+    expect(createdC1(repo)['title']).toBe('Igual');
+    expect(aliasWarnings(warnSpy)).toHaveLength(1);
+    warnSpy.mockRestore();
+  });
+
+  it('title valid + blank titulo is rejected naming titulo; blank title + valid titulo is rejected naming title (no legacy)', async () => {
+    const { svc, repo } = makeServiceC1();
+    const blankLegacy = await rejectionBody(create(svc, { title: 'Ok', titulo: '  ' }));
+    expect(blankLegacy.code).toBe('CONTRACT_TITLE_INVALID');
+    expect(blankLegacy.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    const blankCanonical = await rejectionBody(create(svc, { title: '  ', titulo: 'Ok' }));
+    expect(blankCanonical.code).toBe('CONTRACT_TITLE_INVALID');
+    expect(blankCanonical.fields).toEqual([{ canonical: 'title', legacy: undefined }]);
+    expect(repo.create).not.toHaveBeenCalled();
+  });
+
+  it('title and titulo that differ conflict, and the conflict names titulo as the legacy field', async () => {
+    const { svc, repo } = makeServiceC1();
+    const body = await rejectionBody(create(svc, { title: 'A', titulo: 'B' }));
+    expect(body.code).toBe('CONTRACT_ALIAS_CONFLICT');
+    expect(body.fields).toEqual([{ canonical: 'title', legacy: 'titulo' }]);
+    expect(repo.create).not.toHaveBeenCalled();
+  });
+});

@@ -42,6 +42,7 @@ const LEGACY_TEAM_CATEGORIES: ReadonlyArray<readonly [string, string]> = [
   ["juridico", "Jurídico"],
   ["editora_musical", "Editora Musical"],
   ["gestor", "Gestor"],
+  ["financeiro", "Financeiro"],
   ["categoria_desconhecida", "Outro"],
 ];
 

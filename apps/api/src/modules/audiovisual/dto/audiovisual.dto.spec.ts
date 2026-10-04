@@ -231,3 +231,18 @@ describe('AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS — legacy alias read-compat', (
     expect(out).not.toHaveProperty('videomaker');
   });
 });
+
+describe('CreateAudiovisualProjectDto — deprecated `videomaker` property (deploy-skew body)', () => {
+  it('declares videomaker: a pre-canonical build sending it is not rejected by whitelist + forbidNonWhitelisted', async () => {
+    const errors = await validatePayload(CreateAudiovisualProjectDto, { title: 'Clipe', type: 'music_video', videomaker: 'Beltrano' });
+    expect(errors.map((e) => e.property)).not.toContain('videomaker');
+    expect(errors).toEqual([]);
+  });
+
+  it('still validates videomaker as a bounded string (it is a real declared field, not skipped)', async () => {
+    const tooLong = await validatePayload(CreateAudiovisualProjectDto, { title: 'Clipe', type: 'music_video', videomaker: 'x'.repeat(256) });
+    expect(tooLong.some((e) => e.property === 'videomaker')).toBe(true);
+    const notString = await validatePayload(CreateAudiovisualProjectDto, { title: 'Clipe', type: 'music_video', videomaker: 123 });
+    expect(notString.some((e) => e.property === 'videomaker')).toBe(true);
+  });
+});

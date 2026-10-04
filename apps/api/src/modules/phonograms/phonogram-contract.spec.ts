@@ -102,3 +102,52 @@ describe('Phonogram request contract (CZ-040)', () => {
     expect(errorsFor(QueryPhonogramDto, { obra_vinculada: 'sem-obra' })).not.toEqual([]);
   });
 });
+
+describe('CreatePhonogramDto legacy title alias "titulo" (legacy in, canonical out)', () => {
+  const strictErrors = (plain: Record<string, unknown>) =>
+    validateSync(plainToInstance(CreatePhonogramDto, plain), { whitelist: true, forbidNonWhitelisted: true });
+
+  it('titulo is a declared property: accepted under whitelist + forbidNonWhitelisted', () => {
+    expect(strictErrors({ titulo: 'Noite Estrelada' })).toEqual([]);
+    expect(strictErrors({ title: 'Noite Estrelada', titulo: 'Noite Estrelada' })).toEqual([]);
+  });
+
+  it('a wrong titulo is refused by its own validators (type, max length), never reported as an unknown property', () => {
+    const notString = strictErrors({ title: 'T', titulo: 5 }).filter((e) => e.property === 'titulo');
+    expect(notString).toHaveLength(1);
+    expect(Object.keys(notString[0].constraints ?? {})).toContain('isString');
+    expect(Object.keys(notString[0].constraints ?? {})).not.toContain('whitelistValidation');
+    const tooLong = strictErrors({ title: 'T', titulo: 'x'.repeat(501) }).filter((e) => e.property === 'titulo');
+    expect(tooLong).toHaveLength(1);
+    expect(Object.keys(tooLong[0].constraints ?? {})).toContain('maxLength');
+  });
+});
+
+describe('phonogram legacy VALUES: every deprecated media type, classification, aggregator and country maps to its canonical value', () => {
+  const canon = (input: Record<string, unknown>) => canonicalizePhonogramInput(input) as Record<string, unknown>;
+
+  it.each([
+    ['todos', 'all'],
+    ['Todos', 'all'],
+    ['físico', 'physical'],
+    ['fisico', 'physical'],
+    ['Fisico', 'physical'],
+  ])('legacy media type %s -> %s (as midia and as media_type); canonical values are unchanged', (legacy, canonical) => {
+    expect(canon({ midia: legacy })).toEqual({ media_type: canonical });
+    expect(canon({ media_type: legacy })).toEqual({ media_type: canonical });
+    expect(canon({ media_type: canonical })).toEqual({ media_type: canonical });
+  });
+
+  it('legacy classificacao / agregadora value "outro" -> other', () => {
+    expect(canon({ classificacao: 'outro' })).toEqual({ recording_classification: 'other' });
+    expect(canon({ agregadora: 'outro' })).toEqual({ aggregator: 'other' });
+    expect(canon({ recording_classification: 'live' })).toEqual({ recording_classification: 'live' });
+  });
+
+  it.each([
+    ['brazil', 'BR'], ['usa', 'US'], ['uk', 'GB'], ['portugal', 'PT'], ['argentina', 'AR'], ['outro', 'ZZ'], ['Brazil', 'BR'],
+  ])('legacy country %s -> %s, for the origin and the publication country alike', (legacy, iso) => {
+    expect(canon({ pais_origem: legacy })).toEqual({ country_of_recording: iso });
+    expect(canon({ pais_publicacao: legacy })).toEqual({ publication_country: iso });
+  });
+});
