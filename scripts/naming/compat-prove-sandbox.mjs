@@ -23,8 +23,9 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(here, "../..");
-const PROOF = path.join(REPO, "docs/naming/audit/compat-mutation-proof.json");
 const arg = (n) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : null; };
+// --proof <file>: read/write an isolated proof file (several people can verify their pairs in parallel without touching the shared one)
+const PROOF = arg("--proof") ? path.resolve(arg("--proof")) : path.join(REPO, "docs/naming/audit/compat-mutation-proof.json");
 const has = (n) => process.argv.includes(n);
 const sha = (p) => (fs.existsSync(p) ? crypto.createHash("sha256").update(fs.readFileSync(p)).digest("hex") : null);
 
