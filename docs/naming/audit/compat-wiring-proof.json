@@ -1,0 +1,435 @@
+{
+ "schemaVersion": 1,
+ "results": [
+  {
+   "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
+   "line": 147,
+   "text": "applyDeprecatedFieldAliases(value, ARTIST_NESTED_DEPRECATED_KEYS)",
+   "fileSha256": "4171f0fb01b62257ffc3be1289a8f174dae2d7d8efe564a32d029a84854f3e4d",
+   "testsSha256": "1e96614a087e30c80fcc54f875c70e251684860324a865a6a1961902623ce0fd",
+   "testDir": "apps/api/src/modules/artists",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
+   "line": 197,
+   "text": "applyDeprecatedFieldAliases(value, metadataAliases)",
+   "fileSha256": "4171f0fb01b62257ffc3be1289a8f174dae2d7d8efe564a32d029a84854f3e4d",
+   "testsSha256": "1e96614a087e30c80fcc54f875c70e251684860324a865a6a1961902623ce0fd",
+   "testDir": "apps/api/src/modules/artists",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
+   "line": 228,
+   "text": "applyDeprecatedFieldAliases(raw, ARTIST_DEPRECATED_FIELDS)",
+   "fileSha256": "4171f0fb01b62257ffc3be1289a8f174dae2d7d8efe564a32d029a84854f3e4d",
+   "testsSha256": "1e96614a087e30c80fcc54f875c70e251684860324a865a6a1961902623ce0fd",
+   "testDir": "apps/api/src/modules/artists",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/audiovisual/projects/projects.service.ts",
+   "line": 73,
+   "text": "applyDeprecatedFieldAliases(input, AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS)",
+   "fileSha256": "fb170a169b51d1cdfd59b26751dbc5b2f68c636fa8889118aed95ed7221ba82a",
+   "testsSha256": "994d06716edcfc46bc2aa6abe414b864deae16f8ea66e90e5e298fed41128e72",
+   "testDir": "apps/api/src/modules/audiovisual",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/audiovisual/projects/projects.service.ts",
+   "line": 89,
+   "text": "applyDeprecatedFieldAliases(input, AUDIOVISUAL_PROJECT_DEPRECATED_FIELDS)",
+   "fileSha256": "fb170a169b51d1cdfd59b26751dbc5b2f68c636fa8889118aed95ed7221ba82a",
+   "testsSha256": "994d06716edcfc46bc2aa6abe414b864deae16f8ea66e90e5e298fed41128e72",
+   "testDir": "apps/api/src/modules/audiovisual",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
+   "line": 187,
+   "text": "applyDeprecatedFieldAliases(raw, CLIENT_DEPRECATED_FIELDS)",
+   "fileSha256": "61cd93fdeb700e88f1b5d4a3825382d0c11d57eeb5d88947393b39fa888575eb",
+   "testsSha256": "60cc1b6d469c165d58e0644c94f3942e82dad1bd931c556efd7ba5356df65160",
+   "testDir": "apps/api/src/modules/clients",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
+   "line": 198,
+   "text": "applyDeprecatedFieldAliases({ ...(query as Record<string, unknown>) }, { type: 'person_type' })",
+   "fileSha256": "61cd93fdeb700e88f1b5d4a3825382d0c11d57eeb5d88947393b39fa888575eb",
+   "testsSha256": "60cc1b6d469c165d58e0644c94f3942e82dad1bd931c556efd7ba5356df65160",
+   "testDir": "apps/api/src/modules/clients",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
+   "line": 97,
+   "text": "applyDeprecatedFieldAliases(item as Record<string, unknown>, INTERACTION_KEYS)",
+   "fileSha256": "61cd93fdeb700e88f1b5d4a3825382d0c11d57eeb5d88947393b39fa888575eb",
+   "testsSha256": "60cc1b6d469c165d58e0644c94f3942e82dad1bd931c556efd7ba5356df65160",
+   "testDir": "apps/api/src/modules/clients",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/contract-service-types/contract-service-types.service.ts",
+   "line": 13,
+   "text": "applyDeprecatedFieldAliases(input, CONTRACT_SERVICE_TYPE_DEPRECATED_FIELDS)",
+   "fileSha256": "465d9332e9e1b05d1fd6a6f9b5bc8d55c21cd5dbfe65cc186bb4b44551f68860",
+   "testsSha256": "ef2fff07c371ea116265c5fea5a321f0b2a4803bfad19fdc893d7a2e4439db60",
+   "testDir": "apps/api/src/modules/contract-service-types",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/contract-templates/contract-templates.service.ts",
+   "line": 52,
+   "text": "applyDeprecatedFieldAliases(dto as any, CONTRACT_TEMPLATE_DEPRECATED_FIELDS)",
+   "fileSha256": "459e5025ce5c9b235c5ee3889c206ab8103590f7c9a06f7bbc0bd03eae6aa8dc",
+   "testsSha256": "3a2b6cfa5208361e895c6d3ae4f6f6c3fe20a07c7d4b4cb6d3d5c38876d4c090",
+   "testDir": "apps/api/src/modules/contract-templates",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/contract-templates/contract-templates.service.ts",
+   "line": 60,
+   "text": "applyDeprecatedFieldAliases(dto as any, CONTRACT_TEMPLATE_DEPRECATED_FIELDS)",
+   "fileSha256": "459e5025ce5c9b235c5ee3889c206ab8103590f7c9a06f7bbc0bd03eae6aa8dc",
+   "testsSha256": "3a2b6cfa5208361e895c6d3ae4f6f6c3fe20a07c7d4b4cb6d3d5c38876d4c090",
+   "testDir": "apps/api/src/modules/contract-templates",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/events/events.service.ts",
+   "line": 99,
+   "text": "applyDeprecatedFieldAliases(dto as Record<string, unknown>, EVENT_DEPRECATED_FIELDS)",
+   "fileSha256": "b8708c43205419b43d88179f3ba67463c815228f9015d090bfa3034044a9dd39",
+   "testsSha256": "aa074abffbb0bfba842bd054018d94c95341524cdb9410287c4c6573f45fb4c1",
+   "testDir": "apps/api/src/modules/events",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/hr/hr.service.ts",
+   "line": 122,
+   "text": "applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, EMPLOYEE_DEPRECATED_FIELDS)",
+   "fileSha256": "13f42c4b9ee1c87c8ef3629df1a29bb3b15e8393d45a8a63162379ef2d7aa8fe",
+   "testsSha256": "cef42c27f3610f7569b42aaeeaf07ae9ef26831db683e5dd9e7684073386275f",
+   "testDir": "apps/api/src/modules/hr",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/hr/hr.service.ts",
+   "line": 174,
+   "text": "applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, PAYROLL_DEPRECATED_FIELDS)",
+   "fileSha256": "13f42c4b9ee1c87c8ef3629df1a29bb3b15e8393d45a8a63162379ef2d7aa8fe",
+   "testsSha256": "cef42c27f3610f7569b42aaeeaf07ae9ef26831db683e5dd9e7684073386275f",
+   "testDir": "apps/api/src/modules/hr",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/hr/hr.service.ts",
+   "line": 224,
+   "text": "applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, LEAVE_REQUEST_DEPRECATED_FIELDS)",
+   "fileSha256": "13f42c4b9ee1c87c8ef3629df1a29bb3b15e8393d45a8a63162379ef2d7aa8fe",
+   "testsSha256": "cef42c27f3610f7569b42aaeeaf07ae9ef26831db683e5dd9e7684073386275f",
+   "testDir": "apps/api/src/modules/hr",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/hr/hr.service.ts",
+   "line": 97,
+   "text": "applyDeprecatedFieldAliases(input as unknown as Record<string, unknown>, EMPLOYEE_DEPRECATED_FIELDS)",
+   "fileSha256": "13f42c4b9ee1c87c8ef3629df1a29bb3b15e8393d45a8a63162379ef2d7aa8fe",
+   "testsSha256": "cef42c27f3610f7569b42aaeeaf07ae9ef26831db683e5dd9e7684073386275f",
+   "testDir": "apps/api/src/modules/hr",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/integrations/integrations.controller.ts",
+   "line": 1067,
+   "text": "applyDeprecatedFieldAliases(body, ABRAMUS_WORK_DEPRECATED_FIELDS)",
+   "fileSha256": "31b67765944c03411e54c0ba295f2b2d843beee425c1c7692c310052dc5d1603",
+   "testsSha256": "b7bb7cf00e69fd2c3fa96b4d6800aaaaa15525c8c1c05d87e00876b9de361e23",
+   "testDir": "apps/api/src/modules/integrations",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/inventory/inventory.service.ts",
+   "line": 102,
+   "text": "applyDeprecatedFieldAliases(input, INVENTORY_DEPRECATED_FIELDS)",
+   "fileSha256": "b76e6fded391de913547c10016a204fe903c6705c65f2879a31cf1ab91731559",
+   "testsSha256": "60853aa8dc68ca3f9d55c74d170b02e6a161d7732776e0a20055b82d57ed73df",
+   "testDir": "apps/api/src/modules/inventory",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/inventory/inventory.service.ts",
+   "line": 31,
+   "text": "applyDeprecatedFieldAliases(input, INVENTORY_QUERY_DEPRECATED_FIELDS)",
+   "fileSha256": "b76e6fded391de913547c10016a204fe903c6705c65f2879a31cf1ab91731559",
+   "testsSha256": "60853aa8dc68ca3f9d55c74d170b02e6a161d7732776e0a20055b82d57ed73df",
+   "testDir": "apps/api/src/modules/inventory",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/invoices/invoices.service.ts",
+   "line": 71,
+   "text": "applyDeprecatedFieldAliases(dto as unknown as Record<string, unknown>, INVOICE_DEPRECATED_FIELDS)",
+   "fileSha256": "10407ab5fe6526081a6bb1557377c52ac7a015cbdcd6da010bf775a07e5f7e89",
+   "testsSha256": "3be75e445d4da3afc68ebdd38b3d73f1c54755007b3b68364c389bcdcfc9f22d",
+   "testDir": "apps/api/src/modules/invoices",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/invoices/invoices.service.ts",
+   "line": 75,
+   "text": "applyDeprecatedFieldAliases(item, INVOICE_ITEM_DEPRECATED_FIELDS)",
+   "fileSha256": "10407ab5fe6526081a6bb1557377c52ac7a015cbdcd6da010bf775a07e5f7e89",
+   "testsSha256": "3be75e445d4da3afc68ebdd38b3d73f1c54755007b3b68364c389bcdcfc9f22d",
+   "testDir": "apps/api/src/modules/invoices",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/leads/leads.service.ts",
+   "line": 502,
+   "text": "applyDeprecatedFieldAliases(input, LEAD_DEPRECATED_FIELDS)",
+   "fileSha256": "772d0f72a7cb821e5e672a8ebaf955380fd7a1296de53815b2991d731fa9a970",
+   "testsSha256": "45882b6f4314a7831ebaaffce6c55107cad065654f55b1a73beb5e552cd711ca",
+   "testDir": "apps/api/src/modules/leads",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/licensing/licensing.service.ts",
+   "line": 40,
+   "text": "applyDeprecatedFieldAliases(dto as Record<string, unknown>, LICENSE_DEPRECATED_FIELDS)",
+   "fileSha256": "7f29b22c887ceb98d6a82f8e7c5fbc2e37bd3be8e8dc363af92e6f7fbc291813",
+   "testsSha256": "14b9720686429c9570b3ccbbf162f36d3b5ef4f98546b88cbdcbc6009a98e8ae",
+   "testDir": "apps/api/src/modules/licensing",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/licensing/licensing.service.ts",
+   "line": 58,
+   "text": "applyDeprecatedFieldAliases(input, LICENSE_QUERY_DEPRECATED_FIELDS)",
+   "fileSha256": "7f29b22c887ceb98d6a82f8e7c5fbc2e37bd3be8e8dc363af92e6f7fbc291813",
+   "testsSha256": "14b9720686429c9570b3ccbbf162f36d3b5ef4f98546b88cbdcbc6009a98e8ae",
+   "testDir": "apps/api/src/modules/licensing",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
+   "line": 109,
+   "text": "applyDeprecatedFieldAliases(raw, PHONOGRAM_DEPRECATED_FIELDS)",
+   "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
+   "testsSha256": "bed98a9e266291806ed7813864b83293155e8862ff6f3f12fd0a2f49c2f9ed29",
+   "testDir": "apps/api/src/modules/phonograms",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
+   "line": 72,
+   "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, PHONOGRAM_PARTICIPATION_DEPRECATED_KEYS)",
+   "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
+   "testsSha256": "bed98a9e266291806ed7813864b83293155e8862ff6f3f12fd0a2f49c2f9ed29",
+   "testDir": "apps/api/src/modules/phonograms",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
+   "line": 77,
+   "text": "applyDeprecatedFieldAliases(item as Record<string, unknown>, PHONOGRAM_PARTICIPANT_DEPRECATED_FIELDS)",
+   "fileSha256": "78229e8fbd40cd821d1d3e7bc7dbc65e23757b854aebd5c202dea800d84dbdb7",
+   "testsSha256": "bed98a9e266291806ed7813864b83293155e8862ff6f3f12fd0a2f49c2f9ed29",
+   "testDir": "apps/api/src/modules/phonograms",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/projects/projects.service.ts",
+   "line": 129,
+   "text": "applyDeprecatedFieldAliases(raw, PROJECT_TRACK_DEPRECATED_FIELDS)",
+   "fileSha256": "1ffb9c8acf77b201d60f148afeba5477f7167e7d62d305901badf8597a70b258",
+   "testsSha256": "f7d8ffeed305673eef0788d6dc89689f9eafd5e57861113727ae36dcffae5c87",
+   "testDir": "apps/api/src/modules/projects",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/projects/projects.service.ts",
+   "line": 228,
+   "text": "applyDeprecatedFieldAliases(input, PROJECT_DEPRECATED_FIELDS)",
+   "fileSha256": "1ffb9c8acf77b201d60f148afeba5477f7167e7d62d305901badf8597a70b258",
+   "testsSha256": "f7d8ffeed305673eef0788d6dc89689f9eafd5e57861113727ae36dcffae5c87",
+   "testDir": "apps/api/src/modules/projects",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/projects/projects.service.ts",
+   "line": 254,
+   "text": "applyDeprecatedFieldAliases(dto as Record<string, unknown>, PROJECT_DEPRECATED_FIELDS)",
+   "fileSha256": "1ffb9c8acf77b201d60f148afeba5477f7167e7d62d305901badf8597a70b258",
+   "testsSha256": "f7d8ffeed305673eef0788d6dc89689f9eafd5e57861113727ae36dcffae5c87",
+   "testDir": "apps/api/src/modules/projects",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
+   "line": 54,
+   "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, aliases)",
+   "fileSha256": "52ca5ca3479385aebe5c9f8cecdb7c6bdd7e60feee88f8070aecd652358b4d53",
+   "testsSha256": "19f73a2f1438531e709fcc9389f4d33e46aa3dc47eac2bed635e413f0aa79293",
+   "testDir": "apps/api/src/modules/releases",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
+   "line": 59,
+   "text": "applyDeprecatedFieldAliases(input as Record<string, unknown>, RELEASE_DEPRECATED_FIELDS)",
+   "fileSha256": "52ca5ca3479385aebe5c9f8cecdb7c6bdd7e60feee88f8070aecd652358b4d53",
+   "testsSha256": "19f73a2f1438531e709fcc9389f4d33e46aa3dc47eac2bed635e413f0aa79293",
+   "testDir": "apps/api/src/modules/releases",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/shares/share-legacy-fields.ts",
+   "line": 123,
+   "text": "applyDeprecatedFieldAliases(entry as Record<string, unknown>, SHARE_HISTORY_ENTRY_DEPRECATED_FIELDS)",
+   "fileSha256": "e7bca84dc74b6d360d2a7239dbb96d161000ed3ccbc40a7de1a99a6e9b6f03a3",
+   "testsSha256": "56acc3af01dbf96fd674b3e9615b1e98cf80eba86ac72a0b8f6d06d07953dfd3",
+   "testDir": "apps/api/src/modules/shares",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/shares/shares.service.ts",
+   "line": 24,
+   "text": "applyDeprecatedFieldAliases(query as Record<string, unknown>, SHARE_QUERY_DEPRECATED_FIELDS)",
+   "fileSha256": "2509c709184999570d8bf9a56aa33767d40d72dbb6d99186a4d1951121b55bd7",
+   "testsSha256": "56acc3af01dbf96fd674b3e9615b1e98cf80eba86ac72a0b8f6d06d07953dfd3",
+   "testDir": "apps/api/src/modules/shares",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/shares/shares.service.ts",
+   "line": 96,
+   "text": "applyDeprecatedFieldAliases(dto as Record<string, unknown>, SHARE_DEPRECATED_FIELDS)",
+   "fileSha256": "2509c709184999570d8bf9a56aa33767d40d72dbb6d99186a4d1951121b55bd7",
+   "testsSha256": "56acc3af01dbf96fd674b3e9615b1e98cf80eba86ac72a0b8f6d06d07953dfd3",
+   "testDir": "apps/api/src/modules/shares",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/takedowns/takedowns.service.ts",
+   "line": 30,
+   "text": "applyDeprecatedFieldAliases(input, TAKEDOWN_QUERY_DEPRECATED_FIELDS)",
+   "fileSha256": "ce821cf8dbb9427dd87a65dc5558d76755fbdcef0cd23db0b4ef829a272edc12",
+   "testsSha256": "dcaf239879274cf80fb65e5e75e5f2e8f5650e344bb25637cbc7064e258b554e",
+   "testDir": "apps/api/src/modules/takedowns",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/takedowns/takedowns.service.ts",
+   "line": 79,
+   "text": "applyDeprecatedFieldAliases(input, TAKEDOWN_DEPRECATED_FIELDS)",
+   "fileSha256": "ce821cf8dbb9427dd87a65dc5558d76755fbdcef0cd23db0b4ef829a272edc12",
+   "testsSha256": "dcaf239879274cf80fb65e5e75e5f2e8f5650e344bb25637cbc7064e258b554e",
+   "testDir": "apps/api/src/modules/takedowns",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/transactions/transaction-legacy-fields.ts",
+   "line": 73,
+   "text": "applyDeprecatedFieldAliases(input as Record<string, unknown>, TRANSACTION_DEPRECATED_FIELDS)",
+   "fileSha256": "057e23037b70da448001cbacb031fe5d542392cd595364a62511b8363ccf079c",
+   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testDir": "apps/api/src/modules/transactions",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/transactions/transactions.service.ts",
+   "line": 212,
+   "text": "applyDeprecatedFieldAliases(query as AnyRecord, TRANSACTION_QUERY_DEPRECATED_FIELDS)",
+   "fileSha256": "3b6d916d05158afeecab0c9943e40d24b4c4a3e65905a93c3ee1e958d984141d",
+   "testsSha256": "499ad565279057480d55aaa756e2cdee59a2e7558eac39aff0b852cdbab34e3d",
+   "testDir": "apps/api/src/modules/transactions",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/works/work-legacy-fields.ts",
+   "line": 125,
+   "text": "applyDeprecatedFieldAliases(raw, WORK_DEPRECATED_FIELDS)",
+   "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
+   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testDir": "apps/api/src/modules/works",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/works/work-legacy-fields.ts",
+   "line": 144,
+   "text": "applyDeprecatedFieldAliases(query as Record<string, unknown>, { tipo_obra: 'work_origin' })",
+   "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
+   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testDir": "apps/api/src/modules/works",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/works/work-legacy-fields.ts",
+   "line": 86,
+   "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, WORK_AI_ELEMENT_DEPRECATED_FIELDS)",
+   "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
+   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testDir": "apps/api/src/modules/works",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "file": "apps/api/src/modules/works/work-legacy-fields.ts",
+   "line": 91,
+   "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, WORK_PARTICIPANT_DEPRECATED_FIELDS)",
+   "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
+   "testsSha256": "0c1212e812a8ff567e4ba7a4ffcc8bdbc6c7e568b596ee62026963f79eaf5d29",
+   "testDir": "apps/api/src/modules/works",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  }
+ ]
+}

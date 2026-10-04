@@ -42,7 +42,17 @@ configuration (`jest.config.ts`/`tsconfig.json` for the API, `vitest.config.mjs`
    (a legacy literal used as a fixture) or a script is credited by binding (the file exists and names the literal): that is not behavioral proof of
    a runtime boundary and is never counted as such.
 
-Known limits (recorded, not hidden): the hashes cover the runtime file, its test and the runner configuration, not transitive helpers (the full API
+7. WIRING (`node scripts/naming/compat-wiring-proof.mjs --check`, proof file `docs/naming/audit/compat-wiring-proof.json`): the name-level proof cannot see that a
+   SERVICE stopped calling the alias helper (the DTO still accepts the legacy field, the table spec passes, and a pre-rename client's value is silently
+   dropped). For every production call of `applyDeprecatedFieldAliases` the call is replaced by its first argument and the specs of the owning module must
+   fail by assertion; records are bound to the file and to every spec of the module. Counter `WIRING_SITES_UNPROVEN` must be 0.
+8. The audit never trusts the stored JSON alone: it recomputes the mutation sites and the census from the current source text and refuses a record that differs
+   (forged census, fewer mutations than sites, mutations of sites that do not exist, a ledger name added after the run).
+
+Known limits (recorded, not hidden): the other alias helpers (`resolveContractAliases`, `resolvePhonogramAliases`, `canonicalizeDeprecatedColumnId`,
+`expandHrPermissionAliases`, `resolveDeprecatedImportHeader`) return structured results and have no wiring operator; legacy-first PRECEDENCE written as a ternary,
+a `continue` guard or variadic argument order (`pick(target, canonical, legacy)`) is invisible to the operators and to `LEGACY_FIRST_READS`, which only sees
+`??`, `||` and `=== undefined` (the instances found by the independent reviews are pinned by behavior tests: HR feature flags, contacts);  the hashes cover the runtime file, its test and the runner configuration, not transitive helpers (the full API
 and web suites run in CI and catch a helper that breaks a test); `COMPILER_CHECKED` relies on the monorepo typecheck; `proofExemptions` are a human
 judgement that a site is prose, reviewed with the ledger; the proof file is trusted as generated evidence (it is excluded from the technical-naming
 census as a single named file, and any other file under `docs/naming/audit` is scanned); the unmutated-form census reports shorthand, binding elements,

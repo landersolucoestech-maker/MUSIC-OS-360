@@ -115,7 +115,7 @@
    "file": "apps/api/src/common/compat/plan-features.ts",
    "test": "apps/api/src/common/compat/plan-features.spec.ts",
    "fileSha256": "eae0d1dc8805aabe1fc51a2d99228ded44c41992009c26efc3789935f4991551",
-   "testSha256": "ce1da9d8f29e825df83879c7a8a1ebe0e78cdd7e61cb0b961b1d36fbb3520c2c",
+   "testSha256": "9fcd100afcbdadad8ce8a156833623ca85e5ec5e242d502f35ac52521b634358",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -126,11 +126,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -141,7 +136,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/common/compat/release-metadata.ts",
@@ -316,7 +317,7 @@
    "file": "apps/api/src/core/rbac/rbac.service.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "9d203f2b5893041840f592d572246511d7f5b7339eaae46882b90d06778998f8",
-   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
+   "testSha256": "52f1f68e10d1e134ccd2857ef0f9e1389985c29b5ee1e93d7b405bb603156413",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -411,12 +412,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "fallbackOperators": 1,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -432,7 +427,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/core/rbac/rbac.service.ts",
@@ -480,7 +481,7 @@
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "0454a37037b41ac3bffbd76a016a803d4c8f6d886a35347db41201f961bdd1d0",
-   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
+   "testSha256": "52f1f68e10d1e134ccd2857ef0f9e1389985c29b5ee1e93d7b405bb603156413",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -539,12 +540,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "fallbackOperators": 1,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -559,7 +554,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
@@ -3691,7 +3692,7 @@
    "file": "apps/api/src/modules/contacts/contacts.service.ts",
    "test": "apps/api/src/modules/contacts/contacts-tenant-isolation.spec.ts",
    "fileSha256": "0656960f0e328803450e6d5b786f395f26a09c288445082ad4543838b6d51716",
-   "testSha256": "b1312d215dc43c7f69868a916bb62e01a17e8d479d528d2adf6f60eb57dfd53a",
+   "testSha256": "7167c4bcd963cdda63ecb6b28deb4c61acb1d7c2d64b56fa61c3cca7b9613570",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -3768,11 +3769,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -3781,7 +3777,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -12937,7 +12940,7 @@
    "file": "apps/api/src/modules/takedowns/takedown-legacy-fields.ts",
    "test": "apps/api/src/modules/takedowns/takedown-legacy-fields.legacy-compat.spec.ts",
    "fileSha256": "914ae278dd9d0999ab210f08a2915a79ffac9ee5feadec8e3808c03421dfb113",
-   "testSha256": "100c5e323280113b62f9b777d8903cbafbe191c554d1dcd78dce5e0e6f1b3f57",
+   "testSha256": "cc945328dd478d47f59fa590a286394ba9b127dbf2379c8f2c9ceef4dd82725d",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -13020,11 +13023,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -13033,7 +13031,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -21738,6 +21743,7 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
    "declarations": [
     "percentual"
    ],
@@ -21747,8 +21753,7 @@
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false,
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/releases/types/index.ts",
@@ -22899,7 +22904,7 @@
    "file": "apps/web/src/shared/lib/feature-flags.ts",
    "test": "apps/web/src/shared/lib/feature-flags.test.ts",
    "fileSha256": "f24db0ccbb240fc41fbb052780b1c843d02e80395a89fb58744e98c7f7e85e48",
-   "testSha256": "d178c4646d8903ead4091fb7d57e9948bb1ca9c32c8519c9bcfff88724f984fe",
+   "testSha256": "b0bc35ccd67ed5341be676e295f620b26a9d1d8feb5a80f34d7ff5038c500297",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -22910,11 +22915,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -22925,7 +22925,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/shared/lib/legacy-title.ts",
@@ -23092,7 +23098,7 @@
    "file": "packages/types/src/enums.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "d0713a3354213ec8af55f2065fdd7455a4111d5752bc6324a3f2906b1d5bd0fc",
-   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
+   "testSha256": "52f1f68e10d1e134ccd2857ef0f9e1389985c29b5ee1e93d7b405bb603156413",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -23163,12 +23169,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "fallbackOperators": 1,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -23189,7 +23189,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "packages/types/src/enums.ts",
@@ -23227,7 +23233,7 @@
    "file": "packages/types/src/role-slugs.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
    "fileSha256": "e8f28d52cf5a24d2ed672a8f56eb92ce9d23972edfb01af5e3b3a8d4a11b1aac",
-   "testSha256": "12c06188d2ae5fed4d4fcad0456f13267aa3ac376a5b51646e8fbb543a974678",
+   "testSha256": "52f1f68e10d1e134ccd2857ef0f9e1389985c29b5ee1e93d7b405bb603156413",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -23268,12 +23274,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "fallbackOperators": 1,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -23289,7 +23289,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   }
  ]
 }
