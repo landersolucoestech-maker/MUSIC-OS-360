@@ -26,3 +26,15 @@ test("merge: among fresh copies the one that ran the most mutations wins; output
   assert.deepEqual(out.map((r) => r.file), ["apps/api/src/a.ts", "apps/api/src/b.ts"]);
   assert.equal(out[0].verdict, "PARTIAL");
 });
+
+test("merge: a strict (exhaustive) record outranks a non-exhaustive one with more mutations from an older run", () => {
+  const sha = shaOf({ "apps/api/src/a.ts": "F1", "apps/api/src/a.spec.ts": "T1" });
+  const old = rec({ verdict: "PROVEN", mutations: [{}, {}, {}] });
+  const strict = rec({ verdict: "PARTIAL", exhaustive: true, mutations: [{}] });
+  for (const lists of [[[old], [strict]], [[strict], [old]]]) {
+    const out = mergeResults(lists, sha);
+    assert.equal(out.length, 1);
+    assert.equal(out[0].exhaustive, true);
+    assert.equal(out[0].verdict, "PARTIAL");
+  }
+});
