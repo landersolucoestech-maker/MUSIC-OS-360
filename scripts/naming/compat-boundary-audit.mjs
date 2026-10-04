@@ -172,7 +172,9 @@ export function pairEvidence(results, file, test, readFile, name = "*", exemptio
   // with a reason; a named row must have no occurrence in a form the operators skip (shorthand, binding element, JSX attribute, method, template part).
   // `expected` is what the harness would compute NOW from the current source text (sites and census): the stored JSON is never trusted on its own
   const census = expected ? expected.census : rec.census;
-  const valid = (exemptions ?? []).filter((x) => x && typeof x.text === "string" && String(x.reason ?? "").trim().length >= 12);
+  // an exemption is for interface prose, never for a legacy NAME: a text equal to any ledger name of the pair is refused
+  const ledgerNames = new Set([...(census?.names ?? []), ...(rec.census?.names ?? []), name]);
+  const valid = (exemptions ?? []).filter((x) => x && typeof x.text === "string" && String(x.reason ?? "").trim().length >= 12 && !ledgerNames.has(x.text));
   let censusState = null;
   let matched = [];
   if (!declared && baseProven) {
@@ -211,13 +213,16 @@ export function audit(map, { readFile, unusedRows = [], mutation = { results: []
     const bind = bindingOf(e, readFile);
     const runtimeFiles = pathsOf(e).filter((p) => p !== "*" && !isTestFile(p) && /\.[cm]?[jt]sx?$/.test(p) && !p.startsWith(".claude/"));
     let mutationState = "N/A";
+    let compilerOnly = false;
     let legacyFirst = [];
     if (needsProof && runtimeFiles.length) {
       const states = [];
       const matchedAll = new Set();
+      compilerOnly = true;
       for (const f of runtimeFiles) {
         const ev = bind.tests.map((t) => pairEvidence(results, f, t, readFile, e.currentName, e.proofExemptions, oracle ? oracle(f, t, readFile) : null));
         for (const x of ev) for (const m of x.matched ?? []) matchedAll.add(m);
+        if (!ev.some((x) => x.proven && x.granularity === "COMPILER_CHECKED")) compilerOnly = false;
         for (const x of ev) legacyFirst.push(...(x.legacyFirst ?? []).map((l) => ({ file: f, ...l })));
         states.push(ev.some((x) => x.fresh && x.proven) ? "PROVEN" : ev.some((x) => !x.fresh && x.verdict !== "NOT_RUN") ? "STALE" : ev.find((x) => x.verdict !== "NOT_RUN")?.state ?? "NOT_RUN");
       }
@@ -229,7 +234,7 @@ export function audit(map, { readFile, unusedRows = [], mutation = { results: []
     const proof = !needsProof ? "NOT_REQUIRED" : !bind.bound ? bind.via : mutationState === "N/A" || mutationState === "PROVEN" ? "PROVEN" : mutationState;
     const names = e.currentName === "*" ? [] : [e.currentName];
     const c = names.map((n) => concept.get(n)).find(Boolean);
-    rows.push({ row: e, ...cat, binding: bind, mutationState, proof, needsProof, canonical: c ? `${c.id} ${c.application ?? c.api ?? c.database}` : "", legacyFirst });
+    rows.push({ row: e, ...cat, binding: bind, mutationState, proof, needsProof, compilerOnly: compilerOnly && mutationState === "PROVEN", canonical: c ? `${c.id} ${c.application ?? c.api ?? c.database}` : "", legacyFirst });
   }
   return rows;
 }
@@ -262,7 +267,8 @@ export function counters(rows) {
   c.COMPATIBILITY_BOUNDARIES_REQUIRING_PROOF = proofRows.length;
   // rows whose path is only a test file (a legacy literal used as a fixture) or a script: credited by binding (the file exists and names the literal), never by mutation
   c.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY = proofRows.filter((r) => r.proof === "PROVEN" && r.mutationState === "N/A").length;
-  c.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION = proofRows.filter((r) => r.proof === "PROVEN" && r.mutationState === "PROVEN").length;
+  c.COMPATIBILITY_ROWS_PROVEN_BY_COMPILER_CHECK = proofRows.filter((r) => r.proof === "PROVEN" && r.mutationState === "PROVEN" && r.compilerOnly).length;
+  c.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION = proofRows.filter((r) => r.proof === "PROVEN" && r.mutationState === "PROVEN" && !r.compilerOnly).length;
   c.OBSOLETE_BOUNDARIES = rows.filter((r) => r.category === "OBSOLETE_BOUNDARY").length;
   c.MISCLASSIFIED_OPERATIONAL_USAGE = rows.filter((r) => r.category === "MISCLASSIFIED_OPERATIONAL_USAGE").length;
   c.LEGACY_FIRST_READS = rows.reduce((n, r) => n + r.legacyFirst.length, 0);
@@ -327,6 +333,7 @@ async function main() {
       ...open.map((k) => `| ${k} | ${cnt[k]} |`),
       `| COMPATIBILITY_BOUNDARIES_REQUIRING_PROOF | ${cnt.COMPATIBILITY_BOUNDARIES_REQUIRING_PROOF} |`,
       `| COMPATIBILITY_ROWS_PROVEN_BY_MUTATION | ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION} |`,
+      `| COMPATIBILITY_ROWS_PROVEN_BY_COMPILER_CHECK | ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_COMPILER_CHECK} |`,
       `| COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY | ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY} |`,
       "",
       "## Rows by category", "", "| Category | Rows |", "|---|---:|",
@@ -349,7 +356,7 @@ async function main() {
     return;
   }
   console.log(`compat-boundary audit: ${cnt.rows} rows, ${groups.length} groups, ${JSON.stringify(Object.fromEntries(open.map((k) => [k, cnt[k]])))}`);
-  console.log(`  proof basis: ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION} rows by mutation, ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY} rows by binding only (legacy literal used as a test fixture or script): binding is not behavioral proof`);
+  console.log(`  proof basis: ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION} rows by mutation, ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_COMPILER_CHECK} by the compiler only (declaration names, no mutation executed), ${cnt.COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY} rows by binding only (legacy literal used as a test fixture or script): binding is not behavioral proof`);
   const bad = rows.filter((r) => (r.needsProof && r.proof !== "PROVEN") || ["OBSOLETE_BOUNDARY", "MISCLASSIFIED_OPERATIONAL_USAGE"].includes(r.category) || r.legacyFirst.length);
   for (const r of bad.slice(0, 60)) console.error(`  ${r.category} ${r.proof} ${r.row.exceptionClass} ${r.row.path} :: ${r.row.currentName}${r.why ? ` (${r.why})` : ""}${r.legacyFirst.length ? ` legacy-first at ${r.legacyFirst.map((l) => `${l.file}:${l.line}`).join(",")}` : ""}`);
   if (bad.length > 60) console.error(`  ... ${bad.length - 60} more`);

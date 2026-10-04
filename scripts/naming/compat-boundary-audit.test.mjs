@@ -425,3 +425,19 @@ test("census: keys and members the predicate rejects, JSX attributes, methods, s
   const clean = findMutations('import x from "contratos"; export * from "contratos"; type T = "contratos";', "a.ts", new Set(), wc, { ptWords });
   assert.deepEqual(clean.census.unmutatedPtSites, [], "module specifiers and literal types are not sites");
 });
+
+test("exemption: a text equal to a legacy NAME of the ledger is refused, and compiler-checked rows are counted apart from mutation", () => {
+  const F = "apps/api/src/m/a.ts";
+  const T = "apps/api/src/m/a.spec.ts";
+  const files = { [F]: "x", [T]: "y" };
+  const read = (p) => files[p] ?? null;
+  const census = { version: 1, names: ["legacyfield"], wildcard: false, siteCount: 1, unmutatedPtSites: [], unmutatedNameSites: [{ name: "legacyfield", line: 1, kind: "shorthand", text: "legacyfield" }] };
+  const rec = new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations: [{ operator: "LEGACY_LITERAL", label: "legacyfield", outcome: "KILLED" }], census }]]);
+  const ev = pairEvidence(rec, F, T, read, "legacyfield", [{ text: "legacyfield", reason: "a long enough reason text" }]);
+  assert.equal(ev.proven, false, "an exemption whose text is the legacy name itself does not cover its unmutated site");
+  assert.equal(ev.state, "UNMUTATED_SITES");
+  const compiler = { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), verdict: "COMPILER_CHECKED", declarations: ["legacyfield"], mutations: [] };
+  const c = counters(audit({ exceptions: [row({ path: F, coveringTest: T })], concepts: [] }, { readFile: (p) => (p === T ? "legacyfield" : read(p)), mutation: { results: [{ ...compiler, testSha256: sha("legacyfield") }] } }));
+  assert.equal(c.COMPATIBILITY_ROWS_PROVEN_BY_COMPILER_CHECK, 1);
+  assert.equal(c.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION, 0);
+});
