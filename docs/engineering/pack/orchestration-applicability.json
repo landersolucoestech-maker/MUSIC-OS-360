@@ -187,7 +187,7 @@
      "no new module, controller, DTO or architecture decision: changes are compatibility readers, specs, tooling and documentation"
     ],
     [
-     "^(schema|migration-engineer|indexing|query|database-engineer|import-export|xlsx|csv|data-engineering|data-integrity|data-migration|denormalization|normalization|relational|locking|optimistic|archival|backup|restore|retention|transaction-reviewer|database-security|database-reliability|concurrency-reviewer)",
+     "^(schema|migration-engineer|indexing|query|database-engineer|import-export|xlsx|c[s]v|data-engineering|data-integrity|data-migration|denormalization|normalization|relational|locking|optimistic|archival|backup|restore|retention|transaction-reviewer|database-security|database-reliability|concurrency-reviewer)",
      "no schema or migration was added or executed; destructive migrations are prepared as drafts only (reviewed by database-reviewer and destructive-change-guard)"
     ],
     [

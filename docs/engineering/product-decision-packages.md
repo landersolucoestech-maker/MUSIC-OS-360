@@ -149,7 +149,7 @@ DECISION_ID: D-06 (BLK-UNWIRED-UI-SCAFFOLD)
 DOMAIN: frontend (schedule, settings users, contracts utils)
 CURRENT_STATE: four pieces of code call the legacy-compatibility helpers but nothing reachable in production runs them: (1) Schedule.tsx handleExcelExport / handleExcelImport (no button or input references them, excelInputRef is never attached) and the unused `type` property of schedulerEvents; (2) Settings.tsx user status filter (state can only be set to "all status" through clearUserFilters, no UI setter exists); (3) apps/web contract-variables resolver (no production importer, used only by its tests).
 CURRENT_DATA: none (client-side only).
-CANONICAL_RULES_ALREADY_KNOWN: one concept, one authoritative implementation; no permanent scaffolding disguised as a fix (naming-canonical rule); spreadsheet exchange is XLSX only (csv-engineer rule).
+CANONICAL_RULES_ALREADY_KNOWN: one concept, one authoritative implementation; no permanent scaffolding disguised as a fix (naming-canonical rule); spreadsheet exchange is XLSX only (XLSX-only exchange rule).
 WHAT_IS_UNDEDUCIBLE: whether the Schedule spreadsheet import/export, the Settings user status filter and contract variable resolution are planned features.
 OPTION_A: delete the dead handlers, filter branch and resolver (and their tests).
 OPTION_B: wire them as real features (UI control, permission check, tests) with an owner and date.

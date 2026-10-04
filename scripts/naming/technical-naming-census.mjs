@@ -579,7 +579,8 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     exceptedClass: sorted(exceptedClass),
     reportOnly,
     /** ACTIVE ledger rows that matched no occurrence in the tree (obsolete boundaries: the code they documented is gone). */
-    unusedRows: (exceptions.rows ?? []).filter((r) => !usedRows.has(r)),
+    // rows of the migrated-schema surface (path `database-schema`) are matched against the live catalog by schema-naming-census.mjs, which owns their stale check
+    unusedRows: (exceptions.rows ?? []).filter((r) => !usedRows.has(r) && !(r.surface === "schema" && r.path === "database-schema")),
   };
 }
 

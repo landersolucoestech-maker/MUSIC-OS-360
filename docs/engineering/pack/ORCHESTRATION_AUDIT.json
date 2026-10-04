@@ -1,16 +1,14 @@
 {
- "plan": "orch-e848167d",
+ "plan": "orch-54733048",
  "workflow": "naming-normalization",
  "counters": {
-  "ORCHESTRATION_COVERAGE_GAPS": 6,
-  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 10,
-  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 0,
-  "UNREVIEWED_CROSS_LAYER_CHANGES": 0,
-  "UNVALIDATED_IMPLEMENTATIONS": 1
+  "ORCHESTRATION_COVERAGE_GAPS": 4,
+  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 36,
+  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 33,
+  "UNREVIEWED_CROSS_LAYER_CHANGES": 4,
+  "UNVALIDATED_IMPLEMENTATIONS": 0
  },
  "gaps": [
-  "w14-mutation-proof: bypass task without a completed independent reviewer task",
-  "r14-mutation: READY",
   "r16-secrets: PENDING",
   "r17-requirements: PENDING",
   "r18-frontend-security: PENDING",
@@ -19,8 +17,8 @@
  "applicableAgents": [
   {
    "name": "adversarial-reviewer",
-   "used": "YES",
-   "tasks": "r5-ci-docs",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -31,20 +29,20 @@
   },
   {
    "name": "architecture-reviewer",
-   "used": "YES",
-   "tasks": "r9b-architecture",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "backend-engineer",
-   "used": "YES",
-   "tasks": "w10-api-tests",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "backend-reviewer",
-   "used": "YES",
-   "tasks": "r10-backend",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -55,8 +53,8 @@
   },
   {
    "name": "code-reviewer",
-   "used": "YES",
-   "tasks": "r11-ledger",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -73,44 +71,44 @@
   },
   {
    "name": "config-mapper",
-   "used": "YES",
-   "tasks": "w1-env-trace",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "database-reviewer",
-   "used": "YES",
-   "tasks": "r6-dossier-db",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "dead-code-detector",
-   "used": "YES",
-   "tasks": "w12-dead-generator",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "dead-code-reviewer",
-   "used": "YES",
-   "tasks": "r12-dead",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "destructive-change-guard",
-   "used": "YES",
-   "tasks": "r6b-dossier-guard",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "devops-ci-reviewer",
-   "used": "YES",
-   "tasks": "w5-ci-check-exhaustion",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "documentation-reviewer",
-   "used": "YES",
-   "tasks": "r3-docs,r3b-docs-corrections",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -121,8 +119,8 @@
   },
   {
    "name": "domain-boundary-reviewer",
-   "used": "YES",
-   "tasks": "r4-decisions",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -133,8 +131,8 @@
   },
   {
    "name": "encryption-reviewer",
-   "used": "YES",
-   "tasks": "w7-pii-key-custody",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -145,14 +143,14 @@
   },
   {
    "name": "frontend-engineer",
-   "used": "YES",
-   "tasks": "w9-web-fixes",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "frontend-reviewer",
-   "used": "YES",
-   "tasks": "r9-frontend",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -175,14 +173,14 @@
   },
   {
    "name": "implementation-engineer",
-   "used": "YES",
-   "tasks": "propagate,w8-env-templates,w11-ledger-gate,w13-doc-corrections",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "migration-planner",
-   "used": "YES",
-   "tasks": "schema-plan,w6-destructive-dossier",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -199,20 +197,20 @@
   },
   {
    "name": "mutation-test-reviewer",
+   "used": "YES",
+   "tasks": "r14-mutation",
+   "reason": ""
+  },
+  {
+   "name": "naming-analyzer",
    "used": "NO",
    "tasks": "",
    "reason": ""
   },
   {
-   "name": "naming-analyzer",
-   "used": "YES",
-   "tasks": "census,classify,w2-compat-semantic-groups",
-   "reason": ""
-  },
-  {
    "name": "naming-reviewer",
-   "used": "YES",
-   "tasks": "canonical-model,r2-naming",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -223,26 +221,26 @@
   },
   {
    "name": "pii-reviewer",
-   "used": "YES",
-   "tasks": "r7-pii",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "producer-consumer-tracer",
-   "used": "YES",
-   "tasks": "w4-decisions-trace",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "protected-file-validator",
-   "used": "YES",
-   "tasks": "r8-protected",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "qa-engineer",
    "used": "YES",
-   "tasks": "w15-proof-closure",
+   "tasks": "compatibility",
    "reason": ""
   },
   {
@@ -253,8 +251,8 @@
   },
   {
    "name": "regression-reviewer",
-   "used": "YES",
-   "tasks": "r15-regression",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -289,8 +287,8 @@
   },
   {
    "name": "security-reviewer",
-   "used": "YES",
-   "tasks": "r1-env-security",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -301,14 +299,14 @@
   },
   {
    "name": "stale-code-detector",
-   "used": "YES",
-   "tasks": "w3-historical-trace",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "test-strategy-engineer",
-   "used": "YES",
-   "tasks": "w14-mutation-proof",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -321,8 +319,8 @@
  "applicableSkills": [
   {
    "name": "backend-audit",
-   "used": "YES",
-   "tasks": "r10-backend",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -333,14 +331,14 @@
   },
   {
    "name": "branch-policy-check",
-   "used": "YES",
-   "tasks": "w5-ci-check-exhaustion",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "canonical-naming",
-   "used": "YES",
-   "tasks": "canonical-model,w2-compat-semantic-groups,w11-ledger-gate,r2-naming",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -357,26 +355,26 @@
   },
   {
    "name": "config-map",
-   "used": "YES",
-   "tasks": "w1-env-trace,w8-env-templates",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "contract-tracing",
-   "used": "YES",
-   "tasks": "r4-decisions",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "create-api-tests",
-   "used": "YES",
-   "tasks": "w10-api-tests",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "create-contract-tests",
    "used": "YES",
-   "tasks": "w10-api-tests,w15-proof-closure",
+   "tasks": "compatibility",
    "reason": ""
   },
   {
@@ -388,25 +386,25 @@
   {
    "name": "create-regression-tests",
    "used": "YES",
-   "tasks": "w14-mutation-proof,w15-proof-closure",
+   "tasks": "compatibility,r14-mutation",
    "reason": ""
   },
   {
    "name": "cross-layer-impact",
-   "used": "YES",
-   "tasks": "w4-decisions-trace,w9-web-fixes,r9b-architecture",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "data-flow-trace",
-   "used": "YES",
-   "tasks": "w4-decisions-trace",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "data-retention-audit",
-   "used": "YES",
-   "tasks": "w7-pii-key-custody",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -423,8 +421,8 @@
   },
   {
    "name": "dead-code-analysis",
-   "used": "YES",
-   "tasks": "classify,w12-dead-generator,r12-dead",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -435,14 +433,14 @@
   },
   {
    "name": "destructive-change-check",
-   "used": "YES",
-   "tasks": "schema-plan,w6-destructive-dossier,r6b-dossier-guard",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "diff-review",
-   "used": "YES",
-   "tasks": "w13-doc-corrections,r3-docs,r15-regression,r3b-docs-corrections",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -453,20 +451,20 @@
   },
   {
    "name": "duplication-analysis",
-   "used": "YES",
-   "tasks": "classify",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "encryption-audit",
-   "used": "YES",
-   "tasks": "w7-pii-key-custody",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "environment-map",
-   "used": "YES",
-   "tasks": "w1-env-trace",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -483,14 +481,14 @@
   },
   {
    "name": "external-action-check",
-   "used": "YES",
-   "tasks": "w5-ci-check-exhaustion",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "frontend-audit",
-   "used": "YES",
-   "tasks": "r9-frontend",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -507,14 +505,14 @@
   },
   {
    "name": "migration-audit",
-   "used": "YES",
-   "tasks": "schema-plan,w6-destructive-dossier,r6-dossier-db",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "naming-analysis",
-   "used": "YES",
-   "tasks": "census,classify,w2-compat-semantic-groups",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -525,20 +523,20 @@
   },
   {
    "name": "pii-audit",
-   "used": "YES",
-   "tasks": "w7-pii-key-custody,r7-pii",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "producer-consumer-trace",
-   "used": "YES",
-   "tasks": "w4-decisions-trace",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "protected-file-check",
-   "used": "YES",
-   "tasks": "w8-env-templates,r8-protected",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -567,8 +565,8 @@
   },
   {
    "name": "repository-census",
-   "used": "YES",
-   "tasks": "census",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -579,20 +577,20 @@
   },
   {
    "name": "residue-search",
-   "used": "YES",
-   "tasks": "w3-historical-trace,w12-dead-generator",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "review",
-   "used": "YES",
-   "tasks": "r5-ci-docs,r11-ledger",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "rollback-analysis",
-   "used": "YES",
-   "tasks": "w6-destructive-dossier",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -603,38 +601,38 @@
   },
   {
    "name": "run-unit-tests",
-   "used": "YES",
-   "tasks": "w14-mutation-proof",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "safe-refactor",
-   "used": "YES",
-   "tasks": "propagate,w9-web-fixes",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "schema-normalization",
-   "used": "YES",
-   "tasks": "propagate",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "scope-lock",
-   "used": "YES",
-   "tasks": "w11-ledger-gate",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "secret-scan",
-   "used": "YES",
-   "tasks": "r1-env-security",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
    "name": "security-audit",
-   "used": "YES",
-   "tasks": "r1-env-security",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   },
   {
@@ -645,8 +643,8 @@
   },
   {
    "name": "stale-code-analysis",
-   "used": "YES",
-   "tasks": "w3-historical-trace,w13-doc-corrections",
+   "used": "NO",
+   "tasks": "",
    "reason": ""
   }
  ]

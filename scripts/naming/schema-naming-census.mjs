@@ -81,12 +81,17 @@ export function scanCatalog(rows) {
 export function schemaCensus(rows, { exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const debt = {};
   const excepted = {};
+  const used = new Set();
   for (const h of scanCatalog(rows)) {
-    const bucket = exceptions.get(SCHEMA_FILE, h.name, "schema") ? excepted : debt;
+    const row = exceptions.get(SCHEMA_FILE, h.name, "schema");
+    if (row) used.add(row);
+    const bucket = row ? excepted : debt;
     bucket[h.key] = (bucket[h.key] ?? 0) + 1;
   }
+  // ACTIVE rows of this surface that match no catalog object are stale (the technical census leaves them to this guard)
+  const unusedRows = (exceptions.rows ?? []).filter((r) => r.surface === "schema" && r.path === SCHEMA_FILE && !used.has(r));
   const sorted = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
-  return { debt: sorted(debt), excepted: sorted(excepted) };
+  return { debt: sorted(debt), excepted: sorted(excepted), unusedRows };
 }
 
 async function readCatalog() {
@@ -125,7 +130,8 @@ async function main() {
   console.log(`schema naming census: ${rows.length} catalog objects, ${total} Portuguese names (${Object.keys(c.excepted).length} excepted)`);
   if (grown.length) console.error(`\nNEW Portuguese schema names (rename in a migration, or register an exception):\n  ${grown.join("\n  ")}`);
   if (shrunk.length) console.error(`\nSchema baseline is stale — these names are gone; drop them in the same commit (--write):\n  ${shrunk.join("\n  ")}`);
-  if (grown.length || shrunk.length) process.exit(1);
+  if (c.unusedRows.length) console.error(`\nStale schema exception rows (they match no catalog object; remove them from canonical-naming-map.json):\n  ${c.unusedRows.map((r) => `${r.exceptionClass} ${r.currentName}`).join("\n  ")}`);
+  if (grown.length || shrunk.length || c.unusedRows.length) process.exit(1);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

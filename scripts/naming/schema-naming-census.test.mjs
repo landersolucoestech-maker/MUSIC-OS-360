@@ -65,6 +65,16 @@ test("exceptions: legal-domain words and schema-surface exceptions are not debt"
   assert.deepEqual(Object.keys(c.excepted).sort(), ["schema::column::invoices.cnpj", "schema::column::invoices.tomador_uf"]);
 });
 
+test("stale schema rows: an ACTIVE database-schema row matching no catalog object is reported, a matching one is not", () => {
+  const live = { currentName: "invoices.nome_x", surface: "schema", path: "database-schema" };
+  const stale = { currentName: "gone.table_col", surface: "schema", path: "database-schema" };
+  const other = { currentName: "elsewhere", surface: "schema", path: "apps/api/src/x.ts" };
+  const exceptions = { rows: [live, stale, other], get: (file, name, surface) => (surface === "schema" && name === "nome_x" ? live : undefined) };
+  const c = schemaCensus([{ kind: "column", object: "invoices.nome_x" }], { exceptions });
+  assert.deepEqual(c.unusedRows, [stale]);
+  assert.deepEqual(Object.keys(c.debt), []);
+});
+
 test("tooling error: no DATABASE_URL fails explicitly (exit 2), never false success", () => {
   const env = { ...process.env };
   delete env.DATABASE_URL;
