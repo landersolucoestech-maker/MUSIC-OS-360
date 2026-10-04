@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "mutation-test-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "r14 round 3 (independent, adversarial) returned PASS_WITH_FINDINGS twice: round A on 877ce65 (HIGH event-type spread = redundant/equivalent mutant, fixed; MEDIUM false COMPILER_CHECKED percentual, fixed; MEDIUM gates not in CI, fixed; MEDIUM doc precision, fixed; 4 LOW recorded as DIVIDA_ACEITA) and delta re-verification on 921a601 with no new false credit. Counters: COMPATIBILITY_BOUNDARIES_WITHOUT_BEHAVIORAL_PROOF=0, WIRING_SITES_UNPROVEN=0, pnpm naming:check exit 0.",
+  "workspaceFingerprint": "7d42a40f8d740e1a4c769c1396f9924e95f4a027fbef4e00c3a6acb95d4a9bba",
+  "fingerprintStatus": "BOUND",
+  "head": "921a601116ee8abe781ce70650f08e32c90d39e7",
+  "id": "evid-0f762c61",
+  "createdAt": "2026-10-04T22:29:12.447Z"
+}

@@ -1,0 +1,9 @@
+{
+  "agent": "mutation-test-reviewer",
+  "objective": "Independent, adversarial review of the FINAL strict compatibility proof. History: two earlier r14 rounds on orch-e848167d returned FAIL and the task hit the 3-attempt loop breaker; the findings (wildcard false credit on legacy-redirects, canonical-wins guards, precedence forms, six alias-helper call sites, audit trusting stored JSON, tooling mutants) were fixed in commits up to 9dafda6. Judge: (1) per-name mutation proof with census, exemptions, runner-config binding and the audit recompute oracle; (2) the wiring gate scripts/naming/compat-wiring-proof.mjs; (3) that the claim is stated precisely in docs/engineering/naming-state-separation.md (what is proven, binding-only rows, known limits). Try to disprove; report PASS, PASS_WITH_FINDINGS or FAIL with reproductions.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-9702b146",
+  "createdAt": "2026-10-04T21:25:59.473Z"
+}

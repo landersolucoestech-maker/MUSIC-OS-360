@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-04T14:19:09.892Z",
+  "updatedAt": "2026-10-04T22:29:12.452Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -772,6 +772,20 @@
       "createdAt": "2026-10-03T19:00:48.581Z",
       "justification": "Outside this window and behavior-correct (canonical first); candidate follow-up to migrate to the legacyTitle helper; recorded, not widened",
       "resolvedAt": "2026-10-03T19:00:48.655Z"
+    },
+    {
+      "id": "find-ed23e770",
+      "category": "E",
+      "severity": "LOW",
+      "file": "scripts/naming/compat-wiring-proof.mjs",
+      "line": null,
+      "summary": "r14 round 3 LOW debt: wiring exemptions keyed by file+text (not line); INCONCLUSIVE own-name sites neither credit nor block in compat-boundary-audit (0 today); wiring records bind consumer file and module specs, not the credited target sha; thrown TypeError kills counted (disclosed in naming-state-separation.md)",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-04T22:29:04.928Z",
+      "justification": "LOW, not exploitable today (counters 0, no credited name with an inconclusive own site); documented in naming-state-separation.md; revisit when the wiring tooling is next extended",
+      "resolvedAt": "2026-10-04T22:29:12.324Z"
     }
   ],
   "evidenceIds": [
@@ -1282,7 +1296,8 @@
     "evid-0e9c8436",
     "evid-b17177b2",
     "evid-6de2b222",
-    "evid-8f9b8a3c"
+    "evid-8f9b8a3c",
+    "evid-0f762c61"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
