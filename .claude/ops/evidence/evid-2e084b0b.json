@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "dead-code-detector",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Residue phase: PASS_WITH_FINDINGS. No new dead production code, no scaffolding, no unledgered Portuguese names (sampled). Residue census on a disposable migrated PostgreSQL: CLEAN, 27 checks, 0 legacy rows (run by the lead because the reviewer had no DB). Stale doc references to the deleted useCanAccess hook fixed in STRUCTURAL_MAP.md and rbac-retirement-plan.md; ENTERPRISE_BLUEPRINT historical doc left as frozen. 2387 binding-only rows remain a disclosed limit.",
+  "workspaceFingerprint": "7771d479db1a3b9d5230d3b812fd840d0efe2bd55428ebd2c177673c23494c43",
+  "fingerprintStatus": "BOUND",
+  "head": "f244626802fa546eb32d5462b65f3230839f06f1",
+  "id": "evid-2e084b0b",
+  "createdAt": "2026-10-04T23:17:36.667Z"
+}

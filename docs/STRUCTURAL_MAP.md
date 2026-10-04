@@ -862,7 +862,6 @@ client/src/test/
 ### Kept despite 0 direct importers (architectural infrastructure)
 - `shared/lib/tenant.ts` — helpers `getCurrentOrgId`, `withTenantFilter`, `stampTenant` for production mode (JWT)
 - `shared/lib/tenant-isolation.ts` — `isolateByTenant`, `assertTenantOwnership`, `stampTenantId`
-- `shared/hooks/useCanAccess.ts` — RBAC hook for per-module/action permission control (referenced in `useIsAdmin.ts`)
 
 ### Result
 - **371 → 318 source files** `.ts`/`.tsx`
