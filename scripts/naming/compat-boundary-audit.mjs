@@ -130,13 +130,29 @@ export function bindingOf(e, readFile) {
   return module ? { tests, bound: true, via: "MODULE" } : { tests, bound: false, via: "NO_BINDING" };
 }
 
+/**
+ * The test-runner configuration a proof depends on besides the runtime file and its test: a change to it can turn a killed mutation into a survivor
+ * (or the reverse) without touching either source file. Null when the test is not under a known app.
+ */
+export function runnerConfigFiles(test) {
+  if (test.startsWith("apps/api/")) return ["apps/api/jest.config.ts", "apps/api/tsconfig.json"];
+  if (test.startsWith("apps/web/")) return ["apps/web/vitest.config.mjs", "apps/web/src/test/setup.ts"];
+  return [];
+}
+export function runnerConfigSha(test, readFile) {
+  const files = runnerConfigFiles(test);
+  if (!files.length) return null;
+  const parts = files.map((f) => { const t = readFile(f); return t == null ? null : `${f}\u0000${t}`; });
+  return parts.some((x) => x == null) ? null : sha256(parts.join("\u0001"));
+}
+
 /** Mutation evidence of a (runtime file, test) pair, fresh only for the current sources. */
 export function pairEvidence(results, file, test, readFile, name = "*", exemptions = []) {
   const rec = results.get(`${file}\u0000${test}`);
   if (!rec) return { verdict: "NOT_RUN", fresh: false };
   const f = readFile(file);
   const t = readFile(test);
-  const fresh = f != null && t != null && sha256(f) === rec.fileSha256 && sha256(t) === rec.testSha256;
+  const fresh = f != null && t != null && sha256(f) === rec.fileSha256 && sha256(t) === rec.testSha256 && (rec.configSha256 ?? null) === runnerConfigSha(test, readFile);
   // a mutation belongs to a name through its label (literal rename) or its labels (canonical-first swap / alias guard that reads the name)
   const own = name === "*" ? null : (rec.mutations ?? []).filter((m) => m.label === name || (m.labels ?? []).includes(name));
   const ownKilled = own ? own.some((m) => m.outcome === "KILLED") : false;

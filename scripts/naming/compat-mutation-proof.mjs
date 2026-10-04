@@ -25,7 +25,7 @@ import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { isVerificationScript, isTestFile, PROOF_CLASSES } from "./compat-boundary-audit.mjs";
+import { isVerificationScript, isTestFile, PROOF_CLASSES, runnerConfigSha } from "./compat-boundary-audit.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(here, "../..");
@@ -34,6 +34,7 @@ const ROOT = path.resolve(arg("--root") ?? REPO);
 const require = createRequire(path.join(REPO, "apps/api/package.json"));
 const ts = require("typescript");
 
+const readRepoFile = (p) => { const f = path.join(REPO, p); return fs.existsSync(f) && fs.statSync(f).isFile() ? fs.readFileSync(f, "utf8") : null; };
 export const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 // one definition of "test file" and of the proof classes, shared with the audit: a drift makes the two disagree on what is runtime
 export { isVerificationScript, isTestFile, PROOF_CLASSES };
@@ -218,7 +219,7 @@ export function buildCensus(sf, text, names, wildcardWords, ptWords, sites) {
       else if (ts.isBindingElement(node) && ((node.propertyName && ts.isIdentifier(node.propertyName) ? node.propertyName.text : ts.isIdentifier(node.name) ? node.name.text : null) === n)) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "binding", text: n });
       else if (ts.isJsxAttribute(node) && node.name.getText(sf) === n) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "jsx-attribute", text: n });
       else if (ts.isMethodDeclaration(node) && (ts.isIdentifier(node.name) || ts.isStringLiteralLike(node.name)) && node.name.text === n) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "method", text: n });
-      else if ((ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) && wholeWord(node.text, n)) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "template-part", text: node.text.slice(0, 80) });
+      else if ((ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) && wholeWord(node.text, n) && !sites.some((m) => m.label === n && m.start >= node.getStart(sf) && m.end <= node.getEnd())) unmutatedNameSites.push({ name: n, line: lineOf(node), kind: "template-part", text: node.text.slice(0, 80) });
     }
     ts.forEachChild(node, visit);
   };
@@ -304,6 +305,7 @@ async function main() {
       const text = fs.readFileSync(path.join(ROOT, pair.file), "utf8");
       if (sha256(text) !== rec.fileSha256) { stale++; continue; }
       rec.census = findMutations(text, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census;
+      rec.configSha256 = runnerConfigSha(pair.test, readRepoFile);
       n++;
     }
     fs.writeFileSync(out, JSON.stringify({ schemaVersion: 1, results: [...byKey.values()].sort((a, b) => (a.file + a.test).localeCompare(b.file + b.test)) }, null, 1) + "\n");
@@ -346,7 +348,7 @@ async function main() {
     const original = fs.readFileSync(abs, "utf8");
     // resume: a pair already judged against the SAME file and test bytes is not run again (an interrupted run continues where it stopped)
     const done = results.get(`${pair.file}\u0000${pair.test}`);
-    if (done && done.verdict && done.exhaustive === true && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !(pair.wildcard && done.wildcardPredicate !== 2) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { done.census = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census; console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
+    if (done && done.verdict && done.exhaustive === true && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !(pair.wildcard && done.wildcardPredicate !== 2) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { done.census = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census; done.configSha256 = runnerConfigSha(pair.test, readRepoFile); console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
     // the hashes bind to the sources that were actually mutated and tested (the --root copy); the audit compares
     // them with the repository, so any later edit of either file makes the result stale
     const realText = original;
@@ -357,6 +359,7 @@ async function main() {
     if (baselineCache.get(pair.test) !== "pass") { rec.verdict = "BASELINE_RED"; results.set(`${pair.file}\u0000${pair.test}`, rec); console.log(`[${i + 1}/${pairs.length}] BASELINE_RED ${pair.file} <= ${pair.test}`); continue; }
     const muts = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null);
     rec.census = muts.census;
+    rec.configSha256 = runnerConfigSha(pair.test, readRepoFile); // the REPO configuration (the sandbox copy of jest.config is relaxed on purpose)
     if (pair.wildcard) rec.wildcardPredicate = 2;
     rec.legacyFirst = muts.legacyFirst;
     rec.declarations = muts.declarations.map((d) => d.label);

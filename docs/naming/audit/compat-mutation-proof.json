@@ -44,7 +44,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/common/compat/contract-last-payment.ts",
@@ -107,7 +108,8 @@
     "siteCount": 6,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/common/compat/plan-features.ts",
@@ -138,7 +140,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/common/compat/release-metadata.ts",
@@ -274,7 +277,8 @@
     "siteCount": 16,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/automation/copywriting.automation.ts",
@@ -305,7 +309,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/rbac/rbac.service.ts",
@@ -425,15 +430,9 @@
     "wildcard": false,
     "siteCount": 15,
     "unmutatedPtSites": [],
-    "unmutatedNameSites": [
-     {
-      "name": "rh",
-      "line": 58,
-      "kind": "template-part",
-      "text": "rh:"
-     }
-    ]
-   }
+    "unmutatedNameSites": []
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/rbac/rbac.service.ts",
@@ -474,7 +473,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
@@ -558,7 +558,8 @@
     "siteCount": 9,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/rbac/role-hierarchy.ts",
@@ -595,7 +596,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/workflow/definitions/contracts.workflow.ts",
@@ -632,7 +634,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/workflow/definitions/leads.workflow.ts",
@@ -699,7 +702,8 @@
     "siteCount": 7,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/workflow/definitions/projects.workflow.ts",
@@ -736,7 +740,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/core/workflow/definitions/releases.workflow.ts",
@@ -779,7 +784,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/database/migration-drafts/20260930000030_CanonicalizeRoleSlugsInPlaceAndBackfillMembers.ts",
@@ -831,7 +837,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/database/migration-drafts/20260930000030_CanonicalizeRoleSlugsInPlaceAndBackfillMembers.ts",
@@ -869,7 +876,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/database/migration-drafts/20261002000002_EncryptArtistsAndClientsPiiBackfill.ts",
@@ -994,7 +1002,8 @@
     "siteCount": 15,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/database/seeds/04_rbac_seed.ts",
@@ -1046,7 +1055,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/database/seeds/04_rbac_seed.ts",
@@ -1090,7 +1100,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
@@ -1320,7 +1331,8 @@
     "siteCount": 34,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artist-goals/artist-goal-legacy.mapper.ts",
@@ -1372,7 +1384,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artist-goals/dto/create-artist-goal.dto.ts",
@@ -1420,7 +1433,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/artist-input-sanitizer.ts",
@@ -1521,7 +1535,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
@@ -2036,7 +2051,8 @@
     "siteCount": 82,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/artists.controller.ts",
@@ -2084,7 +2100,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/artists.service.ts",
@@ -2124,7 +2141,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/dto/create-artist.dto.ts",
@@ -2505,7 +2523,8 @@
     "siteCount": 51,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/dto/create-artist.dto.ts",
@@ -2543,7 +2562,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/artists/dto/query-artist.dto.ts",
@@ -2591,7 +2611,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/audiovisual/dto/audiovisual.dto.ts",
@@ -2628,7 +2649,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/auth/auth-context.service.ts",
@@ -2659,7 +2681,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/auth/organization-industry.ts",
@@ -2697,7 +2720,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/auth/organization-industry.ts",
@@ -2728,7 +2752,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/auth/organization-industry.ts",
@@ -2780,7 +2805,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
@@ -2899,6 +2925,12 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 61,
+     "label": "estratégica",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 65,
      "label": "foto",
      "outcome": "KILLED"
@@ -2985,6 +3017,12 @@
      "operator": "LEGACY_LITERAL",
      "line": 66,
      "label": "responsavel_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 76,
+     "label": "rg",
      "outcome": "KILLED"
     },
     {
@@ -3193,11 +3231,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -3208,7 +3241,15 @@
     "siteCount": 69,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -3239,7 +3280,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -3284,7 +3326,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -3322,7 +3365,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -3640,7 +3684,8 @@
     "siteCount": 42,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contacts/contacts.service.ts",
@@ -3735,7 +3780,8 @@
     "siteCount": 12,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -3773,7 +3819,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -3818,7 +3865,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contract-service-types/contract-service-type.vocabulary.ts",
@@ -3877,7 +3925,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contract-service-types/dto/create-contract-service-type.dto.ts",
@@ -3914,7 +3963,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contract-templates/dto/create-contract-template.dto.ts",
@@ -3970,7 +4020,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
@@ -4064,7 +4115,8 @@
     "siteCount": 10,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
@@ -4095,7 +4147,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
@@ -4241,7 +4294,8 @@
      }
     ],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
@@ -4314,7 +4368,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/contract-party-refs.ts",
@@ -4343,14 +4398,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [
-    "artistas",
-    "clientes"
-   ],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -4358,7 +4405,18 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [
+    "artistas",
+    "clientes"
+   ],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/contracts.service.ts",
@@ -4414,7 +4472,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/dto/contract-party-ref.dto.ts",
@@ -4461,7 +4520,8 @@
      }
     ],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/dto/create-contract.dto.ts",
@@ -4588,7 +4648,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/contracts/dto/query-contract.dto.ts",
@@ -4636,7 +4697,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
@@ -4731,7 +4793,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/conversations/musicchat-vocabulary.ts",
@@ -4844,7 +4907,8 @@
     "siteCount": 15,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/events/dto/events.dto.ts",
@@ -4920,7 +4984,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/finance-category-rules/dto/finance-category-rules.dto.ts",
@@ -4943,11 +5008,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -4955,7 +5015,15 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts",
@@ -4986,7 +5054,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/financial-rules/dto/financial-rules.dto.ts",
@@ -5023,7 +5092,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
@@ -5148,7 +5218,8 @@
     "siteCount": 16,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/financial-rules/financial-rule-legacy.mapper.ts",
@@ -5228,7 +5299,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
@@ -5273,7 +5345,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
@@ -5325,7 +5398,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -5356,7 +5430,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -5387,7 +5462,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -5445,7 +5521,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -5489,7 +5566,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -5520,7 +5598,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -5617,7 +5696,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/hr-legacy-fields.ts",
@@ -5636,6 +5716,72 @@
      "operator": "LEGACY_LITERAL",
      "line": 51,
      "label": "clt",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "Estágio",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 73,
+     "label": "falta injustificada",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 72,
+     "label": "falta justificada",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "férias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 75,
+     "label": "folga compensatória",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 70,
+     "label": "licença maternidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 69,
+     "label": "licença médica",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 71,
+     "label": "licença paternidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 48,
+     "label": "pj",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "pj",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 57,
+     "label": "Temporário",
      "outcome": "KILLED"
     },
     {
@@ -5778,6 +5924,12 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "PJ",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 17,
      "label": "salario",
      "outcome": "KILLED"
@@ -5820,11 +5972,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -5832,7 +5979,15 @@
     "siteCount": 44,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/hr.controller.ts",
@@ -5863,7 +6018,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/hr/hr.controller.ts",
@@ -5894,7 +6050,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
@@ -5944,7 +6101,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
@@ -6032,7 +6190,8 @@
     "siteCount": 10,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/inventory/dto/inventory.dto.ts",
@@ -6104,7 +6263,8 @@
     "siteCount": 7,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/inventory/inventory-legacy-fields.ts",
@@ -6211,7 +6371,8 @@
     "siteCount": 14,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/invoices/dto/invoices.dto.ts",
@@ -6242,7 +6403,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/invoices/dto/invoices.dto.ts",
@@ -6335,7 +6497,8 @@
     "siteCount": 10,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/invoices/invoice-legacy-fields.ts",
@@ -6448,7 +6611,8 @@
     "siteCount": 15,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/leads/dto/leads.dto.ts",
@@ -6500,7 +6664,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/leads/lead-vocabulary.ts",
@@ -7194,11 +7359,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -7206,7 +7366,15 @@
     "siteCount": 106,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
@@ -7258,7 +7426,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
@@ -7323,7 +7492,8 @@
     "siteCount": 6,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/licensing/dto/licensing.dto.ts",
@@ -7396,6 +7566,18 @@
    "testSha256": "1242b13d534958e781b8c205f33407bfd4481c43e6c87cb44637a18f670d4ec5",
    "verdict": "PROVEN",
    "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 41,
+     "label": "américa_latina",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 35,
+     "label": "mecânica",
+     "outcome": "KILLED"
+    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 41,
@@ -7560,11 +7742,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -7572,7 +7749,15 @@
     "siteCount": 29,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
@@ -7722,6 +7907,18 @@
    "testSha256": "b4ed8947b38362d4c2a2815dae68ae09948126ed4d4f5cab6f1c90a2dc2701fc",
    "verdict": "PROVEN",
    "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 404,
+     "label": "Administração Musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 405,
+     "label": "Distribuição Digital",
+     "outcome": "KILLED"
+    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 413,
@@ -8068,6 +8265,12 @@
      "operator": "LEGACY_LITERAL",
      "line": 403,
      "label": "Comercial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 402,
+     "label": "Comunicação",
      "outcome": "KILLED"
     },
     {
@@ -8738,11 +8941,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -8750,7 +8948,15 @@
     "siteCount": 172,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
@@ -8828,7 +9034,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
@@ -9141,7 +9348,8 @@
     "siteCount": 42,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
@@ -9347,7 +9555,8 @@
     "siteCount": 26,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
@@ -9423,11 +9632,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -9451,7 +9655,15 @@
      }
     ],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.ts",
@@ -9524,7 +9736,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
@@ -9561,6 +9774,12 @@
      "operator": "LEGACY_LITERAL",
      "line": 113,
      "label": "duracao_seg",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "físico",
      "outcome": "KILLED"
     },
     {
@@ -9763,11 +9982,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -9779,7 +9993,15 @@
     "siteCount": 39,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/phonograms/phonograms.controller.ts",
@@ -9820,7 +10042,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
@@ -9857,7 +10080,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/projects/dto/projects.dto.ts",
@@ -10057,7 +10281,8 @@
     "siteCount": 12,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/projects/dto/projects.dto.ts",
@@ -10201,7 +10426,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/registry/payloads/society-payload-builder.service.ts",
@@ -10273,7 +10499,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
@@ -10333,7 +10560,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/releases/dto/releases.dto.ts",
@@ -10385,7 +10613,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/releases/release-artist-ref.ts",
@@ -10416,7 +10645,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
@@ -10425,6 +10655,12 @@
    "testSha256": "876b610e59e7ebab626b1b8020ef327f0636dfe34e91afdf419496e92911aea8",
    "verdict": "PROVEN",
    "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 37,
+     "label": "compilação",
+     "outcome": "KILLED"
+    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 26,
@@ -10511,11 +10747,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -10523,7 +10754,15 @@
     "siteCount": 15,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
@@ -10682,7 +10921,8 @@
     "siteCount": 20,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
@@ -11882,7 +12122,8 @@
     "siteCount": 168,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/reports/import/import-mapper.service.ts",
@@ -12130,7 +12371,8 @@
     "siteCount": 6,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
@@ -12188,7 +12430,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/shares/dto/shares.dto.ts",
@@ -12282,7 +12525,8 @@
     "siteCount": 10,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/shares/share-legacy-fields.ts",
@@ -12587,7 +12831,8 @@
     "siteCount": 47,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/takedowns/dto/takedowns.dto.ts",
@@ -12685,7 +12930,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/takedowns/takedown-legacy-fields.ts",
@@ -12786,7 +13032,8 @@
     "siteCount": 13,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -12823,7 +13070,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -12854,7 +13102,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -12927,7 +13176,8 @@
     "siteCount": 7,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -13791,7 +14041,8 @@
     "siteCount": 120,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-legacy-fields.ts",
@@ -14248,11 +14499,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -14260,7 +14506,15 @@
     "siteCount": 43,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/works/dto/create-work.dto.ts",
@@ -14361,7 +14615,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/works/dto/create-work.dto.ts",
@@ -14420,7 +14675,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/works/dto/query-work.dto.ts",
@@ -14451,7 +14707,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/works/work-legacy-fields.ts",
@@ -14509,6 +14766,30 @@
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "Alemão",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "Árabe",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "Chinês Mandarim",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 50,
+     "label": "compositor/autor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 64,
      "label": "Coreano",
      "outcome": "KILLED"
@@ -14522,7 +14803,25 @@
     {
      "operator": "LEGACY_LITERAL",
      "line": 64,
+     "label": "Dinamarquês",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 64,
      "label": "Espanhol",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 64,
+     "label": "Finlandês",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 64,
+     "label": "Francês",
      "outcome": "KILLED"
     },
     {
@@ -14539,14 +14838,44 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 65,
+     "label": "Holandês",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 124,
      "label": "idioma",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 65,
+     "label": "Indonésio",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 66,
+     "label": "Inglês",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 72,
+     "label": "Instrumental (Sem Letra)",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 66,
      "label": "Italiano",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 66,
+     "label": "Japonês",
      "outcome": "KILLED"
     },
     {
@@ -14569,8 +14898,20 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "não_informado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 77,
      "label": "no-projeto",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "Norueguês",
      "outcome": "KILLED"
     },
     {
@@ -14605,6 +14946,18 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "Polonês",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "Português",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 68,
      "label": "Russo",
      "outcome": "KILLED"
@@ -14625,6 +14978,12 @@
      "operator": "LEGACY_LITERAL",
      "line": 68,
      "label": "Sueco",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 68,
+     "label": "Tailandês",
      "outcome": "KILLED"
     },
     {
@@ -14827,11 +15186,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -14842,7 +15196,15 @@
     "siteCount": 70,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true,
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/api/src/modules/works/works.controller.ts",
@@ -14883,15 +15245,286 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/web/src/app/routes/legacy-redirects.tsx",
    "test": "apps/web/src/app/routes/legacy-redirects.test.tsx",
    "fileSha256": "1b617a7a7fb82cb5df49e23ce9ee34e2dc90053fb298b98315235e8a6741d3d8",
-   "testSha256": "faba2f26a3a827f67c3afe4a10eaddb9891cd8b51ae8f4bc9f58a09d42ee9bf5",
+   "testSha256": "160ef06b985412a132460d154c25d779e7fb5a68ccf4040cb4620a00aa3df067",
    "verdict": "PROVEN",
    "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 35,
+     "label": "/accounting/automacoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 34,
+     "label": "/accounting/categorias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 32,
+     "label": "/accounting/contabilidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 33,
+     "label": "/accounting/nota-fiscal",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 65,
+     "label": "/admin/configuracoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 66,
+     "label": "/admin/musicchat/automacoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 56,
+     "label": "/agenda/configuracoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 23,
+     "label": "/artistas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 64,
+     "label": "/auditoria",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "/cadastro/:orgSlug",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 42,
+     "label": "/captar",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 60,
+     "label": "/configuracoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 61,
+     "label": "/configuracoes/billing",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 28,
+     "label": "/contratos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 30,
+     "label": "/contratos-v2",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 31,
+     "label": "/contratos-v2/*",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 29,
+     "label": "/contratos/templates",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 41,
+     "label": "/crm-relacionamentos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 40,
+     "label": "/crm/configuracoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 36,
+     "label": "/financeiro/regras",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 37,
+     "label": "/financeiro/regras-categorias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 39,
+     "label": "/gestao-shares",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 57,
+     "label": "/inventario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 38,
+     "label": "/lancamentos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "/licenciamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "/marketing/aprovacoes-criativas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 51,
+     "label": "/marketing/automacoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 53,
+     "label": "/marketing/biblioteca-da-marca",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 45,
+     "label": "/marketing/calendario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 44,
+     "label": "/marketing/campanhas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "/marketing/central-criativa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 49,
+     "label": "/marketing/configuracoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 48,
+     "label": "/marketing/ia-criativa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 47,
+     "label": "/marketing/metricas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 50,
+     "label": "/marketing/projetos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 46,
+     "label": "/marketing/tarefas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 43,
+     "label": "/marketing/visao-geral",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 25,
+     "label": "/monitoramento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 62,
+     "label": "/perfil",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "/projetos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 24,
+     "label": "/registro-musicas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 59,
+     "label": "/relatorios",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 58,
+     "label": "/rh",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 26,
+     "label": "/rights-monitoring/execucao/:id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "/usuarios",
+     "outcome": "KILLED"
+    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 19,
@@ -14930,11 +15563,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [],
@@ -14942,7 +15570,15 @@
     "siteCount": 51,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false,
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/accounting/constants/invoice-payment-methods.ts",
@@ -14994,7 +15630,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
@@ -15060,7 +15697,8 @@
     "siteCount": 6,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
@@ -15986,7 +16624,8 @@
     "siteCount": 129,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/accounting/constants/transaction-constants.ts",
@@ -16017,7 +16656,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/accounting/utils/financialRules.utils.ts",
@@ -16131,7 +16771,8 @@
       "text": "Contrato referente a: "
      }
     ]
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
@@ -16204,7 +16845,8 @@
     "siteCount": 7,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
@@ -16301,7 +16943,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/artist/lib/contract-type-filters.ts",
@@ -16339,7 +16982,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/artist/lib/contract-type-filters.ts",
@@ -16384,7 +17028,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/artist/lib/distributor-id.ts",
@@ -16415,7 +17060,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/artist/lib/revenue-nature.ts",
@@ -16496,7 +17142,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/auth/constants/organization-industry.ts",
@@ -16555,7 +17202,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "apps/web/src/modules/auth/constants/organization-industry.ts",
@@ -16639,7 +17287,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/auth/services/activation-plans.service.ts",
@@ -16684,7 +17333,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
@@ -16725,7 +17375,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
@@ -16756,7 +17407,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/components/ContractFormModal.tsx",
@@ -16976,7 +17628,8 @@
     "siteCount": 30,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
@@ -17141,7 +17794,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
@@ -17209,7 +17863,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-placeholders.ts",
@@ -17331,7 +17986,8 @@
     "siteCount": 14,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
@@ -17369,7 +18025,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
@@ -17449,7 +18106,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-variable-vocabulary.ts",
@@ -17557,7 +18215,8 @@
     "siteCount": 12,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
@@ -17615,13 +18274,14 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-wizard-party.ts",
    "test": "apps/web/src/modules/contracts/lib/contract-wizard-party.test.ts",
    "fileSha256": "1aba3a9b1a205f0d496ae2b7f92a9b6c6684e60fe3e28d07d4e169b504f63627",
-   "testSha256": "07652113071319e8210ad99803fec6a887938068258ac216dc88c76e789ad7cd",
+   "testSha256": "5791d9f2623841b5fd0f46ab5dd34c606cea83b8e6329ff18ce0b4cbbcd4855b",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -17776,11 +18436,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -17811,7 +18466,14 @@
     "siteCount": 25,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false,
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/contracts/schemas/contract-schema.ts",
@@ -17856,7 +18518,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
@@ -18188,7 +18851,8 @@
     "siteCount": 44,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
@@ -18233,7 +18897,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/dashboard/lib/audit-activity.ts",
@@ -18421,7 +19086,8 @@
     "siteCount": 10,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
@@ -18501,7 +19167,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
@@ -18539,7 +19206,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/events/lib/event-type.ts",
@@ -18632,7 +19300,8 @@
     "siteCount": 10,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/integrations/hooks/useNfe.ts",
@@ -18663,7 +19332,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
@@ -18750,7 +19420,8 @@
     "siteCount": 9,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/audioVocabulary.ts",
@@ -18800,7 +19471,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
@@ -18850,7 +19522,8 @@
     "siteCount": 4,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/lyricsVocabulary.ts",
@@ -18907,7 +19580,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/pending.ts",
@@ -18938,7 +19612,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
@@ -18947,6 +19622,24 @@
    "testSha256": "a8bd69469b2b95bd6f28715f902f1f71af8b535106ab1ececf6c1eaf2823d7c2",
    "verdict": "PROVEN",
    "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 447,
+     "label": "Administração Musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 445,
+     "label": "Comunicação",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 448,
+     "label": "Distribuição Digital",
+     "outcome": "KILLED"
+    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 459,
@@ -19927,11 +20620,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [],
@@ -19939,7 +20627,15 @@
     "siteCount": 166,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false,
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
@@ -19982,7 +20678,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
@@ -20013,7 +20710,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/musicchat/components/TriageMenuBuilder.tsx",
@@ -20051,7 +20749,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/musicchat/pages/MusicChatAutomationSettings.tsx",
@@ -20089,7 +20788,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/musicchat/services/conversations.service.ts",
@@ -20120,7 +20820,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
@@ -20158,7 +20859,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
@@ -20215,7 +20917,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
@@ -20775,7 +21478,8 @@
     "siteCount": 17,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/releases/lib/release-metadata.ts",
@@ -20924,7 +21628,8 @@
     "siteCount": 18,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/releases/lib/release-status.tsx",
@@ -20962,7 +21667,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/releases/types/index.ts",
@@ -21022,15 +21728,6 @@
    "verdict": "COMPILER_CHECKED",
    "mutations": [],
    "legacyFirst": [],
-   "declarations": [
-    "percentual"
-   ],
-   "namesWithoutSite": [
-    "percentual"
-   ],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -21040,7 +21737,18 @@
     "siteCount": 0,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "declarations": [
+    "percentual"
+   ],
+   "namesWithoutSite": [
+    "percentual"
+   ],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false,
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/releases/types/index.ts",
@@ -21088,7 +21796,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
@@ -21119,7 +21828,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/settings/hooks/useUserSettings.ts",
@@ -21206,7 +21916,8 @@
     "siteCount": 9,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
@@ -21526,7 +22237,8 @@
     "siteCount": 43,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/settings/lib/user-status.ts",
@@ -21588,7 +22300,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/modules/settings/lib/user-status.ts",
@@ -21619,7 +22332,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/components/StatusBadge.tsx",
@@ -21678,7 +22392,8 @@
     "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/components/StatusBadge.tsx",
@@ -21842,7 +22557,8 @@
     "siteCount": 20,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/hooks/useHasRole.ts",
@@ -21908,7 +22624,8 @@
     "siteCount": 6,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/lib/category-labels.ts",
@@ -22094,7 +22811,8 @@
     "siteCount": 3,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/lib/category-labels.ts",
@@ -22174,7 +22892,8 @@
     "siteCount": 8,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/lib/feature-flags.ts",
@@ -22205,7 +22924,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/lib/legacy-title.ts",
@@ -22245,7 +22965,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/lib/masks.ts",
@@ -22276,7 +22997,8 @@
     "siteCount": 0,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "apps/web/src/shared/lib/permission-map.ts",
@@ -22307,7 +23029,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
   },
   {
    "file": "packages/auth/src/permissions.ts",
@@ -22345,7 +23068,8 @@
     "siteCount": 2,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "packages/auth/src/permissions.ts",
@@ -22464,7 +23188,8 @@
     "siteCount": 11,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "packages/types/src/enums.ts",
@@ -22495,7 +23220,8 @@
     "siteCount": 1,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   },
   {
    "file": "packages/types/src/role-slugs.ts",
@@ -22562,7 +23288,8 @@
     "siteCount": 6,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
-   }
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
   }
  ]
 }

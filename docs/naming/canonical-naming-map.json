@@ -3102,7 +3102,25 @@
       "blocker": "deployment cutover (web release) and production alias-usage evidence — outside this environment",
       "dependency": "CZ-026 web release",
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts"
+      "coveringTest": "apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts",
+      "proofExemptions": [
+        {
+          "text": "\" e o alias legado \"",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "\" inválido.",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "Campo \"",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "Campos conflitantes: \"",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        }
+      ]
     },
     {
       "item": "contract legacy alias resolver",
@@ -3119,7 +3137,25 @@
       "blocker": "deployment cutover (web release) and production alias-usage evidence — outside this environment",
       "dependency": "CZ-026 web release",
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts"
+      "coveringTest": "apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts",
+      "proofExemptions": [
+        {
+          "text": "\" e o alias legado \"",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "\" inválido.",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "Campo \"",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "Campos conflitantes: \"",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        }
+      ]
     },
     {
       "item": "contract legacy alias resolver (spec fixtures)",
@@ -6410,7 +6446,21 @@
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.legacy-compat.spec.ts"
+      "coveringTest": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.legacy-compat.spec.ts",
+      "proofExemptions": [
+        {
+          "text": "Campos conflitantes.",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "Registro vinculado inválido. Selecione um registro existente.",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        },
+        {
+          "text": "title inválido.",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code and fields[canonical, legacy]) is what clients read and is asserted by the covering spec."
+        }
+      ]
     },
     {
       "item": "legacy input mapper (deprecated aliases/values -> canonical)",
@@ -7033,7 +7083,13 @@
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/contracts/contract-party-refs.security.spec.ts"
+      "coveringTest": "apps/api/src/modules/contracts/contract-party-refs.security.spec.ts",
+      "proofExemptions": [
+        {
+          "text": "Deprecated alias of `client` (+ `nome`) for web builds older than the English em",
+          "reason": "OpenAPI description prose that mentions the deprecated field in documentation; it is not read or matched at runtime."
+        }
+      ]
     },
     {
       "item": "deprecated response embed keys artistas/clientes (deploy-skew window)",
@@ -26284,7 +26340,13 @@
       "blocker": "BLK-TRANSACTION-CATEGORY-TAXONOMY (rule store labels are persisted user-visible names; S11 CHECK on transactions.category blocked)",
       "dependency": "BLK-TRANSACTION-CATEGORY-TAXONOMY",
       "status": "ACTIVE",
-      "coveringTest": "apps/web/src/modules/accounting/utils/financialRules.utils.labels.test.ts"
+      "coveringTest": "apps/web/src/modules/accounting/utils/financialRules.utils.labels.test.ts",
+      "proofExemptions": [
+        {
+          "text": "Contrato referente a: ",
+          "reason": "The word is part of a generated description sentence in the product language (UX text), not a field or key; the legacy-name literal of this row is mutated and killed separately."
+        }
+      ]
     },
     {
       "item": "legacy compatibility `Despesa` (financialRules.utils.ts)",
@@ -57785,23 +57847,6 @@
       "coveringTest": "apps/web/src/shared/lib/category-labels.test.ts"
     },
     {
-      "item": "legacy Portuguese name `percentual` in compat-boundary-audit.test.mjs",
-      "path": "scripts/naming/compat-boundary-audit.test.mjs",
-      "currentName": "percentual",
-      "surface": "value",
-      "layer": "test",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "Test input or assertion over a legacy Portuguese name that the compatibility reader still accepts; the name is the data under test, not a technical name the product introduces.",
-      "consumer": "the compatibility test itself",
-      "owner": "api owner (Phase 0 naming)",
-      "removalCondition": "removed together with the legacy alias it exercises",
-      "targetState": "reader and test deleted with the alias",
-      "blocker": "deployment cutover (web release) — outside this environment",
-      "dependency": "CZ-022 web release",
-      "status": "ACTIVE",
-      "coveringTest": "scripts/naming/compat-boundary-audit.test.mjs"
-    },
-    {
       "item": "legacy Portuguese name `artistas` in release-artist-ref.security.spec.ts",
       "path": "apps/api/src/modules/releases/release-artist-ref.security.spec.ts",
       "currentName": "artistas",
@@ -63580,6 +63625,108 @@
       "dependency": null,
       "status": "ACTIVE",
       "coveringTest": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.legacy-compat.test.ts"
+    },
+    {
+      "item": "legacy Portuguese literal in a compatibility test `editFonograma`",
+      "path": "apps/web/src/app/routes/legacy-redirects.test.tsx",
+      "currentName": "editFonograma",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture for the legacy-redirects module asserting the legacy Portuguese value `editFonograma` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
+      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
+      "owner": "web platform owner",
+      "removalCondition": "removed together with the legacy alias it exercises",
+      "targetState": "test deleted with the alias",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/app/routes/legacy-redirects.test.tsx"
+    },
+    {
+      "item": "legacy Portuguese literal in a compatibility test `editObra`",
+      "path": "apps/web/src/app/routes/legacy-redirects.test.tsx",
+      "currentName": "editObra",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture for the legacy-redirects module asserting the legacy Portuguese value `editObra` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
+      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
+      "owner": "web platform owner",
+      "removalCondition": "removed together with the legacy alias it exercises",
+      "targetState": "test deleted with the alias",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/app/routes/legacy-redirects.test.tsx"
+    },
+    {
+      "item": "legacy Portuguese literal in a compatibility test `fonograma`",
+      "path": "apps/web/src/app/routes/legacy-redirects.test.tsx",
+      "currentName": "fonograma",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture for the legacy-redirects module asserting the legacy Portuguese value `fonograma` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
+      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
+      "owner": "web platform owner",
+      "removalCondition": "removed together with the legacy alias it exercises",
+      "targetState": "test deleted with the alias",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/app/routes/legacy-redirects.test.tsx"
+    },
+    {
+      "item": "legacy Portuguese literal in a compatibility test `newObra`",
+      "path": "apps/web/src/app/routes/legacy-redirects.test.tsx",
+      "currentName": "newObra",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture for the legacy-redirects module asserting the legacy Portuguese value `newObra` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
+      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
+      "owner": "web platform owner",
+      "removalCondition": "removed together with the legacy alias it exercises",
+      "targetState": "test deleted with the alias",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/app/routes/legacy-redirects.test.tsx"
+    },
+    {
+      "item": "legacy Portuguese literal in a compatibility test `obra`",
+      "path": "apps/web/src/app/routes/legacy-redirects.test.tsx",
+      "currentName": "obra",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture for the legacy-redirects module asserting the legacy Portuguese value `obra` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
+      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
+      "owner": "web platform owner",
+      "removalCondition": "removed together with the legacy alias it exercises",
+      "targetState": "test deleted with the alias",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/app/routes/legacy-redirects.test.tsx"
+    },
+    {
+      "item": "legacy Portuguese literal in a compatibility test `projeto`",
+      "path": "apps/web/src/app/routes/legacy-redirects.test.tsx",
+      "currentName": "projeto",
+      "surface": "objectKey",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture for the legacy-redirects module asserting the legacy Portuguese value `projeto` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
+      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
+      "owner": "web platform owner",
+      "removalCondition": "removed together with the legacy alias it exercises",
+      "targetState": "test deleted with the alias",
+      "blocker": null,
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/app/routes/legacy-redirects.test.tsx"
     }
   ],
   "blockers": [

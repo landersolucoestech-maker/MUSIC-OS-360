@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { audit, categoryOf, boundaryKind, bindingOf, counters, moduleOf, groupRows, pairEvidence } from "./compat-boundary-audit.mjs";
+import { runnerConfigSha, runnerConfigFiles, audit, categoryOf, boundaryKind, bindingOf, counters, moduleOf, groupRows, pairEvidence } from "./compat-boundary-audit.mjs";
 import { findMutations, apply, classifyRun, pairsFromLedger, routeAliases } from "./compat-mutation-proof.mjs";
 
 const sha = (s) => createHash("sha256").update(s).digest("hex");
@@ -313,4 +313,27 @@ test("audit: an exemption that matches no census site any more makes its row STA
   const exr = [{ text: "msg", reason: "UX message, not a legacy name" }, { text: "gone", reason: "removed from the code long ago" }];
   assert.equal(audit({ exceptions: [mk(exr)], concepts: [] }, { readFile: readFile2, mutation: { results } })[0].mutationState, "STALE_EXEMPTION");
   assert.equal(audit({ exceptions: [mk([exr[0]])], concepts: [] }, { readFile: readFile2, mutation: { results } })[0].mutationState, "PROVEN");
+});
+
+test("census: a template part whose legacy namespace is already mutated (PREFIX_LITERAL) is not reported as unmutated", () => {
+  const m = findMutations("const b = `legacyns:${k}`;", "a.ts", new Set(["legacyns"]));
+  assert.equal(m.lit.filter((x) => x.operator === "PREFIX_LITERAL").length, 1);
+  assert.deepEqual(m.census.unmutatedNameSites, []);
+  const other = findMutations("const b = `see legacyns docs ${k}`; const c = 'legacyns';", "a.ts", new Set(["legacyns"]));
+  assert.deepEqual(other.census.unmutatedNameSites.map((x) => x.kind), ["template-part"], "a template part with the name as a word and no mutation of it is reported");
+});
+
+test("hash binding covers the test-runner configuration: a changed jest/vitest config or setup file makes the proof stale", () => {
+  const F = "apps/web/src/m/a.ts";
+  const T = "apps/web/src/m/a.test.ts";
+  const cfg = { "apps/web/vitest.config.mjs": "export default {}", "apps/web/src/test/setup.ts": "import 'x'" };
+  const files = { [F]: "x", [T]: "y", ...cfg };
+  const read = (p) => files[p] ?? null;
+  assert.deepEqual(runnerConfigFiles(T), ["apps/web/vitest.config.mjs", "apps/web/src/test/setup.ts"]);
+  const rec = (configSha256) => new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha("x"), testSha256: sha("y"), configSha256, verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations: [{ operator: "LEGACY_LITERAL", label: "a", outcome: "KILLED" }], census: { version: 1, names: ["a"], wildcard: false, siteCount: 1, unmutatedPtSites: [], unmutatedNameSites: [] } }]]);
+  const good = runnerConfigSha(T, read);
+  assert.ok(good);
+  assert.equal(pairEvidence(rec(good), F, T, read, "a").fresh, true);
+  assert.equal(pairEvidence(rec(good), F, T, (p) => (p === "apps/web/src/test/setup.ts" ? "import 'y'" : read(p)), "a").fresh, false, "an edited setup file stales the proof");
+  assert.equal(pairEvidence(rec(undefined), F, T, read, "a").fresh, false, "a record with no config binding is not fresh");
 });

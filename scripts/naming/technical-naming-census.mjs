@@ -81,6 +81,7 @@ export const DETECTOR_FIXTURES = new Set([
   "scripts/naming/technical-naming-census.test.mjs",
   "scripts/naming/schema-naming-census.test.mjs",
   "scripts/naming/naming-gates-mutation.test.mjs",
+  "scripts/naming/compat-boundary-audit.test.mjs", // exercises the Portuguese-aware wildcard predicate and the census: PT words are its data
   "apps/api/src/database/pt-column-naming-baseline.guard.spec.ts",
   // old -> new rename table: the legacy Portuguese names are the data it maps away from
   "scripts/run-technical-english-normalization.mjs",
