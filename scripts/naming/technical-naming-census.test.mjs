@@ -9,7 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { scanSource, compare, census, stripRecordId } from "./technical-naming-census.mjs";
+import { scanSource, compare, census, stripRecordId, isBookkeeping } from "./technical-naming-census.mjs";
 import { loadAuthority } from "./canonical-map.mjs";
 import { ptWords, isPtProse } from "./pt-lexicon.mjs";
 
@@ -628,4 +628,12 @@ test("stale-row gate: a row matching no occurrence is reported in unusedRows; re
   assert.deepEqual(without.unusedRows, []);
   const grown = Object.keys(without.debt).filter((k) => k.includes(covering.path));
   assert.ok(grown.length > 0, `removing the row for ${covering.path} :: ${covering.currentName} must leave debt in that file`);
+});
+
+test("evidence: generated audit evidence and mission bookkeeping are not product surfaces, product data files are", () => {
+  assert.equal(isBookkeeping("docs/naming/audit/compat-mutation-proof.json"), true);
+  assert.equal(isBookkeeping(".claude/ops/records/x.json"), true);
+  assert.equal(isBookkeeping("docs/naming/canonical-naming-map.json"), false);
+  assert.equal(isBookkeeping("apps/api/src/data/seed.json"), false);
+  assert.equal(isBookkeeping("docs/naming/auditoria/x.json"), false);
 });
