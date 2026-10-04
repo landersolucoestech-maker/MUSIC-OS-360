@@ -1,7 +1,7 @@
 // Wiring test: normalizeToBackendType resolves a pre-OL1 operational slug through the shared
 // operational vocabulary (canonicalOperationalSlug) before looking it up in the granular map.
 import { describe, expect, it } from "vitest";
-import { normalizeToBackendType } from "./event-type";
+import { canonicalEventCategory, normalizeToBackendType } from "./event-type";
 
 const L = (...p: string[]) => p.join("");
 
@@ -23,5 +23,18 @@ describe("normalizeToBackendType legacy operational slug wiring", () => {
   it("a coarse backend enum value and a canonical slug keep working", () => {
     expect(normalizeToBackendType("Tour", {})).toBe("tour");
     expect(normalizeToBackendType("meetings", { meetings: "interview" })).toBe("interview");
+  });
+
+  it("canonicalEventCategory maps every pre-OL1 operational slug to its canonical category", () => {
+    const pairs: Array<[string, string]> = [
+      [L("sessoes", "_estudio"), "studio_sessions"],
+      [L("ensa", "ios"), "rehearsals"],
+      [L("sessoes", "_fotos"), "photo_shoots"],
+      [L("entre", "vistas"), "interviews"],
+      [L("programas", "_tv"), "tv_shows"],
+      [L("producao", "_conteudo"), "content_production"],
+      [L("reu", "nioes"), "meetings"],
+    ];
+    for (const [legacy, canonical] of pairs) expect(canonicalEventCategory(legacy)).toBe(canonical);
   });
 });

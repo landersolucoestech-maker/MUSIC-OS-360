@@ -19228,77 +19228,72 @@
   {
    "file": "apps/web/src/modules/events/lib/event-type.ts",
    "test": "apps/web/src/modules/events/lib/event-type.legacy-compat.test.ts",
-   "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
+   "fileSha256": "1e91d0afb598acf7090bb025355d592fcecf1495f4974418c9bfdf4b3561dac7",
    "testSha256": "7469bff5e91ed6cc7396a57da81b71bacb9b901fd95f567f6c66ea83de7ee803",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 145,
+     "line": 144,
      "label": "entrevista",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 120,
+     "line": 119,
+     "label": "evento_corporativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 141,
      "label": "evento_corporativo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 142,
-     "label": "evento_corporativo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 143,
      "label": "gravacao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 144,
+     "line": 143,
      "label": "gravacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 119,
+     "line": 118,
      "label": "lancamento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 121,
+     "line": 120,
      "label": "reuniao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 118,
+     "line": 117,
      "label": "rodeio",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 116,
+     "line": 115,
      "label": "show_teatro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 146,
+     "line": 145,
      "label": "turne",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -19317,7 +19312,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/integrations/hooks/useNfe.ts",

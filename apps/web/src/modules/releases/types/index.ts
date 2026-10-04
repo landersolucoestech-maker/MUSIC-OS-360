@@ -156,9 +156,8 @@ export interface ShareHistoryEntry {
   version?: number | string | null;
   /** Canonical field for newly-written entries. */
   percentage?: number | null;
-  /** @deprecated Legacy key on already-persisted (append-only) entries written before the
-   * naming-normalization rename; kept for backward-compatible reads only, never written anew. */
-  percentual?: number | null;
+  // Legacy persisted key `percentual` (append-only entries written before the rename) is read through
+  // lib/legacy-reads.ts (loosely typed); it is not part of this type.
   description?: string | null;
   author?: string | null;
 }

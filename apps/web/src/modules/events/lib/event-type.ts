@@ -1,5 +1,5 @@
 import type { OperationalListItem } from "@/modules/settings/hooks/useOperationalSettings";
-import { LEGACY_OPERATIONAL_SLUGS, canonicalOperationalSlug, legacyOperationalSlugs } from "@/modules/settings/lib/operational-vocabulary";
+import { canonicalOperationalSlug, legacyOperationalSlugs } from "@/modules/settings/lib/operational-vocabulary";
 
 /** Enum actually persisted in events.type (CreateEventDto.type on the backend). */
 export const BACKEND_EVENT_TYPES = ["show", "festival", "recording", "meeting", "interview", "tour", "other"] as const;
@@ -105,13 +105,12 @@ export const VENUE_CRM_EVENT_CATEGORIES: readonly string[] = ["shows", "tv_shows
 /**
  * Legacy reader (input only): everything an older build, a saved draft, a
  * MusicChat prefill or a persisted coarse `events.type` may hand the form,
- * mapped to the canonical category id. Pre-OL1 Portuguese slugs come from the
- * shared operational vocabulary map; the rest are the historic free-text
+ * mapped to the canonical category id. Pre-OL1 Portuguese slugs are resolved by
+ * canonicalOperationalSlug (the shared operational vocabulary, single source); the rest are the historic free-text
  * aliases of the scheduler and the coarse backend enum (a persisted event only
  * keeps the coarse type, so edit resolves it to a representative category).
  */
 const EVENT_CATEGORY_INPUT_ALIASES: Readonly<Record<string, EventCategoryId>> = {
-  ...(LEGACY_OPERATIONAL_SLUGS["event_type"] as Record<string, EventCategoryId>),
   show: "shows",
   show_teatro: "shows",
   festival: "shows",

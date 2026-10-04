@@ -2519,7 +2519,7 @@
    "text": "legacyRoutes()",
    "target": "apps/web/src/app/routes/legacy-redirects.tsx",
    "fileSha256": "6228ce73daea908d9f61d0f391d2b1823397bf4232fd959e07754b3b6f6871dc",
-   "testsSha256": "d39818ecc42c98f60974331d1e5ac87e2d0854caa15ff5efbe84a18be0e9649b",
+   "testsSha256": "945e64bd9d0d1fa141733ef45bfb85959a7422674d42459cfbdbb1e05ac30a1f",
    "testDir": "apps/web/src",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4367,7 +4367,7 @@
    "text": "legacyTitle(event)",
    "target": "apps/web/src/shared/lib/legacy-title.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4379,7 +4379,7 @@
    "text": "canonicalEventCategory(event?.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4391,7 +4391,7 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4403,7 +4403,7 @@
    "text": "buildGranularToBackendTypeMap(getItemsByKind(\"event_type\"))",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4415,7 +4415,7 @@
    "text": "canonicalEventCategory(formData.eventType || event?.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4427,7 +4427,7 @@
    "text": "eventCategoryToBackendType(type, granularToBackendType)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "f2d8d24d8bd8c5128161c91a8fddb479ce42ab1818c3045cd8b1105d213a46d2",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4439,7 +4439,7 @@
    "text": "getBackendEventTypeLabel(event.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "18c289c892c2c797ceebc5f763745dfdb0ff0431db9aa49f1893f054c4770301",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4447,11 +4447,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/events/lib/event-type.ts",
-   "line": 136,
+   "line": 135,
    "text": "canonicalOperationalSlug(\"event_type\", normalized)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
-   "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "fileSha256": "1e91d0afb598acf7090bb025355d592fcecf1495f4974418c9bfdf4b3561dac7",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4459,11 +4459,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/events/lib/event-type.ts",
-   "line": 173,
+   "line": 172,
    "text": "canonicalOperationalSlug(\"event_type\", v)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
-   "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "fileSha256": "1e91d0afb598acf7090bb025355d592fcecf1495f4974418c9bfdf4b3561dac7",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4474,8 +4474,8 @@
    "line": 42,
    "text": "legacyOperationalSlugs(\"event_type\", item.slug)",
    "target": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
-   "fileSha256": "49a94a6f82e2a6e812ef1a8dccaf7c079416f8b49fc7ca455224b3ee2c8ac731",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "fileSha256": "1e91d0afb598acf7090bb025355d592fcecf1495f4974418c9bfdf4b3561dac7",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4487,7 +4487,7 @@
    "text": "useOperationalSettings()",
    "target": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4499,7 +4499,7 @@
    "text": "buildGranularToBackendTypeMap(getItemsByKind(\"event_type\"))",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4511,7 +4511,7 @@
    "text": "normalizeToBackendType(value, granularToBackendType)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -4523,7 +4523,7 @@
    "text": "toAgendaRow({\n        title: e.title,\n        type: getBackendEventTypeLabel(e.type),\n        status: statusLabelPtBr(\"e",
    "target": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4535,7 +4535,7 @@
    "text": "getBackendEventTypeLabel(e.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4547,7 +4547,7 @@
    "text": "readAgendaCell(row, column)",
    "target": "apps/web/src/modules/events/lib/agenda-spreadsheet.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4559,7 +4559,7 @@
    "text": "normalizeToBackendType(rawType, granularToBackendType)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"
@@ -4571,7 +4571,7 @@
    "text": "getBackendEventTypeLabel(event.type)",
    "target": "apps/web/src/modules/events/lib/event-type.ts",
    "fileSha256": "e339bba04ad53af7fa7502b1f873a933630f434df455d99b0890945b3c6f1372",
-   "testsSha256": "7da39ea1168d079a85d648a05cb9a363d55b710d2ba1ff3794819ead5107e031",
+   "testsSha256": "cf5f2121c03a30cdfd8166b48b7967a936b6e86bfe085331adaeecd6e76ab5d4",
    "testDir": "apps/web/src/modules/events",
    "operator": "CALL_BYPASS",
    "verdict": "SURVIVED"

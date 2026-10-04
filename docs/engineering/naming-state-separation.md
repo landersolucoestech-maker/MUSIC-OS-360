@@ -40,20 +40,31 @@ configuration (`jest.config.ts`/`tsconfig.json` for the API, `vitest.config.mjs`
    runs again; it re-runs only the stale pairs (`--census-only` recomputes the census of the records already judged on the same bytes).
 6. Reporting keeps two bases apart: `COMPATIBILITY_ROWS_PROVEN_BY_MUTATION` and `COMPATIBILITY_ROWS_PROVEN_BY_BINDING_ONLY`. A row whose path is a test
    (a legacy literal used as a fixture) or a script is credited by binding (the file exists and names the literal): that is not behavioral proof of
-   a runtime boundary and is never counted as such.
+   a runtime boundary and is never counted as such. (The binding is the existence of the test/script file; that the file really names the literal is
+   enforced only indirectly, by the `OBSOLETE_BOUNDARIES` counter.)
 
 7. WIRING (`node scripts/naming/compat-wiring-proof.mjs --check`, proof file `docs/naming/audit/compat-wiring-proof.json`): the name-level proof cannot see that a
    SERVICE stopped calling the alias helper (the DTO still accepts the legacy field, the table spec passes, and a pre-rename client's value is silently
-   dropped). For every production call of `applyDeprecatedFieldAliases` the call is replaced by its first argument and the specs of the owning module must
-   fail by assertion; records are bound to the file and to every spec of the module. Counter `WIRING_SITES_UNPROVEN` must be 0.
+   dropped). It covers two kinds of production call site: HELPER (every call of `applyDeprecatedFieldAliases`) and CONSUMER (every direct call, by identifier
+   or namespace, of a function exported by a credited file, resolving relative, `@/` and barrel imports; draft migrations excluded). Each call is replaced
+   by its first argument (or `undefined`) and a spec of the loaded suites must fail: `classifyWiring` credits any failing test in a loaded suite (an
+   assertion, but also an error thrown by the mutated code, and it cannot rule out a timing flake; baseline-red pairs are retried and reported apart).
+   Records are bound to the consumer file and to the specs of its module, not to the credited target file. Exemptions
+   (`docs/naming/audit/compat-wiring-exemptions.json`) match on file plus exact call text (not the line) with a reason of at least 40 characters and are
+   reported when stale. Counter `WIRING_SITES_UNPROVEN` must be 0; `naming:check` runs it together with the wiring tool tests.
 8. The audit never trusts the stored JSON alone: it recomputes the mutation sites and the census from the current source text and refuses a record that differs
    (forged census, fewer mutations than sites, mutations of sites that do not exist, a ledger name added after the run).
+
+Known limits of the wiring gate (recorded, not hidden): it mutates CALLS only. Non-call uses of a credited export (a table spread or indexed, a function passed as
+a reference, a JSX/default-import use, a member read) are not mutated; the independent review r14 counted about 224 such references. They are covered only
+by the name-level proof of the credited file and by the behavior tests of their module; imports through workspace packages, method calls and default imports
+are not followed. An identical call added later in a file with an exemption is exempt too (exemptions are keyed by text).
 
 Known limits (recorded, not hidden): the other alias helpers (`resolveContractAliases`, `resolvePhonogramAliases`, `canonicalizeDeprecatedColumnId`,
 `expandHrPermissionAliases`, `resolveDeprecatedImportHeader`) return structured results and have no wiring operator; legacy-first PRECEDENCE written as a ternary,
 a `continue` guard or variadic argument order (`pick(target, canonical, legacy)`) is invisible to the operators and to `LEGACY_FIRST_READS`, which only sees
 `??`, `||` and `=== undefined` (the instances found by the independent reviews are pinned by behavior tests: HR feature flags, contacts);  the hashes cover the runtime file, its test and the runner configuration, not transitive helpers (the full API
-and web suites run in CI and catch a helper that breaks a test); `COMPILER_CHECKED` relies on the monorepo typecheck; `proofExemptions` are a human
+and web suites run in CI and catch a helper that breaks a test); `COMPILER_CHECKED` relies on the monorepo typecheck and is accepted only for declarations a typed reader depends on (a property signature that readers reach through string indexing is not compiler-checked and was removed instead); `proofExemptions` are a human
 judgement that a site is prose, reviewed with the ledger; the proof file is trusted as generated evidence (it is excluded from the technical-naming
 census as a single named file, and any other file under `docs/naming/audit` is scanned); the unmutated-form census reports shorthand, binding elements,
 JSX attributes, methods and template parts but has no mutation operator for them.
