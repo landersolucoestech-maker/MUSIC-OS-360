@@ -4,8 +4,8 @@
   "workflow": "naming-normalization",
   "intent": null,
   "status": "ACTIVE",
-  "stopBlocks": 3,
-  "lastProgressAt": "2026-10-04T23:20:10.772Z",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-05T00:50:21.511Z",
   "tasks": [
     {
       "id": "census",
@@ -609,12 +609,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "RUNNING",
+      "status": "COMPLETED",
       "attempts": 0,
       "delegationId": "dele-6910fce6",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-11c117a6"
+      ],
+      "result": "L5 security review: PASS_WITH_FINDINGS; MEDIUM and LOW findings fixed with tests; proofs at 0.",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -649,12 +651,14 @@
         "completion"
       ],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "COMPLETED",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-463ce45f",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-60842048"
+      ],
+      "result": "Closure: git audit PASS_WITH_FINDINGS; handoff updated; graphify not installed (external); orchestration audit counters explained.",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,

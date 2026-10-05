@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "L5 security review PASS_WITH_FINDINGS: alias/role lookups fail closed (probe with __proto__/constructor/toString; alias roles grant no more than canonical; RolesGuard denies unknown), export without encryptedFields map proven equivalent over all 22 report contracts (19 encrypted fields, bad=0), no migration added or executed, destructive drafts unregistered, no secrets in logs; scanner candidates (2 synthetic AWS keys in security.yml) FALSE-POSITIVE. MEDIUM F1 (HR prototype-key lookup) and LOW F2/F3 plus one extra TypeError crash found and fixed with tests (find CORRIGIDA). Not verified: DB RLS behavior, HTTP whitelist pipe end to end; security gate needs fresh evidence at code freeze.",
+  "workspaceFingerprint": "38809e605ed2ad7b79985b34f075ddd7c0c89a81c76932c50c3bb8dae1ec0051",
+  "fingerprintStatus": "BOUND",
+  "head": "2f9ac0a68a8211941b0380fd28c26411a86ac30f",
+  "id": "evid-11c117a6",
+  "createdAt": "2026-10-05T00:38:10.052Z"
+}

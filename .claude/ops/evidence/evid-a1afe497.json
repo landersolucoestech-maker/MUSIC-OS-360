@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:54330/musicos360 DB_SSL=false NODE_ENV=test pnpm --filter @music-os-360/api db:check",
+  "command": "env DATABASE_URL=postgresql://musicos360@127.0.0.1:54330/musicos360 DB_SSL=false NODE_ENV=test pnpm --filter @music-os-360/api db:check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> @music-os-360/api@0.0.1 db:check /home/user/MUSIC-OS-360/apps/api\n> tsx scripts/db-ops.ts check\n\n\n[db:check] Checking migration state…\n\nquery: SELECT version()\nquery: SELECT * FROM current_schema()\nquery: CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\nquery: SELECT * FROM \"information_schema\".\"tables\" WHERE \"table_schema\" = 'public' AND \"table_name\" = 'musicos360_migrations'\nquery: SELECT * FROM \"musicos360_migrations\" \"musicos360_migrations\" ORDER BY \"id\" DESC\n✓ No pending migrations — schema in sync.",
+  "stderrTail": "",
+  "workspaceFingerprint": "38809e605ed2ad7b79985b34f075ddd7c0c89a81c76932c50c3bb8dae1ec0051",
+  "fingerprintStatus": "BOUND",
+  "head": "2f9ac0a68a8211941b0380fd28c26411a86ac30f",
+  "durationMs": 2207,
+  "id": "evid-a1afe497",
+  "createdAt": "2026-10-05T00:39:39.745Z"
+}

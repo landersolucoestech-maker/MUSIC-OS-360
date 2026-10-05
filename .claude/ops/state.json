@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-04T23:20:08.285Z",
+  "updatedAt": "2026-10-05T00:50:21.430Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -63,7 +63,8 @@
             "evid-ae3c5b59",
             "evid-a29a2015",
             "evid-11f432fe",
-            "evid-93263303"
+            "evid-93263303",
+            "evid-79502ded"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -108,7 +109,8 @@
             "evid-27629692",
             "evid-9093d5a1",
             "evid-28766ff2",
-            "evid-0194f550"
+            "evid-0194f550",
+            "evid-00077836"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -158,7 +160,8 @@
             "evid-0d562ffc",
             "evid-a902f012",
             "evid-1d35a695",
-            "evid-0c2d31e5"
+            "evid-0c2d31e5",
+            "evid-e0f2a53f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -209,7 +212,8 @@
             "evid-b852d6ea",
             "evid-998a5708",
             "evid-cdd32cdd",
-            "evid-51eadf43"
+            "evid-51eadf43",
+            "evid-8986ce47"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -257,7 +261,8 @@
             "evid-ab35d74b",
             "evid-4f85074c",
             "evid-05c805eb",
-            "evid-a699ddf3"
+            "evid-a699ddf3",
+            "evid-5667829a"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -299,7 +304,8 @@
             "evid-3ff07815",
             "evid-b4bd6906",
             "evid-da57923e",
-            "evid-0a8b1a66"
+            "evid-0a8b1a66",
+            "evid-26cbe1a6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -347,7 +353,8 @@
             "evid-bc439320",
             "evid-d56d058a",
             "evid-6e0ed166",
-            "evid-c4e6a957"
+            "evid-c4e6a957",
+            "evid-c67e44a3"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -385,7 +392,8 @@
             "evid-b26b48a5",
             "evid-07be12d2",
             "evid-5372d67b",
-            "evid-cc02c445"
+            "evid-cc02c445",
+            "evid-5e089813"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -424,7 +432,8 @@
             "evid-6cfe69e6",
             "evid-0a6c6f50",
             "evid-addf57a0",
-            "evid-8ef0adb2"
+            "evid-8ef0adb2",
+            "evid-3d4917c8"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -467,7 +476,8 @@
             "evid-8d4a6927",
             "evid-b62819a0",
             "evid-99215978",
-            "evid-b88aa16b"
+            "evid-b88aa16b",
+            "evid-3487fbb8"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -505,7 +515,8 @@
             "evid-dc62868c",
             "evid-6f218718",
             "evid-f4f50fdb",
-            "evid-3ca89173"
+            "evid-3ca89173",
+            "evid-525d12bc"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -542,7 +553,8 @@
             "evid-68ed0709",
             "evid-e28c3b08",
             "evid-3eb15844",
-            "evid-d530539a"
+            "evid-d530539a",
+            "evid-8efe667a"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -587,7 +599,8 @@
             "evid-4fe02fb6",
             "evid-0c4ccd88",
             "evid-ae9b98ba",
-            "evid-c7b69b97"
+            "evid-c7b69b97",
+            "evid-2aaddb25"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -634,7 +647,8 @@
             "evid-d71d175b",
             "evid-255b43d5",
             "evid-543cd540",
-            "evid-dfc83882"
+            "evid-dfc83882",
+            "evid-ede952e2"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -670,7 +684,8 @@
             "evid-5371c654",
             "evid-22df4d8d",
             "evid-43ee9e31",
-            "evid-22cabd8b"
+            "evid-22cabd8b",
+            "evid-f3cc4fe9"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -711,7 +726,8 @@
             "evid-d6b9b7a0",
             "evid-2778f770",
             "evid-014f0510",
-            "evid-87796377"
+            "evid-87796377",
+            "evid-a1afe497"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -814,6 +830,20 @@
       "createdAt": "2026-10-04T23:19:53.359Z",
       "justification": "Pre-existing, not introduced by the diff, no CRITICAL/HIGH/MEDIUM; scope-control: adjacent debt is recorded, not fixed; listed in the final report for the owner.",
       "resolvedAt": "2026-10-04T23:19:53.480Z"
+    },
+    {
+      "id": "find-52132e1c",
+      "category": "G",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/hr/hr-legacy-fields.ts",
+      "line": 79,
+      "summary": "Security review F1 (pre-existing): unguarded legacy lookup in canonicalContractType/canonicalLeaveType returned prototype members (constructor, toString, __proto__) to the persistence layer. Same class found by the new tests in import-value-canonicalizers, value-labels.pt-br and operational-list-vocabulary (F2, F3 plus a TypeError crash in isMultiValueLabelColumn). Fixed with own-property guards and tests.",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-05T00:38:03.883Z",
+      "justification": "Own-property guards added in hr-legacy-fields, import-value-canonicalizers, value-labels.pt-br, operational-list-vocabulary with prototype-key tests; 45 suites/706 tests pass; compat and wiring proofs re-run at 0.",
+      "resolvedAt": "2026-10-05T00:38:09.926Z"
     }
   ],
   "evidenceIds": [
@@ -1340,7 +1370,25 @@
     "evid-d3a21770",
     "evid-2abf3639",
     "evid-b3d1e0a6",
-    "evid-4412276a"
+    "evid-4412276a",
+    "evid-11c117a6",
+    "evid-79502ded",
+    "evid-00077836",
+    "evid-e0f2a53f",
+    "evid-5667829a",
+    "evid-2aaddb25",
+    "evid-c67e44a3",
+    "evid-5e089813",
+    "evid-3d4917c8",
+    "evid-3487fbb8",
+    "evid-525d12bc",
+    "evid-8efe667a",
+    "evid-ede952e2",
+    "evid-a1afe497",
+    "evid-f3cc4fe9",
+    "evid-8986ce47",
+    "evid-26cbe1a6",
+    "evid-60842048"
   ],
   "checkpointIds": [],
   "touchedFiles": [],

@@ -2,24 +2,19 @@
  "plan": "orch-54733048",
  "workflow": "naming-normalization",
  "counters": {
-  "ORCHESTRATION_COVERAGE_GAPS": 4,
-  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 34,
-  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 31,
+  "ORCHESTRATION_COVERAGE_GAPS": 0,
+  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 2,
+  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 0,
   "UNREVIEWED_CROSS_LAYER_CHANGES": 4,
   "UNVALIDATED_IMPLEMENTATIONS": 0
  },
- "gaps": [
-  "r16-secrets: RUNNING",
-  "r17-requirements: RUNNING",
-  "r18-frontend-security: RUNNING",
-  "r19-frontend-consistency: RUNNING"
- ],
+ "gaps": [],
  "applicableAgents": [
   {
    "name": "adversarial-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r5-ci-docs); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "approval-router",
@@ -31,19 +26,19 @@
    "name": "architecture-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r9b-architecture); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "backend-engineer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w10-api-tests); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "backend-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r10-backend); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "branch-policy-validator",
@@ -55,7 +50,7 @@
    "name": "code-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r11-ledger); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "commit-validator",
@@ -73,13 +68,13 @@
    "name": "config-mapper",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w1-env-trace); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "database-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r6-dossier-db); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "dead-code-detector",
@@ -91,25 +86,25 @@
    "name": "dead-code-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r12-dead); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "destructive-change-guard",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r6b-dossier-guard); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "devops-ci-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w5-ci-check-exhaustion); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "documentation-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r3-docs, r3b-docs-corrections); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "domain-boundary-guardian",
@@ -121,7 +116,7 @@
    "name": "domain-boundary-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r4-decisions); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "duplication-detector",
@@ -133,30 +128,30 @@
    "name": "encryption-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w7-pii-key-custody); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "frontend-consistency-reviewer",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "r19-frontend-consistency",
    "reason": ""
   },
   {
    "name": "frontend-engineer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w9-web-fixes); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "frontend-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r9-frontend); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "frontend-security-reviewer",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "r18-frontend-security",
    "reason": ""
   },
   {
@@ -175,13 +170,13 @@
    "name": "implementation-engineer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task propagate, w8-env-templates, w11-ledger-gate, w13-doc-corrections); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "migration-planner",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task schema-plan, w6-destructive-dossier); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "migration-test-engineer",
@@ -205,37 +200,37 @@
    "name": "naming-analyzer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task census, classify, w2-compat-semantic-groups); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "naming-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task canonical-model, r2-naming); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "orphan-detector",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No separate orphan-detector task was run. Orphans were covered by the residue phase (dead-code-detector), the compat audit counter OBSOLETE_BOUNDARIES and the stale ledger-row gates; no orphan finding was raised."
   },
   {
    "name": "pii-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r7-pii); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "producer-consumer-tracer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w4-decisions-trace); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "protected-file-validator",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r8-protected); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "qa-engineer",
@@ -253,7 +248,7 @@
    "name": "regression-reviewer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task r15-regression); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "repo-inspector",
@@ -269,8 +264,8 @@
   },
   {
    "name": "requirements-reviewer",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "r17-requirements",
    "reason": ""
   },
   {
@@ -281,14 +276,14 @@
   },
   {
    "name": "secrets-reviewer",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "r16-secrets",
    "reason": ""
   },
   {
    "name": "security-reviewer",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "review",
    "reason": ""
   },
   {
@@ -301,19 +296,19 @@
    "name": "stale-code-detector",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w3-historical-trace); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "test-strategy-engineer",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "Delegated and COMPLETED in plan orch-e848167d (task w14-mutation-proof); that plan was abandoned by user decision (loop breaker on r14) and its completed, evidenced work was adopted into this plan, so the same work was not delegated a second time."
   },
   {
    "name": "verification-controller",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No separate verification-controller task was run in either plan. Independent re-execution of the claims was done by the evidence runner (ops.mjs evidence run, real exit codes bound to the workspace fingerprint), by the migration-test-engineer verify phase and by the r14 delta re-verification."
   }
  ],
  "applicableSkills": [
@@ -321,25 +316,25 @@
    "name": "backend-audit",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The backend audit was done by the backend-reviewer (r10-backend, orch-e848167d) and the security-reviewer review phase of this plan."
   },
   {
    "name": "blast-radius-analysis",
-   "used": "NO",
-   "tasks": "",
-   "reason": "blast radius of each change was traced by the propagate task (producer/consumer tracing) and the regression review r15"
+   "used": "YES",
+   "tasks": "review",
+   "reason": ""
   },
   {
    "name": "branch-policy-check",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The branch policy was enforced by the git-guard hooks and checked with scripts/verify-branch-topology.mjs (criterion ac-523dfee6)."
   },
   {
    "name": "canonical-naming",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The canonical map was maintained through the ledger and validated by scripts/naming/validate-canonical-map.mjs (criterion ac-d232f321); canonical-model task reviewed by naming-reviewer."
   },
   {
    "name": "change-cluster-consolidator",
@@ -357,19 +352,19 @@
    "name": "config-map",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The configuration contract was traced by config-mapper (w1-env-trace, orch-e848167d) and enforced by pnpm env:contract."
   },
   {
    "name": "contract-tracing",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Producers and consumers were traced by producer-consumer-tracer (w4, orch-e848167d) and, for every alias helper and credited export, by the compat wiring proof gate."
   },
   {
    "name": "create-api-tests",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. API tests were written by backend-engineer/qa-engineer and the lead without invoking it; their value is proven by the mutation and wiring proofs."
   },
   {
    "name": "create-contract-tests",
@@ -393,19 +388,19 @@
    "name": "cross-layer-impact",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Cross-layer impact was covered by the wiring proof gate and the independent reviews r9/r10 (orch-e848167d) and r16-r19 plus the L5 review of this plan."
   },
   {
    "name": "data-flow-trace",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Data flow of the touched fields was covered by the wiring proof gate and the L5 security review (export path equivalence proven over all report contracts)."
   },
   {
    "name": "data-retention-audit",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Retention was handled in the destructive dossier and the PII custody request (w6, w7, orch-e848167d); no retention change was made."
   },
   {
    "name": "database-schema-drift",
@@ -423,7 +418,7 @@
    "name": "dead-code-analysis",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Dead code was analyzed by dead-code-detector (w12 in orch-e848167d and the residue phase of this plan)."
   },
   {
    "name": "definition-of-done",
@@ -435,12 +430,12 @@
    "name": "destructive-change-check",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Destructive changes were reviewed by destructive-change-guard (r6b, orch-e848167d) and the dossier gate; no destructive change was executed."
   },
   {
    "name": "diff-review",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "review",
    "reason": ""
   },
   {
@@ -453,19 +448,19 @@
    "name": "duplication-analysis",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. One-source-of-truth duplication was reviewed in r19 and by the redundant-code removals proven equivalent."
   },
   {
    "name": "encryption-audit",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Covered by encryption-reviewer (w7, orch-e848167d), the r16 secrets sweep and the L5 export equivalence proof for encrypted fields."
   },
   {
    "name": "environment-map",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Environments were handled through the env contract census (pnpm env:contract) and the disposable-database rule; nothing touched dev, staging or production."
   },
   {
    "name": "evaluate-human-approval",
@@ -483,13 +478,13 @@
    "name": "external-action-check",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. No external action was performed: no push outside origin/dev, no deploy, no provider call, no approval granted."
   },
   {
    "name": "frontend-audit",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The frontend audit was done by frontend-reviewer (r9-frontend, orch-e848167d) and r18/r19 of this plan."
   },
   {
    "name": "git-safety-check",
@@ -507,12 +502,12 @@
    "name": "migration-audit",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. No migration was added or changed in this mission; migrations were verified on a disposable PostgreSQL (migrate, check, RLS, round trips) in the verify phase."
   },
   {
    "name": "naming-analysis",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "r19-frontend-consistency",
    "reason": ""
   },
   {
@@ -525,19 +520,19 @@
    "name": "pii-audit",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Covered by pii-reviewer (r7, orch-e848167d), the custody request and the L5 review."
   },
   {
    "name": "producer-consumer-trace",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Covered by producer-consumer-tracer (w4, orch-e848167d) and the compat wiring proof gate (consumer call sites)."
   },
   {
    "name": "protected-file-check",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Covered by protected-file-validator (r8-protected, orch-e848167d) and the env templates guard."
   },
   {
    "name": "quality-gate",
@@ -567,7 +562,7 @@
    "name": "repository-census",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The census was produced by scripts/naming/technical-naming-census.mjs (criterion ac-4e42aad6) and the naming-analyzer census task."
   },
   {
    "name": "request-human-approval",
@@ -585,13 +580,13 @@
    "name": "review",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Reviews were delegated directly to the domain reviewers of the review phase (r16-r19, security-reviewer)."
   },
   {
    "name": "rollback-analysis",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. No state-changing release step was executed; rollback of the destructive packages is documented in the dossier (reviewed in r6, orch-e848167d)."
   },
   {
    "name": "run-typecheck",
@@ -609,30 +604,30 @@
    "name": "safe-refactor",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The only refactors were removals of verified-unreferenced code, each proven by typecheck and the full suites."
   },
   {
    "name": "schema-normalization",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. The schema plan was produced by migration-planner (schema-plan task) and the live schema was checked by the schema naming census (criterion ac-5305eb7b)."
   },
   {
    "name": "scope-lock",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Scope was kept by the dev-only branch policy, per-file reviews and the closure git-auditor task."
   },
   {
    "name": "secret-scan",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "r16-secrets",
    "reason": ""
   },
   {
    "name": "security-audit",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "review",
    "reason": ""
   },
   {
@@ -645,7 +640,7 @@
    "name": "stale-code-analysis",
    "used": "NO",
    "tasks": "",
-   "reason": ""
+   "reason": "No run of this skill is recorded. Covered by stale-code-detector (w3, orch-e848167d) and the stale-row gates of the technical and schema censuses."
   }
  ]
 }

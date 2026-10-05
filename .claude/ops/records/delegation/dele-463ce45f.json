@@ -1,0 +1,9 @@
+{
+  "agent": "git-auditor",
+  "objective": "Phase \"closure\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: completion-controller.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-463ce45f",
+  "createdAt": "2026-10-05T00:38:10.199Z"
+}
