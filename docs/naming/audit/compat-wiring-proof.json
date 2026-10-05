@@ -2568,7 +2568,7 @@
    "text": "legacyRoutes()",
    "target": "apps/web/src/app/routes/legacy-redirects.tsx",
    "fileSha256": "6228ce73daea908d9f61d0f391d2b1823397bf4232fd959e07754b3b6f6871dc",
-   "testsSha256": "925a6d9b5a5149ce5d599b4de6a430b11875ec7573724bafeead935a07b3c2d4",
+   "testsSha256": "9df02a3d3c338eab2149a896259bd63aa60aee9b706931f0584ec7bba34568fe",
    "testDir": "apps/web/src",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
