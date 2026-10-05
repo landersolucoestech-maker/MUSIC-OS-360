@@ -15,3 +15,18 @@ describe("genre-match own-property lookups", () => {
     expect(genreLabel("eletronica")).toBe("Eletrônica");
   });
 });
+
+describe("matchGenre electronic aliases (each alias key resolved separately)", () => {
+  it.each(["Electrónico", "eletrónico", "electronico", "eletronico", "electronica", "Electronica", "  ELETRONICO "])(
+    "%j resolves to eletronica",
+    (raw) => {
+      expect(matchGenre(raw)).toBe("eletronica");
+    },
+  );
+  it("the canonical value maps to itself", () => {
+    expect(matchGenre("eletronica")).toBe("eletronica");
+  });
+  it.each(["eletronicoo", "electronic", "electroni"])("near-miss %j does not map to eletronica", (raw) => {
+    expect(matchGenre(raw)).not.toBe("eletronica");
+  });
+});

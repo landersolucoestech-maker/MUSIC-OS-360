@@ -71435,7 +71435,8 @@
       "targetState": "accepted set is the English values only",
       "blocker": "data backfill of transactions.type awaits production evidence",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
     },
     {
       "item": "sqlString `imposto` (sql) in migrate-application.ts",
@@ -71451,7 +71452,8 @@
       "targetState": "accepted set is the English values only",
       "blocker": "data backfill of transactions.type awaits production evidence",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
     },
     {
       "item": "sqlString `investimento` (sql) in migrate-application.ts",
@@ -71467,7 +71469,8 @@
       "targetState": "accepted set is the English values only",
       "blocker": "data backfill of transactions.type awaits production evidence",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
     },
     {
       "item": "sqlString `receita` (sql) in migrate-application.ts",
@@ -71483,7 +71486,8 @@
       "targetState": "accepted set is the English values only",
       "blocker": "data backfill of transactions.type awaits production evidence",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
     },
     {
       "item": "sqlString `transferencia` (sql) in migrate-application.ts",
@@ -71499,7 +71503,8 @@
       "targetState": "accepted set is the English values only",
       "blocker": "data backfill of transactions.type awaits production evidence",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
     },
     {
       "item": "sqlString `rh` (sql) in 20260930000051_RenameLegacyHrPermissionsInPlace.ts",
@@ -71515,7 +71520,8 @@
       "targetState": "draft promoted to a published migration (then excluded as immutable history)",
       "blocker": "promotion of the draft requires explicit approval",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts"
     },
     {
       "item": "sqlString `faixas` (sql) in release-tracks.field.ts",
@@ -71532,7 +71538,7 @@
       "blocker": "requires a data backfill of releases.metadata",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.spec.ts"
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
     },
     {
       "item": "sqlString `teste` (sql) in signature-webhooks-real-context.e2e-spec.ts",
@@ -72052,7 +72058,8 @@
       "targetState": "department ids are English, labels live in the PT-BR resource",
       "blocker": "data migration of persisted department values",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/automation/project-planning.default-departments.spec.ts"
     },
     {
       "item": "value `Distribuição` (capitalized-string) in project-planning.automation.ts",
@@ -72068,7 +72075,8 @@
       "targetState": "department ids are English, labels live in the PT-BR resource",
       "blocker": "data migration of persisted department values",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/automation/project-planning.default-departments.spec.ts"
     },
     {
       "item": "value `Jurídico` (capitalized-string) in project-planning.automation.ts",
@@ -72084,7 +72092,8 @@
       "targetState": "department ids are English, labels live in the PT-BR resource",
       "blocker": "data migration of persisted department values",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/automation/project-planning.default-departments.spec.ts"
     },
     {
       "item": "value `DIVERGENTE` (caps-string) in canonical-role-slug.spec.ts",
@@ -72118,7 +72127,7 @@
       "blocker": "external dashboard migration (outside this repository)",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/core/rbac/canonical-role-slug.spec.ts"
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
     },
     {
       "item": "value `DIVERGENTE` (caps-string) in permission-resolver.service.ts",
@@ -72135,7 +72144,7 @@
       "blocker": "external dashboard migration (outside this repository)",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/core/rbac/canonical-role-slug.spec.ts"
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
     },
     {
       "item": "value `REMOVIDA` (caps-string) in permission-resolver.service.ts",
@@ -72152,7 +72161,7 @@
       "blocker": "external dashboard migration (outside this repository)",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/core/rbac/canonical-role-slug.spec.ts"
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
     },
     {
       "item": "value `ARTISTA` (caps-string) in marketing-vocabulary.migration.spec.ts",
@@ -72388,7 +72397,8 @@
       "targetState": "canonical English slug with the label in the PT-BR resource",
       "blocker": "data migration of persisted operational list slugs",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts"
     },
     {
       "item": "value `VIDEOMAKER` (caps-string) in operational-lists.service.spec.ts",
@@ -73815,7 +73825,8 @@
       "targetState": "canonical English classification ids with PT-BR labels",
       "blocker": "data migration of persisted contact classifications",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/crm-relationships/constants/contact-type-options.test.ts"
     },
     {
       "item": "value `VIDEOMAKER` (caps-string) in index.ts",
@@ -73831,7 +73842,8 @@
       "targetState": "canonical English classification ids",
       "blocker": "data migration of persisted contact classifications",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/crm-relationships/constants/contact-type-options.test.ts"
     },
     {
       "item": "value `TITULO` (caps-string) in agenda-spreadsheet.ts",
@@ -73897,7 +73909,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `Comercial` (capitalized-string) in useEmployees.ts",
@@ -73913,7 +73926,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `Financeiro` (capitalized-string) in useEmployees.ts",
@@ -73929,7 +73943,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `Jurídico` (capitalized-string) in useEmployees.ts",
@@ -73945,7 +73960,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `Operações` (capitalized-string) in useEmployees.ts",
@@ -73961,7 +73977,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `Produção Musical` (capitalized-string) in useEmployees.ts",
@@ -73977,7 +73994,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `RH` (caps-string) in useEmployees.ts",
@@ -73993,7 +74011,8 @@
       "targetState": "canonical English department ids with PT-BR labels",
       "blocker": "data migration of persisted employees.department",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
     },
     {
       "item": "value `EMPRESA` (caps-string) in marketing.mk2-vocabulary.test.ts",
@@ -74031,7 +74050,7 @@
     },
     {
       "item": "value `Artista Principal` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Artista Principal",
       "surface": "value",
       "layer": "web",
@@ -74043,11 +74062,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Coro` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Coro",
       "surface": "value",
       "layer": "web",
@@ -74059,11 +74079,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Engenheiro de Gravação` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Engenheiro de Gravação",
       "surface": "value",
       "layer": "web",
@@ -74075,11 +74096,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Engenheiro de Masterização` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Engenheiro de Masterização",
       "surface": "value",
       "layer": "web",
@@ -74091,11 +74113,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Intérprete` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Intérprete",
       "surface": "value",
       "layer": "web",
@@ -74107,11 +74130,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Mixagem` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Mixagem",
       "surface": "value",
       "layer": "web",
@@ -74123,11 +74147,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Produtor` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Produtor",
       "surface": "value",
       "layer": "web",
@@ -74139,11 +74164,12 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `Produtor Executivo` (capitalized-string) in ReleaseFormModal.tsx",
-      "path": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+      "path": "apps/web/src/modules/releases/lib/credit-roles.ts",
       "currentName": "Produtor Executivo",
       "surface": "value",
       "layer": "web",
@@ -74155,7 +74181,8 @@
       "targetState": "canonical English role ids with PT-BR labels",
       "blocker": "data migration of persisted release credit roles",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/credit-roles.test.ts"
     },
     {
       "item": "value `REJEITADO` (caps-string) in release-status.legacy-compat.test.tsx",
@@ -74205,7 +74232,8 @@
       "targetState": "canonical English slug with the label in the PT-BR resource",
       "blocker": "data migration of persisted operational list slugs",
       "dependency": null,
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/settings/hooks/useOperationalSettings.legacy-compat.test.ts"
     },
     {
       "item": "value `MEU` (caps-string) in operational-vocabulary.test.ts",
@@ -74433,6 +74461,618 @@
       "blocker": null,
       "dependency": null,
       "status": "ACTIVE"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `artista`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "artista",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `compositores`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "compositores",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `faixa`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "faixa",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `faixas`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "faixas",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `idioma`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "idioma",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `letra`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "letra",
+      "surface": "objectKey",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy HR permission resource in the draft migration spec `RH`",
+      "path": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts",
+      "currentName": "RH",
+      "surface": "sqlString",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Draft migration spec: asserts the exact SQL that renames the legacy `rh` permission resource to `hr`, including near-miss values that must stay untouched.",
+      "consumer": "unregistered draft migration 20260930000051 (blocked on BLK-RBAC-LEGACY-ROLE-SLUGS related approval)",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove with the draft once the in-place rename is approved, applied and the draft deleted",
+      "targetState": "canonical hr permission resource",
+      "blocker": "destructive in-place rename needs explicit owner approval",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts"
+    },
+    {
+      "item": "legacy HR permission resource in the draft migration spec `rh`",
+      "path": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts",
+      "currentName": "rh",
+      "surface": "sqlString",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Draft migration spec: asserts the exact SQL that renames the legacy `rh` permission resource to `hr`, including near-miss values that must stay untouched.",
+      "consumer": "unregistered draft migration 20260930000051 (blocked on BLK-RBAC-LEGACY-ROLE-SLUGS related approval)",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove with the draft once the in-place rename is approved, applied and the draft deleted",
+      "targetState": "canonical hr permission resource",
+      "blocker": "destructive in-place rename needs explicit owner approval",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts"
+    },
+    {
+      "item": "platform default department values in the planning automation spec `Financeiro`",
+      "path": "apps/api/src/core/automation/project-planning.default-departments.spec.ts",
+      "currentName": "Financeiro",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of DEFAULT_DEPARTMENTS: the Portuguese department names are persisted platform values (employees.department), asserted exactly with near-misses.",
+      "consumer": "project-planning.automation.ts fallback departments",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when departments get canonical English ids with dual-read and backfill",
+      "targetState": "English department ids",
+      "blocker": "persisted employees.department values are Portuguese platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/automation/project-planning.default-departments.spec.ts"
+    },
+    {
+      "item": "platform default department values in the planning automation spec `lancamento`",
+      "path": "apps/api/src/core/automation/project-planning.default-departments.spec.ts",
+      "currentName": "lancamento",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of DEFAULT_DEPARTMENTS: the Portuguese department names are persisted platform values (employees.department), asserted exactly with near-misses.",
+      "consumer": "project-planning.automation.ts fallback departments",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when departments get canonical English ids with dual-read and backfill",
+      "targetState": "English department ids",
+      "blocker": "persisted employees.department values are Portuguese platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/automation/project-planning.default-departments.spec.ts"
+    },
+    {
+      "item": "legacy divergence telemetry labels in the resolver spec `ARQUIVADA`",
+      "path": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts",
+      "currentName": "ARQUIVADA",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the emitted divergence_legacy log value next to the canonical divergence value.",
+      "consumer": "permission-resolver.service.ts rbac_dual_read telemetry",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove with LEGACY_DIVERGENCE_LABEL (dashboards/alerts migrated to the canonical field)",
+      "targetState": "canonical divergence value only",
+      "blocker": "external dashboards may still read divergence_legacy",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
+    },
+    {
+      "item": "legacy divergence telemetry labels in the resolver spec `DIVERGENTE`",
+      "path": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts",
+      "currentName": "DIVERGENTE",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the emitted divergence_legacy log value next to the canonical divergence value.",
+      "consumer": "permission-resolver.service.ts rbac_dual_read telemetry",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove with LEGACY_DIVERGENCE_LABEL (dashboards/alerts migrated to the canonical field)",
+      "targetState": "canonical divergence value only",
+      "blocker": "external dashboards may still read divergence_legacy",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
+    },
+    {
+      "item": "legacy divergence telemetry labels in the resolver spec `REMOVIDA`",
+      "path": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts",
+      "currentName": "REMOVIDA",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the emitted divergence_legacy log value next to the canonical divergence value.",
+      "consumer": "permission-resolver.service.ts rbac_dual_read telemetry",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove with LEGACY_DIVERGENCE_LABEL (dashboards/alerts migrated to the canonical field)",
+      "targetState": "canonical divergence value only",
+      "blocker": "external dashboards may still read divergence_legacy",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
+    },
+    {
+      "item": "legacy divergence telemetry labels in the resolver spec `juridico`",
+      "path": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts",
+      "currentName": "juridico",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the emitted divergence_legacy log value next to the canonical divergence value.",
+      "consumer": "permission-resolver.service.ts rbac_dual_read telemetry",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove with LEGACY_DIVERGENCE_LABEL (dashboards/alerts migrated to the canonical field)",
+      "targetState": "canonical divergence value only",
+      "blocker": "external dashboards may still read divergence_legacy",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/core/rbac/permission-resolver.divergence-legacy-label.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `DESPESA`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "DESPESA",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `despesa`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "despesa",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `despesas`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "despesas",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `imposto`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "imposto",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `investimento`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "investimento",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `receita`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "receita",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "legacy transactions.type values in the preflight spec `transferencia`",
+      "path": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts",
+      "currentName": "transferencia",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "LEGACY_DATABASE_COMPATIBILITY",
+      "reason": "Behavioral test of the preflight NOT IN list: legacy persisted transactions.type values count as mapped; near-misses warn.",
+      "consumer": "migrate-application.ts preflightSchemaChange",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove the legacy list with the transactions.type backfill (approval needed)",
+      "targetState": "canonical transaction types only",
+      "blocker": "chk_transactions_type is NOT VALID until the backfill",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/database/migrate-application.preflight-transaction-types.spec.ts"
+    },
+    {
+      "item": "platform default contact classification slug in the bootstrap spec `CINEGRAFISTA`",
+      "path": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts",
+      "currentName": "CINEGRAFISTA",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the platform default contact classification item seeded on first read (slug is a stored platform value; legacy kind name asserted absent).",
+      "consumer": "operational-lists.defaults.ts bootstrap seed",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when platform slugs get English ids with legacy_slug dual-read",
+      "targetState": "English slugs",
+      "blocker": "stored slugs are platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts"
+    },
+    {
+      "item": "platform default contact classification slug in the bootstrap spec `VIDEOMAKER`",
+      "path": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts",
+      "currentName": "VIDEOMAKER",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the platform default contact classification item seeded on first read (slug is a stored platform value; legacy kind name asserted absent).",
+      "consumer": "operational-lists.defaults.ts bootstrap seed",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when platform slugs get English ids with legacy_slug dual-read",
+      "targetState": "English slugs",
+      "blocker": "stored slugs are platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts"
+    },
+    {
+      "item": "platform default contact classification slug in the bootstrap spec `contact_pf_classification`",
+      "path": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts",
+      "currentName": "contact_pf_classification",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the platform default contact classification item seeded on first read (slug is a stored platform value; legacy kind name asserted absent).",
+      "consumer": "operational-lists.defaults.ts bootstrap seed",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when platform slugs get English ids with legacy_slug dual-read",
+      "targetState": "English slugs",
+      "blocker": "stored slugs are platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts"
+    },
+    {
+      "item": "platform default contact classification slug in the bootstrap spec `videomaker`",
+      "path": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts",
+      "currentName": "videomaker",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the platform default contact classification item seeded on first read (slug is a stored platform value; legacy kind name asserted absent).",
+      "consumer": "operational-lists.defaults.ts bootstrap seed",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when platform slugs get English ids with legacy_slug dual-read",
+      "targetState": "English slugs",
+      "blocker": "stored slugs are platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/operational-lists/operational-lists.default-contact-classification.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `faixa`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "faixa",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "legacy release-track metadata keys in the behavioral test of the SQL read/write `faixas`",
+      "path": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
+      "currentName": "faixas",
+      "surface": "value",
+      "layer": "api test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Test fixture: sends/reads the legacy Portuguese metadata keys (faixas and the per-track keys) to prove the SQL COALESCE read and the import cleanup, with near-miss keys that must not be read.",
+      "consumer": "release-tracks.field.ts export read and import write",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove together with the legacy `faixas` metadata read once the release-metadata backfill is verified in every environment",
+      "targetState": "canonical tracks metadata only",
+      "blocker": "persisted releases.metadata rows can still carry the legacy key",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts"
+    },
+    {
+      "item": "contact type slug in the options test `VIDEOMAKER`",
+      "path": "apps/web/src/modules/crm-relationships/constants/contact-type-options.test.ts",
+      "currentName": "VIDEOMAKER",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the individual contact type options: the slug is a persisted platform value, near-miss casings asserted rejected.",
+      "consumer": "crm-relationships constants/types",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when contact types get English slugs with dual-read and backfill",
+      "targetState": "English contact types",
+      "blocker": "persisted classification values",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/crm-relationships/constants/contact-type-options.test.ts"
+    },
+    {
+      "item": "contact type slug in the options test `videomaker`",
+      "path": "apps/web/src/modules/crm-relationships/constants/contact-type-options.test.ts",
+      "currentName": "videomaker",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of the individual contact type options: the slug is a persisted platform value, near-miss casings asserted rejected.",
+      "consumer": "crm-relationships constants/types",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when contact types get English slugs with dual-read and backfill",
+      "targetState": "English contact types",
+      "blocker": "persisted classification values",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/crm-relationships/constants/contact-type-options.test.ts"
+    },
+    {
+      "item": "department values in the employee departments test `RH`",
+      "path": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts",
+      "currentName": "RH",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of DEPARTMENTS: persisted employees.department values asserted exactly, with near-misses rejected.",
+      "consumer": "hr/hooks/useEmployees.ts DEPARTMENTS",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when departments get canonical English ids with backfill",
+      "targetState": "English department ids",
+      "blocker": "persisted employees.department values",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
+    },
+    {
+      "item": "department values in the employee departments test `administrativo`",
+      "path": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts",
+      "currentName": "administrativo",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of DEPARTMENTS: persisted employees.department values asserted exactly, with near-misses rejected.",
+      "consumer": "hr/hooks/useEmployees.ts DEPARTMENTS",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when departments get canonical English ids with backfill",
+      "targetState": "English department ids",
+      "blocker": "persisted employees.department values",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
+    },
+    {
+      "item": "department values in the employee departments test `rh`",
+      "path": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts",
+      "currentName": "rh",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of DEPARTMENTS: persisted employees.department values asserted exactly, with near-misses rejected.",
+      "consumer": "hr/hooks/useEmployees.ts DEPARTMENTS",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when departments get canonical English ids with backfill",
+      "targetState": "English department ids",
+      "blocker": "persisted employees.department values",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/hr/hooks/useEmployees.departments.test.ts"
+    },
+    {
+      "item": "genre alias inputs in the genre matcher test `electronico`",
+      "path": "apps/web/src/modules/releases/lib/genre-match.test.ts",
+      "currentName": "electronico",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of matchGenre: user-typed Portuguese spelling variants must resolve to the persisted genre slug, each alias asserted separately.",
+      "consumer": "genre-match.ts matchGenre",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove once musicalGenres exposes English genre ids with dual-read plus backfill",
+      "targetState": "English genre ids",
+      "blocker": "genre slug decision (genres derive slugs from PT labels)",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/genre-match.test.ts"
+    },
+    {
+      "item": "genre alias inputs in the genre matcher test `eletronico`",
+      "path": "apps/web/src/modules/releases/lib/genre-match.test.ts",
+      "currentName": "eletronico",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of matchGenre: user-typed Portuguese spelling variants must resolve to the persisted genre slug, each alias asserted separately.",
+      "consumer": "genre-match.ts matchGenre",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove once musicalGenres exposes English genre ids with dual-read plus backfill",
+      "targetState": "English genre ids",
+      "blocker": "genre slug decision (genres derive slugs from PT labels)",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/genre-match.test.ts"
+    },
+    {
+      "item": "genre alias inputs in the genre matcher test `eletrónico`",
+      "path": "apps/web/src/modules/releases/lib/genre-match.test.ts",
+      "currentName": "eletrónico",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test of matchGenre: user-typed Portuguese spelling variants must resolve to the persisted genre slug, each alias asserted separately.",
+      "consumer": "genre-match.ts matchGenre",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove once musicalGenres exposes English genre ids with dual-read plus backfill",
+      "targetState": "English genre ids",
+      "blocker": "genre slug decision (genres derive slugs from PT labels)",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/releases/lib/genre-match.test.ts"
+    },
+    {
+      "item": "default contact classification slug in the operational settings test `videomaker`",
+      "path": "apps/web/src/modules/settings/hooks/useOperationalSettings.legacy-compat.test.ts",
+      "currentName": "videomaker",
+      "surface": "value",
+      "layer": "web test",
+      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
+      "reason": "Behavioral test: the default individual contact classification item (stored platform slug) is offered and merged exactly once.",
+      "consumer": "settings/hooks/useOperationalSettings.ts",
+      "owner": "owner of the module under test (Phase 0 naming)",
+      "removalCondition": "remove when platform slugs get English ids with legacy_slug dual-read",
+      "targetState": "English slugs",
+      "blocker": "stored slugs are platform labels",
+      "dependency": null,
+      "status": "ACTIVE",
+      "coveringTest": "apps/web/src/modules/settings/hooks/useOperationalSettings.legacy-compat.test.ts"
     }
   ],
   "blockers": [

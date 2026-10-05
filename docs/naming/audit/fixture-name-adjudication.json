@@ -4287,6 +4287,54 @@
    "file": "apps/web/src/modules/monitoring/rights/components/DivergencesPanel.tsx",
    "class": "UI_TEXT",
    "reason": "Word of the user-visible label \"Detecção sem obra vinculada\" (DivergencesPanel); end-user PT-BR text."
+  },
+  {
+   "name": "ar_gestao",
+   "file": "apps/web/src/modules/settings/components/UserFormModal.tsx",
+   "class": "COMMENT_OR_DOC",
+   "reason": "the only occurrence is the comment (line ~25) explaining that this legacy form value was removed from the offered roles; no code reads or writes it"
+  },
+  {
+   "name": "ar_gestao",
+   "file": "packages/types/src/role-slugs.ts",
+   "class": "COMMENT_OR_DOC",
+   "reason": "the only occurrence is the header comment (line ~15) describing web-only legacy form values with no roles row; the persisted-role constants of this file are covered by their own identifier rows and by BLK-RBAC-LEGACY-ROLE-SLUGS"
+  },
+  {
+   "name": "financeiro_contabil",
+   "file": "apps/web/src/modules/settings/components/UserFormModal.tsx",
+   "class": "COMMENT_OR_DOC",
+   "reason": "the only occurrence is the comment (line ~25) explaining that this legacy form value was removed from the offered roles; no code reads or writes it"
+  },
+  {
+   "name": "financeiro_contabil",
+   "file": "packages/types/src/role-slugs.ts",
+   "class": "COMMENT_OR_DOC",
+   "reason": "the only occurrence is the header comment (line ~15) describing web-only legacy form values with no roles row; the persisted-role constants of this file are covered by their own identifier rows and by BLK-RBAC-LEGACY-ROLE-SLUGS"
+  },
+  {
+   "name": "teste",
+   "file": "apps/web/src/modules/admin/constants/environment-badge.ts",
+   "class": "UI_TEXT",
+   "reason": "user-visible label string \"Stripe em modo de teste (TEST MODE)\"; the e2e fixtures use the word as test data and do not depend on it"
+  },
+  {
+   "name": "teste",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT",
+   "reason": "JSX text \"dias de teste\" shown to the user; the e2e fixtures use the word as test data and do not depend on it"
+  },
+  {
+   "name": "teste",
+   "file": "apps/web/src/modules/integrations/components/NfeConfigDialog.tsx",
+   "class": "UI_TEXT",
+   "reason": "select option label \"Homologação (teste)\" shown to the user; the e2e fixtures use the word as test data and do not depend on it"
+  },
+  {
+   "name": "teste",
+   "file": "packages/types/src/status-labels.pt-br.ts",
+   "class": "UI_TEXT",
+   "reason": "pt-BR display label \"Período de teste\" of BillingStatus.TRIAL; the e2e fixtures use the word as test data and do not depend on it"
   }
  ]
 }

@@ -343,6 +343,10 @@ jobs:
         env:
           DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
         run: pnpm --filter @music-os-360/api verify:cz045-musicchat-migration
+      - name: verify:musicchat-routing-keys — backfill/restore/idempotency of migration 20261005100001
+        env:
+          DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
+        run: pnpm --filter @music-os-360/api verify:musicchat-routing-keys
       - name: test:e2e (RLS real via Postgres — blocking)
         run: pnpm --filter @music-os-360/api test:e2e
 

@@ -69,6 +69,7 @@ import {
   projectToReleaseSeed,
 } from "@/modules/releases/mappers";
 
+import { ARTIST_ROLES, PRODUCER_ROLES } from "@/modules/releases/lib/credit-roles";
 import { GENRE_OPTS, GENRE_LABELS, matchGenre } from "@/modules/releases/lib/genre-match";
 import { ReleaseGenresSummary } from "@/modules/releases/components/ReleaseGenresSummary";
 import { findPhonogramByTitle } from "@/modules/releases/lib/phonogram-title-lookup";
@@ -129,22 +130,6 @@ const VERSION_TYPE_OPTS = [
   { value: "other", label: "Outro" },
 ];
 
-const ARTIST_ROLES = [
-  "Artista Principal",
-  "Featuring",
-  "Intérprete",
-  "Remixer",
-  "DJ",
-  "Coro",
-];
-const PRODUCER_ROLES = [
-  "Produtor",
-  "Co-Produtor",
-  "Produtor Executivo",
-  "Mixagem",
-  "Engenheiro de Masterização",
-  "Engenheiro de Gravação",
-];
 // value = persisted technical value (English), label = PT-BR shown to the user
 const INSTRUMENT_OPTS = [
   { value: "Guitar", label: "Guitarra / Violão" },
