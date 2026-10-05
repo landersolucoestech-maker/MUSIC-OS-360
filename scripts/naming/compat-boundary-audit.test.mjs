@@ -461,7 +461,7 @@ test("SQL_WORD: a legacy name inside a SQL statement is a site per whole-word oc
   }
   const hrSites = sqlSites("const q = `UPDATE \"permissions\" SET \"resource\" = 'hr' WHERE \"resource\" = 'rh' OR \"key\" LIKE 'rh:%'`;", ["rh"]);
   assert.equal(hrSites.length, 3 - 1, "quoted value 'rh' and the namespace 'rh:%' are sites (the `hr` value is not)");
-  assert.ok(rh.every((m) => !/_/.test(m.replacement)), "no `_` in the token (a LIKE wildcard would keep the mutant matching)");
+  assert.ok(hrSites.every((m) => !/_/.test(m.replacement)), "no `_` in the token (a LIKE wildcard would keep the mutant matching)");
 });
 
 test("SQL_WORD: the neutral token is never another ledger name", () => {
