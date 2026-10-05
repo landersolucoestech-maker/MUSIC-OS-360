@@ -16,6 +16,14 @@
  *   value          technical string values: enum initializers, string-literal types, and any
  *                  lowercase/camelCase token literal (status values, option values, form field
  *                  names, test ids, query params); UX text is never token-shaped
+ *                  ALL-CAPS tokens ("DIVERGENTE", IdentifierProvider.PRO_MUSICA = "PRO_MUSICA") are values too
+ *                  (kind caps-string), and capitalized Portuguese literals are values wherever they are data and not
+ *                  text: classification fields, comparisons against any expression, `case` clauses, array members,
+ *                  `includes`/`has`/`indexOf` arguments, `in` operands and element-access keys (see isDataPosition);
+ *                  a capitalized object-literal KEY is an objectKey (kind capitalized-key)
+ *   sqlString      Portuguese identifiers and token-shaped literals inside SQL embedded in non-migration code
+ *                  (a string/template that starts with SELECT/INSERT/UPDATE/DELETE/WITH/CREATE/ALTER/DROP):
+ *                  identifiers outside comments and quoted literals, plus token-shaped single-quoted values
  *   dbColumn       physical columns declared in apps/api/src/database/entities.ts
  *   filename / directory   every tracked path in the repository
  *   envVar, eventQueueJob, apiRoute, frontendRoute
@@ -64,7 +72,7 @@ export const BASELINE = process.env.NAMING_BASELINE_PATH ? path.resolve(process.
 const require = createRequire(path.join(ROOT, "package.json"));
 const ts = require("typescript");
 
-export const SURFACES = ["apiRoute", "comment", "dbColumn", "dataFile", "toolMessage", "directory", "doc", "docCode", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value"];
+export const SURFACES = ["apiRoute", "comment", "dbColumn", "dataFile", "toolMessage", "directory", "doc", "docCode", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "sqlString", "testTitle", "value"];
 const ENTITIES = "apps/api/src/database/entities.ts";
 
 /** Third-party bundles committed as static assets: not our names. ledger: EXM-VENDORED */
@@ -176,7 +184,22 @@ export const VALUE_SHAPE = /^\p{Ll}[\p{L}\p{N}]*(?:[_-][\p{L}\p{N}]+)*$/u;
  * not matched). Reported only where the literal is data, not text: see isDataPosition.
  */
 export const CAPITALIZED_VALUE_SHAPE = /^\p{Lu}\p{Ll}+(?:\s+(?:(?:de|da|do|das|dos|e)\s+)?\p{Lu}\p{Ll}+){0,2}$/u;
+/**
+ * ALL-CAPS tokens ("DIVERGENTE", "PRO_MUSICA"): the shape of persisted/compared constants, never of display text.
+ * Reported wherever the literal is not UX (see isUxValue); env-var names are covered by the envVar surface and a
+ * token is only reported when it carries a Portuguese word.
+ */
+export const CAPS_VALUE_SHAPE = /^\p{Lu}[\p{Lu}\p{N}]*(?:[_-][\p{Lu}\p{N}]+)*$/u;
+/** Statement starts that mark a string/template as embedded SQL. */
+export const SQL_START = /^\s*(?:--[^\n]*\n\s*)*(?:select\b[\s\S]*\bfrom\b|select\s+(?:\(|\*|[\w"']+\s*(?:,|::|\bas\b))|insert\s+into\b|update\s+["\w.]+\s+set\b|delete\s+from\b|with\s+\w+\s+as\s*\(|(?:create|alter|drop)\s+(?:or\s+replace\s+)?(?:unique\s+)?(?:table|index|policy|view|function|type|trigger|extension|schema|materialized|constraint)\b|truncate\b|comment\s+on\b)/i;
+/** Names of variables/properties that hold a list of verbatim classification values. */
+export const CLASSIFICATION_NAME = /(sector|department|queue|segment|stage|phase|status|statuse|role|kind|tier)s?$/i;
+/** Property names that carry a persisted/compared classification value (`type`, `category`, `status`, `role`, `kind`, `genre`). */
+export const CLASSIFICATION_FIELDS = /^(type|category|subcategory|kind|role|genre|area|tier|level|priority|state|mode|channel|profile)s?$/i;
+/** Method names whose string argument is compared/looked up verbatim. */
+const LOOKUP_METHODS = new Set(["includes", "has", "indexOf", "lastIndexOf", "get", "startsWith", "endsWith"]);
 /** PT-BR label resources (`*.pt-br.ts`, `*-labels.ts`): their string values are display text by construction. */
+export const isTestFile = (f) => /\.(test|spec|e2e-spec|guard)\.[tj]sx?$/.test(f) || /(^|\/)(__tests__|__mocks__|test|tests|e2e)\//.test(f);
 export const isLabelResource = (f) => /\.pt-br\.[tj]sx?$/.test(f) || /(^|[-./])labels?\.[tj]sx?$/.test(f);
 /** Names of classification fields whose value is persisted/compared verbatim (see CAPITALIZED_VALUE_SHAPE). */
 export const PERSISTED_FIELD_KEYS = new Set(["sector", "department", "queue", "segment", "stage", "phase"]);
@@ -185,7 +208,7 @@ export const PERSISTED_FIELD_KEYS = new Set(["sector", "department", "queue", "s
  * abbreviation of the fixture, not a Portuguese word (`abr` = abril). Only the trailing code is
  * ignored; every other segment of the value is still checked.
  */
-export const stripRecordId = (text) => text.replace(/(^|[-_])[A-Z]{2,6}-\d+$/, "$1");
+export const stripRecordId = (text) => (/^[A-Z]{2,6}(?:-(?:TEST|DEMO))?(?:-\d+)+$/.test(text) ? "" : text.replace(/(^|[-_])[A-Z]{2,6}-\d+$/, "$1"));
 /** JSX attributes and object properties whose string value is user-visible text. */
 const UX_KEYS = new Set(["aria-label", "aria-description", "aria-placeholder", "aria-roledescription", "aria-valuetext", "title", "placeholder",
   "alt", "label", "description", "helperText", "tooltip", "emptyMessage", "emptyText", "subtitle", "hint", "message", "text", "confirmText",
@@ -250,6 +273,19 @@ export function scanPath(relPath) {
 }
 
 /**
+ * Portuguese names in one embedded SQL statement (pure): identifiers outside comments and quoted literals, plus the
+ * token-shaped single-quoted values (`'receita'`, `'PRO_MUSICA'`). Free text in quotes (an operator message) is not a name.
+ */
+export function scanSqlString(sql) {
+  const names = new Set();
+  const addTokens = (src) => { for (const t of src.match(/[\p{L}_][\p{L}\p{N}_]*/gu) ?? []) if (ptWords(t).length) names.add(t); };
+  const stripped = sql.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/--[^\n]*/g, " ");
+  addTokens(stripped.replace(/'(?:[^']|'')*'/g, " ").replace(/\$\{[^}]*\}/g, " "));
+  for (const m of stripped.matchAll(/'((?:[^']|'')*)'/g)) if (VALUE_SHAPE.test(m[1]) || CAPS_VALUE_SHAPE.test(m[1])) addTokens(m[1]);
+  return [...names].sort();
+}
+
+/**
  * Scans one source file. Returns technical-name hits:
  * { surface, kind, name, line }. Pure: no filesystem access.
  */
@@ -289,6 +325,9 @@ export function scanSource(relPath, text) {
     const name = nameNode.text;
     if (EXTERNAL_TOOL_NAMES.has(name) || externalProps?.has(name)) return;
     if (TECHNICAL_NAME.test(name.replace(/[A-Z]/g, (c) => c.toLowerCase())) && ptWords(name).length) add("objectKey", "object-key", name, lineOf(at));
+    // a capitalized/accented/ALL-CAPS key ("Comunicação": ..., "TITULO": ...) is a lookup key, not display text (label resources hold display text)
+    else if (ts.isStringLiteral(nameNode) && !isLabelResource(relPath) && !isTestFile(relPath) && (CAPITALIZED_VALUE_SHAPE.test(name) || CAPS_VALUE_SHAPE.test(name) || VALUE_SHAPE.test(name))
+      && !contentWords.has(name) && ptWords(name).length) add("objectKey", "capitalized-key", name, lineOf(at));
   };
   const isEnvSchema = relPath.endsWith("env.schema.ts");
   const isTestCall = (n) => ts.isCallExpression(n) && (ts.isIdentifier(n.expression) ? ["describe", "it", "test"].includes(n.expression.text)
@@ -335,13 +374,36 @@ export function scanSource(relPath, text) {
   // verbatim ({ sector: "Comunicação" }, row.status === "Pendente", case on a `.sector`). Label maps
   // keyed by English ids ({ pending: "Pendente" }) and free text are UX, not data, and are not matched.
   const keyText = (k) => (k ? k.getText(sf).replace(/^["']|["']$/g, "") : "");
+  // An array of verbatim classification values: the receiver of a lookup (`["A", "B"].includes(x)`), the argument of
+  // `new Set([...])`, or the initializer of a variable/property named after a classification (`SECTORS`, `allowedStatuses`).
+  // Any other array of capitalized words is option/label content (month names, places, display lists) and is UX.
+  const unwrap = (e) => { let c = e; while (c.parent && (ts.isAsExpression(c.parent) || ts.isParenthesizedExpression(c.parent) || (ts.isSatisfiesExpression && ts.isSatisfiesExpression(c.parent)))) c = c.parent; return c; };
+  const isClassificationArray = (arr) => {
+    const top = unwrap(arr);
+    const q = top.parent;
+    if (ts.isPropertyAccessExpression(q) && q.expression === top) return LOOKUP_METHODS.has(q.name.text) || q.name.text === "some";
+    if (ts.isNewExpression(q) && q.arguments?.[0] === top) return /^(Set|Map)$/.test(q.expression.getText(sf));
+    const nameNode = (ts.isVariableDeclaration(q) && q.initializer === top) || (ts.isPropertyAssignment(q) && q.initializer === top) || (ts.isPropertyDeclaration(q) && q.initializer === top) ? q.name : null;
+    return !!nameNode && CLASSIFICATION_NAME.test(nameNode.getText(sf).replace(/^["']|["']$/g, ""));
+  };
+  // A classification expression: a property/identifier named after a persisted classification (`row.sector`, `status`, `departments`).
+  const isClassificationExpr = (e) => {
+    const base = ts.isPropertyAccessExpression(e) ? e.name.text : ts.isIdentifier(e) ? e.text : ts.isElementAccessExpression(e) && ts.isStringLiteral(e.argumentExpression) ? e.argumentExpression.text : null;
+    return base != null && (PERSISTED_FIELD_KEYS.has(base) || CLASSIFICATION_NAME.test(base) || CLASSIFICATION_FIELDS.test(base));
+  };
   const isDataPosition = (n) => {
     const p = n.parent;
     if (ts.isPropertyAssignment(p) && p.initializer === n) return PERSISTED_FIELD_KEYS.has(keyText(p.name));
-    if (ts.isBinaryExpression(p) && ["===", "!==", "==", "!="].includes(p.operatorToken.getText(sf))) {
-      const other = p.left === n ? p.right : p.left;
-      return ts.isPropertyAccessExpression(other) && PERSISTED_FIELD_KEYS.has(other.name.text);
+    // compared against a classification field: `row.sector !== "Comunicação"`, `type === "Receita"`
+    if (ts.isBinaryExpression(p)) {
+      const op = p.operatorToken.getText(sf);
+      if (["===", "!==", "==", "!="].includes(op)) return isClassificationExpr(p.left === n ? p.right : p.left);
+      if (op === "in") return p.left === n; // "Comunicação" in map: a key lookup
     }
+    if (ts.isCaseClause(p) && p.expression === n) return ts.isSwitchStatement(p.parent.parent) && isClassificationExpr(p.parent.parent.expression);
+    if (ts.isArrayLiteralExpression(p)) return isClassificationArray(p);
+    if (ts.isElementAccessExpression(p) && p.argumentExpression === n) return true; // map["Comunicação"]
+    if (ts.isCallExpression(p) && p.arguments[0] === n && ts.isPropertyAccessExpression(p.expression)) return LOOKUP_METHODS.has(p.expression.name.text) && isClassificationExpr(p.expression.expression);
     return false;
   };
   let controllerBase = null;
@@ -386,7 +448,11 @@ export function scanSource(relPath, text) {
     else if (ts.isElementAccessExpression(n) && isEnvAccess(n.expression) && ts.isStringLiteral(n.argumentExpression)) { claimed.add(n.argumentExpression); env(n.argumentExpression.text, n); }
     // member READS (`row.titulo`, `row['nome']`): a legacy-field fallback is a technical use of the Portuguese name even when no declaration exists
     else if (ts.isPropertyAccessExpression(n)) ident("property-read", n.name, n);
-    else if (ts.isElementAccessExpression(n) && n.argumentExpression && ts.isStringLiteral(n.argumentExpression)) ident("property-read", n.argumentExpression, n);
+    else if (ts.isElementAccessExpression(n) && n.argumentExpression && ts.isStringLiteral(n.argumentExpression)) {
+      ident("property-read", n.argumentExpression, n);
+      // a non-token key (`map["Comunicação"]`) is not an identifier: leave the literal to the value surface (isDataPosition)
+      if (CAPITALIZED_VALUE_SHAPE.test(n.argumentExpression.text)) claimed.delete(n.argumentExpression);
+    }
     else if (ts.isDecorator(n) && ts.isCallExpression(n.expression)) {
       const callee = n.expression.expression.getText(sf);
       const arg = n.expression.arguments[0];
@@ -429,6 +495,19 @@ export function scanSource(relPath, text) {
       const p = n.parent;
       const isKey = (ts.isPropertyAssignment(p) || ts.isPropertySignature(p) || ts.isPropertyDeclaration(p) || ts.isMethodDeclaration(p) || ts.isEnumMember(p)) && p.name === n;
       if (!isKey) add("value", ts.isLiteralTypeNode(p) ? "literal-type" : ts.isEnumMember(p) ? "enum-value" : "string", n.text, lineOf(n));
+    }
+    if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && CAPS_VALUE_SHAPE.test(n.text)
+      && !isLabelResource(relPath) && !isModuleSpecifier(n) && !isUxValue(n) && !contentWords.has(n.text) && ptWords(stripRecordId(n.text)).length) {
+      const p = n.parent;
+      const isKey = (ts.isPropertyAssignment(p) || ts.isPropertySignature(p) || ts.isPropertyDeclaration(p) || ts.isMethodDeclaration(p) || ts.isEnumMember(p)) && p.name === n;
+      if (!isKey) { claimed.add(n); add("value", "caps-string", n.text, lineOf(n)); }
+    }
+    if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n) || ts.isTemplateExpression(n)) && !claimed.has(n) && !isMigration(relPath)) {
+      const sql = ts.isTemplateExpression(n) ? n.head.text + n.templateSpans.map((sp) => ` __ph__ ${sp.literal.text}`).join("") : n.text;
+      if (SQL_START.test(sql)) {
+        claimed.add(n);
+        for (const name of scanSqlString(sql)) if (!contentWords.has(name)) add("sqlString", "sql", name, lineOf(n));
+      }
     }
     if (!fixture && (ts.isStringLiteral(n) || ts.isNoSubstitutionTemplateLiteral(n)) && !claimed.has(n) && CAPITALIZED_VALUE_SHAPE.test(n.text)
       && !isLabelResource(relPath) && isDataPosition(n) && !isModuleSpecifier(n) && !isUxValue(n) && !contentWords.has(n.text) && ptWords(n.text).length) {

@@ -140,7 +140,7 @@ export class ReleaseReadinessService {
         const missing = requirements.filter((r) => r.blocking && r.status === 'missing').map((r) => r.id);
         const ready = missing.length === 0;
 
-        await ctx.log('info', `Release readiness: ${ready ? 'PRONTO' : 'BLOQUEADO'}`, { missing });
+        await ctx.log('info', `Release readiness: ${ready ? 'READY' : 'BLOCKED'}`, { missing });
 
         const result: ReleaseReadinessResult = { ready, requirements, missing };
         return { result, output: result as unknown as Record<string, unknown> };

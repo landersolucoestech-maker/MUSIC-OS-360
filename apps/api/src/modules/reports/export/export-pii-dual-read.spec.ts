@@ -59,16 +59,16 @@ describe('artists PII export (dual-read, BLK-CRM-PII-PLAINTEXT)', () => {
 
   it('decrypts ciphertext, passes legacy plaintext through, never emits ciphertext', async () => {
     const { engine } = engineWith([
-      { stage_name: 'Nova', rg: encryption.encrypt('RG-NOVO'), birth_date: encryption.encrypt('1990-05-06'), bank_account: encryption.encrypt('111-1'), pix_key: null, email: encryption.encrypt('n@x.com') },
-      { stage_name: 'Antiga', rg: 'RG-LEGADO', birth_date: '1980-01-02', bank_account: '222-2', pix_key: 'pix-legado', email: null },
+      { stage_name: 'Nova', rg: encryption.encrypt('RG-NEW'), birth_date: encryption.encrypt('1990-05-06'), bank_account: encryption.encrypt('111-1'), pix_key: null, email: encryption.encrypt('n@x.com') },
+      { stage_name: 'Antiga', rg: 'RG-LEGACY', birth_date: '1980-01-02', bank_account: '222-2', pix_key: 'pix-legado', email: null },
     ]);
     const result = await engine.export('artists', { format: 'xlsx' }, 'tenant-1', 'user-1');
     const sheet = XLSX.read(result.body as Buffer, { type: 'buffer' });
     const rows = XLSX.utils.sheet_to_json<unknown[]>(sheet.Sheets[sheet.SheetNames[0]], { header: 1 });
     const flat = JSON.stringify(rows);
-    expect(flat).toContain('RG-NOVO');
+    expect(flat).toContain('RG-NEW');
     expect(flat).toContain('06/05/1990'); // formatted by the export (pt-BR date)
-    expect(flat).toContain('RG-LEGADO');
+    expect(flat).toContain('RG-LEGACY');
     expect(flat).toContain('02/01/1980');
     expect(flat).toContain('pix-legado');
     expect(flat).not.toContain('enc:v1:');

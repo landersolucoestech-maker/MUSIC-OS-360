@@ -200,9 +200,9 @@ export class AnalyticsService {
             [tenantId],
           )
         : Promise.resolve([] as Array<{ cnt: string }>),
-      // Artists currently in onboarding (status = contratado)
+      // Artists currently in onboarding (status = signed; the legacy value `contratado` was backfilled to `signed` by migration 20260911000001)
       this.ds.query<[{ cnt: string }]>(
-        `SELECT COUNT(*)::int AS cnt FROM artists WHERE tenant_id = $1 AND status = 'contratado' AND deleted_at IS NULL`,
+        `SELECT COUNT(*)::int AS cnt FROM artists WHERE tenant_id = $1 AND status = 'signed' AND deleted_at IS NULL`,
         [tenantId],
       ),
       // Artists with distribution setup requested but not completed

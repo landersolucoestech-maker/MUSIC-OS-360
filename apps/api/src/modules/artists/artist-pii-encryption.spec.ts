@@ -112,13 +112,13 @@ describe('artists PII at rest (BLK-CRM-PII-PLAINTEXT)', () => {
     const { service } = makeService({
       rg_encrypted: encryption.encrypt('RG-CIPHER'), cpf_cnpj_encrypted: encryption.encrypt('111.222.333-44'),
       bank_name_encrypted: encryption.encrypt('Banco C'),
-      metadata: { gender: 'male', rg: 'META-RG', banco: 'META-BANCO', chave_pix: 'META-PIX', cpf: 'META-CPF' },
+      metadata: { gender: 'male', rg: 'META-RG', banco: 'META-BANK', chave_pix: 'META-PIX', cpf: 'META-CPF' },
     });
     const response = await service.findByIdForResponse('t1', 'artist-1') as unknown as Record<string, unknown>;
     for (const key of Object.keys(response)) expect(key).not.toMatch(/_encrypted$/);
     expect(response).not.toHaveProperty('metadata');
     const serialized = JSON.stringify(response);
-    for (const leaked of ['META-RG', 'META-BANCO', 'META-PIX', 'META-CPF', 'enc:v1:']) expect(serialized).not.toContain(leaked);
+    for (const leaked of ['META-RG', 'META-BANK', 'META-PIX', 'META-CPF', 'enc:v1:']) expect(serialized).not.toContain(leaked);
     expect(response).toMatchObject({ rg: 'RG-CIPHER', cpf_cnpj: '111.222.333-44', bank_name: 'Banco C', gender: 'male' });
   });
 

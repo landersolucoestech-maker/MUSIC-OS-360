@@ -68,7 +68,7 @@ export function validateStructure(map) {
         for (const part of parts) if (!fs.existsSync(path.join(ROOT, part))) p.push(`exception ${label}: whole-file path '${part}' does not exist`);
       }
     }
-    if (e.surface && !["apiRoute", "comment", "dbColumn", "dataFile", "toolMessage", "directory", "doc", "docCode", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value", "schema"].includes(e.surface)) {
+    if (e.surface && !["apiRoute", "comment", "dbColumn", "dataFile", "toolMessage", "directory", "doc", "docCode", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "sqlString", "testTitle", "value", "schema"].includes(e.surface)) {
       p.push(`exception ${label}: unknown surface '${e.surface}'`);
     }
     if (e.coveringTest != null && (typeof e.coveringTest !== "string" || !e.coveringTest || !fs.existsSync(path.join(ROOT, e.coveringTest)))) {

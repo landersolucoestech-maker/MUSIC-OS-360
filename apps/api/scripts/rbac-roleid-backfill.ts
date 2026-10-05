@@ -61,7 +61,7 @@ async function main() {
     report.push({
       membership_id: m.id, tenant_id: m.tenant_id, role: m.role,
       expected_role_id: roleId, cls,
-      status: filled ? 'JA_PREENCHIDO' : (roleId ? 'A_PREENCHER' : 'BLOQUEADO'),
+      status: filled ? 'ALREADY_FILLED' : (roleId ? 'TO_FILL' : 'BLOCKED'),
     });
   }
 
@@ -72,7 +72,7 @@ async function main() {
   console.log('classifications:', byCls, '| valid:', valid, '| invalid:', invalid, '| already filled:', alreadyFilled);
 
   if (mode === 'rollback-dry-run') {
-    const filled = report.filter((r) => r.status === 'JA_PREENCHIDO').length;
+    const filled = report.filter((r) => r.status === 'ALREADY_FILLED').length;
     console.log(`\n[ROLLBACK-SIM] records with role_id filled that would go back to NULL: ${filled}. Reversible: YES. Dependencies: none (role remains the legacy source). NO WRITES.`);
     await ds.destroy(); return;
   }
@@ -87,7 +87,7 @@ async function main() {
     try {
       let updated = 0;
       for (const r of report) {
-        if (r.status === 'A_PREENCHER' && r.expected_role_id) {
+        if (r.status === 'TO_FILL' && r.expected_role_id) {
           const res = await qr.query(`UPDATE org_members SET role_id=$1, updated_at=now() WHERE id=$2 AND role_id IS NULL RETURNING id`, [r.expected_role_id, r.membership_id]);
           // TypeORM (pg) returns [rows, affected]; we count the rows actually returned by RETURNING.
           const rows = Array.isArray(res) && Array.isArray(res[0]) ? res[0] : res;

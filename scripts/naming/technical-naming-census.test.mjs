@@ -672,3 +672,59 @@ test("markdown code spans: a Portuguese technical name in a backtick span or fen
   assert.deepEqual(scanMarkdownCode("Plain prose with valor_total outside code is the prose scan's job."), []);
   assert.ok(isCurrentDocForCode("docs/engineering/security.md") && !isCurrentDocForCode("docs/backend-v2/01-x.md") && !isCurrentDocForCode("docs/product-tasks/task-1.md"));
 });
+
+// ---- gate coverage gaps closed by the independent probe: ALL-CAPS values, capitalized data positions, embedded SQL ----
+const valueHits = (src, file = "apps/api/src/a.ts") => scanSource(file, src).filter((h) => h.surface === "value" || h.surface === "objectKey" || h.surface === "sqlString").map((h) => `${h.surface}:${h.kind}:${h.name}`);
+
+test("ALL-CAPS Portuguese values: enum initializers, constant maps and arrays are found; English caps, UX props and module specifiers are not", () => {
+  assert.deepEqual(valueHits(`export const L = { a: 'DIVERGENTE', b: "REMOVIDA", c: 'ARQUIVADA' };`), ["value:caps-string:DIVERGENTE", "value:caps-string:REMOVIDA", "value:caps-string:ARQUIVADA"]);
+    assert.ok(valueHits(`export enum IdentifierProvider { PRO_MUSICA = "PRO_MUSICA" }`, "packages/types/src/enums.ts").includes("value:caps-string:PRO_MUSICA"));
+  assert.deepEqual(valueHits(`export const H = ["TITULO", "DATA_FIM"];`, "apps/web/src/modules/events/lib/agenda-spreadsheet.ts"), ["value:caps-string:TITULO", "value:caps-string:DATA_FIM"]);
+  assert.deepEqual(valueHits(`export const t = x === 'ISENTO' ? 1 : 2;`), ["value:caps-string:ISENTO"]);
+  // negatives: English constants, UX attributes, labels, module specifiers
+  assert.deepEqual(valueHits(`export const E = { a: 'ACTIVE', b: 'PENDING', c: 'DRAFT', d: 'GET' };`), []);
+  assert.deepEqual(valueHits(`export const u = <Button label="SALVAR" aria-label="FECHAR" />;`, "apps/web/src/a.tsx"), []);
+  assert.deepEqual(valueHits(`export const m = { label: "ISENTO", message: "ARQUIVADA" };`), []);
+  assert.deepEqual(valueHits(`export const m = { 'ISENTO': 'Isento' };`, "apps/web/src/i18n/status.pt-br.ts").filter((x) => x.startsWith("value")), []);
+});
+
+test("capitalized data positions: comparisons against a classification field, switch/case, lookups, `in`, element access and classification arrays are found; display text is not", () => {
+  assert.deepEqual(valueHits(`export const f = (r: any) => r.type === "Receita";`), ["value:capitalized-string:Receita"]);
+  assert.deepEqual(valueHits(`export const f = (status: string) => { switch (status) { case "Pendente": return 1; default: return 0; } };`), ["value:capitalized-string:Pendente"]);
+  assert.deepEqual(valueHits(`export const f = (m: any) => m["Comunicação"];`), ["value:capitalized-string:Comunicação"]);
+  assert.deepEqual(valueHits(`export const f = (m: any) => "Comunicação" in m;`), ["value:capitalized-string:Comunicação"]);
+  assert.deepEqual(valueHits(`export const f = (r: any) => ["Comunicação", "Marketing"].includes(r.sector);`), ["value:capitalized-string:Comunicação"]);
+  assert.deepEqual(valueHits(`export const DEPARTMENTS = ["Jurídico", "Administrativo"];`), ["value:capitalized-string:Jurídico", "value:capitalized-string:Administrativo"]);
+  assert.deepEqual(valueHits(`export const f = (r: any) => allowedStatuses.includes("Pendente");`), ["value:capitalized-string:Pendente"]);
+  // objectKey: a capitalized/accented key is a lookup key
+  assert.deepEqual(valueHits(`export const M = { "Comunicação": "communication", Design: "design" };`), ["objectKey:capitalized-key:Comunicação"]);
+  // negatives: month-name arrays, label comparisons, substring probes, display props, label resources, tests building spreadsheet rows
+  assert.deepEqual(valueHits(`export const MONTHS = ["Janeiro", "Fevereiro", "Março"];`), []);
+  assert.deepEqual(valueHits(`export const f = (label: string, title: string) => label === "Artista" || title.includes("Artista");`), []);
+  assert.deepEqual(valueHits(`export const f = <Tab title="Comunicação" label="Jurídico" placeholder="Receita" />;`, "apps/web/src/a.tsx"), []);
+  assert.deepEqual(valueHits(`export const t = { status: "pending", title: "Comunicação" };`), []);
+  assert.deepEqual(valueHits(`export const M = { "Comunicação": "Comunicação" };`, "apps/web/src/modules/x/labels.ts"), []);
+  assert.deepEqual(valueHits(`const row = { "Título": 1 };`, "apps/web/src/modules/events/lib/agenda-spreadsheet.test.ts"), []);
+});
+
+test("sqlString: Portuguese identifiers and token-shaped literals inside embedded SQL are found; English SQL, prose literals, comments and non-SQL strings are not", async () => {
+  const { scanSqlString } = await import("./technical-naming-census.mjs");
+  assert.deepEqual(scanSqlString(`SELECT "type", count(*) FROM "transactions" WHERE lower("type") NOT IN ('receita','despesa','revenue') GROUP BY 1`), ["despesa", "receita"]);
+  assert.deepEqual(scanSqlString(`UPDATE artists SET nome_artistico = $1 -- comentário do artista\nWHERE id = $2`), ["nome_artistico"]);
+  assert.deepEqual(scanSqlString(`SELECT id FROM artists WHERE stage_name = 'Nome do Artista Demo' AND status = 'active'`), []);
+  assert.deepEqual(valueHits("export const q = `SELECT (rolsuper OR rolbypassrls) AS bypass FROM pg_roles WHERE rolname = current_user`;", "apps/api/src/database/x.ts"), []);
+  assert.deepEqual(valueHits("export const q = `UPDATE transactions SET categoria = ${'$'}{col} WHERE tipo = 'receita'`;", "apps/api/src/database/x.ts"), ["sqlString:sql:categoria", "sqlString:sql:receita", "sqlString:sql:tipo"]);
+  assert.deepEqual(valueHits("export const q = `INSERT INTO artists (stage_name) VALUES ($1)`;", "apps/api/src/database/x.ts"), []);
+  // UX prose that merely starts with an SQL-looking word is not SQL
+  assert.deepEqual(valueHits(`export const m = "Select the artist to continue";`), []);
+  assert.deepEqual(valueHits(`export const m = "Update the contract with the artista name";`), []);
+  // published migrations stay immutable history
+  assert.deepEqual(valueHits("export const q = `UPDATE x SET nome = 1`;", "apps/api/src/database/migrations/20260101_X.ts"), []);
+});
+
+test("caps values: a whole fixture record id (ABR-001-2025, ABR-TEST-001) is not Portuguese; a real caps word with a record-like suffix still is", () => {
+  assert.equal(stripRecordId("ABR-001-2025"), "");
+  assert.equal(stripRecordId("ABR-TEST-001"), "");
+  assert.deepEqual(valueHits(`export const c = { society_code: "ABR-001-2025", other: "ABR-TEST-001" };`), []);
+  assert.deepEqual(valueHits(`export const c = "META-BANCO";`), ["value:caps-string:META-BANCO"]);
+});

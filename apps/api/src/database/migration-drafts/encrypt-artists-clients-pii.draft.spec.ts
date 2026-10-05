@@ -158,7 +158,7 @@ describe('PII BACKFILL draft: write ciphertext only, never remove plaintext (BLK
       clientsPending: 1,
       artistRows: [{
         id: 'a1', tenant_id: 't1', ...emptyFields, ...RAW, pix_key_encrypted: 'enc:v1:already-newer',
-        metadata: { gender: 'female', rg: 'META-RG', Banco: 'META-BANCO', leadId: 'l1' },
+        metadata: { gender: 'female', rg: 'META-RG', Banco: 'META-BANK', leadId: 'l1' },
       }],
       clientRows: [{
         id: 'c1', tenant_id: 't1', cpf_cnpj_encrypted: null,

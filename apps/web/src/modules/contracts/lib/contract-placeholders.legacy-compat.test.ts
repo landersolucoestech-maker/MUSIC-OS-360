@@ -28,7 +28,7 @@ describe("contract placeholder legacy field tokens (authored in, canonical out)"
   });
 
   it("an unknown token is not guessed: it stays as authored with no party key", () => {
-    expect(canonicalPlaceholderField("CAMPO_INEXISTENTE")).toBe("CAMPO_INEXISTENTE");
-    expect(partyKeyForPlaceholderField("CAMPO_INEXISTENTE")).toBeUndefined();
+    expect(canonicalPlaceholderField("UNKNOWN_FIELD")).toBe("UNKNOWN_FIELD");
+    expect(partyKeyForPlaceholderField("UNKNOWN_FIELD")).toBeUndefined();
   });
 });
