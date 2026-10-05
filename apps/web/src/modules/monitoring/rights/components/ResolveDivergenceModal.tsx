@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/button";
 import { Textarea } from "@/shared/ui/textarea";
 import { Label } from "@/shared/ui/label";
 import { Hash, Radio, Tag, Calendar, BookOpen, Gauge, History } from "lucide-react";
-import type { Divergence, DivergenceSeverity } from "./DivergencesPanel";
+import { divergenceTypeLabel, type Divergence, type DivergenceSeverity } from "./DivergencesPanel";
 import { formatRightsDate } from "../utils/date-format";
 
 const SEVERITY: Record<DivergenceSeverity, { label: string; variant: BadgeVariant }> = {
@@ -56,19 +56,19 @@ export function ResolveDivergenceModal({ divergence, open, onOpenChange, onSubmi
 
   const sev = SEVERITY[divergence.severity];
   const st = STATUS[divergence.status];
-  const createdAt = divergence.created_at ?? divergence.data;
+  const createdAt = divergence.created_at ?? divergence.date;
 
   const apply = (newStatus: Divergence["status"], action: string) => {
-    const data = today();
+    const date = today();
     const history = [
       ...(divergence.history ?? []),
-      { data, action, by: "Você" },
+      { date, action, by: "Você" },
     ];
     const updated: Divergence = {
       ...divergence,
       status: newStatus,
       notes: notes.trim() || undefined,
-      resolved_at: newStatus === "resolved" ? data : undefined,
+      resolved_at: newStatus === "resolved" ? date : undefined,
       history,
     };
     onSubmit(updated);
@@ -80,7 +80,7 @@ export function ResolveDivergenceModal({ divergence, open, onOpenChange, onSubmi
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" data-testid="modal-resolve-divergence">
         <DialogHeader>
           <DialogTitle className="text-base leading-snug">Resolver Divergência</DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">{divergence.type}</DialogDescription>
+          <DialogDescription className="text-xs text-muted-foreground">{divergenceTypeLabel(divergence.type)}</DialogDescription>
         </DialogHeader>
 
         <div className="mt-1 space-y-4">
@@ -88,7 +88,7 @@ export function ResolveDivergenceModal({ divergence, open, onOpenChange, onSubmi
           <div>
             <p className="text-xs font-semibold tracking-wide text-muted-foreground mb-2">Identificação</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-border/60 bg-muted/20 p-3">
-              <Row icon={<Tag className="h-3.5 w-3.5" />} label="Tipo" value={divergence.type} />
+              <Row icon={<Tag className="h-3.5 w-3.5" />} label="Tipo" value={divergenceTypeLabel(divergence.type)} />
               <Row icon={<Gauge className="h-3.5 w-3.5" />} label="Severidade / Risco" value={
                 <div className="flex items-center gap-2">
                   <Badge variant={sev.variant}>{sev.label}</Badge>
@@ -120,7 +120,7 @@ export function ResolveDivergenceModal({ divergence, open, onOpenChange, onSubmi
               <div className="rounded-lg border border-border/60 bg-muted/20 px-3 py-2 space-y-1.5">
                 {divergence.history.map((h, i) => (
                   <div key={i} className="text-xs text-muted-foreground flex items-center gap-2">
-                    <span className="font-sans">{formatRightsDate(h.data)}</span>
+                    <span className="font-sans">{formatRightsDate(h.date)}</span>
                     <span className="text-foreground">{h.action}</span>
                     {h.by && <span>· {h.by}</span>}
                   </div>

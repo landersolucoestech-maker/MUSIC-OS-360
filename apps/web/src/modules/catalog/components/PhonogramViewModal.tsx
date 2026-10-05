@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import { ChevronDown, FileAudio, Music } from "lucide-react";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
+import type { WorkWithRelations } from "@/modules/catalog/hooks/useWorks";
 
 import type { Phonogram, PhonogramParticipant } from "@/modules/catalog/types/catalog.types";
 import { phonogramToFormFields } from "@/modules/catalog/mappers";
@@ -143,7 +143,7 @@ export function PhonogramViewModal({
   // on the work being among the first records loaded (Task J: it used to use an
   // unfiltered useWorks(), truncated at 50).
   const lookupWorkId = phonogram?.work_id ?? undefined;
-  const { entity: foundWork } = useEntityById<ObraWithRelations>("works", open ? lookupWorkId : undefined);
+  const { entity: foundWork } = useEntityById<WorkWithRelations>("works", open ? lookupWorkId : undefined);
 
   if (!phonogram) return null;
 

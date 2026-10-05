@@ -25,15 +25,16 @@ The TypeORM migration `RLSPolicies20260520000020` is the current executable RLS 
 | `contract_templates` | yes | Legal ops |
 | `transactions` | yes | Financial ops |
 | `invoices` | yes | Financial ops |
-| `clients` | yes | Legacy CRM |
-| `leads` | yes | Legacy CRM |
-| `lead_interactions` | yes | Legacy CRM timeline |
+| `clients` | yes | Canonical CRM entity (Contact = Client, see `docs/CRM_CANONICAL_ADR.md`) |
+| `leads` | yes | CRM |
+| `lead_interactions` | yes | CRM timeline |
 | `campaigns` | yes | Campaign ops |
 | `events` | yes | Operations/calendar |
 | `projects` | yes | Operations |
 | `releases` | yes | Release ops |
 | `shares` | yes | Rights/revenue split |
-| `audit_log` | yes | Immutable audit surface |
+| `audit_logs` | yes | Immutable audit surface |
+| `inventory_items`, `licenses`, `financial_rules` | yes | Migration `20260613000006_RlsPoliciesInventoryLicensesFinancial` |
 | `notifications` | yes | User/tenant ownership |
 
 ## Required Next Audit
@@ -51,14 +52,14 @@ Confirm RLS coverage for:
 - HR entities;
 - workflow transitions;
 - domain event logs;
-- future contacts, companies, opportunities, conversations, messages, workflows, forms, and landing pages.
+- future companies, opportunities, messages, workflows, and landing pages (`contacts` is the `clients` table; the generic forms module was dropped by migration `20260822000005_DropGenericFormsModule`).
 
 ## Hardening Applied
 
 - In production, `DatabaseModule` now fails startup when `DATABASE_URL` is missing or PostgreSQL cannot be reached.
 - In production, `MigrationValidatorService` exits when the database is unavailable, because migration validation cannot be skipped safely.
 - In production, `TenantGuard` no longer falls through when repositories are unavailable; it returns a service-unavailable error.
-- In production, frontend storage pending tables are not allowed to fallback to in-memory mock data.
+- Frontend storage pending tables (`PENDING_TABLES` in `apps/web/src/shared/lib/api-client.ts`) are unavailable in every environment: they raise an integration error and never fall back to in-memory data.
 
 ## Current Gaps To Close Before Production
 
@@ -71,7 +72,7 @@ Confirm RLS coverage for:
 | Billing subscriptions | Endpoint exists, org-scoped rather than tenant-scoped | Policy compares JWT `org_id` with `billing_subscriptions.org_id`; add billing role tests |
 | AI jobs | Endpoint exists, cost/tenant ledger needs policy coverage | Add AI job/cost RLS before production AI ops |
 | HR | Endpoint exists, RLS coverage pending | Add policies for employees, payroll, leave requests |
-| Inventory | Frontend exists, backend absent | Implement backend/RLS or keep production-blocked |
+| Inventory | Backend (`/inventory`) and RLS (migration `20260613000006`) exist | Keep cross-tenant tests for `inventory_items` |
 
 ## Mandatory Tests
 

@@ -1,0 +1,9 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Independent residue scan of test fixtures, mocks, factories, seeds, scripts, CI, env contract, tooling and current technical documentation versus the implementation",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-829f92b7",
+  "createdAt": "2026-10-05T01:16:57.726Z"
+}

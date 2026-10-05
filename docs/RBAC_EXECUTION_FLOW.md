@@ -6,10 +6,12 @@ Global order registered in `AppModule`:
 
 1. `RateLimitGuard`
 2. `JwtAuthGuard`
-3. `TenantGuard`
-4. `RolesGuard`
-5. `PermissionsGuard`
-6. interceptors for RLS context, metrics, auditing and the handler
+3. `MustChangePasswordGuard`
+4. `TenantGuard`
+5. `BillingEnforcementGuard`
+6. `RolesGuard`
+7. `PermissionsGuard`
+8. interceptors for RLS context, metrics, auditing and the handler
 
 `RequestIdMiddleware` and `CorrelationMiddleware` run before the guards.
 Every request receives a `requestId` and a `traceId`; valid `traceparent`,
@@ -86,7 +88,7 @@ divergence and cache. Persistence failures never change the authorization.
 - Grafana: `infra/observability/grafana/dashboards/rbac-shadow.json`.
 - Sentry: `would_allow`, `would_deny`, `authorization_failure`,
   `cache_failure`, `resolver_failure`.
-- Real readiness: `npm run rbac:readiness` in `apps/api`.
+- Real readiness: `pnpm --filter @music-os-360/api rbac:readiness`.
 
 ## Actual Fallbacks
 

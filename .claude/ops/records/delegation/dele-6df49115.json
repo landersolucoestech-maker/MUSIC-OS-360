@@ -1,0 +1,9 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Adjudicate 96 legacy names that tests use as fixtures and that also occur in production files without a ledger row: UI text vs technical residue vs missing boundary row",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-6df49115",
+  "createdAt": "2026-10-05T01:25:45.263Z"
+}

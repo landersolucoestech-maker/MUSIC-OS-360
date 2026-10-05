@@ -1,0 +1,9 @@
+{
+  "agent": "frontend-engineer",
+  "objective": "Fix web naming defects found by the independent scans (type aliases, data field, discriminator values, dead role options, stale comments, dead readers, display type rename)",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-b5f5b467",
+  "createdAt": "2026-10-05T01:30:11.106Z"
+}

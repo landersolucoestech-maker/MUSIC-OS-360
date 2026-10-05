@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Superseded procedure for the 2026-07 baseline. Current contract: `docs/engineering/release-production.md`.
+
 # RELEASE RUNBOOK - CANONICAL BASELINE 157/80
 
 Date: 2026-07-04

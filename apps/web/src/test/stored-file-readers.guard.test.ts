@@ -44,6 +44,15 @@ describe("stored document readers go through the tenant-checked download", () =>
     expect(offenders).toEqual([]);
   });
 
+  it("invoice readers open the canonical file_url (url_pdf only as fallback via invoiceFileUrl)", () => {
+    for (const r of ["modules/accounting/components/InvoiceViewModal.tsx", "modules/accounting/pages/Invoices.tsx"]) {
+      const src = fs.readFileSync(path.join(SRC_ROOT, r), "utf8");
+      expect(`${r}: ${/invoiceFileUrl\(invoice\)/.test(src)}`).toBe(`${r}: true`);
+      expect(`${r}: ${/invoice\.url_pdf/.test(src)}`).toBe(`${r}: false`);
+    }
+    expect(DOC_FIELDS).toEqual(expect.arrayContaining(["file_url", "url_pdf"]));
+  });
+
   it("the known readers use StoredFileLink/openStoredFile", () => {
     const readers = [
       "modules/contracts/components/ContractViewModal.tsx",

@@ -27,6 +27,7 @@ import type { ContractTemplateRow, ContractVariable, WizardSignerRecord } from "
 import type { ContractWithRelations, ContractInsert } from "@/modules/contracts/hooks/useContracts";
 import { SIGNING_PLATFORM_LABEL, type SigningPlatform } from "@/modules/contracts/types/contracts.types";
 import { cn } from "@/shared/lib/utils";
+import { contractRoleLabel } from "@/modules/contracts/utils/contract-variables";
 import { A4Preview } from "@/modules/contracts/components/ContractA4Preview";
 import { UserFacingError } from "@/shared/lib/errors";
 import { CONTRACT_STATUS_OPTIONS } from "@/modules/contracts/lib/contract-status";
@@ -332,7 +333,7 @@ function PartyCard({
     <div className="rounded-lg border border-border bg-card p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4 text-muted-foreground" />
-        <h3 className="text-sm font-semibold text-foreground">{role}</h3>
+        <h3 className="text-sm font-semibold text-foreground">{contractRoleLabel(role)}</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
@@ -664,7 +665,7 @@ function SignerRow({
   return (
     <div className="rounded-lg border border-border bg-card p-3 space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <Badge variant="outline" className="text-xs">{signer.role}</Badge>
+        <Badge variant="outline" className="text-xs">{contractRoleLabel(signer.role)}</Badge>
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer">
             <Checkbox

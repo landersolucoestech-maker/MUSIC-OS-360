@@ -8,7 +8,7 @@ type Props = { value?: string | null; kind?: string; className?: string };
 const labels: Record<string, string> = {
   recorded: "Gravada", recording: "Em Gravação", scheduled: "Agendada", pending: "Pendente",
   editing: "Em Edição", finished: "Finalizada", not_started: "Não Iniciada",
-  review: "Em Revisão", approved: "Aprovado", rejected: "Reprovado",
+  review: "Em Revisão", approved: "Aprovado", rejected: "Reprovado", revision_requested: "Revisão solicitada",
   planned: "Planejado", production: "Em Produção", published: "Publicado", archived: "Arquivado",
   delivered: "Finalizado", draft: "Planejado", post_production: "Em Edição", approval: "Em Revisão",
 };
@@ -16,7 +16,7 @@ const labels: Record<string, string> = {
 const variants: Record<string, BadgeVariant> = {
   recorded: "success", finished: "success", approved: "success", published: "success", delivered: "success",
   editing: "info", post_production: "info", recording: "info", production: "info",
-  scheduled: "warning", pending: "warning", review: "warning", approval: "warning",
+  scheduled: "warning", pending: "warning", review: "warning", revision_requested: "warning", approval: "warning",
   not_started: "neutral", planned: "neutral", draft: "neutral", archived: "neutral",
   rejected: "danger", cancelled: "danger",
 };

@@ -9,7 +9,11 @@ export type AudiovisualProjectStatus =
 export type AudiovisualFormat = "16:9" | "9:16" | "1:1" | "4:5" | string;
 export type CaptureStatus = "scheduled" | "recording" | "recorded" | "pending";
 export type EditingStatus = "not_started" | "editing" | "finished";
+// Project-level approval_status (free string column; owner decision pending on "review"). Unchanged.
 export type ApprovalStatus = "pending" | "review" | "approved" | "rejected";
+// Approval decision statuses accepted by the API decision endpoint (APPROVAL_STATUSES). Never includes "review".
+export const APPROVAL_DECISION_STATUSES = ["pending", "approved", "rejected", "revision_requested"] as const;
+export type ApprovalDecisionStatus = typeof APPROVAL_DECISION_STATUSES[number];
 export type FinalStatus = "planned" | "production" | "finished" | "published" | "archived";
 export type DeliverableType = "master" | "cutdown" | "reels" | "thumbnail" | "teaser" | "other";
 export type TeamRole = "director" | "producer" | "camera" | "editor" | "colorist" | "motion_designer" | "photographer" | "stylist" | "makeup" | "actor" | "assistant" | "drone_operator" | "other";
@@ -92,7 +96,7 @@ export interface AudiovisualProject {
 
 export interface AudiovisualBriefing { id: string; audiovisual_project_id?: string; concept?: string; objective?: string; references?: string[]; moodboard?: string[]; notes?: string; }
 export interface AudiovisualDeliverable { id: string; title: string; type?: DeliverableType; status?: string; file_url?: string; }
-export interface AudiovisualApproval { id: string; status: ApprovalStatus; comments?: string; created_at?: string; }
+export interface AudiovisualApproval { id: string; status: ApprovalDecisionStatus; comments?: string; created_at?: string; }
 export interface AudiovisualDashboard { total_projects?: number; in_production?: number; delivered?: number; pending_approval?: number; upcoming_publish_7d?: number; approvals_pending?: number; overdue_deliverables?: number; budget_estimated_total?: number; budget_actual_total?: number; by_status: Partial<Record<AudiovisualProjectStatus, number>>; }
 export interface AudiovisualShot { id: string; shot?: string; shot_type?: string; movement?: string; duration?: string; status?: string; }
 export interface AudiovisualProductionDay { id: string; shooting_date: string; location?: string; call_time?: string; wrap_time?: string; }

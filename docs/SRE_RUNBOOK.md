@@ -145,9 +145,9 @@ Severity 3 (minor / single tenant affected):
 ### Database migration pending (production)
 
 1. `MigrationValidatorService` will exit the process with code 1 in production
-2. Run migrations: `pnpm --filter api db:migrate`
-3. Verify: `pnpm --filter api db:migrate:show`
-4. Rollback if needed: `pnpm --filter api db:migrate:revert`
+2. Run migrations: `pnpm --filter @music-os-360/api db:migrate`
+3. Verify: `pnpm --filter @music-os-360/api db:check` (fails on pending or unknown applied migrations)
+4. Rollback if needed: follow the reverse transition in `docs/engineering/database.md` (`rollback:to <Migration>`, or `db:rollback` for the last migration; production requires `CONFIRM_ROLLBACK`)
 
 ---
 
@@ -179,12 +179,12 @@ If any component is `"status": "down"`, return HTTP 503.
 
 Before every production deploy:
 
-- [ ] All tests pass (`pnpm turbo test:ci`)
-- [ ] Build succeeds (`pnpm turbo build`)
+- [ ] All tests pass (`pnpm test`)
+- [ ] Build succeeds (`pnpm build`)
 - [ ] No pending migrations OR migration has been run in staging first
 - [ ] Sentry release tag set (`SENTRY_RELEASE`)
 - [ ] Env vars validated (deployment will fail if required vars are missing)
-- [ ] Feature flags reviewed (no MOCK_MODE, no AUTH_BYPASS)
+- [ ] Feature flags reviewed (no bypass flag enabled; `pnpm --filter @music-os-360/api verify:production-flags` must pass)
 - [ ] Rollback plan documented
 
 ---

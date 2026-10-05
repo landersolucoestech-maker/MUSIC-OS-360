@@ -187,7 +187,7 @@ export default function RightsMonitoring() {
       .filter((det) => !det.work || !det.work.ecad_code)
       .map((det) => ({
         id: `div-${det.id}`,
-        type: det.work ? "Obra sem código ECAD" : "Detecção sem obra vinculada",
+        type: det.work ? ("work_without_ecad_code" as const) : ("detection_without_work" as const),
         description: det.work
           ? `Detecção em "${det.platform}" está vinculada à obra "${det.work.title}", mas ela não possui código ECAD cadastrado.`
           : `Detecção em "${det.platform}" (${det.detected_title ?? "sem título"}) não possui obra vinculada no catálogo interno.`,
@@ -195,7 +195,7 @@ export default function RightsMonitoring() {
         origin: det.platform,
         severity: det.work ? "medium" as const : "high" as const,
         risk_score: det.work ? 45 : 65,
-        data: det.detected_at.split("T")[0],
+        date: det.detected_at.split("T")[0],
         status: "open" as const,
       })),
     [filtered],

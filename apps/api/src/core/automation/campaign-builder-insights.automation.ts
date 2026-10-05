@@ -16,7 +16,7 @@
  *                 invents an incompatible placement).
  *
  * Neither reads/writes `metrics`/`estimateCampaignResults()` — see
- * docs/CODEBASE_MAP.md: that field already fabricates performance and is displayed as
+ * docs/CODEBASE_MAP.md (historical snapshot): that field already fabricates performance and is displayed as
  * real (a pre-existing finding, out of this automation's scope). Neither
  * writes the result back to the campaign automatically.
  */

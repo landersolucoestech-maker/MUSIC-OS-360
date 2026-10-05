@@ -1,0 +1,65 @@
+# Canonical Technical Vocabulary (meaning, not translation)
+
+Status: derived from `docs/naming/canonical-naming-map.json` (97 concepts), `apps/api/src/database/entities.ts`, `packages/types/src/enums.ts`, `docs/engineering/naming-state-separation.md` and `docs/engineering/pack/NORMALIZATION_REPORT.md`. The map stays the only registry. This file defines meaning and cross-references the map entries. It does not invent names. Portuguese appears only as the PT-BR UI term or as legacy aliases in backticks. Anything not verified is marked UNVERIFIED.
+
+## 1. Conventions
+
+- Database: snake_case (`work_id`). TypeScript and JS: camelCase (`workId`). Class names: PascalCase with an `Entity` suffix (`WorkEntity`). Files and routes: kebab-case.
+- Enum values are English snake_case machine values. The PT-BR label is a separate mapping and is never shown raw.
+- Fiscal and legal terms are permanent exceptions (map `exceptions`, class PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION): `cpf`, `cnpj`, `tomador`, `prestador`, `serie`, `tipo_nota`, `cfop`, `natureza_operacao`.
+
+## 2. Core catalog (per concept)
+
+| Domain | Concept | Canonical technical name | PT-BR UI term | Definition and business meaning | Must NOT be confused with | Database | Backend and API | Frontend | Legacy aliases | Compatibility policy | Status |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Catalog | Work | `Work` (`WorkEntity`) | Obra | The musical composition, that is, the copyright in the song. Carries `iswc`, `society_code`, `ecad_code`, participants. | Phonogram (the recording), ReleaseTrack, released music | `works`; participants in `work_participants`; FK `work_id` | `workId`; the work DTO accepts pre-rename names as deprecated input (`work-legacy-fields.ts`) | `modules/catalog` (`WorkFormModal`, `WorkViewModal`) | `obra_id`, `tipo_obra`, `compositor`, `cod_entidade`, `idioma` | Read and input aliases kept, canonical writes. Legacy duplicate columns kept as `legacy_*` (drop blocked by BLK-WORKS-LEGACY-DUPLICATES) | NC-002, CZ-039: DONE; legacy drop pending approval |
+| Catalog | Phonogram | `Phonogram` (`PhonogramEntity`) | Fonograma | A sound recording of a work, the master right. Carries `isrc`, `work_id` (nullable), `artist_id`, `audio_file_id`, `participation` jsonb. | Work, Release, ReleaseTrack. There is no `recordings` table, so `recording` must not be used as a FK name. | `phonograms`; FK `phonogram_id` (used by shares, transaction_allocations and others) | `phonogramId`. The API field is `phonogram_id`, and `trackId` is a deprecated alias (NC-007). | `modules/catalog` (`PhonogramFormModal`) | `fonograma_id`, `arquivo_audio` (display metadata, a distinct concept from `audio_file_id`), `duracao_min` | Same as Work (`phonogram-legacy-fields.ts`, BLK-PHONOGRAMS-LEGACY-DUPLICATES) | NC-007, NC-029, CZ-040: DONE |
+| Production | Project | `Project` (`ProjectEntity`) | Projeto | A music production effort (album, EP or single) in development. It has a budget and a `ProjectStatus` (planning, in_progress, review, completed, cancelled). | Release, Distribution. Also AudiovisualProject and MarketingProject, which are separate aggregates and must be qualified. | `projects`; FK `project_id` | `projectId` | `modules/projects` | `projeto_id`, `nome` | Alias input kept | NC-004: DONE |
+| Production | ProjectTrack | `ProjectTrack` (`ProjectTrackEntity`) | Faixa do projeto (UNVERIFIED label) | A song under development inside a Project. It has its own table, participants with roles composer, performer or producer, lyrics and audio URL. | Release track, Phonogram, Work | `project_tracks`, `project_track_participants` | `ProjectTrackResponse`, `hydrateTracks` in `projects.service.ts` | `projects/utils/track-helpers.ts` | `faixas` (old form), roles in Portuguese | Pre-CZ-031 payloads accepted and migrated | CZ-015, CZ-031: DONE |
+| Distribution | Release | `Release` (`ReleaseEntity`) | Lançamento | A single, EP, album or compilation the tenant distributes to DSPs. Has `upc`, `distributor`, `release_date`, `ReleaseStatus` (draft ... distributed, released). A music release, never a software release or ledger entry. | Project, Phonogram, ReleaseTrack, accounting entry (use `transaction`) | `releases`; FK `release_id`; relation to works through the join table `release_works` | `releaseId`; domain event `RELEASE_DISTRIBUTED` | `modules/releases` | `lancamento_id`, `distribuidora`, `data_lancamento` | DTO accepts pre-CZ-038 names, canonical writes | NC-006, CZ-038: DONE |
+| Distribution | ReleaseTrack | `ReleaseTrack` (concept only, no table or entity) | Faixa do lançamento (UNVERIFIED) | One track row of a release form. It lives only as jsonb in `releases.metadata.tracks`. | ProjectTrack (normalized table), Phonogram | `releases.metadata.tracks` (jsonb) | `ReleaseTrackItem` in `reports/computed-fields/release-tracks.field.ts` (`canonicalReleaseTrack` dual-reads) | `ReleaseFormModal` track state | key `faixas` (read only) | Dual-read, backfill migration 20260930000019 | CZ-016: DONE (jsonb by design) |
+| Distribution | Distribution | none (no aggregate) | Distribuição | The act of delivering a release to DSPs via a distributor. In code only as `releases.distributor`, status `distributed` and the contract category slug `distribution`. | Release, Project, statistical distribution | no table | event name only | not applicable | none | none | UNVERIFIED as a future aggregate; owner decision |
+| Rights | Share (split) | `Share` (`ShareEntity`) | Share / Rateio | A percentage of rights or royalties (`party_role`, `percentage`, `holder_name`), tied to `work_id` and/or `phonogram_id`. It also carries the financial receivable/payable form (`direction`, `total_amount`, `settled_amount`). | Financial transaction, SaaS split | `shares` | `shareId`; `role` is mapped onto `party_role` and discarded before persistence | `Shares.tsx` | `papel`, `percentual`, `titular_nome`, `direcao` | DTO accepts old names, canonical wins | NC-023, NC-038: DONE. NC-039 (`shares.role`): NEEDS_PRODUCT_DECISION |
+| Legal | Contract | `Contract` (`ContractEntity`) | Contrato | A legal agreement, signed via Autentique or DocuSign. It has `type` (a category slug), `artist_id`, `client_id` and `release_id`. | License (sync license), API contract | `contracts` | `contractId`; slugs in `contract-category-slugs.ts` | `modules/contracts` | `gravacao`, `cessao_direitos` slugs | Legacy slugs read, canonical writes | CZ-026: DONE |
+| Finance | Invoice | `Invoice` (`InvoiceEntity`) | Nota fiscal | A fiscal NFS-e issued by the tenant, or a Stripe SaaS invoice. Both are in one table, discriminated by `type`. | Billing (SaaS), transaction | `invoices` | `invoiceId`, `stripeInvoiceId` | `modules/accounting` | `vencimento`, `data_vencimento` | Deprecated input alias | CZ-036: DONE |
+| Finance | Transaction (ledger entry) | `Transaction` | Lançamento financeiro | A revenue or expense ledger entry. | Release (the PT-BR word for a music release must not mean ledger) | `transactions` v1, `financial_transactions` v2 (scaffold) | `transactionId` | `modules/accounting` | `forma_pagamento` | DTO canonical | CZ-041: DONE |
+| Identity | Artist | `Artist` | Artista | A performer or creator managed by the tenant. | An external platform profile | `artists`; `artist_id` | `artistId`; external ids are namespaced, for example `spotifyArtistId` | `modules/artist` | `artista_id` | Alias input | NC-001, CZ-042: DONE |
+| CRM | Client / Contact | `Client` (a contact is a `clients` row) | Cliente / Contato | A CRM contact of the tenant. | Lead, the Stripe customer | `clients`; `client_id` | `clientId`, `contactId` equals `clientId` | `modules/crm-relationships` | `cliente_id` | Facade `ContactsService` | NC-003, CZ-043: DONE |
+| CRM | Lead | `Lead` | Lead | A prospect not yet converted. | Contact | `leads` | `leadId` | `modules/leads` | `origem_lead`, `proximo_follow_up` | Dual storage (NC-037) | CZ-033: DONE; NC-037 open |
+| Isolation | Tenant, Organization | `tenantId`, `orgId` | Workspace (product term) | Tenant is the isolation boundary. Organization owns the tenants. Workspace is the (org, tenant) pair and has no table. | Account, user | `tenants`, `organizations` | RLS keys `app_current_tenant_id()`, `app_current_org_id()` | not applicable | none | none | glossary |
+
+Other map concepts (campaigns, takedowns, sync licenses, HR, inventory, events, ECAD reports, content detections, artist goals) follow the same rule: the English technical name and legacy aliases are in the map under NC-005, CZ-022 to CZ-035 and CZ-044 to CZ-048. They are referenced by map id and not individually described here (UNVERIFIED coverage of each).
+
+## 3. Mandatory distinctions
+
+1. Project is not ProjectTrack, and neither is Release. A Project (`projects`) is the effort. A ProjectTrack (`project_tracks`) is a child row, which is a song in development. A Release (`releases`) is the distributable product. Evidence: three separate entities. Only Project owns `ProjectStatus`, and ProjectTrack has an FK `project_id`, not `release_id`.
+2. Work is not Phonogram, and neither is ReleaseTrack. A Work is the composition (`works`, `iswc`). A Phonogram is a recording of it (`phonograms`, `isrc`, `work_id` nullable). ReleaseTrack has no table, so it is jsonb in `releases.metadata.tracks`.
+3. Work and Phonogram are not released music. Both are registry records. Nothing becomes released music until a Release exists with status `distributed` or `released`.
+4. Project is not Distribution, and neither is Release. A Project is production. Distribution is delivery to DSPs, and in code it is only a status plus the `distributor` column on Release. Distribution has no aggregate. UNVERIFIED whether one is wanted.
+5. Phonogram is not Release. Different tables with no direct FK between them. Releases link to Works through `release_works`. UNVERIFIED how a release links to its phonograms.
+6. Release is not ReleaseTrack. Release is a row. ReleaseTrack is an element inside the `metadata.tracks` jsonb of that row.
+7. Work is not ReleaseTrack. The release track jsonb carries its own `isrc` and `composers` names, not a `work_id`.
+8. Work contract, Phonogram contract and Distribution contract are not the same. Honest state: `contracts` has one table with a free `type` slug. The platform seeds the categories recording, rights_assignment, production, exclusivity, advertising, semantic, distribution, licensing, management, other. The table has `artist_id`, `client_id` and `release_id`, with no `work_id` or `phonogram_id`. So a Work contract and a Phonogram contract are not modeled separately. "Distribution contract" exists only as the category slug `distribution`. Whether to model a contract kind per aggregate is an owner decision (UNVERIFIED, not in code).
+
+## 4. Other collisions discovered
+
+- `invoices.due_date` versus `invoices.due_at`. `due_date` is Stripe-owned and mirrors the provider field 1:1 (NC-025, only on `type='stripe_subscription'` rows, never renamed). `due_at` is the NFS-e due date (NC-024, renamed by CZ-036). Never merge them.
+- `shares` versus financial split. The `shares` table holds both rights shares (`party_role`, `percentage`) and the financial receivable form. Qualify as rights share or financial share (CZ-037).
+- `shares.type` versus `party_role` (NC-038, RESOLVED), and `shares.role` (NC-039, open product decision): `party_role` is the canonical role. The columns `type` and `role` still exist on the entity.
+- Generic `type` columns exist on works, phonograms, projects, releases, contracts and invoices with different vocabularies. Always qualify by aggregate (NC-009).
+- `invoices.type` (`stripe_subscription` versus fiscal) versus `invoices.tipo_nota` (fiscal note type). Two different discriminators on one table.
+- `release` (music) versus a software release or ledger entry. `track` versus `phonogram`. `contract` versus an API contract. `account` must never be bare (glossary).
+- `works.type`, which holds a catalog-origin value (NC-031: `tipo_obra` versus `type`), versus the work origin value.
+- `arquivo_audio` (display jsonb) versus `audio_file_id` (FK to uploads), both live (NC-029).
+- `events.data` versus `starts_at`: dual-write during migration CZ-029 (MIGRATION_REQUIRED, drop blocked by BLK-C3-E6).
+
+## 5. Compatibility policy (summary)
+
+Legacy names are accepted as deprecated input or read aliases, writes are canonical, and drops of `legacy_*` columns need explicit owner approval (`destructive-approval-dossier.md`). The state model is in `docs/engineering/naming-state-separation.md`.
+
+## 6. UNVERIFIED items
+
+- Whether a Release should link to Phonograms: `release_works` exists, no `release_phonograms` table was found.
+- Contract kind per aggregate: owner decision, not in code; `ContractEntity` has no `work_id` or `phonogram_id`.
+- PT-BR display terms for ProjectTrack and ReleaseTrack: the map has no `displayPtBr` for CZ-015, CZ-016 or CZ-031.
+- Per-concept description of the remaining map entries.

@@ -79,7 +79,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
     VALUES ($1, $2, 'company', 'producer', 'other', 'Maria Produtora', 'Gravadora Demo Records', 'high', 'active',
       $3::jsonb, $4)
     ON CONFLICT (id) DO NOTHING
-  `, [contactId, tenantId, JSON.stringify([{ event_type: 'contact.created', summary: 'Contato criado via seed operacional', actor_id: effectiveAdminSub, at: new Date().toISOString() }]), effectiveAdminSub]);
+  `, [contactId, tenantId, JSON.stringify([{ id: '10000000-0000-0000-0000-000000000031', type: 'note', date: new Date().toISOString().slice(0, 10), time: '00:00', description: 'Contato criado via seed operacional' }]), effectiveAdminSub]);
 
   const campaignId = '10000000-0000-0000-0000-000000000040';
   const now = new Date();
@@ -107,7 +107,7 @@ export async function seedOperational(ds: DataSource, tenant: SeedResult): Promi
   const contractId = '10000000-0000-0000-0000-000000000060';
   await ds.query(`
     INSERT INTO contracts (id, tenant_id, title, type, status, artist_id, fixed_value, exclusive, created_by)
-    VALUES ($1, $2, 'Contrato de Gravacao Demo', 'gravacao', 'draft', $3, 50000, FALSE, $4)
+    VALUES ($1, $2, 'Contrato de Gravacao Demo', 'recording', 'draft', $3, 50000, FALSE, $4)
     ON CONFLICT (id) DO NOTHING
   `, [contractId, tenantId, artistId, effectiveAdminSub]);
 

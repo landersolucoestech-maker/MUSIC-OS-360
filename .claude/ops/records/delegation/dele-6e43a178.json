@@ -1,0 +1,9 @@
+{
+  "agent": "backend-engineer",
+  "objective": "Fix API/tooling naming defects found by the independent scans (seed legacy values, verify script fixtures, db-ops messages, swagger examples/text, periodo query alias, USE_MOCK)",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-6e43a178",
+  "createdAt": "2026-10-05T01:30:11.110Z"
+}

@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { AppDataSource } from '../src/database/datasource';
 
-type Cls = 'OK' | 'ALIAS' | 'SEM_CORRESPONDENCIA' | 'CROSS_TENANT' | 'ARQUIVADA' | 'REMOVIDA' | 'ALIAS_INVALIDO';
+type Cls = 'OK' | 'ALIAS' | 'NO_MATCH' | 'CROSS_TENANT' | 'ARCHIVED' | 'REMOVED' | 'INVALID_ALIAS';
 
 // Detects once whether the roles.archived_at column exists (pre-Enterprise-006 DBs do not have it).
 async function hasArchivedColumn(ds: any): Promise<boolean> {
@@ -29,14 +29,14 @@ async function classify(ds: any, tenantId: string | null, role: string, archSel:
      ORDER BY (tenant_id=$2) DESC NULLS LAST LIMIT 1`, [role, tenantId]);
   if (rows.length === 0) {
     const other = await ds.query(`SELECT 1 FROM roles WHERE slug=$1 AND tenant_id IS NOT NULL AND tenant_id<>$2 AND deleted_at IS NULL LIMIT 1`, [role, tenantId]);
-    return { roleId: null, cls: other.length ? 'CROSS_TENANT' : 'SEM_CORRESPONDENCIA' };
+    return { roleId: null, cls: other.length ? 'CROSS_TENANT' : 'NO_MATCH' };
   }
   const r = rows[0];
-  if (r.deleted_at) return { roleId: null, cls: 'REMOVIDA' };
-  if (r.archived_at) return { roleId: null, cls: 'ARQUIVADA' };
+  if (r.deleted_at) return { roleId: null, cls: 'REMOVED' };
+  if (r.archived_at) return { roleId: null, cls: 'ARCHIVED' };
   if (r.canonical_role_id) {
     const can = await ds.query(`SELECT id, ${archSel} AS archived_at, deleted_at FROM roles WHERE id=$1`, [r.canonical_role_id]);
-    if (!can.length || can[0].deleted_at || can[0].archived_at) return { roleId: null, cls: 'ALIAS_INVALIDO' };
+    if (!can.length || can[0].deleted_at || can[0].archived_at) return { roleId: null, cls: 'INVALID_ALIAS' };
     return { roleId: can[0].id, cls: 'ALIAS' };
   }
   return { roleId: r.id, cls: 'OK' };

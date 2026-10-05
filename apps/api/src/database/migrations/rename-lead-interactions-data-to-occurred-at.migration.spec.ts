@@ -11,9 +11,11 @@ function runner() {
 describe('RenameLeadInteractionsDataToOccurredAt (cross-layer: DB column, entity, API field)', () => {
   const migration = new Migration();
 
-  it('is registered and is the newest registered migration', () => {
+  it('is registered exactly once, in timestamp order (later migrations may follow it)', () => {
     const names = ALL_MIGRATIONS.map((m) => m.name);
-    expect(names[names.length - 1]).toBe(migration.name);
+    expect(names.filter((n) => n === migration.name)).toHaveLength(1);
+    const stamp = (n: string): number => Number(n.slice(-13));
+    expect(stamp(names[names.length - 1]!)).toBeGreaterThanOrEqual(stamp(migration.name));
   });
 
   it('up() is a guarded metadata-only rename: no data statement, no DROP, no rewrite', async () => {

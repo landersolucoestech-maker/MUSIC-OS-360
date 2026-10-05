@@ -1,5 +1,5 @@
 import { EntityMetadataService } from '../entity-metadata.service';
-import { ReportEntityDefinitionService } from './report-entity-definition.service';
+import { ReportEntityDefinitionService, HIDDEN_INTERNAL_HINT } from './report-entity-definition.service';
 import { tryGetFieldLabelPtBr } from '../i18n/field-labels.pt-br';
 import { EntityCategory } from '../entity-metadata.types';
 import {
@@ -162,6 +162,42 @@ describe('ReportEntityDefinitionService — contracts', () => {
         { name: 'notes', type: 'text' },
       ]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('HIDDEN_INTERNAL_HINT deny-list (English only)', () => {
+    const allColumnNames = Array.from(new Set(inv.entities.flatMap((e) => e.columns.map((c) => c.name))));
+    const REMOVED_PT = /^(notas?_internas?|observacoes?_internas?|comentarios?_internos?)$/i;
+
+    it('inspects real entity metadata (non-empty)', () => {
+      expect(allColumnNames.length).toBeGreaterThan(50);
+    });
+
+    it('none of the removed Portuguese alternatives matches a real entity column', () => {
+      expect(allColumnNames.filter((n) => REMOVED_PT.test(n))).toEqual([]);
+    });
+
+    it('internal_notes (and widened English forms) stay hidden; Portuguese legacy names no longer match', () => {
+      for (const n of ['internal_notes', 'internal_note', 'internal_comments', 'internal_observations', 'INTERNAL_NOTES']) {
+        expect(HIDDEN_INTERNAL_HINT.test(n)).toBe(true);
+      }
+      for (const n of ['notes', 'notas_internas', 'observacoes_internas', 'comentarios_internos', 'internal_notes_x']) {
+        expect(HIDDEN_INTERNAL_HINT.test(n)).toBe(false);
+      }
+    });
+
+    it('every real column matched by the deny-list is excluded from filterable/sortable/searchable columns', () => {
+      const hidden = inv.entities.flatMap((e) => e.columns.filter((c) => HIDDEN_INTERNAL_HINT.test(c.name)).map((c) => ({ t: e.tableName, n: c.name })));
+      expect(hidden.length).toBeGreaterThan(0);
+      for (const { t, n } of hidden) {
+        const d = defs.find((x) => x.tableName === t);
+        if (!d) continue;
+        expect([...d.filterableColumns, ...d.sortableColumns, ...d.searchableColumns]).not.toContain(n);
+      }
+    });
+
+    it('no real column name matches the dead Portuguese filter hints (situacao|categoria|prioridade|ativo)', () => {
+      expect(allColumnNames.filter((n) => /^(situacao|categoria|prioridade|ativo)$/.test(n))).toEqual([]);
     });
   });
 });

@@ -1,0 +1,9 @@
+{
+  "agent": "repo-investigator",
+  "objective": "Reconstruct the real baseline SHA of the technical normalization from Git history, ledger and reports; justify BASELINE_SHA and BASELINE_REASON without choosing a convenient one",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-4ae39b74",
+  "createdAt": "2026-10-05T01:16:57.718Z"
+}

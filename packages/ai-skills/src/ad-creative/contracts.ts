@@ -13,7 +13,7 @@
  * marketing-integration.contract.ts declares `available: false` for every ads
  * provider). This skill never implies an ad was served and never produces
  * performance numbers (reach/clicks/conversions/ROAS) — see
- * docs/CODEBASE_MAP.md on `estimateCampaignResults()` already being a fabricated
+ * docs/CODEBASE_MAP.md (historical snapshot) on `estimateCampaignResults()` already being a fabricated
  * metric shown as real; this skill does not repeat that pattern.
  *
  * Scope distinction: paid-ads suggests budget/platform ALLOCATION; ad-creative

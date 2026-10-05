@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "repo-investigator",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "n1 baseline: PASS_WITH_FINDINGS. Claimed baseline 02f1ee8a not verifiable in the shallow clone (88 commits); after git fetch --unshallow (2022 commits) the first PT->EN rename commit is 986739c6 (2026-09-05, artista_id->artist_id) so BASELINE_SHA=56b55c46f35d92cabdd8a98bebf7fdfe3a9c1cac (its parent, 2026-09-05 13:44 -0300); FINAL_PRODUCT_SHA candidate 2f9ac0a, head d7a98fe.",
+  "workspaceFingerprint": "9c9998b879947cc56b845d251e7125d84e732c0047cd7c1c17d36f3a52065089",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-b20c43c8",
+  "createdAt": "2026-10-05T01:26:47.318Z"
+}

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "frontend-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "p1 web naming fixes: Obra*/Fonograma* type aliases and ProjetoWithRelations renamed, data->date, divergence/activity machine codes with PT-BR label maps, dead UserFormModal role options removed, dead phonogram_ids reader removed, ReleaseStatus display type renamed ReleaseDisplayStatus, contract registry localStorage keys prefixed with one-time migration, contract role labels humanized; web typecheck clean; touched-module vitest runs green (856+231+172+626). Caveat to review: members holding a removed role (admin_master, ar_gestao, financeiro_contabil) see an empty access-level select in edit mode.",
+  "workspaceFingerprint": "829c0782d7d9afdae8fa6af49758371d885ff78e38c27e5b313e5990931e335b",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-338b5f4c",
+  "createdAt": "2026-10-05T01:43:05.907Z"
+}

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "n7 adjudication of 848 (name,file) pairs: 787 UI_TEXT, 35 COMMENT_OR_DOC, 16 compound-slug fragments already covered, 1 TECHNICAL_OPERATIONAL (dead alternatives in report-entity-definition HIDDEN_INTERNAL_HINT), 9 boundaries missing a ledger row; uppercase PT classification enums (ARQUIVADA, SEM_CORRESPONDENCIA, REMOVIDA) are a residue outside the literal set. Persisted as docs/naming/audit/fixture-name-adjudication.json and consumed by the boundary classifier.",
+  "workspaceFingerprint": "1f96267075d4c3ff8f67f4e9be841f6731aed967ce231b9db38e81e54f48fb88",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-8600cb3b",
+  "createdAt": "2026-10-05T01:31:43.023Z"
+}

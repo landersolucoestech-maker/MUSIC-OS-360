@@ -16,12 +16,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { toast } from "sonner";
 import { Plus, Search, ChevronDown, Trash2, Upload, FileAudio, Music, X, Eye, Link, Loader2 } from "lucide-react";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
-import { usePhonograms, type FonogramaUpdate } from "@/modules/catalog/hooks/usePhonograms";
+import type { WorkWithRelations } from "@/modules/catalog/hooks/useWorks";
+import { usePhonograms, type PhonogramUpdate } from "@/modules/catalog/hooks/usePhonograms";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
+import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import { ParticipantViewModal } from "@/modules/catalog/components/ParticipantViewModal";
 import { useCurrentOrgId } from "@/shared/hooks/useCurrentOrgId";
 import { useDebounce } from "@/shared/hooks/useDebounce";
@@ -270,7 +270,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
   // stay stuck on the "Obra vinculada" placeholder forever if it was
   // outside the tenant's first 50).
   const hydratedWorkId: string | undefined = phonogram?.work_id ?? undefined;
-  const { entity: hydratedWork } = useEntityById<ObraWithRelations>(
+  const { entity: hydratedWork } = useEntityById<WorkWithRelations>(
     "works",
     open ? hydratedWorkId : undefined,
   );
@@ -312,7 +312,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
   // search, the same concession already accepted in the other migrations of this task.
   const LOCAL_RESULTS_LIMIT = 20;
   const titleCollator = new Intl.Collator("pt-BR", { sensitivity: "base" });
-  const { items: worksSearch, total: registeredWorksTotal } = useEntityLookup<ObraWithRelations>({
+  const { items: worksSearch, total: registeredWorksTotal } = useEntityLookup<WorkWithRelations>({
     table: "works",
     search: searchWorkDebounced,
     pageSize: LOCAL_RESULTS_LIMIT,
@@ -494,7 +494,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
       if (mode === "create") {
         await addPhonogram.mutateAsync(payload);
       } else if (mode === "edit" && phonogram?.id) {
-        const updatePayload: { id: string } & FonogramaUpdate & { expectedUpdatedAt?: string } = {
+        const updatePayload: { id: string } & PhonogramUpdate & { expectedUpdatedAt?: string } = {
           id: phonogram.id,
           ...payload,
           expectedUpdatedAt: getExpectedUpdatedAt(phonogram),
@@ -696,7 +696,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 setMusicGenre(matched ? matched.toLowerCase() : work.musicGenre.toLowerCase());
                               }
                               // Fill the participation from the full work data
-                              const fullWork = worksSearch.find((o: ObraWithRelations) => o.id === work.id);
+                              const fullWork = worksSearch.find((o: WorkWithRelations) => o.id === work.id);
                               if (fullWork) {
                                 const composersStr =
                                   composersToString(fullWork.composer_names) ||
@@ -706,7 +706,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                 // of an unfiltered useProjetos(), truncated at 50 per tenant).
                                 let sessionMusicians: PhonogramParticipant[] = [];
                                 if ((fullWork.project_id as string | null | undefined)) {
-                                  const project = await storage.findById<ProjetoWithRelations>("projects", fullWork.project_id as string);
+                                  const project = await storage.findById<ProjectWithRelations>("projects", fullWork.project_id as string);
                                   if (project) {
                                     const normT = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
                                     const sameTitle = (name: string) => normT(name) === normT(fullWork.title || "") || normT(name) === normT(work.title || "");

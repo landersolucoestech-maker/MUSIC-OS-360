@@ -104,5 +104,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-048 | Transaction category/subcategory slug vocabulary (platform-owned options) | done | DONE | no |
 | NC-049 | Lead interaction timestamp | done | DONE | no |
 
-Concepts: 97. Renames: 0. Exceptions: 4027. Blockers: 29.
+Concepts: 97. Renames: 0. Exceptions: 4033. Blockers: 29.
 By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, done/DONE 85, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

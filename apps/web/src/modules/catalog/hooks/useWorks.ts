@@ -4,7 +4,7 @@ import { emit, DomainEvents } from "@/shared/domain-events";
 import { useTenant } from "@/app/providers/TenantContext";
 import type { Work, WorkInsert, WorkUpdate, WorkWithRelations } from "../types/catalog.types";
 
-export type { Work as Obra, WorkInsert as ObraInsert, WorkUpdate as ObraUpdate, WorkWithRelations as ObraWithRelations };
+export type { Work, WorkInsert, WorkUpdate, WorkWithRelations };
 
 export function useWorks(enabled = true, artistId?: string) {
   const { tenant } = useTenant();

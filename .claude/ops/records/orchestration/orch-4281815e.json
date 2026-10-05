@@ -1,0 +1,859 @@
+{
+  "order": "MUSIC OS 360 technical normalization verification mission: reconstruct the baseline, build the canonical technical vocabulary and domain model (preserving Project/Work/Phonogram/Release/ReleaseTrack/Distribution distinctions), global independent residue and negative-proof audit, reclassify every compatibility boundary (behaviorally proven, compiler proven, binding only, exempt, unproven), re-evaluate the 12 wiring exemptions, mutation-test the naming gate itself, cross-layer and documentation divergence audit, quantitative before-after report, independent adversarial semantic review, final gates; no destructive approval, no functional rebuild, no product decisions",
+  "title": "MUSIC OS 360 technical normalization verification mission: reconstruct the basel",
+  "workflow": "naming-normalization",
+  "intent": null,
+  "status": "ACTIVE",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-05T06:29:44.464Z",
+  "tasks": [
+    {
+      "id": "census",
+      "title": "census",
+      "objective": "Phase \"census\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: repo-inspector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "repository-census"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "n1-baseline",
+        "n2-residue-data-backend",
+        "n3-residue-api-frontend",
+        "n4-residue-tests-tooling-docs",
+        "n5-domain-model"
+      ],
+      "acceptance": [
+        "evidence recorded: census-report"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-6477a661",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-bf24fcf3"
+      ],
+      "result": "completed",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "classify",
+      "title": "classify",
+      "objective": "Phase \"classify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: duplication-detector, dead-code-detector.",
+      "agent": "naming-analyzer",
+      "skills": [
+        "naming-analysis",
+        "duplication-analysis",
+        "dead-code-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "n7-uncovered-names"
+      ],
+      "acceptance": [
+        "evidence recorded: classification-record"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "READY",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "canonical-model",
+      "title": "canonical-model",
+      "objective": "Phase \"canonical-model\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: domain-boundary-guardian.",
+      "agent": "naming-reviewer",
+      "skills": [
+        "canonical-naming"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "classify",
+        "p4-invoices-design",
+        "p5-musicchat-vocab",
+        "p6-crosslayer-enums"
+      ],
+      "acceptance": [
+        "evidence recorded: canonical-map-update"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model"
+    },
+    {
+      "id": "schema-plan",
+      "title": "schema-plan",
+      "objective": "Phase \"schema-plan\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: database-reviewer, rollback-planner.",
+      "agent": "migration-planner",
+      "skills": [
+        "migration-audit",
+        "destructive-change-check"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model"
+      ],
+      "acceptance": [
+        "evidence recorded: migration-plan",
+        "evidence recorded: rollback-plan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "schema-plan"
+    },
+    {
+      "id": "destructive-approval",
+      "title": "destructive-approval",
+      "objective": "Phase \"destructive-approval\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: approval-router.",
+      "agent": "human-approval-agent",
+      "skills": [
+        "evaluate-human-approval",
+        "request-human-approval"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "schema-plan"
+      ],
+      "acceptance": [
+        "evidence recorded: approval-record",
+        "a recorded human approval of this phase"
+      ],
+      "gates": [],
+      "approvalClass": "human-approval",
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "destructive-approval"
+    },
+    {
+      "id": "propagate",
+      "title": "propagate",
+      "objective": "Phase \"propagate\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: refactoring-engineer.",
+      "agent": "implementation-engineer",
+      "skills": [
+        "safe-refactor",
+        "schema-normalization"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-model",
+        "schema-plan",
+        "p1-web-fixes",
+        "p2-api-fixes",
+        "p3-docs-corrections",
+        "w1-types-api",
+        "w2-musicchat",
+        "w3-marketing-web",
+        "w4-audiovisual-web",
+        "w5-invoices-api",
+        "w6-rbac-reports"
+      ],
+      "acceptance": [
+        "evidence recorded: change-set-record"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "compatibility",
+      "title": "compatibility",
+      "objective": "Phase \"compatibility\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: contract-test-engineer.",
+      "agent": "qa-engineer",
+      "skills": [
+        "create-contract-tests",
+        "create-regression-tests"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "propagate",
+        "n6-gate-mutation"
+      ],
+      "acceptance": [
+        "evidence recorded: compatibility-test-run"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "verify",
+      "title": "verify",
+      "objective": "Phase \"verify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: verification-controller.",
+      "agent": "migration-test-engineer",
+      "skills": [
+        "create-migration-tests",
+        "run-unit-tests",
+        "run-typecheck"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "compatibility"
+      ],
+      "acceptance": [
+        "evidence recorded: after-test-run",
+        "evidence recorded: migration-verification"
+      ],
+      "gates": [
+        "global"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "verify"
+    },
+    {
+      "id": "residue",
+      "title": "residue",
+      "objective": "Phase \"residue\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: orphan-detector.",
+      "agent": "dead-code-detector",
+      "skills": [
+        "residue-search",
+        "orphan-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "verify"
+      ],
+      "acceptance": [
+        "evidence recorded: residue-scan"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "residue"
+    },
+    {
+      "id": "review",
+      "title": "review",
+      "objective": "Phase \"review\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: regression-reviewer.",
+      "agent": "security-reviewer",
+      "skills": [
+        "security-audit",
+        "diff-review",
+        "blast-radius-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "residue"
+      ],
+      "acceptance": [
+        "evidence recorded: security-verdict",
+        "evidence recorded: regression-verdict"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "review"
+    },
+    {
+      "id": "closure",
+      "title": "closure",
+      "objective": "Phase \"closure\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: completion-controller.",
+      "agent": "git-auditor",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "review"
+      ],
+      "acceptance": [
+        "evidence recorded: gate-results",
+        "evidence recorded: final-report"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "closure"
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "census",
+        "classify",
+        "canonical-model",
+        "schema-plan",
+        "destructive-approval",
+        "propagate",
+        "compatibility",
+        "verify",
+        "residue",
+        "review",
+        "closure"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    },
+    {
+      "id": "n1-baseline",
+      "title": "n1-baseline",
+      "objective": "Reconstruct the real baseline SHA of the technical normalization from Git history, ledger and reports; justify BASELINE_SHA and BASELINE_REASON without choosing a convenient one",
+      "agent": "repo-investigator",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-4ae39b74",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-b20c43c8"
+      ],
+      "result": "n1 baseline: PASS_WITH_FINDINGS. Claimed baseline 02f1ee8a not verifiable in the shallow clone (88 commits); after git fetch --unshallow (2022 commits) the first PT->EN rename commit is 986739c6 (2026-09-05, artista_id->artist_id) so BASELINE_SHA=56b55c46f35d92cabdd8a98bebf7fdfe3a9c1cac (its parent, 2026-09-05 13:44 -0300); FINAL_PRODUCT_SHA candidate 2f9ac0a, head d7a98fe.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "n2-residue-data-backend",
+      "title": "n2-residue-data-backend",
+      "objective": "Independent residue scan (not census/ledger-based) of database, entities, migrations (read only), DTOs, services, repositories, controllers, events, queues, workers for legacy names, mixed PT/EN technical identifiers, synonyms and canonical-first violations",
+      "agent": "naming-analyzer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-e8ba6936",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-968b077b"
+      ],
+      "result": "n2 data/backend independent residue scan: PASS_WITH_FINDINGS. 1023 production files, 132 entities / 2173 columns scanned; entities, files, queues, events, env keys clean; NOT_NORMALIZED items found (invoices tipo_nota/legacy_amount/prestador_id/tomador_*, MusicChat PT queue/sector/tags, seed gravacao, periodo query param, campaigns start_date vs starts_at, swagger example, ticket event names) and undeclared boundaries D1-D3 recorded for remediation.",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "n3-residue-api-frontend",
+      "title": "n3-residue-api-frontend",
+      "objective": "Independent residue scan of API contracts, routes, shared types, frontend routes, components, hooks, stores, forms, query/cache keys, storage keys and the wire adapters between web and API",
+      "agent": "naming-analyzer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-da584387",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-48e55efa"
+      ],
+      "result": "n3 PASS_WITH_FINDINGS; findings carried to the defect register",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "n4-residue-tests-tooling-docs",
+      "title": "n4-residue-tests-tooling-docs",
+      "objective": "Independent residue scan of test fixtures, mocks, factories, seeds, scripts, CI, env contract, tooling and current technical documentation versus the implementation",
+      "agent": "naming-analyzer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-829f92b7",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-e80215d6"
+      ],
+      "result": "n4 investigation complete; findings registered for remediation",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "n5-domain-model",
+      "title": "n5-domain-model",
+      "objective": "Prove the canonical domain model preserves Project, ProjectTrack, Work, Phonogram, Release, ReleaseTrack, Distribution and the three contract kinds as distinct concepts across database, backend, API, frontend; find other conceptual collisions",
+      "agent": "domain-boundary-guardian",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-0a06dc9c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-aa3d9496"
+      ],
+      "result": "n5 domain model: PASS_WITH_FINDINGS. Project/ProjectTrack/Work/Phonogram/Release/ReleaseTrack/Distribution/contract kinds are structurally distinct in db, backend, api, web; 17 api suites 421 tests and 6 web files 38 tests pass; findings T1-T12 technically deducible and O1-O6 owner decisions (no ReleaseTrack/Distribution aggregate tables, shares conflation, contract kind not tied to aggregate).",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "census"
+    },
+    {
+      "id": "n6-gate-mutation",
+      "title": "n6-gate-mutation",
+      "objective": "Mutation-test the naming gate itself: temporarily inject representative forbidden naming into a sandbox copy for each layer category and prove the gate fails; report gaps",
+      "agent": "qa-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-3bec239b",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "compatibility"
+    },
+    {
+      "id": "n7-uncovered-names",
+      "title": "n7-uncovered-names",
+      "objective": "Adjudicate 96 legacy names that tests use as fixtures and that also occur in production files without a ledger row: UI text vs technical residue vs missing boundary row",
+      "agent": "naming-analyzer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-6df49115",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-8600cb3b"
+      ],
+      "result": "n7 adjudication complete",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "classify"
+    },
+    {
+      "id": "p1-web-fixes",
+      "title": "p1-web-fixes",
+      "objective": "Fix web naming defects found by the independent scans (type aliases, data field, discriminator values, dead role options, stale comments, dead readers, display type rename)",
+      "agent": "frontend-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-b5f5b467",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-338b5f4c"
+      ],
+      "result": "p1 web fixes done",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p2-api-fixes",
+      "title": "p2-api-fixes",
+      "objective": "Fix API/tooling naming defects found by the independent scans (seed legacy values, verify script fixtures, db-ops messages, swagger examples/text, periodo query alias, USE_MOCK)",
+      "agent": "backend-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-6e43a178",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-a2048cfb",
+        "evid-38c85bd0"
+      ],
+      "result": "p2 done; owner/compat items recorded",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p3-docs-corrections",
+      "title": "p3-docs-corrections",
+      "objective": "Correct current technical docs that contradict the code and reclassify superseded docs as frozen historical records",
+      "agent": "implementation-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-419db632",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-27802fc1",
+        "evid-4aea838b",
+        "evid-a10772c7"
+      ],
+      "result": "p3 docs corrections and reclassification done",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "p4-invoices-design",
+      "title": "p4-invoices-design",
+      "objective": "Design the canonical naming resolution for the invoices residues (type/tipo_nota dual write, legacy_amount, prestador_id, tomador_*, url_pdf/file_url, due_date/due_at, TIPO_OPERACAO marker): separate technically deducible parts from owner decisions and destructive dependencies",
+      "agent": "data-architecture-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-9d6c780c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-db6547e1"
+      ],
+      "result": "p4 design delivered",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model"
+    },
+    {
+      "id": "p5-musicchat-vocab",
+      "title": "p5-musicchat-vocab",
+      "objective": "Design the canonical resolution of MusicChat queue/sector/tags Portuguese persisted values (slice R3-03), the uppercase PT membership classification enums and the marketing vocabulary divergences",
+      "agent": "api-architecture-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-3f840044",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-e299845f"
+      ],
+      "result": "p5 design delivered",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model"
+    },
+    {
+      "id": "p6-crosslayer-enums",
+      "title": "p6-crosslayer-enums",
+      "objective": "Design the single-source resolution of the cross-layer enum/vocabulary divergences found by n3 (marketing project type, approval status, enum case, priority scales, provider spellings, artist mapper, signup categories, storage/query keys)",
+      "agent": "frontend-architecture-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-0d43ad8f",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-c68ab86a"
+      ],
+      "result": "p6 design delivered",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-model"
+    },
+    {
+      "id": "w1-types-api",
+      "title": "w1-types-api",
+      "objective": "Wave 2a: packages/types shared vocabularies (priorities, providers, accounting vocabulary, artist team categories, PT-BR labels) and API consumers of priorities/providers",
+      "agent": "implementation-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-3a94ea85",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w2-musicchat",
+      "title": "w2-musicchat",
+      "objective": "Wave 2a: MusicChat canonical routing keys end to end (API vocabulary/DTO/service, additive migration, verify script, web labels and fallbacks)",
+      "agent": "implementation-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-bc75b3f0",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w3-marketing-web",
+      "title": "w3-marketing-web",
+      "objective": "Wave 2a: web marketing status draft/archived round trip (C1)",
+      "agent": "frontend-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-652bee2c",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-644ae215"
+      ],
+      "result": "w3 done",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w4-audiovisual-web",
+      "title": "w4-audiovisual-web",
+      "objective": "Wave 2a: web audiovisual approval decision type split (C2)",
+      "agent": "frontend-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-2a3c07de",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-2b2b0051"
+      ],
+      "result": "w4 done",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w5-invoices-api",
+      "title": "w5-invoices-api",
+      "objective": "Wave 2a: invoices canonical naming slices that need no migration (legacy_amount alias, url_pdf to file_url alias+mirror, tomador read, due_date/due_at guard) API + web invoices",
+      "agent": "implementation-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-9dfba81f",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    },
+    {
+      "id": "w6-rbac-reports",
+      "title": "w6-rbac-reports",
+      "objective": "Wave 2a: RBAC classification enums renamed with dual log field (B1) and report hidden-column hint cleanup (D1)",
+      "agent": "backend-engineer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "COMPLETED",
+      "attempts": 0,
+      "delegationId": "dele-12473452",
+      "approvalId": null,
+      "evidenceRefs": [
+        "evid-72bfa2ac"
+      ],
+      "result": "w6 done; security review in the review phase",
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "propagate"
+    }
+  ],
+  "missionId": "mission-c83f8d58",
+  "requireWorkflow": true,
+  "id": "orch-4281815e",
+  "createdAt": "2026-10-05T01:16:17.407Z",
+  "workflowInstanceId": "work-de9faff1"
+}

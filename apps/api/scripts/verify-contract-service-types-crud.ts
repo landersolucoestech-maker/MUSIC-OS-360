@@ -114,7 +114,7 @@ async function main(): Promise<void> {
     await setTenant(client, tenantA);
     await client.query(
       `INSERT INTO contract_service_types (id, tenant_id, name, slug, client_types, financial_model)
-       VALUES ($1, $2, 'Distribuição Teste', 'distribuicao_teste', '["artista"]'::jsonb, 'valor_fixo')`,
+       VALUES ($1, $2, 'Distribuição Teste', 'distribution_test', '["artist"]'::jsonb, 'fixed_value')`,
       [cstA, tenantA],
     );
     await client.query('COMMIT');
@@ -137,7 +137,7 @@ async function main(): Promise<void> {
     try {
       await client.query(
         `INSERT INTO contract_service_types (id, tenant_id, name, slug, client_types, financial_model)
-         VALUES ($1, $2, 'Duplicado', 'distribuicao_teste', '["artista"]'::jsonb, 'valor_fixo')`,
+         VALUES ($1, $2, 'Duplicado', 'distribution_test', '["artist"]'::jsonb, 'fixed_value')`,
         [randomUUID(), tenantA],
       );
     } catch {
@@ -152,7 +152,7 @@ async function main(): Promise<void> {
     await setTenant(client, tenantB);
     await client.query(
       `INSERT INTO contract_service_types (id, tenant_id, name, slug, client_types, financial_model)
-       VALUES ($1, $2, 'Distribuição Teste B', 'distribuicao_teste', '["artista"]'::jsonb, 'valor_fixo')`,
+       VALUES ($1, $2, 'Distribuição Teste B', 'distribution_test', '["artist"]'::jsonb, 'fixed_value')`,
       [cstB, tenantB],
     );
     await client.query('COMMIT');

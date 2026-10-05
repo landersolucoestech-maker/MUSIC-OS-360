@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "frontend-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "w4 audiovisual: ApprovalDecisionStatus (exactly the 4 API decision values) used by approvals.decide/list/hook, project-level ApprovalStatus unchanged (owner decision on 'Em Revisão' pending), PT-BR label for revision_requested, 4 new tests; web typecheck clean; audiovisual vitest 9/9.",
+  "workspaceFingerprint": "aaf1987ac4c9c90279fb1fc8b493c05ae651666537b77558fb3128d63ef5b691",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-2b2b0051",
+  "createdAt": "2026-10-05T01:45:17.865Z"
+}

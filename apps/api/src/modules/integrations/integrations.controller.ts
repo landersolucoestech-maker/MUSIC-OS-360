@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService }              from '@nestjs/config';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { randomUUID }    from 'crypto';
 import { plainToInstance } from 'class-transformer';
 import { validate }      from 'class-validator';
@@ -39,19 +39,16 @@ import {
   OAuthExchangeDto,
   RegisterAbramusWorkDto,
   ABRAMUS_WORK_DEPRECATED_FIELDS,
+  ABRAMUS_STATEMENTS_DEPRECATED_QUERY,
   ConfigureSoundCloudDto,
   OAuthCodeStateDto,
   AutentiqueWebhookDto,
 } from './dto/integrations.dto';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
+import { GENERIC_OAUTH_PROVIDER_IDS } from '@music-os-360/types';
 import { integrationNotConfigured } from '../../core/errors/integration-not-configured';
 
-const GENERIC_OAUTH_PLATFORMS = new Set([
-  'corp_instagram', 'meta_business', 'meta_ads',
-  'corp_tiktok', 'tiktok_business', 'tiktok_ads',
-  'corp_youtube', 'youtube_business', 'google_business', 'google_ads', 'youtube_ads',
-  'docusign', 'stripe_connect',
-]);
+const GENERIC_OAUTH_PLATFORMS = new Set<string>(GENERIC_OAUTH_PROVIDER_IDS);
 
 const OAUTH_PROVIDER_ALIASES: Readonly<Record<string, string>> = {
   corp_spotify: 'spotify',
@@ -406,7 +403,7 @@ export class IntegrationsController {
   }
 
   private resolveOAuthProvider(platform: string): string {
-    const alias = OAUTH_PROVIDER_ALIASES[platform];
+    const alias = Object.prototype.hasOwnProperty.call(OAUTH_PROVIDER_ALIASES, platform) ? OAUTH_PROVIDER_ALIASES[platform] : undefined;
     if (alias) return alias;
     if (!GENERIC_OAUTH_PLATFORMS.has(platform)) {
       throw new BadRequestException(`Plataforma OAuth não suportada: ${platform}`);
@@ -554,7 +551,7 @@ export class IntegrationsController {
   @Get('spotify/callback')
   @Public()
   @Redirect()
-  @ApiOperation({ summary: 'Callback OAuth Spotify (redirect do Spotify)' })
+  @ApiOperation({ summary: 'Spotify OAuth callback (redirect from Spotify)' })
   async spotifyCallbackGet(@Query('code') code: string, @Query('state') state: string) {
     const frontendUrl = process.env['FRONTEND_URL'] ?? 'http://localhost:5000';
     try {
@@ -1079,11 +1076,16 @@ export class IntegrationsController {
   @Get('abramus/statements')
   @RequireRole('manager')
   @ApiOperation({ summary: 'Copyright statements in Abramus (manager+)' })
+  @ApiQuery({ name: 'period', required: false, example: '2026-01' })
+  @ApiQuery({ name: 'periodo', required: false, deprecated: true, description: 'Use "period".' })
   abramusStatements(
     @Request() req: any,
-    @Query('periodo') periodo?: string,
+    @Query('period') period?: string,
+    @Query('periodo') legacyPeriod?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.abramus.getStatements(req.tenant?.id ?? req.tenantId, periodo, limit ? +limit : 20);
+    // Deprecated `periodo` is folded into canonical `period` (canonical wins).
+    const query = applyDeprecatedFieldAliases({ period, periodo: legacyPeriod }, ABRAMUS_STATEMENTS_DEPRECATED_QUERY);
+    return this.abramus.getStatements(req.tenant?.id ?? req.tenantId, query.period, limit ? +limit : 20);
   }
 }

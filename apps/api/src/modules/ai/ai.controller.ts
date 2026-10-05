@@ -50,7 +50,7 @@ export class AIController {
   }
 
   @Post('generate')
-  @ApiOperation({ summary: 'Alias de /complete para o frontend (useAI hook)' })
+  @ApiOperation({ summary: 'Alias of /complete for the frontend (useAI hook)' })
   @HttpCode(HttpStatus.OK)
   async generate(
     @Request() req: any,

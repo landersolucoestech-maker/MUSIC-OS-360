@@ -1,0 +1,9 @@
+{
+  "agent": "backend-engineer",
+  "objective": "Wave 2a: RBAC classification enums renamed with dual log field (B1) and report hidden-column hint cleanup (D1)",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-12473452",
+  "createdAt": "2026-10-05T01:41:54.442Z"
+}

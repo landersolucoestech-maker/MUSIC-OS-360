@@ -1,0 +1,9 @@
+{
+  "agent": "implementation-engineer",
+  "objective": "Correct current technical docs that contradict the code and reclassify superseded docs as frozen historical records",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-419db632",
+  "createdAt": "2026-10-05T01:30:11.112Z"
+}

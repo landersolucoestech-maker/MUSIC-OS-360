@@ -88,8 +88,9 @@ export class AbramusService extends IntegrationBaseService {
     return this.request(tenantId, '/api/v1/works', { method: 'POST', body: JSON.stringify(externalBody) });
   }
 
-  async getStatements(tenantId: string, periodo?: string, limit = 20) {
-    const qs = new URLSearchParams({ limit: String(limit), ...(periodo ? { periodo } : {}) });
+  async getStatements(tenantId: string, period?: string, limit = 20) {
+    // The Abramus external contract names this query parameter `periodo`.
+    const qs = new URLSearchParams({ limit: String(limit), ...(period ? { periodo: period } : {}) });
     return this.request(tenantId, `/api/v1/statements?${qs}`);
   }
 }

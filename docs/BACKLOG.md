@@ -8,7 +8,7 @@ health of the last call) and exposed as `ExternalProviderStatus`
 (`dependency_not_met` / `available_not_connected` / `connected` / `requires_reauth` /
 `provider_error`) in `@music-os-360/types`.
 
-- Catalog: `apps/api/src/modules/integrations/governance/external-providers.catalog.ts`.
+- Sources: `apps/api/src/modules/integrations/governance/integration-capability.registry.ts` (technical capability derived from the code) and `integration-policy.service.ts` (policy resolved from the persisted `platform_integrations` governance), exposed by `GET /integrations/providers`. The former `external-providers.catalog.ts` file no longer exists.
 - It is **not** a catalog of platform features nor feature flags. Internal modules and
   infrastructure (internal AI, PostHog/Sentry, BullMQ/jobs, storage/uploads, internal finance/CRM/
   tickets/projects, OAuth infra) are explicitly out — a test locks this.
@@ -25,7 +25,7 @@ health of the last call) and exposed as `ExternalProviderStatus`
 
 Audited on: 2026-05-20 (groups/priorities preserved; see the provenance note below).
 
-> **Rule**: implement each item as a new branch from `dev`, going through the normal PR checklist. None of these items has recoverable source code today — they are feature ideas to be reimplemented from scratch.
+> **Rule**: implement each item on `dev` (the only branch, see `CLAUDE.md` and `docs/engineering/git-safety.md`), going through the normal PR checklist. None of these items has recoverable source code today — they are feature ideas to be reimplemented from scratch.
 
 > **Provenance note**: this list originally documented a set of agent-session branches (an old development flow) that no longer exist — neither locally nor on the remote. There are no commits to recover or port; the identifiers of those branches were replaced by neutral sequential IDs (`BACKLOG-NNN`). The content of each item (the feature idea) is preserved below.
 
@@ -85,7 +85,7 @@ is real — exposing a selectable provider that does not deliver would be fabric
 | `BACKLOG-007` | Filter by ECAD status in the works list (handle empty/whitespace) |
 | `BACKLOG-008` | Bulk filling of ECAD codes with error handling |
 
-**What to do**: Create the `feat/ecad-catalog-enhancements` branch from `dev`.
+**What to do**: implement it on `dev`.
 
 ---
 
@@ -100,7 +100,7 @@ is real — exposing a selectable provider that does not deliver would be fabric
 | `BACKLOG-011` | Filter by date, artist and XLSX export in the performances table |
 | `BACKLOG-012` | Automated tests: detail modal + catalog lookup |
 
-**What to do**: Create the `feat/rights-monitoring-v2` branch from `dev`.
+**What to do**: implement it on `dev`.
 
 ---
 
@@ -130,7 +130,7 @@ those credentials).
 | `BACKLOG-015` | Artist signup form: multiple distributors |
 | `BACKLOG-016` | Show only the filled-in distributors in the step 3 summary |
 
-**What to do**: Create the `feat/artist-signup-distribuidoras` branch from `dev`.
+**What to do**: implement it on `dev`.
 
 ---
 
@@ -143,7 +143,7 @@ those credentials).
 | `BACKLOG-017` | Clear legacy credential keys from sessionStorage/localStorage at startup |
 | `BACKLOG-018` | Versioned migration system for cleaning browser storage (#658) |
 
-**What to do**: Create the `feat/storage-cleanup-migration` branch from `dev`. Evaluate compatibility with the removal of MOCK_MODE (Phase 2 of the roadmap).
+**What to do**: implement it on `dev`. `MOCK_MODE` was already removed from the code (locked by `apps/api/src/core/config/auth-disabled-env.spec.ts`), so there is no compatibility concern with it.
 
 ---
 
@@ -153,9 +153,9 @@ those credentials).
 
 | ID | Feature |
 |----|---------|
-| `BACKLOG-019` | Server-side Zod validation for the POST, PUT and PATCH endpoints of transactions + documentation |
+| `BACKLOG-019` | Server-side validation for the POST, PUT and PATCH endpoints of transactions + documentation (the backend validates with class-validator DTOs, see `docs/engineering/backend.md`; the original Zod proposal is superseded) |
 
-**What to do**: Create the `feat/zod-server-validation` branch from `dev`. Larger scope — review carefully before implementing.
+**What to do**: implement it on `dev`. Larger scope — review carefully before implementing.
 
 ---
 
@@ -167,7 +167,7 @@ those credentials).
 |----|---------|
 | `BACKLOG-020` | Unit tests for the transaction form business rules + test scripts in the web app |
 
-**What to do**: Create the `feat/frontend-unit-tests` branch from `dev`.
+**What to do**: implement it on `dev`.
 
 ---
 
@@ -177,9 +177,9 @@ those credentials).
 
 | ID | Feature |
 |----|---------|
-| `BACKLOG-021` | NotaFiscalFormModal: modular architecture |
+| `BACKLOG-021` | Invoice-note form modal: modular architecture (the original component name no longer exists in `apps/web/src`) |
 
-**What to do**: Create the `feat/nota-fiscal-modal-refactor` branch from `dev`.
+**What to do**: implement it on `dev`.
 
 ---
 
@@ -191,7 +191,7 @@ those credentials).
 |----|---------|
 | `BACKLOG-022` | CalendarCards with real engagement stats of publications |
 
-**What to do**: Create the `feat/calendar-engagement-stats` branch from `dev`.
+**What to do**: implement it on `dev`.
 
 ---
 
@@ -223,9 +223,9 @@ those credentials).
 
 | ID | Group | Priority | Status |
 |----|-------|-----------|--------|
-| BACKLOG-001 | Contract Signing | High | Obsolete (verified 2026-08-23 — see Group 1) |
+| BACKLOG-001 | Contract Signing | High | Active: Clicksign dialog restored, awaiting backend (see Group 1) |
 | BACKLOG-002 | Contract Signing | High | Re-evaluate for Autentique (verified 2026-08-23) |
-| BACKLOG-003 | Contract Signing | High | Obsolete (verified 2026-08-23 — see Group 1) |
+| BACKLOG-003 | Contract Signing | High | DocuSign done; Clicksign pending (see Group 1) |
 | BACKLOG-019 | Zod Validation | High | Backlog |
 | BACKLOG-020 | Frontend Tests | High | Backlog |
 | BACKLOG-012 | Rights Monitoring | High | Backlog |

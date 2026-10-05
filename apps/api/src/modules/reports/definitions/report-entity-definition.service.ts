@@ -10,7 +10,8 @@ import {
 
 const JSON_TYPES = new Set(['json', 'jsonb', 'simple-json', 'simple-array']);
 const BLOB_NAME_HINT = /(^|_)(html|raw|payload|snapshot|dump|debug|xml)(_|$)/i;
-const HIDDEN_INTERNAL_HINT = /^(notas?_internas?|observacoes?_internas?|comentarios?_internos?|internal_notes)$/i;
+/** Deny-list: internal-notes style columns are never exposed by reports (English forms only; the legacy Portuguese columns were renamed). */
+export const HIDDEN_INTERNAL_HINT = /^(internal_notes?|internal_comments?|internal_observations?)$/i;
 
 function isInternalColumn(c: ColumnMeta): boolean {
   return (
@@ -27,7 +28,7 @@ function isSensitiveColumn(c: ColumnMeta): boolean {
 
 const DATE_TYPES = new Set(['timestamp', 'timestamptz', 'date', 'datetime', 'Date']);
 const NUMERIC_TYPES = new Set(['int', 'integer', 'numeric', 'decimal', 'float', 'bigint', 'Number', 'real', 'double precision']);
-const FILTERABLE_HINTS = /^(status|situacao|categoria|category|type|type|kind|stage|prioridade|priority|active|ativo|is_active|published|approved|archived)$/;
+const FILTERABLE_HINTS = /^(status|category|type|kind|stage|priority|active|is_active|published|approved|archived)$/;
 
 /**
  * Row-level exclusions for tables that are dual-purpose at the physical-table

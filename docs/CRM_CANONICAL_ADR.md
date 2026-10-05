@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed for a future phase.
+Partially decided in code: Contact = Client. `contacts` and `clients` are the same physical entity (the `clients` table); `ContactsService` is a facade over `ClientsService` (`apps/api/src/modules/contacts/contacts.service.ts`) and new code uses `/clients`. The remaining entities below stay proposed for a future phase.
 
 ## Decision
 
@@ -10,7 +10,7 @@ Do not create a new CRM in Phase 0. The current `clients`, `leads` and `lead-int
 
 ## Future entities
 
-- contacts
+- contacts (decided: the existing `clients` table, no separate table)
 - companies
 - artists
 - opportunities

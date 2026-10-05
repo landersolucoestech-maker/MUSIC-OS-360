@@ -17,8 +17,6 @@ import {
 } from "lucide-react";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonograms";
-import { participantNames } from "@/modules/catalog/lib/phonogram-participants";
 import { useShares } from "@/modules/releases/hooks/useShares";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import { StatusBadge } from "@/shared/components/StatusBadge";
@@ -122,29 +120,8 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     open,
   );
 
-  // Track fallback (only used when metadata.faixas is empty — old
-  // releases) and artist names per linked share — resolved directly by ID
-  // via storage.findById, never scanning usePhonograms()/
-  // useArtistas() without a filter (Task J).
-  const phonogramIds = useMemo(
-    () => (Array.isArray(release?.phonogram_ids) ? (release!.phonogram_ids as string[]) : []),
-    [release],
-  );
-  const [resolvedPhonograms, setResolvedPhonograms] = useState<Record<string, FonogramaWithRelations>>({});
-  useEffect(() => {
-    if (!open || phonogramIds.length === 0) return;
-    let cancelled = false;
-    Promise.all(phonogramIds.map((id) => storage.findById<FonogramaWithRelations & { id: string }>("phonograms", id)))
-      .then((results) => {
-        if (cancelled) return;
-        const map: Record<string, FonogramaWithRelations> = {};
-        results.forEach((f, i) => { if (f) map[phonogramIds[i]] = f; });
-        setResolvedPhonograms(map);
-      })
-      .catch((err: unknown) => captureError(err instanceof Error ? err : new Error(String(err)), { extra: { source: "ReleaseViewModal.resolvePhonograms" } }));
-    return () => { cancelled = true; };
-  }, [open, phonogramIds]);
-
+  // Artist names per linked share — resolved directly by ID via storage.findById,
+  // never scanning useArtistas() without a filter (Task J).
   const shareArtistIds = useMemo(
     () => Array.from(new Set(shares.filter((s) => (s as Record<string, unknown>)["release_id"] === release?.id && s.artist_id).map((s) => s.artist_id as string))),
     [shares, release?.id],
@@ -183,15 +160,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   const formattedReleaseDate = formatReleaseDate(release.release_date);
   const languageLabel = releaseLanguageLabel(release.language);
 
-  // Catalog tracks are phonograms: credits come from the structured `participation`.
-  const catalogTracks = phonogramIds
-    .map((id) => resolvedPhonograms[id])
-    .filter(Boolean)
-    .map((phonogram) => ({
-      performers: participantNames(phonogram, "performers"),
-      producers: participantNames(phonogram, "phonographic_producers"),
-    }));
-  const tracks = trackMetadata.length > 0 ? trackMetadata : catalogTracks;
+  const tracks = trackMetadata;
   const composers = aggregateField(tracks, "composers");
   const performers = aggregateField(tracks, "performers");
   const producers = aggregateField(tracks, "producers");

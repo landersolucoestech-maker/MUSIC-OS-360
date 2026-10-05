@@ -59,8 +59,6 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2) tomador_uf?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(10) tomador_cep?: string;
 
-  /** Legacy column still used by events and old screens; mirrors service_amount. */
-  @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) legacy_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) service_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) deductions_amount?: number;
   @ApiPropertyOptional() @IsOptional() @IsNumber() @Min(0) @Type(() => Number) base_calculo?: number;
@@ -77,7 +75,7 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional({ enum: [...INVOICE_PAYMENT_METHODS], description: 'Canonical payment method (same vocabulary as transactions, plus bank_transfer). Deprecated Portuguese values (dinheiro, cartao_credito, cartao_debito, cheque, transferencia) are accepted and mapped; membership is enforced by InvoicesService.' })
   @IsOptional() @IsString() @MaxLength(100) payment_method?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(200) payment_terms?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(1000) url_pdf?: string;
+  @ApiPropertyOptional({ description: 'Document (PDF) URL of the fiscal invoice.' }) @IsOptional() @IsString() @MaxLength(1000) file_url?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(2000) notes?: string;
 
   @ApiPropertyOptional({ type: [InvoiceItemDto] })
@@ -94,6 +92,8 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional({ deprecated: true, description: 'Use "tomador_legal_name".' }) @IsOptional() @IsString() @MaxLength(200) tomador_razao_social?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "payment_method".' }) @IsOptional() @IsString() @MaxLength(100) forma_pagamento?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "payment_terms".' }) @IsOptional() @IsString() @MaxLength(200) condicao_pagamento?: string;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "service_amount".' }) @IsOptional() @IsNumber() @Min(0) @Type(() => Number) legacy_amount?: number;
+  @ApiPropertyOptional({ deprecated: true, description: 'Use "file_url".' }) @IsOptional() @IsString() @MaxLength(1000) url_pdf?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "items".', type: [InvoiceItemDto] })
   @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => InvoiceItemDto)
   itens?: InvoiceItemDto[];

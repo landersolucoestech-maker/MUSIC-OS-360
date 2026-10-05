@@ -275,15 +275,15 @@ export function counters(rows) {
   return c;
 }
 
-function loadMutation() {
+export function loadMutation() {
   return fs.existsSync(MUTATION_FILE) ? JSON.parse(fs.readFileSync(MUTATION_FILE, "utf8")) : { results: [] };
 }
-const readRepo = (p) => { const f = path.join(ROOT, p); return fs.existsSync(f) && fs.statSync(f).isFile() ? fs.readFileSync(f, "utf8") : null; };
+export const readRepo = (p) => { const f = path.join(ROOT, p); return fs.existsSync(f) && fs.statSync(f).isFile() ? fs.readFileSync(f, "utf8") : null; };
 
 const tsvCell = (s) => String(s ?? "").replace(/[\t\r\n]+/g, " ").trim();
 
 /** Recomputes, from the current source text, the mutation sites and the census of a pair exactly as the harness does (dynamic import: the harness imports this module). */
-async function buildOracle(map) {
+export async function buildOracle(map) {
   const proof = await import("./compat-mutation-proof.mjs");
   const { ptWords } = await import("./pt-lexicon.mjs");
   const wildcard = proof.makeWildcardPredicate(ptWords);

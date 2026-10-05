@@ -17,7 +17,7 @@ import { formatDate, formatCurrency } from "@/shared/lib/format-utils";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useReleases } from "@/modules/releases/hooks/useReleases";
-import type { ObraWithRelations } from "@/modules/catalog/hooks/useWorks";
+import type { WorkWithRelations } from "@/modules/catalog/hooks/useWorks";
 import { useEntityById } from "@/shared/hooks/useEntityLookup";
 import {
   resolveShareType,
@@ -67,7 +67,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
   // DIRECT resolution by ID (GET /works/:id, GET /artists/:id) — does not depend
   // on the work/artist being among the first 50 loaded by
   // useWorks()/useArtistas() without a filter (Task J).
-  const { entity: linkedWork } = useEntityById<ObraWithRelations>("works", open ? str("work_id") || undefined : undefined);
+  const { entity: linkedWork } = useEntityById<WorkWithRelations>("works", open ? str("work_id") || undefined : undefined);
   const { entity: artistResolvedWire } = useEntityById<ArtistWireRecord>("artists", open ? share?.artist_id ?? undefined : undefined);
   const artistResolved: Artist | undefined = artistResolvedWire ? wireToArtist(artistResolvedWire) : undefined;
   const linkedArtistId = share?.artist_id || undefined;

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "n4 tests/tooling/docs independent residue scan delivered (reviewer verdict FAIL on the repository state, recorded as findings for remediation): seeds/scripts writing legacy values (F1-F4), env/CI clean (USE_MOCK alias outside ledger), 14 current docs contradict code (~70 wrong claims), ~130 docs should be HISTORICAL_RECORD or corrected, census markdown blind spot (backtick spans and fenced blocks not scanned), .claude naming rule points at generated files as authored.",
+  "workspaceFingerprint": "9c9998b879947cc56b845d251e7125d84e732c0047cd7c1c17d36f3a52065089",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-e80215d6",
+  "createdAt": "2026-10-05T01:29:56.265Z"
+}

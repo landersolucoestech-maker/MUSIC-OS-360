@@ -9,6 +9,7 @@
  * vocabulary straight to the API, which the database rejected). They are the
  * only place that knows the Portuguese spellings; responses are canonical only.
  */
+import { WORK_PRIORITIES } from '@music-os-360/types';
 
 /**
  * `backlog` is a distinct persisted state (not an alias of `pending`): the task
@@ -27,7 +28,7 @@ export const MARKETING_TASK_STATUSES = [
 ] as const;
 export type MarketingTaskStatus = (typeof MARKETING_TASK_STATUSES)[number];
 
-export const MARKETING_TASK_PRIORITIES = ['low', 'normal', 'high', 'urgent'] as const;
+export const MARKETING_TASK_PRIORITIES = WORK_PRIORITIES;
 export type MarketingTaskPriority = (typeof MARKETING_TASK_PRIORITIES)[number];
 
 /** Status that stamps `completed_at`. */

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "n2 data/backend independent residue scan: PASS_WITH_FINDINGS. 1023 production files, 132 entities / 2173 columns scanned; entities, files, queues, events, env keys clean; NOT_NORMALIZED items found (invoices tipo_nota/legacy_amount/prestador_id/tomador_*, MusicChat PT queue/sector/tags, seed gravacao, periodo query param, campaigns start_date vs starts_at, swagger example, ticket event names) and undeclared boundaries D1-D3 recorded for remediation.",
+  "workspaceFingerprint": "9c9998b879947cc56b845d251e7125d84e732c0047cd7c1c17d36f3a52065089",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-968b077b",
+  "createdAt": "2026-10-05T01:26:47.791Z"
+}

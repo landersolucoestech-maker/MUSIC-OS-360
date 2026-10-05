@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { localStore } from "@/shared/lib/local-store";
+import { readWithLegacyKeyMigration } from "@/modules/contracts/lib/local-key-migration";
 
-const STORAGE_KEY = "variable_registry";
+const STORAGE_KEY = "musicos360_variable_registry";
+// Key used before the `musicos360_` prefix; read once and migrated to STORAGE_KEY.
+const LEGACY_STORAGE_KEY = "variable_registry";
 
 export interface RegistryVariable {
   id: string;
@@ -49,7 +52,7 @@ function buildSeeds(): RegistryVariable[] {
 function load(): RegistryVariable[] {
   // Seeds only on first use — null key = never written.
   // An empty array is valid user state and must not be replaced with seeds.
-  const stored = localStore.get<RegistryVariable[]>(STORAGE_KEY);
+  const stored = readWithLegacyKeyMigration<RegistryVariable[]>(STORAGE_KEY, LEGACY_STORAGE_KEY);
   return stored !== null ? stored : buildSeeds();
 }
 

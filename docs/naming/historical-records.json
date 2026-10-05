@@ -2,9 +2,17 @@
  "schemaVersion": 1,
  "label": "> Historical record. Kept as recorded; not the current contract.",
  "records": {
+  "NAMING_NORMALIZATION_DISCOVERY_LOG.md": {
+   "sha256": "443203bc84b52b8cd32f595848939c656332c9bb0b252d0b66d96e910ecb352e",
+   "lines": 156
+  },
   "docs/BLUEPRINT_ENTERPRISE.md": {
    "sha256": "33a97e18948bff512a5158420d6338dc0a3e623e67598cb7982e5da833df4004",
    "lines": 722
+  },
+  "docs/CODEBASE_MAP.md": {
+   "sha256": "57119de3c9f9bb61f36baa85d160312fa2015bc672e3257cd7105bf759647bd3",
+   "lines": 299
   },
   "docs/DB_AUDIT_2026-07-05.md": {
    "sha256": "8b90a91f834ba796d4a9b037352dce3af69d494f7fbb83ab5b67f00976ef9767",
@@ -14,17 +22,61 @@
    "sha256": "97bbe23998ce8c29b1e0baccdd9af6401d0a8f755b08209048f0933936373411",
    "lines": 1896
   },
+  "docs/EXECUTIVE_SUMMARY.md": {
+   "sha256": "bcc700b609f43a1499df6fcf08f60b259da00f733d70a328bcc14771043b7456",
+   "lines": 373
+  },
   "docs/FORM_DATABASE_ALIGNMENT_AUDIT.md": {
    "sha256": "d9409b0104eac1f54c25053872ca895d825424e6fece992748349fc2d8a907e0",
    "lines": 971
+  },
+  "docs/GOVERNANCE.md": {
+   "sha256": "fed8f3e33b92fcf106935577c1498df1da02a18d7da59e043a06ba318b8caeba",
+   "lines": 763
+  },
+  "docs/INDEX_DOCUMENTATION.md": {
+   "sha256": "c85d475a625c31c6ea656b2586603207c8473a4eba80d24f78234796e5bbe0ce",
+   "lines": 486
+  },
+  "docs/PHASE_1_IMPLEMENTATION_GUIDE.md": {
+   "sha256": "7039c782c12e71ef3b5e19dafa01eefde8776d0ac3a5dfeb2b61ae107cf971e0",
+   "lines": 813
+  },
+  "docs/RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md": {
+   "sha256": "df9df56a21d60bbb1747d2b49af47f8398a5d359f99ec93d84ac2e86811741f6",
+   "lines": 1505
+  },
+  "docs/ROADMAP_IMPLEMENTATION.md": {
+   "sha256": "064e08913bf5fbfe3dcd22e1c256e3246b53e470d78d0569deed45881b68a96e",
+   "lines": 618
   },
   "docs/STAGE_4_CANONICAL_BASELINE_157_80.md": {
    "sha256": "fcb2f3e91d7d04cc0628b2932dd4138a92c17d0f9de72d7bee9b95146b433a10",
    "lines": 192
   },
+  "docs/STRUCTURAL_MAP.md": {
+   "sha256": "0fabc73ebb018a96338bd00528dca2fcbd7b32ddbd9238e39faef58a5f6e5acb",
+   "lines": 1014
+  },
   "docs/TECHNICAL_SPECIFICATION_CURRENT_SYSTEM_STATE.md": {
    "sha256": "f07bd93fd3dbc80de276975407b341c55e20fd79e1b84e07f1628bc105ddbf90",
    "lines": 645
+  },
+  "docs/audit/systemic-2026-09-13/01-environment-baseline.md": {
+   "sha256": "2757109bd0d572b5389ac0659d63260a4584e7dabbaa436d0621efce893d30f6",
+   "lines": 93
+  },
+  "docs/audit/systemic-2026-09-13/02-repository-inventory.md": {
+   "sha256": "ebea80ba206a0b999ed3381e4dd2f36c5fe49cc5586a8f5e6d39498f3e27280e",
+   "lines": 231
+  },
+  "docs/audit/systemic-2026-09-13/23-findings-register.md": {
+   "sha256": "d99ca9dfa2e2cf5a7d9f5e6d585dc927245bd3480c82f28041d9fcf583c6338e",
+   "lines": 328
+  },
+  "docs/audit/systemic-2026-09-13/README.md": {
+   "sha256": "917184e4b2e1e68a7cddcd2ca60654a2130d20e84b1ac1bcd23e669cce85f92c",
+   "lines": 21
   },
   "docs/backend-v2/00-repository-state.md": {
    "sha256": "23466aeb9a6f55e4e095d19f992c1f384044a15a33e437aed9a013de306188f2",
@@ -509,6 +561,14 @@
   "docs/backend-v2/review/01-full-project-exhaustive-verification.md": {
    "sha256": "a01d2c7dd3326ed352004585c77c8dfb33304bf8670fa03df93c2d3be4ad8a25",
    "lines": 3497
+  },
+  "docs/legacy/V1.2.1-RE-AUDIT-FIXES.md": {
+   "sha256": "5ef92838d8537e16d691dbfcfd4e9421ff2f50f0c34d7a3d9c8bca94c6106bd1",
+   "lines": 45
+  },
+  "docs/runbooks/release-baseline-157-80.md": {
+   "sha256": "8a9118fbb2610c8998d8e0fa6a3a5f7af76ac4315bcd3e1464daaf4534d87489",
+   "lines": 476
   },
   "reports/CLEANUP_REPORT.md": {
    "sha256": "7ab57235029d5a147ccd02de4ae6f98818f827b124907cec16c7dcd1d33524a1",

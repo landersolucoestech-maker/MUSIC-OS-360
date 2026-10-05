@@ -1,7 +1,11 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Current contracts: `docs/engineering/README.md` (per-area engineering conventions) and `docs/naming/canonical-naming-map.json` (canonical names). This document describes an older standalone/mock-data system and is no longer normative.
+
 # MUSIC OS 360 — Official Governance and Operational Documentation
 
-> Canonical version of the platform's architecture, conventions, entities, states, permissions, flows and contracts.
-> This document is normative — every contribution to the codebase must comply with it.
+> Version, as recorded, of the platform's architecture, conventions, entities, states, permissions, flows and contracts.
+> Historical description of an older system; it makes no normative claim.
 
 ---
 
@@ -754,6 +758,6 @@ Does NOT include:
 
 ---
 
-*This document is generated from the TypeScript sources in `shared/governance/` and is normative for every contribution to MUSIC OS 360.*
+*This document was generated from TypeScript sources in `shared/governance/` that are not part of the current repository; it is not normative.*
 
 *Last update synchronized with: STAGE 11 (`ETAPA 11`) — Definitive Governance*

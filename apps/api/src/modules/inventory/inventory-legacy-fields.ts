@@ -41,5 +41,5 @@ export const ACCEPTED_INVENTORY_STATUSES = [...INVENTORY_STATUSES, ...Object.key
 
 export function canonicalInventoryStatus<T extends string | null | undefined>(value: T): T | InventoryStatus {
   if (typeof value !== 'string') return value;
-  return LEGACY_INVENTORY_STATUSES[value] ?? value;
+  return Object.prototype.hasOwnProperty.call(LEGACY_INVENTORY_STATUSES, value) ? LEGACY_INVENTORY_STATUSES[value] : value;
 }

@@ -1,0 +1,107 @@
+{
+  "workflow": "naming-normalization",
+  "planId": "orch-4281815e",
+  "matchId": "work-53cf7b6d",
+  "status": "ACTIVE",
+  "adoptedFrom": [],
+  "steps": [
+    {
+      "phase": "census",
+      "taskIds": [
+        "census",
+        "n1-baseline",
+        "n2-residue-data-backend",
+        "n3-residue-api-frontend",
+        "n4-residue-tests-tooling-docs",
+        "n5-domain-model"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "classify",
+      "taskIds": [
+        "classify",
+        "n7-uncovered-names"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "canonical-model",
+      "taskIds": [
+        "canonical-model",
+        "p4-invoices-design",
+        "p5-musicchat-vocab",
+        "p6-crosslayer-enums"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "schema-plan",
+      "taskIds": [
+        "schema-plan"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "destructive-approval",
+      "taskIds": [
+        "destructive-approval"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "propagate",
+      "taskIds": [
+        "propagate",
+        "p1-web-fixes",
+        "p2-api-fixes",
+        "p3-docs-corrections",
+        "w1-types-api",
+        "w2-musicchat",
+        "w3-marketing-web",
+        "w4-audiovisual-web",
+        "w5-invoices-api",
+        "w6-rbac-reports"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "compatibility",
+      "taskIds": [
+        "compatibility",
+        "n6-gate-mutation"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "verify",
+      "taskIds": [
+        "verify"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "residue",
+      "taskIds": [
+        "residue"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "review",
+      "taskIds": [
+        "review"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "closure",
+      "taskIds": [
+        "closure"
+      ],
+      "adopted": []
+    }
+  ],
+  "id": "work-de9faff1",
+  "createdAt": "2026-10-05T01:16:17.412Z"
+}

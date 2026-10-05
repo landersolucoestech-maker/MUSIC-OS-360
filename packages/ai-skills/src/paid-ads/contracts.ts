@@ -16,7 +16,7 @@
  * ANTI-FABRICATION: this skill NEVER produces a numeric performance forecast
  * (CPA, ROAS, estimated CTR) — only budget allocation percentages (summing to
  * 100%, renormalized in the parser) and qualitative recommendations.
- * docs/CODEBASE_MAP.md documents that `estimateCampaignResults()` already
+ * docs/CODEBASE_MAP.md (historical snapshot) documents that `estimateCampaignResults()` already
  * fabricates metrics shown as real; this skill neither reproduces that pattern
  * nor reads/writes those fields.
  *

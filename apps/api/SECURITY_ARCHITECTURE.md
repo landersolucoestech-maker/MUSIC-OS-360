@@ -2,7 +2,7 @@
 
 > **Currency note (2026-09-15):** this document predated a significant amount
 > of work already completed (see §8) and must not be treated as a current
-> source without cross-checking against the code. `docs/CODEBASE_MAP.md` is the
+> source without cross-checking against the code. `docs/CODEBASE_MAP.md (historical snapshot)` is the
 > most recent verified source on the real security/tenancy state of this
 > repository.
 >
@@ -235,7 +235,7 @@ has_min_role(required) → boolean
 | Populate `app_metadata.org_id` | High | Set org_id in Supabase Dashboard → Authentication → Users or via trigger |
 | Rename `auth_user_id` → `supabase_user_id` | Medium | Schema migration (waits for the production DB) |
 | Rename `external_auth_org_id` → `ext_org_id` | Medium | Same: schema migration |
-| ~~Tenant isolation E2E tests~~ | — | **Done.** `apps/api/test/e2e/rls/rls-isolation.e2e-spec.ts` already covers exactly this: cross-tenant INSERT/UPDATE/DELETE blocked (Postgres `42501`, `WITH CHECK`) against a real Postgres database, tenant A × tenant B, across dozens of tables. Verified on 2026-09-15 during the Cartographer handoff (`docs/CODEBASE_MAP.md`). |
+| ~~Tenant isolation E2E tests~~ | — | **Done.** `apps/api/test/e2e/rls/rls-isolation.e2e-spec.ts` already covers exactly this: cross-tenant INSERT/UPDATE/DELETE blocked (Postgres `42501`, `WITH CHECK`) against a real Postgres database, tenant A × tenant B, across dozens of tables. Verified on 2026-09-15 during the Cartographer handoff (`docs/CODEBASE_MAP.md (historical snapshot)`). |
 | RBAC denial test | High | Verify that `viewer` cannot `POST /contracts` |
 | JWT expiry | High | Test behavior when the token expires mid-session |
 | `super_admin` portal | Low | Organization management interface |

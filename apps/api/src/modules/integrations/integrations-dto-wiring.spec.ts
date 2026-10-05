@@ -35,13 +35,13 @@ import { IdempotencyStore } from '../../core/interceptors/idempotency.store';
 
 describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)', () => {
   let app: INestApplication;
-  let abramus: { registerWork: jest.Mock };
+  let abramus: { registerWork: jest.Mock; getStatements: jest.Mock };
   let soundcloud: { configure: jest.Mock };
   let autentique: { handleWebhook: jest.Mock };
   let instagram: { handleCallback: jest.Mock };
 
   beforeAll(async () => {
-    abramus = { registerWork: jest.fn().mockResolvedValue({ ok: true }) };
+    abramus = { registerWork: jest.fn().mockResolvedValue({ ok: true }), getStatements: jest.fn().mockResolvedValue([]) };
     soundcloud = { configure: jest.fn().mockResolvedValue(undefined) };
     autentique = { handleWebhook: jest.fn().mockResolvedValue({ ok: true }) };
     instagram = {
@@ -138,6 +138,30 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
     });
   });
 
+  describe('GET /integrations/abramus/statements (period / deprecated periodo)', () => {
+    const get = (qs: string) => request(app.getHttpServer()).get(`/integrations/abramus/statements${qs}`);
+
+    it('canonical period is forwarded', async () => {
+      await get('?period=2026-01').expect(200);
+      expect(abramus.getStatements).toHaveBeenCalledWith('tenant-1', '2026-01', 20);
+    });
+
+    it('legacy periodo alias still accepted', async () => {
+      await get('?periodo=2025-12&limit=5').expect(200);
+      expect(abramus.getStatements).toHaveBeenCalledWith('tenant-1', '2025-12', 5);
+    });
+
+    it('canonical wins when both are sent', async () => {
+      await get('?period=2026-01&periodo=2025-12').expect(200);
+      expect(abramus.getStatements).toHaveBeenCalledWith('tenant-1', '2026-01', 20);
+    });
+
+    it('neither sent -> no period', async () => {
+      await get('').expect(200);
+      expect(abramus.getStatements).toHaveBeenCalledWith('tenant-1', undefined, 20);
+    });
+  });
+
   describe('POST /integrations/soundcloud/configure', () => {
     it('absent clientSecret → 400, service not called', async () => {
       await request(app.getHttpServer())
@@ -193,5 +217,13 @@ describe('IntegrationsController DTO wiring (HTTP contract, ValidationPipe real)
         .expect(200);
       expect(autentique.handleWebhook).toHaveBeenCalled();
     });
+  });
+});
+
+describe('abramus statements swagger contract: deprecated period alias is documented', () => {
+  it('documents `period` as canonical and `periodo` as deprecated', () => {
+    const params = Reflect.getMetadata('swagger/apiParameters', IntegrationsController.prototype.abramusStatements) as Array<{ name: string; deprecated?: boolean }>;
+    expect(params.find((p) => p.name === 'period')?.deprecated).toBeUndefined();
+    expect(params.find((p) => p.name === 'periodo')?.deprecated).toBe(true);
   });
 });

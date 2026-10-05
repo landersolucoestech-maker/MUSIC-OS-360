@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Current contracts: `docs/engineering/README.md` and `docs/naming/canonical-naming-map.json`. This May 2026 map describes an older standalone/mock-data layout (`client/src`) that no longer matches the repository.
+
 # COMPLETE STRUCTURAL MAP — MUSIC OS 360
 *Audit generated in May 2026. Source: direct reading of all the project files.*
 

@@ -1546,518 +1546,532 @@
   {
    "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
    "test": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
-   "fileSha256": "4171f0fb01b62257ffc3be1289a8f174dae2d7d8efe564a32d029a84854f3e4d",
-   "testSha256": "f7a54d4393ac8189ecc92f20dde219acf24a7b1f2f733b172156312d89641742",
+   "fileSha256": "cd89aa2c8b4ca4f934a17f6721ede2fb66182afb91e09d0ab9fe0bee8c1b5665",
+   "testSha256": "4ee1ca0d15c54e05b1138d2f3bd9c888e20d4f8aab658c62ca833efbc1ff0a7c",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 221,
+     "line": 248,
      "label": "independente",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 221,
+     "line": 248,
      "label": "tipo_perfil",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 28,
-     "label": "agencia",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 60,
-     "label": "agencia_booking",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 68,
-     "label": "apple_music_albuns_url",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "assessoria",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 27,
-     "label": "banco",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 100,
-     "label": "categoria",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 30,
-     "label": "chave_pix",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "com_empresario",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 117,
-     "label": "compositor_autor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 29,
-     "label": "conta",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "contador",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 55,
-     "label": "contatos_equipe",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 54,
-     "label": "contatos_vinculados",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 62,
-     "label": "contrato_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 24,
-     "label": "data_nascimento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 67,
-     "label": "deezer_fas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 98,
-     "label": "distribuidoras",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 50,
-     "label": "distribuidoras_emails",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 52,
-     "label": "distribuidoras_empresa_emails",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 51,
-     "label": "distribuidoras_empresa_selecionadas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 53,
-     "label": "distribuidoras_gerais",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 49,
-     "label": "distribuidoras_selecionadas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 117,
-     "label": "dj_produtor",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 22,
-     "label": "documentos_pessoais_url",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "editora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 120,
-     "label": "editora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 120,
-     "label": "empresario",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 40,
-     "label": "empresario_email",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 37,
-     "label": "empresario_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 38,
-     "label": "empresario_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 39,
-     "label": "empresario_telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 25,
-     "label": "endereco",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 96,
-     "label": "escritorio",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 21,
-     "label": "especialidades",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 35,
-     "label": "fase_carreira",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 123,
-     "label": "feminino",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "financeiro",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 19,
-     "label": "foto_url",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 20,
-     "label": "galeria_urls",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 64,
-     "label": "genero",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "gravadora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 120,
-     "label": "gravadora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 44,
-     "label": "gravadora_email",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 41,
-     "label": "gravadora_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 42,
-     "label": "gravadora_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 48,
-     "label": "gravadora_responsavel_email",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 45,
-     "label": "gravadora_responsavel_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 46,
-     "label": "gravadora_responsavel_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 47,
-     "label": "gravadora_responsavel_telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 43,
-     "label": "gravadora_telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "independente",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 70,
-     "label": "instagram_seguidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 117,
-     "label": "interprete",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 120,
-     "label": "juridico",
+     "label": "agencia",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 61,
-     "label": "label_parceira",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 58,
-     "label": "manager_contato",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 57,
-     "label": "manager_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 123,
-     "label": "masculino",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 94,
-     "label": "nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 17,
-     "label": "nome_artistico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 241,
-     "label": "nome_artistico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 18,
-     "label": "nome_civil",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 99,
-     "label": "nomeCustom",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 56,
-     "label": "notas_internas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 153,
-     "label": "outros",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 117,
-     "label": "produtor",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 59,
-     "label": "produtor_executivo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 36,
-     "label": "relacionamentos",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 97,
-     "label": "responsaveis",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 33,
-     "label": "slug_artistico",
+     "label": "agencia_booking",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 69,
-     "label": "soundcloud_seguidores_url",
+     "label": "apple_music_albuns_url",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
-     "label": "spotify_ouvintes",
+     "line": 122,
+     "label": "assessoria",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 242,
-     "label": "status_cadastro",
+     "line": 28,
+     "label": "banco",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 34,
-     "label": "tags_musicais",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 26,
-     "label": "telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 95,
-     "label": "telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 71,
-     "label": "tiktok_seguidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 32,
-     "label": "tipo_perfil",
+     "line": 101,
+     "label": "categoria",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 31,
-     "label": "titular_conta",
+     "label": "chave_pix",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "com_empresario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 118,
+     "label": "compositor_autor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 30,
+     "label": "conta",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 122,
+     "label": "contador",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 56,
+     "label": "contatos_equipe",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "contatos_vinculados",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "contrato_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 25,
+     "label": "data_nascimento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 68,
+     "label": "deezer_fas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 99,
+     "label": "distribuidoras",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 51,
+     "label": "distribuidoras_emails",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 53,
+     "label": "distribuidoras_empresa_emails",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "distribuidoras_empresa_selecionadas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "distribuidoras_gerais",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 50,
+     "label": "distribuidoras_selecionadas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 118,
+     "label": "dj_produtor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 23,
+     "label": "documentos_pessoais_url",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "editora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 121,
+     "label": "editora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 146,
+     "label": "editora_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 121,
+     "label": "empresario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 41,
+     "label": "empresario_email",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 38,
+     "label": "empresario_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 39,
+     "label": "empresario_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 40,
+     "label": "empresario_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 26,
+     "label": "endereco",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 97,
+     "label": "escritorio",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 22,
+     "label": "especialidades",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 36,
+     "label": "fase_carreira",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 124,
+     "label": "feminino",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 122,
+     "label": "financeiro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "foto_url",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "galeria_urls",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 65,
+     "label": "genero",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 147,
+     "label": "gestor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "gravadora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 121,
+     "label": "gravadora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 45,
+     "label": "gravadora_email",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 42,
+     "label": "gravadora_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 43,
+     "label": "gravadora_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 49,
+     "label": "gravadora_responsavel_email",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 46,
+     "label": "gravadora_responsavel_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 47,
+     "label": "gravadora_responsavel_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 48,
+     "label": "gravadora_responsavel_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 44,
+     "label": "gravadora_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "independente",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 71,
+     "label": "instagram_seguidores",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 118,
+     "label": "interprete",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 121,
+     "label": "juridico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 62,
+     "label": "label_parceira",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 59,
+     "label": "manager_contato",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 58,
+     "label": "manager_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 124,
+     "label": "masculino",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 95,
+     "label": "nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 18,
+     "label": "nome_artistico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 268,
+     "label": "nome_artistico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 19,
+     "label": "nome_civil",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 100,
+     "label": "nomeCustom",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 57,
+     "label": "notas_internas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 179,
+     "label": "outros",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 118,
+     "label": "produtor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 60,
+     "label": "produtor_executivo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 37,
+     "label": "relacionamentos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 98,
+     "label": "responsaveis",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 34,
+     "label": "slug_artistico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 70,
+     "label": "soundcloud_seguidores_url",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 66,
+     "label": "spotify_ouvintes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 269,
+     "label": "status_cadastro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 35,
+     "label": "tags_musicais",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 96,
+     "label": "telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 72,
+     "label": "tiktok_seguidores",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 33,
+     "label": "tipo_perfil",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 32,
+     "label": "titular_conta",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
      "label": "youtube_inscritos",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
     "wildcard": true,
-    "siteCount": 82,
+    "siteCount": 84,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/artists/artists.controller.ts",
@@ -2112,7 +2126,7 @@
    "file": "apps/api/src/modules/artists/artists.service.ts",
    "test": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
    "fileSha256": "cf300250063e9b3d1c2bcdd9fc372207fa361e353eb14117a61493b751854d64",
-   "testSha256": "f7a54d4393ac8189ecc92f20dde219acf24a7b1f2f733b172156312d89641742",
+   "testSha256": "4ee1ca0d15c54e05b1138d2f3bd9c888e20d4f8aab658c62ca833efbc1ff0a7c",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -2132,11 +2146,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -2147,7 +2156,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/artists/dto/create-artist.dto.ts",
@@ -2816,97 +2831,91 @@
   {
    "file": "apps/api/src/modules/clients/client-legacy-fields.ts",
    "test": "apps/api/src/modules/clients/client-contract.spec.ts",
-   "fileSha256": "61cd93fdeb700e88f1b5d4a3825382d0c11d57eeb5d88947393b39fa888575eb",
+   "fileSha256": "8f8af99bad5cb02c19de6061b72f730eb266799981c30283b1d8e19f4ab185f9",
    "testSha256": "82e521844fa1b9da3a26ba82b6fee32994160a28dd7a9cbca7984edbf768169d",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 66,
+     "line": 67,
      "label": "bairro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 76,
+     "line": 77,
      "label": "celular",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "cep",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
-     "label": "cnpj",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 76,
-     "label": "cnpj",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 167,
-     "label": "cnpj",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 172,
-     "label": "cnpj",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
      "line": 66,
-     "label": "complemento",
+     "label": "cnpj",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
-     "label": "cpf",
+     "line": 77,
+     "label": "cnpj",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 76,
-     "label": "cpf",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 167,
-     "label": "cpf",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 172,
-     "label": "cpf",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 21,
-     "label": "cpf_cnpj",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 76,
-     "label": "cpf_cnpj",
+     "line": 168,
+     "label": "cnpj",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 173,
+     "label": "cnpj",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "complemento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 66,
+     "label": "cpf",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 77,
+     "label": "cpf",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 168,
+     "label": "cpf",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 173,
+     "label": "cpf",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 22,
+     "label": "cpf_cnpj",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 77,
      "label": "cpf_cnpj",
      "outcome": "KILLED"
     },
@@ -2924,313 +2933,319 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 76,
+     "line": 176,
+     "label": "cpf_cnpj",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 77,
      "label": "documento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 61,
+     "line": 62,
      "label": "estratégica",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "foto",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "funcao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 67,
+     "line": 68,
      "label": "interacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 143,
+     "line": 144,
      "label": "interacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 143,
+     "line": 144,
      "label": "interacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 143,
+     "line": 144,
      "label": "interacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "logradouro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "nome_fantasia",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 66,
+     "line": 67,
      "label": "numero",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "perfil",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "razao_social",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 67,
+     "line": 68,
      "label": "responsavel_cargo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 66,
+     "line": 67,
      "label": "responsavel_email",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 66,
+     "line": 67,
      "label": "responsavel_nome",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 66,
+     "line": 67,
      "label": "responsavel_telefone",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 76,
+     "line": 77,
      "label": "rg",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 76,
+     "line": 77,
      "label": "telefone",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 65,
+     "line": 66,
      "label": "tipo_pessoa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 136,
+     "line": 137,
      "label": "tipo_pessoa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 142,
+     "line": 143,
      "label": "tipo_pessoa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 61,
+     "line": 62,
      "label": "alta",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 37,
+     "line": 38,
      "label": "bairro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 61,
+     "line": 62,
      "label": "baixa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 27,
+     "line": 28,
      "label": "categoria",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 40,
+     "line": 41,
      "label": "cep",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 38,
+     "line": 39,
      "label": "cidade",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 36,
+     "line": 37,
      "label": "complemento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 41,
+     "line": 42,
      "label": "endereco_completo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 39,
+     "line": 40,
      "label": "estado",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 61,
+     "line": 62,
      "label": "estrategica",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 29,
+     "line": 30,
      "label": "foto",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 33,
+     "line": 34,
      "label": "funcao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 49,
+     "line": 50,
      "label": "interacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 34,
+     "line": 35,
      "label": "logradouro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 25,
+     "line": 26,
      "label": "nome",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 31,
+     "line": 32,
      "label": "nome_fantasia",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 32,
+     "line": 33,
      "label": "nome_pf",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 35,
+     "line": 36,
      "label": "numero",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 48,
+     "line": 49,
      "label": "observacoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 28,
+     "line": 29,
      "label": "perfil",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 57,
+     "line": 58,
      "label": "pessoa_fisica",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 57,
+     "line": 58,
      "label": "pessoa_juridica",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 42,
+     "line": 43,
      "label": "prioridade_contato",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 30,
+     "line": 31,
      "label": "razao_social",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 44,
+     "line": 45,
      "label": "responsavel_cargo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 45,
+     "line": 46,
      "label": "responsavel_email",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 43,
+     "line": 44,
      "label": "responsavel_nome",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 46,
+     "line": 47,
      "label": "responsavel_telefone",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 47,
+     "line": 48,
      "label": "telefone",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 26,
+     "line": 27,
      "label": "tipo_pessoa",
      "outcome": "KILLED"
     }
@@ -3247,14 +3262,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
    "wildcardPredicate": 2,
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true,
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/clients/client-profile-vocabulary.ts",
@@ -3938,7 +3953,7 @@
   {
    "file": "apps/api/src/modules/contract-service-types/dto/create-contract-service-type.dto.ts",
    "test": "apps/api/src/modules/contract-service-types/dto/create-contract-service-type.dto.legacy-compat.spec.ts",
-   "fileSha256": "c2e3ad65f63232c021490826afe11eb3492a38e932234cff6bce4164e530b539",
+   "fileSha256": "11f8cc11fbb19f522a333eb9ec42d029ddc36a3b55196d3458c68ac9dbed005c",
    "testSha256": "489475231a27c81e7cd44209d5a6cc0acbafa2aaf6c22da1507bf3180169ebb3",
    "verdict": "PROVEN",
    "mutations": [
@@ -3956,11 +3971,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -3971,7 +3981,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/contract-templates/dto/create-contract-template.dto.ts",
@@ -4680,7 +4696,7 @@
   {
    "file": "apps/api/src/modules/contracts/dto/query-contract.dto.ts",
    "test": "apps/api/src/modules/contracts/dto/query-contract.dto.legacy.spec.ts",
-   "fileSha256": "4d6ed9448fb94e7839d4ce67a812098bc25945f6ad14757cb1f70c4bf72074e1",
+   "fileSha256": "95550280406db92df0f9416d2b1e742455bdad1e7695f565533e8f34a10f662c",
    "testSha256": "e1c44ec6965343af2f17b733c59269ad230857348f8f56650adc34c86f273584",
    "verdict": "PROVEN",
    "mutations": [
@@ -4692,11 +4708,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -4707,21 +4718,21 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
    "test": "apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts",
-   "fileSha256": "a255a52982142ebd610bd7cadb4a3bd76dc6d465742189287c3e80b1c647e2a6",
-   "testSha256": "49f82a9b7162aabb7bbd326741ae017e38278014b1b3d7e5d8cf7fc1103340ab",
+   "fileSha256": "a263a8a3fa4e2018a1e68a7b67f3314001d63613a64d26d4297ce7b0e4d56e5a",
+   "testSha256": "2446cb42a0c3b142432d4dfee803b1db09999fd0eba0e5fb19ddfbce435d6a08",
    "verdict": "PROVEN",
    "mutations": [
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 48,
-     "label": "Atendimento",
-     "outcome": "KILLED"
-    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 49,
@@ -4730,65 +4741,66 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 42,
+     "line": 50,
+     "label": "Atendimento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 43,
      "label": "Comercial",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 42,
+     "line": 43,
      "label": "Comercial",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 46,
+     "line": 47,
      "label": "Financeiro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 46,
+     "line": 47,
      "label": "Financeiro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 46,
+     "line": 47,
      "label": "Financeiro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 46,
+     "line": 47,
      "label": "Financeiro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 57,
+     "line": 58,
      "label": "Financeiro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 48,
+     "line": 49,
      "label": "Suporte",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 49,
+     "line": 50,
      "label": "Triagem",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -4803,15 +4815,33 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/conversations/musicchat-vocabulary.ts",
    "test": "apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts",
-   "fileSha256": "7b39f91bb7f65354d6315975c520c0e189dd1923def1039fcfb6189cc8f86af0",
-   "testSha256": "49f82a9b7162aabb7bbd326741ae017e38278014b1b3d7e5d8cf7fc1103340ab",
+   "fileSha256": "56d4992d90ecd562b0377bba37797512bf0b1a1d5eeed5b91c4c1af801720b79",
+   "testSha256": "2446cb42a0c3b142432d4dfee803b1db09999fd0eba0e5fb19ddfbce435d6a08",
    "verdict": "PROVEN",
    "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "Editora/Distribuição",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 53,
+     "label": "Produção Musical",
+     "outcome": "KILLED"
+    },
     {
      "operator": "LEGACY_LITERAL",
      "line": 10,
@@ -4838,14 +4868,44 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 57,
+     "label": "Atendimento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 18,
      "label": "baixa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "Catálogo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "Comercial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 29,
      "label": "conteudo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 66,
+     "label": "Conteúdo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 64,
+     "label": "Criação",
      "outcome": "KILLED"
     },
     {
@@ -4880,6 +4940,18 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 56,
+     "label": "Financeiro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 65,
+     "label": "Financeiro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 9,
      "label": "nova",
      "outcome": "KILLED"
@@ -4898,26 +4970,46 @@
     },
     {
      "operator": "LEGACY_LITERAL",
+     "line": 62,
+     "label": "Produção",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
      "line": 13,
      "label": "resolvida",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 67,
+     "label": "Suporte",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 68,
+     "label": "Triagem",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
     "wildcard": true,
-    "siteCount": 15,
+    "siteCount": 27,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/events/dto/events.dto.ts",
@@ -6072,41 +6164,36 @@
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
    "test": "apps/api/src/modules/integrations/dto/integrations.dto.legacy.spec.ts",
-   "fileSha256": "9df5ee6c9fbbe9080743937128c361d9cdc88efa658235f03f01e25650f6b4aa",
+   "fileSha256": "8f3d7849b8cb2bef02422954cba5d3c5d496ed08ccf94bb3eedf66be991842e6",
    "testSha256": "a4b70687e83c51bed8ea9488583ec1ac0a91d4a951e7985c144600e08948ed10",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 207,
+     "line": 197,
      "label": "duracao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 249,
+     "line": 244,
      "label": "duracao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 208,
+     "line": 198,
      "label": "editora",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 256,
+     "line": 251,
      "label": "editora",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -6118,82 +6205,83 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
    "test": "apps/api/src/modules/integrations/dto/integrations.dto.spec.ts",
-   "fileSha256": "9df5ee6c9fbbe9080743937128c361d9cdc88efa658235f03f01e25650f6b4aa",
+   "fileSha256": "8f3d7849b8cb2bef02422954cba5d3c5d496ed08ccf94bb3eedf66be991842e6",
    "testSha256": "f4b40d39aa93912e28fd325fef62ef71204a1b5fb5528dd5ddcfe6fcdb8bc76f",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 205,
+     "line": 195,
      "label": "coautores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 232,
+     "line": 227,
      "label": "coautores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 204,
+     "line": 194,
      "label": "compositor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 221,
+     "line": 216,
      "label": "compositor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 225,
+     "line": 220,
      "label": "compositor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 206,
+     "line": 196,
      "label": "genero",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 242,
+     "line": 237,
      "label": "genero",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 203,
+     "line": 193,
      "label": "titulo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 213,
+     "line": 208,
      "label": "titulo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 217,
+     "line": 212,
      "label": "titulo",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -6207,7 +6295,91 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
+  },
+  {
+   "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
+   "test": "apps/api/src/modules/integrations/integrations-dto-wiring.spec.ts",
+   "fileSha256": "8f3d7849b8cb2bef02422954cba5d3c5d496ed08ccf94bb3eedf66be991842e6",
+   "testSha256": "88b4670125bbf60a2d5e180dfd0bf93ba6051dc4d74d17b0a9ce0dd60a5123d7",
+   "verdict": "PROVEN",
+   "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 203,
+     "label": "periodo",
+     "outcome": "KILLED"
+    }
+   ],
+   "legacyFirst": [],
+   "census": {
+    "version": 1,
+    "names": [
+     "periodo"
+    ],
+    "wildcard": false,
+    "siteCount": 1,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
+  },
+  {
+   "file": "apps/api/src/modules/integrations/integrations.controller.ts",
+   "test": "apps/api/src/modules/integrations/integrations-dto-wiring.spec.ts",
+   "fileSha256": "bb6ef5d2d11a63a1c98c95a5acad8c766163bcca5e95929ed1c9afd5de6828f8",
+   "testSha256": "88b4670125bbf60a2d5e180dfd0bf93ba6051dc4d74d17b0a9ce0dd60a5123d7",
+   "verdict": "PROVEN",
+   "mutations": [
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 1080,
+     "label": "periodo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 1084,
+     "label": "periodo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 1088,
+     "label": "periodo",
+     "outcome": "KILLED"
+    }
+   ],
+   "legacyFirst": [],
+   "census": {
+    "version": 1,
+    "names": [
+     "periodo"
+    ],
+    "wildcard": false,
+    "siteCount": 3,
+    "unmutatedPtSites": [],
+    "unmutatedNameSites": []
+   },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/inventory/dto/inventory.dto.ts",
@@ -6393,23 +6565,18 @@
   {
    "file": "apps/api/src/modules/invoices/dto/invoices.dto.ts",
    "test": "apps/api/src/modules/invoices/dto/invoices.dto.legacy-compat.spec.ts",
-   "fileSha256": "6e2eb77dc61a13a909f6af85b246561e8011ffb681406000ab0313d4b3195412",
+   "fileSha256": "4820726d638265057f87b470a889beae56fa9a590015f2663ab38e03e9523e27",
    "testSha256": "fe18bf5593551916f7be37a941de6bdd4b2c39865a2b06ca32ff6bab633505c1",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 91,
+     "line": 89,
      "label": "venda_id",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -6420,12 +6587,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/invoices/dto/invoices.dto.ts",
    "test": "apps/api/src/modules/invoices/invoice-contract.spec.ts",
-   "fileSha256": "6e2eb77dc61a13a909f6af85b246561e8011ffb681406000ab0313d4b3195412",
+   "fileSha256": "4820726d638265057f87b470a889beae56fa9a590015f2663ab38e03e9523e27",
    "testSha256": "b9aedef638fa799ee19f18966598907363b58cd4a3e256ed83428da07d6150f9",
    "verdict": "PROVEN",
    "mutations": [
@@ -6437,19 +6610,19 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 96,
+     "line": 94,
      "label": "condicao_pagamento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 92,
+     "line": 90,
      "label": "data_emissao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 95,
+     "line": 93,
      "label": "forma_pagamento",
      "outcome": "KILLED"
     },
@@ -6461,7 +6634,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 90,
+     "line": 88,
      "label": "numero",
      "outcome": "KILLED"
     },
@@ -6479,23 +6652,18 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 94,
+     "line": 92,
      "label": "tomador_razao_social",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 93,
+     "line": 91,
      "label": "vencimento",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -6514,12 +6682,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/invoices/invoice-legacy-fields.ts",
    "test": "apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts",
-   "fileSha256": "bfedc37a54436d875e5c24caf68e53a1ff3de3a1c2ccaada7151b2cd5190622c",
+   "fileSha256": "6fc900c7cbb8b5cf965bdbd9146d45d48f38dcf0d5b8af03a84dcd9a3fb97e86",
    "testSha256": "b7d45e1cfd623b30386a7552e98925770fea6a5885452430b6d852f4fce776f1",
    "verdict": "PROVEN",
    "mutations": [
@@ -6531,25 +6705,25 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 46,
+     "line": 50,
      "label": "transferencia",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 60,
+     "line": 64,
      "label": "cartao_credito",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 61,
+     "line": 65,
      "label": "cartao_debito",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 26,
+     "line": 30,
      "label": "codigo_servico",
      "outcome": "KILLED"
     },
@@ -6567,7 +6741,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 59,
+     "line": 63,
      "label": "dinheiro",
      "outcome": "KILLED"
     },
@@ -6591,7 +6765,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 27,
+     "line": 31,
      "label": "quantidade",
      "outcome": "KILLED"
     },
@@ -6615,11 +6789,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -6628,7 +6797,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/leads/dto/leads.dto.ts",
@@ -7919,1039 +8095,1039 @@
   {
    "file": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
    "test": "apps/api/src/modules/marketing/marketing-vocabulary.compat.spec.ts",
-   "fileSha256": "b61f7edb0810a28e972e65c9a3fe377b834524fbe6fb72c109408cdc44d54804",
+   "fileSha256": "8057b06958c6aefe52b2e4ef2437237ec2f515c4bd8b39e24a9f7ed358c0d326",
    "testSha256": "b4ed8947b38362d4c2a2815dae68ae09948126ed4d4f5cab6f1c90a2dc2701fc",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 404,
+     "line": 405,
      "label": "Administração Musical",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 405,
+     "line": 406,
      "label": "Distribuição Digital",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 413,
+     "line": 414,
      "label": "flow-bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 412,
+     "line": 413,
      "label": "flow-conteudo-corporativo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 414,
+     "line": 415,
      "label": "flow-evento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 411,
+     "line": 412,
      "label": "flow-lancamento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 415,
+     "line": 416,
      "label": "flow-produto-saas",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 37,
+     "line": 38,
      "label": "a_fazer",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 111,
+     "line": 112,
      "label": "agendado",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 160,
+     "line": 161,
      "label": "ajustes_solicitados",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 47,
+     "line": 48,
      "label": "alta",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 283,
+     "line": 284,
      "label": "analise",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 341,
+     "line": 342,
      "label": "analise_artista",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 343,
+     "line": 344,
      "label": "analise_empresa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 335,
+     "line": 336,
      "label": "analise_fonograma",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 336,
+     "line": 337,
      "label": "analise_letra",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 342,
+     "line": 343,
      "label": "analise_marca",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 125,
+     "line": 126,
      "label": "anuncio",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 304,
+     "line": 305,
      "label": "apresentacao_comercial",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 281,
+     "line": 282,
      "label": "aprovacao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 330,
+     "line": 331,
      "label": "aprovacao_conteudo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 158,
+     "line": 159,
      "label": "aprovado",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 324,
+     "line": 325,
      "label": "arte_divulgacao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 291,
+     "line": 292,
      "label": "arte_redes_sociais",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 119,
+     "line": 120,
      "label": "artista",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 129,
-     "label": "artista",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 204,
-     "label": "artista",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 240,
-     "label": "artistica",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 257,
-     "label": "artistico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 317,
-     "label": "assessoria_imprensa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 45,
-     "label": "baixa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 285,
-     "label": "bastidor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 130,
-     "label": "bastidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 216,
-     "label": "bastidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 262,
-     "label": "bastidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 273,
-     "label": "bastidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 296,
-     "label": "bastidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 306,
-     "label": "bastidores_empresa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 40,
-     "label": "bloqueada",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 318,
-     "label": "branding_pessoal",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 347,
-     "label": "calendario_editorial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 253,
-     "label": "campanha",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 268,
-     "label": "campanha",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 279,
-     "label": "campanha",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 212,
-     "label": "campanha_institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 309,
-     "label": "campanha_institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 327,
-     "label": "campanha_lancamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 213,
-     "label": "campanha_promocional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 113,
-     "label": "cancelado",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 233,
-     "label": "cancelado",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 290,
-     "label": "capa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 298,
-     "label": "captacao_evento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 124,
-     "label": "carrossel",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 451,
-     "label": "carrossel",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 447,
-     "label": "catalogo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 307,
-     "label": "cobertura_evento_corporativo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 128,
-     "label": "comercial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 239,
-     "label": "comercial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 256,
-     "label": "comercial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 403,
-     "label": "Comercial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 402,
-     "label": "Comunicação",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 222,
-     "label": "comunicacao_externa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 221,
-     "label": "comunicacao_interna",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 311,
-     "label": "comunicados",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 41,
-     "label": "concluida",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 232,
-     "label": "concluido",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 246,
-     "label": "conteudo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 254,
-     "label": "conteudo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 288,
-     "label": "conteudo_artistico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 348,
-     "label": "conteudo_bastidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 287,
-     "label": "conteudo_comercial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 215,
-     "label": "conteudo_corporativo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 349,
-     "label": "conteudo_corporativo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 286,
-     "label": "conteudo_institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 325,
-     "label": "conteudo_lancamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 322,
-     "label": "conteudo_redes_sociais",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 323,
-     "label": "contratacoes",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 457,
-     "label": "custo_alvo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 326,
-     "label": "distribuicao",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 328,
-     "label": "divulgacao",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 218,
-     "label": "divulgacao_produto",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 220,
-     "label": "divulgacao_saas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 219,
-     "label": "divulgacao_servico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 38,
-     "label": "em_andamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 230,
-     "label": "em_andamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 120,
-     "label": "empresa",
+     "label": "artista",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 205,
-     "label": "empresa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 297,
-     "label": "entrevista",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 308,
-     "label": "entrevista_corporativa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 320,
-     "label": "estrategias_crescimento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 132,
-     "label": "evento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 214,
-     "label": "evento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 245,
-     "label": "evento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 258,
-     "label": "evento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 271,
-     "label": "evento_externo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 270,
-     "label": "evento_interno",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 114,
-     "label": "falhou",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 461,
-     "label": "feminino",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 315,
-     "label": "gestao_agenda",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 292,
-     "label": "identidade_visual",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 450,
-     "label": "imagem",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 329,
-     "label": "influenciadores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 127,
-     "label": "institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 238,
-     "label": "institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 255,
-     "label": "institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 445,
-     "label": "lancamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 210,
-     "label": "lancamento_musical",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 242,
-     "label": "lancamento_musical",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 339,
-     "label": "legenda",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 456,
-     "label": "limite_custo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 462,
-     "label": "masculino",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 303,
-     "label": "material_institucional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 293,
-     "label": "material_promocional",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 269,
-     "label": "material_publicitario",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 455,
-     "label": "menor_custo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 463,
-     "label": "nao_binario",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 464,
-     "label": "nao_informado",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 300,
-     "label": "negociacao",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 248,
-     "label": "organica",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 313,
-     "label": "parcerias",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 231,
-     "label": "pausado",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 157,
-     "label": "pendente",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 345,
-     "label": "pitch_imprensa",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 229,
-     "label": "planejamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 280,
-     "label": "planejamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 337,
-     "label": "planejamento_campanha",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 314,
-     "label": "planejamento_carreira",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 316,
-     "label": "planejamento_estrategico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 302,
-     "label": "planejamento_lancamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 223,
-     "label": "portal_noticias",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 261,
-     "label": "portal_noticias",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 267,
-     "label": "portal_noticias",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 319,
-     "label": "posicionamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 346,
-     "label": "posicionamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 310,
-     "label": "posicionamento_marca",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 444,
-     "label": "pre_lancamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 243,
-     "label": "produto",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 259,
-     "label": "produto",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 224,
-     "label": "projeto_especial",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "projeto_musical",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 203,
-     "label": "projeto_musical",
+     "label": "artista",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 241,
-     "label": "promocional",
+     "label": "artistica",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 299,
-     "label": "prospeccao",
+     "line": 258,
+     "label": "artistico",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 278,
-     "label": "publicacao",
+     "line": 318,
+     "label": "assessoria_imprensa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 112,
-     "label": "publicado",
+     "line": 46,
+     "label": "baixa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 133,
-     "label": "publicidade",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 110,
-     "label": "rascunho",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 126,
-     "label": "rede_social",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 301,
-     "label": "relacionamento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 312,
-     "label": "relacionamento_parceiros",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 159,
-     "label": "reprovado",
+     "line": 286,
+     "label": "bastidor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 131,
-     "label": "reuniao",
+     "label": "bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 217,
-     "label": "reuniao",
+     "label": "bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 272,
-     "label": "reuniao",
+     "line": 263,
+     "label": "bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 284,
-     "label": "reuniao",
+     "line": 274,
+     "label": "bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 39,
-     "label": "revisao",
+     "line": 297,
+     "label": "bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 282,
-     "label": "revisao",
+     "line": 307,
+     "label": "bastidores_empresa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 340,
-     "label": "roteiro",
+     "line": 41,
+     "label": "bloqueada",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 244,
-     "label": "servico",
+     "line": 319,
+     "label": "branding_pessoal",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 260,
-     "label": "servico",
+     "line": 348,
+     "label": "calendario_editorial",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 321,
-     "label": "sessao_fotos",
+     "line": 254,
+     "label": "campanha",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 338,
-     "label": "sugestao_conteudo",
+     "line": 269,
+     "label": "campanha",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 446,
-     "label": "sustentacao",
+     "line": 280,
+     "label": "campanha",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 213,
+     "label": "campanha_institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 310,
+     "label": "campanha_institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 328,
+     "label": "campanha_lancamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 214,
+     "label": "campanha_promocional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 114,
+     "label": "cancelado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 234,
+     "label": "cancelado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 291,
+     "label": "capa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 299,
+     "label": "captacao_evento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 125,
+     "label": "carrossel",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 452,
-     "label": "texto",
+     "label": "carrossel",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 460,
-     "label": "todos",
+     "line": 448,
+     "label": "catalogo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 308,
+     "label": "cobertura_evento_corporativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 129,
+     "label": "comercial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 240,
+     "label": "comercial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 257,
+     "label": "comercial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 404,
+     "label": "Comercial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 403,
+     "label": "Comunicação",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 223,
+     "label": "comunicacao_externa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 222,
+     "label": "comunicacao_interna",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 312,
+     "label": "comunicados",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 42,
+     "label": "concluida",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 233,
+     "label": "concluido",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 247,
-     "label": "trafego_pago",
+     "label": "conteudo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 255,
+     "label": "conteudo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 289,
-     "label": "trafego_pago",
+     "label": "conteudo_artistico",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 48,
-     "label": "urgente",
+     "line": 349,
+     "label": "conteudo_bastidores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 305,
-     "label": "video_institucional",
+     "line": 288,
+     "label": "conteudo_comercial",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 295,
-     "label": "video_redes_sociais",
+     "line": 216,
+     "label": "conteudo_corporativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 350,
+     "label": "conteudo_corporativo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 287,
+     "label": "conteudo_institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 326,
+     "label": "conteudo_lancamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 323,
+     "label": "conteudo_redes_sociais",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 324,
+     "label": "contratacoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 458,
+     "label": "custo_alvo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 327,
+     "label": "distribuicao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 329,
+     "label": "divulgacao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 219,
+     "label": "divulgacao_produto",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 221,
+     "label": "divulgacao_saas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 220,
+     "label": "divulgacao_servico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 39,
+     "label": "em_andamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 231,
+     "label": "em_andamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 121,
+     "label": "empresa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 206,
+     "label": "empresa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 298,
+     "label": "entrevista",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 309,
+     "label": "entrevista_corporativa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 321,
+     "label": "estrategias_crescimento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 133,
+     "label": "evento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 215,
+     "label": "evento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 246,
+     "label": "evento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 259,
+     "label": "evento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 272,
+     "label": "evento_externo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 271,
+     "label": "evento_interno",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 115,
+     "label": "falhou",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 462,
+     "label": "feminino",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 316,
+     "label": "gestao_agenda",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 293,
+     "label": "identidade_visual",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 451,
+     "label": "imagem",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 330,
+     "label": "influenciadores",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 128,
+     "label": "institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 239,
+     "label": "institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 256,
+     "label": "institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 446,
+     "label": "lancamento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 211,
-     "label": "videoclipe",
+     "label": "lancamento_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 243,
+     "label": "lancamento_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 340,
+     "label": "legenda",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 457,
+     "label": "limite_custo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 463,
+     "label": "masculino",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 304,
+     "label": "material_institucional",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 294,
+     "label": "material_promocional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 270,
+     "label": "material_publicitario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 456,
+     "label": "menor_custo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 464,
+     "label": "nao_binario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 465,
+     "label": "nao_informado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 301,
+     "label": "negociacao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 249,
+     "label": "organica",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 314,
+     "label": "parcerias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 232,
+     "label": "pausado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 158,
+     "label": "pendente",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 346,
+     "label": "pitch_imprensa",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 230,
+     "label": "planejamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 281,
+     "label": "planejamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 338,
+     "label": "planejamento_campanha",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 315,
+     "label": "planejamento_carreira",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 317,
+     "label": "planejamento_estrategico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 303,
+     "label": "planejamento_lancamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 224,
+     "label": "portal_noticias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 262,
+     "label": "portal_noticias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 268,
+     "label": "portal_noticias",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 320,
+     "label": "posicionamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 347,
+     "label": "posicionamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 311,
+     "label": "posicionamento_marca",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 445,
+     "label": "pre_lancamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 244,
+     "label": "produto",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 260,
+     "label": "produto",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 225,
+     "label": "projeto_especial",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "projeto_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 204,
+     "label": "projeto_musical",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 242,
+     "label": "promocional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 300,
+     "label": "prospeccao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 279,
+     "label": "publicacao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 113,
+     "label": "publicado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 134,
+     "label": "publicidade",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 111,
+     "label": "rascunho",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 127,
+     "label": "rede_social",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 302,
+     "label": "relacionamento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 313,
+     "label": "relacionamento_parceiros",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 160,
+     "label": "reprovado",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 132,
+     "label": "reuniao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 218,
+     "label": "reuniao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 273,
+     "label": "reuniao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 285,
+     "label": "reuniao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 40,
+     "label": "revisao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 283,
+     "label": "revisao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 341,
+     "label": "roteiro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 245,
+     "label": "servico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 261,
+     "label": "servico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 322,
+     "label": "sessao_fotos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 339,
+     "label": "sugestao_conteudo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 447,
+     "label": "sustentacao",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 453,
+     "label": "texto",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 461,
+     "label": "todos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 248,
+     "label": "trafego_pago",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 290,
+     "label": "trafego_pago",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 49,
+     "label": "urgente",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 306,
+     "label": "video_institucional",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 296,
+     "label": "video_redes_sociais",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 212,
+     "label": "videoclipe",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 295,
      "label": "videoclipe",
      "outcome": "KILLED"
     }
@@ -8965,14 +9141,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
    "wildcardPredicate": 2,
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true,
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/marketing/marketing-vocabulary.ts",
@@ -9372,7 +9548,7 @@
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
    "test": "apps/api/src/modules/phonograms/phonogram-contract.spec.ts",
-   "fileSha256": "07c092ee97c884c6e11dd5442c10a2f3f711ead95cc597ed6a0abdba042b619a",
+   "fileSha256": "95f4425ed0abec6cb048791f688f9fab40989943183aaece35d16899e4c90c6c",
    "testSha256": "1dfc8e93b356ecf6cbf6e083013359cf0e5f057430a779b5d27e96e9f26c56fa",
    "verdict": "PROVEN",
    "mutations": [
@@ -9534,11 +9710,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -9574,7 +9745,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
@@ -10649,13 +10826,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [
-    "artistas"
-   ],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -10664,7 +10834,16 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [
+    "artistas"
+   ],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/releases/release-legacy-fields.ts",
@@ -10785,7 +10964,7 @@
   {
    "file": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "test": "apps/api/src/modules/reports/form-contracts/report-column-ids.spec.ts",
-   "fileSha256": "6d9391a7030f1e5bcc74c1694150e351cd755af0feb43c7bcfcb00b518a6a3e3",
+   "fileSha256": "3348d16e7f851c7d47d5fb90b2c3c90c3e9f8d89c1f81eca697cca159002625a",
    "testSha256": "49902458ea76428e6ee54b8fed20d8d19db2937ea040060fcce8e711799b8760",
    "verdict": "PROVEN",
    "mutations": [
@@ -10911,11 +11090,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -10940,12 +11114,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "test": "apps/api/src/modules/reports/i18n/field-labels.legacy-keys.spec.ts",
-   "fileSha256": "251ebbdb5a3c30854a5415bc5c8aa8fb74cc6937ef9355a6fd70d3e28b5c1777",
+   "fileSha256": "dec1dc1c311cdadc6446baad375ed893c959705dae0004f2cd0eb318029c9446",
    "testSha256": "ddab9b222ff41702ec955f8d9dfbf3300ab42d07ebabe829c3b46ffb0f8e35af",
    "verdict": "PROVEN",
    "mutations": [
@@ -11059,7 +11239,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 627,
+     "line": 626,
      "label": "codigoServico",
      "outcome": "KILLED"
     },
@@ -11167,7 +11347,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 527,
+     "line": 526,
      "label": "dataIdentificacao",
      "outcome": "KILLED"
     },
@@ -11323,7 +11503,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 526,
+     "line": 525,
      "label": "evidencias",
      "outcome": "KILLED"
     },
@@ -11617,7 +11797,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 524,
+     "line": 523,
      "label": "obraAfetada",
      "outcome": "KILLED"
     },
@@ -11671,7 +11851,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 609,
+     "line": 608,
      "label": "percentual",
      "outcome": "KILLED"
     },
@@ -11923,7 +12103,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 525,
+     "line": 524,
      "label": "urlInfracao",
      "outcome": "KILLED"
     },
@@ -11947,7 +12127,7 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 553,
+     "line": 552,
      "label": "videomaker",
      "outcome": "KILLED"
     },
@@ -11959,11 +12139,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -12141,7 +12316,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/reports/import/import-mapper.service.ts",
@@ -12956,85 +13137,85 @@
   {
    "file": "apps/api/src/modules/takedowns/takedown-legacy-fields.ts",
    "test": "apps/api/src/modules/takedowns/takedown-legacy-fields.legacy-compat.spec.ts",
-   "fileSha256": "914ae278dd9d0999ab210f08a2915a79ffac9ee5feadec8e3808c03421dfb113",
+   "fileSha256": "b5f6a4340f6ef46c5997df9e6d54f36af0379de352cf1d6268ace707eeccc174",
    "testSha256": "cc945328dd478d47f59fa590a286394ba9b127dbf2379c8f2c9ceef4dd82725d",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 31,
+     "line": 32,
      "label": "alta",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 15,
+     "line": 16,
      "label": "artista",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 31,
+     "line": 32,
      "label": "baixa",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 20,
+     "line": 21,
      "label": "data_identificacao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 29,
+     "line": 30,
      "label": "enviado",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 21,
+     "line": 22,
      "label": "evidencias",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 18,
+     "line": 19,
      "label": "motivo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 14,
+     "line": 15,
      "label": "obra_afetada",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 16,
+     "line": 17,
      "label": "plataforma",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 24,
+     "line": 25,
      "label": "plataforma",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 19,
+     "line": 20,
      "label": "prioridade",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 29,
+     "line": 30,
      "label": "recebido",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 17,
+     "line": 18,
      "label": "url_infracao",
      "outcome": "KILLED"
     }
@@ -13131,7 +13312,7 @@
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
    "test": "apps/api/src/modules/transactions/transaction-category-slugs.spec.ts",
    "fileSha256": "94d4a6b191bdd9493a0efb9743e17418a8067250fafd7df7bda41beaa272e44c",
-   "testSha256": "4cd90fcdf5ca70e084bba6bc587c775a51cd65e5d396ece057f1b1c1e21ef782",
+   "testSha256": "deb5826e7150b0b1947cf6fb5e6886fc8d92aa170aa611db9248e93735eb55f0",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -13178,11 +13359,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -13199,7 +13375,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
@@ -16800,59 +16982,54 @@
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
    "test": "apps/web/src/modules/artist/components/ArtistVision360Modal.legacy-compat.test.tsx",
-   "fileSha256": "421e8b70c00b2823c1ca1d8d260ff8feed038c21a2f2c2f3c5af49643ad9dc10",
+   "fileSha256": "e72f14318b6993d408f35088e5bf3681e06a5f19eb32cf95c731352ca325a24a",
    "testSha256": "590b4505c1b9726a17c4b8a58bad952c185951f0152c42fd1ffeb09f397cded9",
    "verdict": "PROVEN",
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1634,
+     "line": 1636,
      "label": "assessoria",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1635,
+     "line": 1637,
      "label": "contador",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1635,
+     "line": 1637,
      "label": "editora_musical",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1636,
+     "line": 1638,
      "label": "empresario",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1635,
+     "line": 1637,
      "label": "financeiro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1636,
+     "line": 1638,
      "label": "gestor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1634,
+     "line": 1636,
      "label": "juridico",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -16869,7 +17046,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
@@ -17362,7 +17545,7 @@
   {
    "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
    "test": "apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx",
-   "fileSha256": "500c6103ff0415395adb1bd0af28e65bf08f7c27c030fde8e28b6d79d978cb78",
+   "fileSha256": "a10f8c54263b8d8d34cf838647676cb4b8537b91f174e82a75d927bb573c70b4",
    "testSha256": "3240a802897e504d1c69c8fafdd69e7de62f32c99fd7c79ac571ce942a649084",
    "verdict": "PROVEN",
    "mutations": [
@@ -17380,14 +17563,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [
-    "nome",
-    "produtores"
-   ],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -17399,7 +17574,16 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [
+    "nome",
+    "produtores"
+   ],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
@@ -19642,7 +19826,7 @@
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "test": "apps/web/src/modules/marketing/services/marketing.contents-vocabulary.test.ts",
-   "fileSha256": "b9db87c04d2546cf5f4f954cb9e725bea4da5deaf33363ea900f662fa00e2f96",
+   "fileSha256": "4d08904a2ecc1dcf423c87b48baac62904afeac97a9976191aade0b70b94d367",
    "testSha256": "a8bd69469b2b95bd6f28715f902f1f71af8b535106ab1ececf6c1eaf2823d7c2",
    "verdict": "PROVEN",
    "mutations": [
@@ -20652,19 +20836,19 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
    "wildcardPredicate": 2,
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": false,
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "test": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.legacy-compat.test.ts",
-   "fileSha256": "b9db87c04d2546cf5f4f954cb9e725bea4da5deaf33363ea900f662fa00e2f96",
+   "fileSha256": "4d08904a2ecc1dcf423c87b48baac62904afeac97a9976191aade0b70b94d367",
    "testSha256": "04ac2b4cef3d5ac4ca642b38f7ae57e809f796461dfe2817047483725b872ef3",
    "verdict": "PROVEN",
    "mutations": [
@@ -20688,11 +20872,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -20703,12 +20882,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/marketing/utils/marketing-legacy-vocabulary.ts",
    "test": "apps/web/src/modules/marketing/utils/marketing-source-department.test.ts",
-   "fileSha256": "b9db87c04d2546cf5f4f954cb9e725bea4da5deaf33363ea900f662fa00e2f96",
+   "fileSha256": "4d08904a2ecc1dcf423c87b48baac62904afeac97a9976191aade0b70b94d367",
    "testSha256": "35ff2027632976fd4fa4f7a76fee6b7ab9f2f07a3272d9127f172a3382285961",
    "verdict": "PROVEN",
    "mutations": [
@@ -20720,11 +20905,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -20735,7 +20915,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/musicchat/components/TriageMenuBuilder.tsx",
@@ -20889,7 +21075,7 @@
   {
    "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
    "test": "apps/web/src/modules/releases/components/ReleaseFormModal.legacy-compat.test.tsx",
-   "fileSha256": "e40b17d3a02199f487a9dea07fee4bb3bdbb72c1dd5cd116ffb4f4372ac4bc69",
+   "fileSha256": "40c9a6dacc0d4bc31927c510e79c45cbe3d744ce3f200341fe36a63e42cf1cf5",
    "testSha256": "fbaf4cc0ae53a63b0e3cecb94e058e7d52d85f17365c08ab4ef96d151a37969c",
    "verdict": "PROVEN",
    "mutations": [
@@ -20925,11 +21111,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -20942,7 +21123,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
@@ -21658,7 +21845,7 @@
   {
    "file": "apps/web/src/modules/releases/lib/release-status.tsx",
    "test": "apps/web/src/modules/releases/lib/release-status.legacy-compat.test.tsx",
-   "fileSha256": "c9f3f19970d3113d1420f53198120ec2bd33038d831ecf136a330977a3a0ce28",
+   "fileSha256": "ce3ba5098df7ec1286bc57dab172a317700da5afef383e2a055b958fbb932c58",
    "testSha256": "f3417f4ec56aabf9fb54ab5741c584c737dfe715537547edca117caf0938a884",
    "verdict": "PROVEN",
    "mutations": [
@@ -21676,11 +21863,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -21692,7 +21874,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/releases/types/index.ts",

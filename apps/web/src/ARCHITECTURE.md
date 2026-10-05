@@ -6,7 +6,7 @@
 > misleading about the current tree. It was verified that `infrastructure/`,
 > `workers/`, `app/guards/` and `shared/design-system/` **do not exist** in
 > `apps/web/src/` today (confirmed by direct listing during the Cartographer
-> handoff, `docs/CODEBASE_MAP.md`). The plan below describes a proposed
+> handoff, `docs/CODEBASE_MAP.md (historical snapshot)`). The plan below describes a proposed
 > reorganization, not the real structure. Treat it as a record of intent, not
 > as a map of the current directory.
 >

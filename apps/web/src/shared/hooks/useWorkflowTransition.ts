@@ -6,9 +6,9 @@
  *
  * Usage:
  *   const { transition, isPending } = useWorkflowTransition({
- *     table: 'lancamentos',
+ *     table: 'releases',
  *     id: release.id,
- *     queryKey: ['lancamentos'],
+ *     queryKey: ['releases'],
  *   });
  *   <WorkflowTransitionPanel onTransition={transition} isLoading={isPending} ... />
  */

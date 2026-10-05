@@ -83,7 +83,7 @@ export class BillingController {
   @Post('plans/:id/sync-stripe')
   @RequireRole('super_admin')
   @Audit('billing.plan_synced')
-  @ApiOperation({ summary: 'Re-sincronizar plano com Stripe (super_admin)' })
+  @ApiOperation({ summary: 'Re-sync plan with Stripe (super_admin)' })
   syncPlan(@Param('id') id: string) {
     return this.plans.syncStripe(id);
   }

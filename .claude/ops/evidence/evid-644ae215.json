@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "frontend-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "w3 marketing: web ProjectStatus gains draft and archived mapped one-to-one with the API (no more collapse to planning/completed), PT-BR options Rascunho/Arquivado, round-trip tests; web typecheck clean; marketing vitest 38 files / 507 tests.",
+  "workspaceFingerprint": "82d68503df18fd2155a0733436c26dac730ac849bf4b2f641f90c45d10517572",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-644ae215",
+  "createdAt": "2026-10-05T01:46:20.154Z"
+}

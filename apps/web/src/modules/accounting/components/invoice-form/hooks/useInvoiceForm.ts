@@ -4,7 +4,8 @@ import { format } from "date-fns";
 import { useInvoices } from "@/modules/accounting/hooks/useInvoices";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useCompanySettings } from "@/modules/settings/hooks/useCompanySettings";
-import { parseOperationType, serializeOperationType } from "@/modules/accounting/types/invoice-type";
+import { invoiceFileUrl, serializeOperationType } from "@/modules/accounting/types/invoice-type";
+import { readInvoiceOperationType } from "@/modules/accounting/types/invoice-operation-type";
 import { invoiceSchema } from "@/modules/accounting/schemas/invoice-schema";
 import { validateInvoiceForm, type InvoiceValidationErrors } from "@/modules/accounting/components/invoice-form/validation/invoice-form-validation";
 import { applyResets } from "@/modules/accounting/components/invoice-form/rules/invoice-reset-rules";
@@ -88,7 +89,7 @@ export function useInvoiceForm({
 
   useEffect(() => {
     if (invoice && (mode === "edit" || mode === "view")) {
-      const { type, cleanedNotes: cleanNotes } = parseOperationType(invoice.notes);
+      const { type, cleanedNotes: cleanNotes } = readInvoiceOperationType(invoice);
       const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const netAmount = numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
       const servicesDescription = invoice.service_description ?? "";
@@ -100,6 +101,8 @@ export function useInvoiceForm({
         notes: cleanNotes,
         payment_method: invoice.payment_method ? canonicalInvoicePaymentMethod(invoice.payment_method) : invoice.payment_method,
         tomador_legal_name: recipientLegalName,
+        // file_url canonical; url_pdf is the pre-rename name still returned for one window.
+        file_url: invoiceFileUrl(invoice) ?? "",
         service_description: servicesDescription,
         service_amount: servicesAmount,
         net_amount: netAmount,
@@ -258,7 +261,7 @@ export function useInvoiceForm({
       issued_at: formData.issued_at ? format(formData.issued_at, "yyyy-MM-dd") : null,
       due_at: formData.due_at ? format(formData.due_at, "yyyy-MM-dd") : null,
       status: formData.status,
-      url_pdf: formData.url_pdf || null,
+      file_url: formData.file_url || null,
       notes: serializeOperationType(operationType, formData.notes?.trim() || "") || null,
       natureza_operacao: formData.natureza_operacao,
       codigo_servico_municipal: formData.codigo_servico_municipal,

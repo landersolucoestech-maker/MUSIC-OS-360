@@ -57,7 +57,7 @@ async function migrate(): Promise<void> {
   }
 
   await requireRlsBypassingRole('db:migrate');
-  console.log('[db:migrate] Aplicando migrations…');
+  console.log('[db:migrate] Applying migrations…');
   await AppDataSource.runMigrations({ transaction: 'each' });
   console.log('[db:migrate] Migrations applied successfully.\n');
 }
@@ -106,7 +106,7 @@ async function migrateApplication(): Promise<void> {
  * command fail (see verify:realtime-external for its state).
  */
 async function checkApplication(): Promise<void> {
-  console.log('\n[db:check:application] Verificando migrations APPLICATION…\n');
+  console.log('\n[db:check:application] Checking APPLICATION migrations…\n');
   await AppDataSource.initialize();
 
   const { applicationPending, nonApplicationPending } = await checkApplicationCore(AppDataSource);
@@ -260,7 +260,7 @@ async function reset(): Promise<void> {
   console.log('[db:reset] Dropping every table (CASCADE)…');
   await AppDataSource.dropDatabase();
 
-  console.log('[db:reset] Criando schema do zero…');
+  console.log('[db:reset] Creating the schema from scratch…');
   await AppDataSource.runMigrations({ transaction: 'each' });
 
   console.log('[db:reset] Running seeds...');

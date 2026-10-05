@@ -303,10 +303,12 @@ export class ActivityLog {
 ### 2. Create the Migration
 
 ```bash
-npm run typeorm migration:generate -- CreateActivityLogs
+pnpm --filter @music-os-360/api db:generate -- CreateActivityLogs
 ```
 
-Check the file generated in `apps/api/src/migrations/`
+`db:generate` does not write the file itself: it prints the TypeORM command to run manually for the given migration name.
+
+Check the file generated in `apps/api/src/database/migrations/` (see `docs/engineering/database.md`)
 
 ### 3. Create the Service
 
@@ -394,7 +396,7 @@ export class ActivityLogModule {}
 ### 6. Run Migration
 
 ```bash
-npm run typeorm migration:run
+pnpm --filter @music-os-360/api db:migrate
 ```
 
 ---
@@ -507,12 +509,10 @@ export const routes = [
 
 ```bash
 # Terminal 1: Frontend
-cd apps/web
-npm run dev
+pnpm dev:web
 
 # Terminal 2: Backend (if needed)
-cd apps/api
-npm run start:dev
+pnpm dev:api
 
 # Open in the browser
 http://localhost:5173/workspace/artist/test-artist-id
@@ -540,7 +540,7 @@ Solution:
 Solution:
 1. Check that workspace/types/workspace.types.ts exists
 2. Check imports: import type { WorkspaceType } from '...'
-3. Run npm run build to see the full errors
+3. Run `pnpm build` to see the full errors
 ```
 
 ### Style issues (Tailwind does not work)
@@ -548,7 +548,7 @@ Solution:
 Solution:
 1. Check that classes use the standard naming (w-4, h-4, etc)
 2. Check that tailwind.config.ts includes src/modules/**
-3. Clear the cache: rm -rf .next or npm run clean
+3. Clear the cache: restart the Vite dev server (`pnpm dev:web`); there is no `clean` script
 ```
 
 ---
@@ -613,6 +613,6 @@ If you got here, you have:
 ---
 
 **Questions?** See:
-1. [RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md](./RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md)
-2. [PHASE_1_IMPLEMENTATION_GUIDE.md](./PHASE_1_IMPLEMENTATION_GUIDE.md)
+1. [RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md](./RESTRUCTURING_OPERATIONAL_ARCHITECTURE.md) (historical record)
+2. [PHASE_1_IMPLEMENTATION_GUIDE.md](./PHASE_1_IMPLEMENTATION_GUIDE.md) (historical record)
 3. [ARCHITECTURE_DECISION_RECORDS.md](./ARCHITECTURE_DECISION_RECORDS.md)

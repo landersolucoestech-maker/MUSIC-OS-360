@@ -12,6 +12,7 @@
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
+import { RELATIONSHIP_PRIORITIES } from '@music-os-360/types';
 import { INTERACTION_KEYS, INTERACTION_TYPES } from '../leads/lead-vocabulary';
 import { CreateClientDto } from './dto/clients.dto';
 import { canonicalClientProfile } from './client-profile-vocabulary';
@@ -50,7 +51,7 @@ export const CLIENT_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
 };
 
 export const CLIENT_PERSON_TYPES = ['individual', 'company'] as const;
-export const CLIENT_PRIORITIES = ['low', 'medium', 'high', 'strategic'] as const;
+export const CLIENT_PRIORITIES = RELATIONSHIP_PRIORITIES;
 export const CLIENT_INTERACTION_TYPES = ['call', 'whatsapp', 'email', 'meeting', 'proposal', 'follow_up', 'note'] as const;
 
 const LEGACY_PERSON_TYPES: Readonly<Record<string, string>> = {

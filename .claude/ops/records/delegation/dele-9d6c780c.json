@@ -1,0 +1,9 @@
+{
+  "agent": "data-architecture-engineer",
+  "objective": "Design the canonical naming resolution for the invoices residues (type/tipo_nota dual write, legacy_amount, prestador_id, tomador_*, url_pdf/file_url, due_date/due_at, TIPO_OPERACAO marker): separate technically deducible parts from owner decisions and destructive dependencies",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-9d6c780c",
+  "createdAt": "2026-10-05T01:36:40.407Z"
+}

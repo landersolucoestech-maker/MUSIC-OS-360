@@ -45,7 +45,7 @@ export const RELEASE_LEGACY_TYPES: Readonly<Record<string, ReleaseTypeValue>> = 
 
 /** Canonical release type of a (possibly legacy) value; unknown values are kept. */
 export const canonicalReleaseType = (value: unknown): unknown =>
-  typeof value === 'string' && RELEASE_LEGACY_TYPES[value.trim().toLowerCase()]
+  typeof value === 'string' && Object.prototype.hasOwnProperty.call(RELEASE_LEGACY_TYPES, value.trim().toLowerCase())
     ? RELEASE_LEGACY_TYPES[value.trim().toLowerCase()]
     : value;
 

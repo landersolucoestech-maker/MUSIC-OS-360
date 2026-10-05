@@ -21,6 +21,7 @@ import {
   canonicalTemplate,
   duplicateId,
   legacyMenuIdMap,
+  withCanonicalRoutingKeys,
 } from './musicchat-vocabulary';
 import { activeTenantMemberIds, assertActiveTenantMembers } from './tenant-members';
 import type {
@@ -39,14 +40,14 @@ const INVALID_OPTION =
   'Não consegui identificar essa opção. Responda apenas com o número de uma das opções do menu principal.';
 
 const DEFAULT_OPTIONS: MusicChatMenuOptionDto[] = [
-  { id: 'shows', order: 1, label: 'Contratação de Shows', responseTemplateId: 'shows', queue: 'Comercial', sector: 'Shows', tags: ['Show', 'Comercial'], priority: 'high', active: true },
-  { id: 'music_production', order: 2, label: 'Produção Musical', responseTemplateId: 'music_production', queue: 'Produção Musical', sector: 'Produção', tags: ['Produção Musical'], priority: 'medium', active: true },
-  { id: 'publishing_distribution', order: 3, label: 'Editora Musical e Distribuição', responseTemplateId: 'publishing_distribution', queue: 'Catálogo', sector: 'Editora/Distribuição', tags: ['Editora', 'Distribuição'], priority: 'medium', active: true },
-  { id: 'design', order: 4, label: 'Design Gráfico e Criação', responseTemplateId: 'design', queue: 'Marketing', sector: 'Criação', tags: ['Design'], priority: 'medium', active: true },
-  { id: 'finance', order: 5, label: 'Financeiro', responseTemplateId: 'finance', queue: 'Financeiro', sector: 'Financeiro', tags: ['Financeiro'], priority: 'high', active: true },
-  { id: 'content', order: 6, label: 'Redação & Conteúdo', responseTemplateId: 'content', queue: 'Marketing', sector: 'Conteúdo', tags: ['Conteúdo'], priority: 'medium', active: true },
-  { id: 'other', order: 7, label: 'Outros Assuntos', responseTemplateId: 'other', queue: 'Atendimento', sector: 'Suporte', tags: ['Outros Assuntos'], priority: 'medium', active: true },
-  { id: WRONG_CONTACT_OPTION_ID, order: 8, label: 'Contato por Engano', responseTemplateId: WRONG_CONTACT_OPTION_ID, queue: 'Atendimento', sector: 'Triagem', tags: ['Contato por Engano'], priority: 'low', active: true },
+  { id: 'shows', order: 1, label: 'Contratação de Shows', responseTemplateId: 'shows', queue: 'Comercial', queueKey: 'commercial', sector: 'Shows', sectorKey: 'shows', tags: ['Show', 'Comercial'], priority: 'high', active: true },
+  { id: 'music_production', order: 2, label: 'Produção Musical', responseTemplateId: 'music_production', queue: 'Produção Musical', queueKey: 'music_production', sector: 'Produção', sectorKey: 'production', tags: ['Produção Musical'], priority: 'medium', active: true },
+  { id: 'publishing_distribution', order: 3, label: 'Editora Musical e Distribuição', responseTemplateId: 'publishing_distribution', queue: 'Catálogo', queueKey: 'catalog', sector: 'Editora/Distribuição', sectorKey: 'publishing_distribution', tags: ['Editora', 'Distribuição'], priority: 'medium', active: true },
+  { id: 'design', order: 4, label: 'Design Gráfico e Criação', responseTemplateId: 'design', queue: 'Marketing', queueKey: 'marketing', sector: 'Criação', sectorKey: 'creative', tags: ['Design'], priority: 'medium', active: true },
+  { id: 'finance', order: 5, label: 'Financeiro', responseTemplateId: 'finance', queue: 'Financeiro', queueKey: 'finance', sector: 'Financeiro', sectorKey: 'finance', tags: ['Financeiro'], priority: 'high', active: true },
+  { id: 'content', order: 6, label: 'Redação & Conteúdo', responseTemplateId: 'content', queue: 'Marketing', queueKey: 'marketing', sector: 'Conteúdo', sectorKey: 'content', tags: ['Conteúdo'], priority: 'medium', active: true },
+  { id: 'other', order: 7, label: 'Outros Assuntos', responseTemplateId: 'other', queue: 'Atendimento', queueKey: 'customer_service', sector: 'Suporte', sectorKey: 'support', tags: ['Outros Assuntos'], priority: 'medium', active: true },
+  { id: WRONG_CONTACT_OPTION_ID, order: 8, label: 'Contato por Engano', responseTemplateId: WRONG_CONTACT_OPTION_ID, queue: 'Atendimento', queueKey: 'customer_service', sector: 'Triagem', sectorKey: 'triage', tags: ['Contato por Engano'], priority: 'low', active: true },
 ];
 
 const DEFAULT_TEMPLATES: MusicChatTemplateDto[] = [
@@ -162,7 +163,7 @@ export class MusicChatAutomationService {
       [...(dto.menu_options ?? []).map((option) => option.id), ...(dto.templates ?? []).map((template) => template.id)],
       [...(dto.menu_options ? [] : storedOptions.map((option) => option.id)), ...(dto.templates ? [] : storedTemplates.map((template) => template.id))],
     );
-    const menuOptionsInput = dto.menu_options?.map((option) => canonicalMenuOption(option, idMap));
+    const menuOptionsInput = dto.menu_options?.map((option) => withCanonicalRoutingKeys(canonicalMenuOption(option, idMap)));
     const templatesInput = dto.templates?.map((template) => canonicalTemplate(template, idMap));
     const duplicate = duplicateId(menuOptionsInput ?? []) ?? duplicateId(templatesInput ?? []) ?? duplicateId(dto.escalation_rules ?? []);
     if (duplicate) {
@@ -243,7 +244,7 @@ export class MusicChatAutomationService {
     const template = (settings.templates as MusicChatTemplateDto[]).find((item) => item.id === selected.responseTemplateId);
     await this.routeConversation(tenantId, conv.id, selected);
     await this.sendSystemMessage(tenantId, conv.id, template?.body ?? selected.label);
-    await this.recordEvent(tenantId, conv.id, 'automation.routed', `Conversa encaminhada para ${selected.queue}`, { selectedOption: selected });
+    await this.recordEvent(tenantId, conv.id, 'automation.routed', `Conversa encaminhada para ${selected.queue}`, { selectedOption: withCanonicalRoutingKeys(selected) });
     await this.createQueueNotification(tenantId, conv.id, selected);
     return { conversation: await this.findConversation(tenantId, conv.id), action: 'routed', option: selected };
   }
@@ -600,6 +601,8 @@ export class MusicChatAutomationService {
   }
 
   private async routeConversation(tenantId: string, conversationId: string, option: MusicChatMenuOptionDto) {
+    // Options stored before the keys existed carry labels only: derive from exact legacy labels, never guess.
+    const keys = withCanonicalRoutingKeys(option);
     const conversation = await this.findConversation(tenantId, conversationId);
     const tags = Array.from(new Set([...(Array.isArray((conversation.metadata as any)?.tags) ? (conversation.metadata as any).tags : []), ...(option.tags ?? [])]));
     await this.convRepo!.update({ tenant_id: tenantId, id: conversationId } as any, {
@@ -613,6 +616,8 @@ export class MusicChatAutomationService {
           : ConversationServiceStatus.WAITING_AGENT,
         queue: option.queue,
         sector: option.sector,
+        queue_key: keys.queueKey ?? null,
+        sector_key: keys.sectorKey ?? null,
         priority: option.priority ?? 'medium',
         tags,
         selected_menu_option: option.id,
@@ -625,9 +630,12 @@ export class MusicChatAutomationService {
   }
 
   private createQueueNotification(tenantId: string, conversationId: string, option: MusicChatMenuOptionDto) {
+    const keys = withCanonicalRoutingKeys(option);
     return this.recordEvent(tenantId, conversationId, 'automation.queue_notification', `Notificação interna gerada para fila ${option.queue}`, {
       queue: option.queue,
       sector: option.sector,
+      queue_key: keys.queueKey ?? null,
+      sector_key: keys.sectorKey ?? null,
       tags: option.tags ?? [],
     });
   }

@@ -1,0 +1,9 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Independent residue scan of API contracts, routes, shared types, frontend routes, components, hooks, stores, forms, query/cache keys, storage keys and the wire adapters between web and API",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-da584387",
+  "createdAt": "2026-10-05T01:16:57.724Z"
+}

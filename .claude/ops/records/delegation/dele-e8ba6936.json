@@ -1,0 +1,9 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Independent residue scan (not census/ledger-based) of database, entities, migrations (read only), DTOs, services, repositories, controllers, events, queues, workers for legacy names, mixed PT/EN technical identifiers, synonyms and canonical-first violations",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-e8ba6936",
+  "createdAt": "2026-10-05T01:16:57.722Z"
+}

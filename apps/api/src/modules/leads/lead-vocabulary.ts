@@ -137,13 +137,13 @@ function canonicalObject(
   }
   for (const [key, map] of Object.entries(values)) {
     const current = out[key];
-    if (typeof current === 'string' && map[current]) out[key] = map[current];
+    if (typeof current === 'string' && Object.prototype.hasOwnProperty.call(map, current)) out[key] = map[current];
   }
   return out;
 }
 
 export function canonicalLeadServiceType<T>(value: T): T | string {
-  return typeof value === 'string' ? (LEGACY_LEAD_SERVICE_TYPES[value] ?? value) : value;
+  return typeof value === 'string' && Object.prototype.hasOwnProperty.call(LEGACY_LEAD_SERVICE_TYPES, value) ? LEGACY_LEAD_SERVICE_TYPES[value] : value;
 }
 
 export function canonicalCrmInternalData(input: unknown): unknown {

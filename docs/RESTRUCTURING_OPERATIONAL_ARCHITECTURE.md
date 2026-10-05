@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time planning document (2026-05-20). Current contract: `docs/engineering/README.md`.
+
 # 🎵 MUSIC OS 360 — DEFINITIVE CONTEXTUAL OPERATIONAL ARCHITECTURE
 
 **Version**: 1.0 — Complete Restructuring  

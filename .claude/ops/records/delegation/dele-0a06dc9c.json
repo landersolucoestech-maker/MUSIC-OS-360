@@ -1,0 +1,9 @@
+{
+  "agent": "domain-boundary-guardian",
+  "objective": "Prove the canonical domain model preserves Project, ProjectTrack, Work, Phonogram, Release, ReleaseTrack, Distribution and the three contract kinds as distinct concepts across database, backend, API, frontend; find other conceptual collisions",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-0a06dc9c",
+  "createdAt": "2026-10-05T01:16:57.728Z"
+}

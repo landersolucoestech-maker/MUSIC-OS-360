@@ -1,0 +1,9 @@
+{
+  "agent": "qa-engineer",
+  "objective": "Mutation-test the naming gate itself: temporarily inject representative forbidden naming into a sandbox copy for each layer category and prove the gate fails; report gaps",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-3bec239b",
+  "createdAt": "2026-10-05T01:20:35.063Z"
+}

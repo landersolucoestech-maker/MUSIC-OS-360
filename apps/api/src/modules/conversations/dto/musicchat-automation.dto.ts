@@ -10,10 +10,12 @@ import {
   IsString,
   IsUUID,
   MaxLength,
+  Matches,
   ValidateNested,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { blankToNull } from './conversations.dto';
+import { ROUTING_KEY_PATTERN } from '../musicchat-vocabulary';
 
 export class MusicChatMenuOptionDto {
   @ApiProperty() @IsString() @IsNotEmpty() id: string;
@@ -22,6 +24,9 @@ export class MusicChatMenuOptionDto {
   @ApiProperty() @IsString() @IsNotEmpty() responseTemplateId: string;
   @ApiProperty() @IsString() @IsNotEmpty() queue: string;
   @ApiProperty() @IsString() @IsNotEmpty() sector: string;
+  /** Canonical machine keys of the queue/sector labels (additive; the labels stay tenant-editable display text). */
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(ROUTING_KEY_PATTERN) queueKey?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @Matches(ROUTING_KEY_PATTERN) sectorKey?: string;
   @ApiPropertyOptional() @Transform(blankToNull) @IsOptional() @IsString() @MaxLength(255) defaultAssignee?: string | null;
   @ApiPropertyOptional() @IsOptional() @IsArray() tags?: string[];
   @ApiPropertyOptional() @IsOptional() @IsString() priority?: string;

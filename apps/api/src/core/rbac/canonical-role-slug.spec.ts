@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { Logger } from '@nestjs/common';
 import type { DataSource } from 'typeorm';
 import { FunctionalRole } from '@music-os-360/types';
 import { PermissionResolverService } from './permission-resolver.service';
@@ -169,10 +170,40 @@ describe('PermissionResolverService.classifyDivergence: canonical role string on
     expect(await classify(svc, legacy)).toBe('MATCH');
   });
 
-  it('a genuinely different role string is still DIVERGENTE (telemetry keeps its signal)', async () => {
+  it('a genuinely different role string is still DIVERGENT (telemetry keeps its signal)', async () => {
     const svc = resolverWith({ slug: 'juridico', canonical_slug: null });
-    expect(await classify(svc, 'sales')).toBe('DIVERGENTE');
-    expect(await classify(svc, 'admin')).toBe('DIVERGENTE');
-    expect(await classify(svc, 'comercial')).toBe('DIVERGENTE');
+    expect(await classify(svc, 'sales')).toBe('DIVERGENT');
+    expect(await classify(svc, 'admin')).toBe('DIVERGENT');
+    expect(await classify(svc, 'comercial')).toBe('DIVERGENT');
+  });
+
+  describe('rbac_dual_read log: canonical divergence + one-release legacy Portuguese alias', () => {
+    const emit = async (svc: PermissionResolverService, role: string): Promise<Record<string, unknown>> => {
+      const log = jest.spyOn(Logger.prototype, 'log').mockImplementation();
+      try {
+        await (svc as unknown as { observeDualRead: (i: unknown) => Promise<void> }).observeDualRead({
+          path: 'role_id', reason: 'role_id_resolved',
+          member: { role, role_id: 'role-id', tenant_id: 't' }, roleId: 'role-id',
+          usedPermissions: ['a'], legacyPermissions: ['a'],
+          ds: (svc as unknown as { ds: DataSource }).ds, tenantId: 't',
+        });
+        const line = log.mock.calls.map((c) => String(c[0])).find((m) => m.includes('rbac_dual_read'));
+        return JSON.parse(line as string) as Record<string, unknown>;
+      } finally {
+        log.mockRestore();
+      }
+    };
+
+    it('DIVERGENT carries divergence_legacy=DIVERGENTE', async () => {
+      const out = await emit(resolverWith({ slug: 'juridico', canonical_slug: null }), 'sales');
+      expect(out['divergence']).toBe('DIVERGENT');
+      expect(out['divergence_legacy']).toBe('DIVERGENTE');
+    });
+
+    it('unchanged values repeat in divergence_legacy (MATCH)', async () => {
+      const out = await emit(resolverWith({ slug: 'juridico', canonical_slug: null }), 'legal');
+      expect(out['divergence']).toBe('MATCH');
+      expect(out['divergence_legacy']).toBe('MATCH');
+    });
   });
 });

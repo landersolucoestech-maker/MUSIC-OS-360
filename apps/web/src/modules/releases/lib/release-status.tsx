@@ -11,7 +11,7 @@ import { ReleaseStatus as PkgReleaseStatus } from "@music-os-360/types";
  * raw `status` is never shown.
  */
 
-export type ReleaseStatus =
+export type ReleaseDisplayStatus =
   | "pending"
   | "on_hold"
   | "rejected"
@@ -22,7 +22,7 @@ export type ReleaseStatus =
 
 type Hue = "emerald" | "amber" | "orange" | "sky" | "rose" | "slate";
 
-const RELEASE_STATUS_META: Record<ReleaseStatus, { label: string; variant: BadgeVariant; hue: Hue }> = {
+const RELEASE_STATUS_META: Record<ReleaseDisplayStatus, { label: string; variant: BadgeVariant; hue: Hue }> = {
   pending: { label: "Pendente", variant: "warning", hue: "amber" },
   on_hold: { label: "Em Espera", variant: "warning", hue: "orange" },
   approved: { label: "Aprovado", variant: "info", hue: "sky" },
@@ -38,7 +38,7 @@ const RELEASE_STATUS_META: Record<ReleaseStatus, { label: string; variant: Badge
  * Rejected red, Takedown dark neutral (info), On Hold yellow (same tone
  * as the "warning" already used in RELEASE_STATUS_META) — all white text (except Incomplete).
  */
-const RELEASE_STATUS_SOLID: Record<ReleaseStatus, string> = {
+const RELEASE_STATUS_SOLID: Record<ReleaseDisplayStatus, string> = {
   distributed: "bg-success text-success-foreground border-transparent",
   approved: "bg-success text-success-foreground border-transparent",
   pending: "bg-warning text-warning-foreground border-transparent",
@@ -51,7 +51,7 @@ const RELEASE_STATUS_SOLID: Record<ReleaseStatus, string> = {
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
 
 // platform_status (distribution platform) → display set
-const PLATFORM_TO_DISPLAY: Record<string, ReleaseStatus> = {
+const PLATFORM_TO_DISPLAY: Record<string, ReleaseDisplayStatus> = {
   approved: "approved",
   distributed: "distributed",
   rejected: "rejected",
@@ -64,7 +64,7 @@ const PLATFORM_TO_DISPLAY: Record<string, ReleaseStatus> = {
 };
 
 /** Backend `ReleaseStatus` (packages/types) → display set. */
-const BACKEND_TO_DISPLAY: Record<string, ReleaseStatus> = {
+const BACKEND_TO_DISPLAY: Record<string, ReleaseDisplayStatus> = {
   [PkgReleaseStatus.DRAFT]: "incomplete",
   [PkgReleaseStatus.METADATA_PENDING]: "incomplete",
   [PkgReleaseStatus.ASSETS_PENDING]: "incomplete",
@@ -81,7 +81,7 @@ const BACKEND_TO_DISPLAY: Record<string, ReleaseStatus> = {
  * Legacy Portuguese statuses with no ReleaseStatus equivalent (migration
  * 20260928000019 maps every other one; BLK-RELEASES-STATUS-CHECK).
  */
-const UNMAPPED_LEGACY_TO_DISPLAY: Record<string, ReleaseStatus> = {
+const UNMAPPED_LEGACY_TO_DISPLAY: Record<string, ReleaseDisplayStatus> = {
   rejeitado: "rejected",
   takedown: "takedown",
   take_down: "takedown",
@@ -93,18 +93,18 @@ const UNMAPPED_LEGACY_TO_DISPLAY: Record<string, ReleaseStatus> = {
  * (GET /releases?status=a,b). Groups without backend statuses (rejected,
  * takedown only come from the distribution platform) are not filterable.
  */
-export const RELEASE_DISPLAY_TO_BACKEND_STATUSES: Partial<Record<ReleaseStatus, string[]>> = Object.entries(BACKEND_TO_DISPLAY)
-  .reduce<Partial<Record<ReleaseStatus, string[]>>>((acc, [backend, display]) => {
+export const RELEASE_DISPLAY_TO_BACKEND_STATUSES: Partial<Record<ReleaseDisplayStatus, string[]>> = Object.entries(BACKEND_TO_DISPLAY)
+  .reduce<Partial<Record<ReleaseDisplayStatus, string[]>>>((acc, [backend, display]) => {
     (acc[display] ??= []).push(backend);
     return acc;
   }, {});
 
 /** Options for filter selects (display order); value = display group. */
-export const RELEASE_STATUS_OPTIONS: { value: ReleaseStatus; label: string }[] = (
-  ["pending", "on_hold", "approved", "distributed", "incomplete"] as ReleaseStatus[]
+export const RELEASE_STATUS_OPTIONS: { value: ReleaseDisplayStatus; label: string }[] = (
+  ["pending", "on_hold", "approved", "distributed", "incomplete"] as ReleaseDisplayStatus[]
 ).map((v) => ({ value: v, label: RELEASE_STATUS_META[v].label }));
 
-const displayOf = (status: string): ReleaseStatus =>
+const displayOf = (status: string): ReleaseDisplayStatus =>
   BACKEND_TO_DISPLAY[status] ?? UNMAPPED_LEGACY_TO_DISPLAY[status] ?? "incomplete";
 
 /**
@@ -113,12 +113,12 @@ const displayOf = (status: string): ReleaseStatus =>
  * `platform_status`/`internal_status` are not columns of `releases`, so in
  * practice both functions classify the backend `status`.
  */
-export function resolveStatusFromRawStatus(status: string): ReleaseStatus {
+export function resolveStatusFromRawStatus(status: string): ReleaseDisplayStatus {
   return displayOf((status || "").toLowerCase());
 }
 
 /** Display status (7-set), single source: `platform_status` first, then `internal_status`/`status`. */
-export function resolveReleaseStatus(release: Release & Record<string, unknown>): ReleaseStatus {
+export function resolveReleaseStatus(release: Release & Record<string, unknown>): ReleaseDisplayStatus {
   const platform = str(release.platform_status).toLowerCase();
   if (platform && PLATFORM_TO_DISPLAY[platform]) return PLATFORM_TO_DISPLAY[platform];
 
@@ -126,7 +126,7 @@ export function resolveReleaseStatus(release: Release & Record<string, unknown>)
   return displayOf(internal || str(release.status).toLowerCase());
 }
 
-export const releaseStatusLabel = (s: ReleaseStatus): string => RELEASE_STATUS_META[s].label;
+export const releaseStatusLabel = (s: ReleaseDisplayStatus): string => RELEASE_STATUS_META[s].label;
 
 export function releaseStatusBadge(release: Release & Record<string, unknown>) {
   const s = resolveReleaseStatus(release);
@@ -134,7 +134,7 @@ export function releaseStatusBadge(release: Release & Record<string, unknown>) {
 }
 
 /** Normalizes a raw `platform_status` value to the 7-set (or null when missing/unknown). */
-export function resolvePlatformStatus(release: Release & Record<string, unknown>): ReleaseStatus | null {
+export function resolvePlatformStatus(release: Release & Record<string, unknown>): ReleaseDisplayStatus | null {
   const platform = str(release.platform_status).toLowerCase();
   return platform && PLATFORM_TO_DISPLAY[platform] ? PLATFORM_TO_DISPLAY[platform] : null;
 }

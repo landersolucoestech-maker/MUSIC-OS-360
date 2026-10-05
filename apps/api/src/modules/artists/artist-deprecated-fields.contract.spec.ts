@@ -204,3 +204,14 @@ describe('artist list: deprecated `vinculo` query alias behaves exactly like `re
     expect(await whereClauses({})).toHaveLength(2);
   });
 });
+
+import { LEGACY_TEAM_CONTACT_CATEGORIES } from './artist-legacy-fields';
+
+describe('deprecated team-contact category-only spellings (CZ-042)', () => {
+  it.each([
+    ['editora_musical', 'publisher'],
+    ['gestor', 'agent'],
+  ])('maps %s to %s through the shared legacy table', (legacyValue, canonicalValue) => {
+    expect(LEGACY_TEAM_CONTACT_CATEGORIES[legacyValue]).toBe(canonicalValue);
+  });
+});

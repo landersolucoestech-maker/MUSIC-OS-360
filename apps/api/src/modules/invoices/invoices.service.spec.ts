@@ -152,3 +152,67 @@ describe('InvoicesService.create - legacy_amount mirror derived from service_amo
     expect(created).not.toHaveProperty('service_amount');
   });
 });
+
+/**
+ * R2 (legacy_amount -> service_amount), R5 (url_pdf -> file_url), R4 (tomador_name read fallback).
+ * Expand window: legacy_amount stays a NOT NULL column derived from service_amount; url_pdf is
+ * mirrored from file_url on write.
+ */
+describe('InvoicesService - legacy names accepted, canonical persisted (R2/R5)', () => {
+  function setup() {
+    const repo = {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => ({ id: 'invoice-1', ...(v as object) })),
+      manager: { connection: { query: jest.fn(async () => []) } },
+    };
+    const ds = { getRepository: jest.fn(() => repo) } as any;
+    const enc = { decryptNullable: jest.fn(() => null), encryptNullable: jest.fn(() => null) } as any;
+    return { svc: new InvoicesService(ds, enc), repo };
+  }
+
+  it('R2: a legacy_amount-only payload persists service_amount (and the derived legacy_amount mirror)', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { legacy_amount: 500 } as any);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ service_amount: 500, legacy_amount: 500 }));
+  });
+
+  it('R2: the canonical service_amount wins when both are sent', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { legacy_amount: 500, service_amount: 700 } as any);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ service_amount: 700, legacy_amount: 700 }));
+  });
+
+  it('R5: a url_pdf-only payload persists file_url and mirrors url_pdf', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { url_pdf: 'https://x.test/a.pdf' } as any);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ file_url: 'https://x.test/a.pdf', url_pdf: 'https://x.test/a.pdf' }));
+  });
+
+  it('R5: file_url wins over url_pdf and is mirrored into url_pdf', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { file_url: 'https://x.test/new.pdf', url_pdf: 'https://x.test/old.pdf' } as any);
+    expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ file_url: 'https://x.test/new.pdf', url_pdf: 'https://x.test/new.pdf' }));
+  });
+
+  it('R5: neither name sent leaves both columns untouched', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { notes: 'x' } as any);
+    const created = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(created).not.toHaveProperty('file_url');
+    expect(created).not.toHaveProperty('url_pdf');
+  });
+
+  it('R5: reads return both names with file_url ?? url_pdf', async () => {
+    const legacyRow = makeService([], { id: 'i', type: 'nfse', file_url: null, url_pdf: 'https://x.test/old.pdf' });
+    expect(await legacyRow.svc.findById('t', 'i')).toMatchObject({ file_url: 'https://x.test/old.pdf', url_pdf: 'https://x.test/old.pdf' });
+    const canonicalRow = makeService([], { id: 'i', type: 'nfse', file_url: 'https://x.test/new.pdf', url_pdf: 'https://x.test/old.pdf' });
+    expect(await canonicalRow.svc.findById('t', 'i')).toMatchObject({ file_url: 'https://x.test/new.pdf', url_pdf: 'https://x.test/new.pdf' });
+  });
+
+  it('R4: reads return tomador_legal_name ?? tomador_name (canonical wins)', async () => {
+    const legacyRow = makeService([], { id: 'i', type: 'nfse', tomador_legal_name: null, tomador_name: 'Antigo LTDA' });
+    expect(await legacyRow.svc.findById('t', 'i')).toMatchObject({ tomador_legal_name: 'Antigo LTDA' });
+    const both = makeService([], { id: 'i', type: 'nfse', tomador_legal_name: 'Novo LTDA', tomador_name: 'Antigo LTDA' });
+    expect(await both.svc.findById('t', 'i')).toMatchObject({ tomador_legal_name: 'Novo LTDA' });
+  });
+});

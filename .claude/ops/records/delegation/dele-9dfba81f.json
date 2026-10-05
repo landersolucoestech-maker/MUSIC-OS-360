@@ -1,0 +1,9 @@
+{
+  "agent": "implementation-engineer",
+  "objective": "Wave 2a: invoices canonical naming slices that need no migration (legacy_amount alias, url_pdf to file_url alias+mirror, tomador read, due_date/due_at guard) API + web invoices",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-9dfba81f",
+  "createdAt": "2026-10-05T01:41:54.440Z"
+}

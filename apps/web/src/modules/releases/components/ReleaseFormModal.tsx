@@ -58,7 +58,7 @@ import { formatReleaseDate, RELEASE_LANGUAGE_OPTIONS, RELEASE_TYPE_LABELS, relea
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import type { FonogramaWithRelations } from "@/modules/catalog/hooks/usePhonograms";
+import type { PhonogramWithRelations } from "@/modules/catalog/hooks/usePhonograms";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { canonicalReleaseMetadata } from "@/modules/releases/lib/release-metadata";
@@ -137,10 +137,10 @@ const splitNames = (s: string | null | undefined): string[] => {
  * list (Task J). Used only for best-effort autofill (ISRC of a project track);
  * a few results are enough, so the small `pageSize` is intentional.
  */
-async function findPhonogramByTitle(title: string): Promise<FonogramaWithRelations | undefined> {
+async function findPhonogramByTitle(title: string): Promise<PhonogramWithRelations | undefined> {
   if (!title.trim()) return undefined;
   const target = normStr(title);
-  const { items } = await storage.listPaged<FonogramaWithRelations & { id: string }>("phonograms", {
+  const { items } = await storage.listPaged<PhonogramWithRelations & { id: string }>("phonograms", {
     page: 1,
     pageSize: 5,
     filters: { search: title },

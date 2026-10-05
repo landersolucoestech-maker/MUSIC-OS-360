@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsNotEmpty, IsBase64, IsUUID, IsIn, IsArray, IsEmail, IsObject, Matches, ValidateIf } from 'class-validator';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
+import { INTEGRATION_PROVIDER_IDS, GENERIC_OAUTH_PROVIDER_IDS } from '@music-os-360/types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 // find-89cba006: RegisterAbramusWorkDto/ConfigureSoundCloudDto/OAuthCodeStateDto/
@@ -18,13 +19,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class OAuthInitDto {
   @ApiProperty({ description: 'Platform that will start the OAuth flow' })
   @IsString() @IsNotEmpty()
-  @IsIn([
-    'corp_instagram', 'meta_business', 'meta_ads',
-    'corp_tiktok', 'tiktok_business', 'tiktok_ads',
-    'corp_youtube', 'youtube_business', 'google_business', 'google_ads', 'youtube_ads',
-    'spotify_ads', 'corp_spotify',
-    'docusign', 'stripe_connect',
-  ])
+  @IsIn(INTEGRATION_PROVIDER_IDS)
   platform!: string;
 }
 
@@ -35,12 +30,7 @@ export class OAuthExchangeDto {
 
   @ApiProperty({ description: 'Platform identifier (e.g. corp_instagram, corp_tiktok, corp_youtube)' })
   @IsString() @IsNotEmpty()
-  @IsIn([
-    'corp_instagram', 'meta_business', 'meta_ads',
-    'corp_tiktok', 'tiktok_business', 'tiktok_ads',
-    'corp_youtube', 'youtube_business', 'google_business', 'google_ads', 'youtube_ads',
-    'docusign', 'stripe_connect',
-  ])
+  @IsIn(GENERIC_OAUTH_PROVIDER_IDS)
   platform!: string;
 
   @ApiProperty({ description: 'Single-use exchange token issued by POST /oauth/init (replaces redirect_uri)' })
@@ -206,6 +196,11 @@ export const ABRAMUS_WORK_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   genero: 'genre',
   duracao: 'duration',
   editora: 'publisher',
+};
+
+/** Deprecated inbound query alias of GET /integrations/abramus/statements (canonical wins). */
+export const ABRAMUS_STATEMENTS_DEPRECATED_QUERY: DeprecatedFieldAliases = {
+  periodo: 'period',
 };
 
 export class RegisterAbramusWorkDto {

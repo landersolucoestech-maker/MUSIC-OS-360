@@ -33,6 +33,7 @@
     "verify:migrations": "tsx scripts/db-ops.ts check",
     "verify:canonical-order": "tsx scripts/verify-canonical-column-order.ts",
     "verify:cz042-cz043-migrations": "tsx scripts/verify-cz042-cz043-migrations.ts",
+    "verify:schema-compat-boundaries": "tsx scripts/verify-schema-compat-boundaries.ts",
     "verify:cz045-musicchat-migration": "tsx scripts/verify-cz045-musicchat-migration.ts",
     "verify:marketing-content-approval-roundtrip": "tsx scripts/verify-marketing-content-approval-roundtrip.ts",
     "verify:tenant-isolation": "tsx scripts/verify-tenant-isolation.ts",

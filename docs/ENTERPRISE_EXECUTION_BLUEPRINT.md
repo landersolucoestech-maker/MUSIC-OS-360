@@ -49,7 +49,7 @@ Every production feature must satisfy:
 
 ### Phases 0–5 (Foundation — completed)
 - Removed runtime auth bypass surface and the legacy third-party auth provider references.
-- Kept explicit local `MOCK_MODE` for development only; production builds force it off.
+- The former `MOCK_MODE` flag was removed (locked by `apps/api/src/core/config/auth-disabled-env.spec.ts`); the remaining dev-only bypass flags are rejected in production-like environments.
 - Made production database/tenant/auth failures fail closed instead of passthrough.
 - Removed the duplicated workspace lockfile.
 - Fixed org-scoped RLS policy generation.

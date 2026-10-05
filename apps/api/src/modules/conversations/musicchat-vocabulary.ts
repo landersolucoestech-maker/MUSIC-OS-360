@@ -41,6 +41,61 @@ function canonical(map: Readonly<Record<string, string>>, value: unknown): unkno
 /** class-transformer @Transform: maps a pre-CZ-045 service_status before validation. */
 export const canonicalServiceStatus = ({ value }: { value: unknown }) => canonical(LEGACY_SERVICE_STATUSES, value);
 
+/**
+ * Queue and sector of a menu option are tenant-editable DISPLAY LABELS (free strings). The canonical machine keys
+ * (`queueKey`/`sectorKey`, pattern ROUTING_KEY_PATTERN) live next to them. These frozen maps are the labels the
+ * pre-key defaults shipped; they are only used to ADD a key to an option still carrying exactly such a label.
+ */
+export const ROUTING_KEY_PATTERN = /^[a-z][a-z0-9_]{0,39}$/;
+
+export const LEGACY_QUEUE_LABELS: Readonly<Record<string, string>> = {
+  Comercial: 'commercial',
+  'Produção Musical': 'music_production',
+  Catálogo: 'catalog',
+  Marketing: 'marketing',
+  Financeiro: 'finance',
+  Atendimento: 'customer_service',
+};
+
+export const LEGACY_SECTOR_LABELS: Readonly<Record<string, string>> = {
+  Shows: 'shows',
+  Produção: 'production',
+  'Editora/Distribuição': 'publishing_distribution',
+  Criação: 'creative',
+  Financeiro: 'finance',
+  Conteúdo: 'content',
+  Suporte: 'support',
+  Triagem: 'triage',
+};
+
+/** Own-property, exact, case-sensitive lookup: a prototype key such as `constructor` never matches. */
+function labelKey(map: Readonly<Record<string, string>>, label: unknown): string | undefined {
+  return typeof label === 'string' && Object.prototype.hasOwnProperty.call(map, label) ? map[label] : undefined;
+}
+
+/**
+ * Keys to ADD to a menu option: only for a key that is absent and whose label matches a legacy label exactly.
+ * An unknown or edited label gets no key (never guessed); an existing key is never overwritten.
+ */
+export function canonicalRoutingKeys(option: { queue?: unknown; sector?: unknown; queueKey?: unknown; sectorKey?: unknown }): { queueKey?: string; sectorKey?: string } {
+  const out: { queueKey?: string; sectorKey?: string } = {};
+  if (option.queueKey === undefined || option.queueKey === null) {
+    const key = labelKey(LEGACY_QUEUE_LABELS, option.queue);
+    if (key) out.queueKey = key;
+  }
+  if (option.sectorKey === undefined || option.sectorKey === null) {
+    const key = labelKey(LEGACY_SECTOR_LABELS, option.sector);
+    if (key) out.sectorKey = key;
+  }
+  return out;
+}
+
+/** The option with its absent routing keys derived from exact legacy labels (all other fields untouched). */
+export function withCanonicalRoutingKeys<T extends { queue?: unknown; sector?: unknown; queueKey?: string | null; sectorKey?: string | null }>(option: T): T {
+  const keys = canonicalRoutingKeys(option);
+  return Object.keys(keys).length > 0 ? { ...option, ...keys } : option;
+}
+
 interface MenuOptionLike { id: string; responseTemplateId: string; priority?: string }
 interface TemplateLike { id: string }
 

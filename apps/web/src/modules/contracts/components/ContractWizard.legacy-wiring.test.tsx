@@ -127,7 +127,7 @@ describe("ContractWizard legacy wiring: re-opening a contract saved by an earlie
     await waitFor(() => expect(preview()).toHaveTextContent("Nome: Maria Souza"));
     fireEvent.click(screen.getByTestId("button-wizard-next"));
     const roles = screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
-    expect(roles).toEqual(["CONTRATANTE", "EMPRESA", "ARTISTA", "CONJUGE", "TESTEMUNHA", "OUTRA"]);
+    expect(roles).toEqual(["Contratante", "Empresa", "Artista", "Cônjuge", "Testemunha", "Outra"]);
     expect(roles).not.toContain("OBJETO");
     expect(roles).not.toContain("SIGNATURE");
   });

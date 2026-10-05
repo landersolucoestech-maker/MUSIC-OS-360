@@ -214,5 +214,20 @@ export const PARTICIPANT_ROLE_OPTIONS: Array<{ value: ParticipantRole; label: st
   { value: "REPRESENTANTE_LEGAL", label: "Representante Legal" },
 ];
 
+/**
+ * PT-BR label for a role key shown to the user (party card title, signer badge).
+ * Roles come from template placeholders and the signer list, so they may be any
+ * machine key (e.g. "OUTRO"): known keys use the label map, unknown ones are
+ * humanized. The persisted value is never changed.
+ */
+const EXTRA_ROLE_LABELS: Record<string, string> = { OUTRO: "Outro", OUTRA: "Outra", REPRESENTANTE: "Representante", CONJUGE: "Cônjuge" };
+
+export function contractRoleLabel(role: string): string {
+  const known = (ROLE_LABELS as Record<string, string>)[role] ?? EXTRA_ROLE_LABELS[role];
+  if (known) return known;
+  const humanized = role.replace(/_/g, " ").trim().toLowerCase();
+  return humanized ? humanized.charAt(0).toUpperCase() + humanized.slice(1) : role;
+}
+
 export { ROLE_LABELS };
 

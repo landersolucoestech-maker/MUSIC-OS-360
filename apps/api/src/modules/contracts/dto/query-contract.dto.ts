@@ -17,12 +17,12 @@ export class QueryContractDto extends PaginationDto {
   @IsString()
   status?: string;
 
-  @ApiPropertyOptional({ example: 'gravacao' })
+  @ApiPropertyOptional({ example: 'recording' })
   @IsOptional()
   @IsString()
   type?: string;
 
-  @ApiPropertyOptional({ example: 'recording', deprecated: true, description: 'Use "type".' })
+  @ApiPropertyOptional({ example: 'gravacao', deprecated: true, description: 'Use "type".' })
   @IsOptional()
   @IsString()
   tipo?: string;

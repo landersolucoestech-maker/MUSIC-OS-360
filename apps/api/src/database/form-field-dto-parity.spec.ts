@@ -76,7 +76,7 @@ describe('Dedicated form columns are always exposed in the matching DTO', () => 
       'deductions_amount', 'base_calculo', 'aliquota_iss', 'iss_amount',
       'iss_retido', 'pis_amount', 'cofins_amount', 'inss_amount', 'ir_amount',
       'csll_amount', 'net_amount', 'payment_method', 'payment_terms',
-      'url_pdf', 'notes', 'items',
+      'file_url', 'url_pdf', 'notes', 'items',
     ] as const;
     expectFields(block, fields, (field) => `\\b${field}\\b`);
     expectFields(dto, fields);

@@ -13,7 +13,7 @@ const UI_TYPES = [
   "corporate_content", "behind_the_scenes", "meeting", "product_promotion", "service_promotion", "saas_promotion",
   "internal_communication", "external_communication", "news_portal", "special_project",
 ] as const;
-const UI_STATUSES = ["planning", "active", "paused", "completed", "cancelled"] as const;
+const UI_STATUSES = ["draft", "planning", "active", "paused", "completed", "cancelled", "archived"] as const;
 /** Deprecated Portuguese UI slugs (rows persisted before migration 20260930000026) -> canonical. */
 const LEGACY_TYPES: Record<string, string> = {
   lancamento_musical: "music_release", videoclipe: "music_video", audiovisual: "audiovisual", campanha_institucional: "institutional_campaign",
@@ -48,6 +48,18 @@ describe("marketing project wire adapter", () => {
     expect(projectStatusFromApi("paused", "paused")).toBe("paused");
     expect(projectStatusFromApi(undefined, "completed")).toBe("completed");
     expect(projectStatusFromApi(undefined, "weird")).toBe("planning");
+  });
+
+  it("round-trips every status one-to-one, draft and archived included (C1)", () => {
+    for (const s of UI_STATUSES) {
+      expect(projectStatusToApi(s)).toBe(s);
+      expect(projectStatusFromApi(undefined, s)).toBe(s);
+      expect(projectStatusFromApi(s, s)).toBe(s);
+    }
+    expect(projectStatusFromApi(undefined, "archived")).not.toBe("completed");
+    expect(projectStatusFromApi(undefined, "draft")).not.toBe("planning");
+    // metadata.uiStatus still wins over the API value
+    expect(projectStatusFromApi("paused", "active")).toBe("paused");
   });
 
   it("dual-read: a stored Portuguese UI slug reads as the canonical value, and is never written back", () => {

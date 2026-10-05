@@ -47,7 +47,7 @@ export interface InvoiceFormData {
   payment_method: string;
   payment_terms: string;
   items: InvoiceLineItem[];
-  url_pdf: string;
+  file_url: string;
   notes: string;
 }
 
@@ -96,7 +96,7 @@ export const INITIAL_FORM_DATA: InvoiceFormData = {
   payment_method: INVOICE_PAYMENT_METHOD_BANK_TRANSFER,
   payment_terms: "30 dias",
   items: [{ ...INITIAL_ITEM }],
-  url_pdf: "",
+  file_url: "",
   notes: "",
 };
 

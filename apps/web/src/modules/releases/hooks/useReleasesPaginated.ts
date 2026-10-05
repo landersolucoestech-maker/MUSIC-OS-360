@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/lib/query-config";
 import { usePaginatedDataQuery } from "@/shared/hooks/usePaginatedDataQuery";
 import { api } from "@/shared/lib/api-client";
-import { resolveStatusFromRawStatus, type ReleaseStatus } from "@/modules/releases/lib/release-status";
+import { resolveStatusFromRawStatus, type ReleaseDisplayStatus } from "@/modules/releases/lib/release-status";
 import type { ReleaseWithRelations } from "./useReleases";
 
 export interface UseReleasesPaginatedParams {
@@ -74,7 +74,7 @@ export function useReleasesDistributionStats() {
   const kpis: DistributionKPIs = rows.length === 0
     ? EMPTY_DISTRIBUTION_KPIS
     : rows.reduce((acc, row) => {
-        const bucket: ReleaseStatus = resolveStatusFromRawStatus(row.status);
+        const bucket: ReleaseDisplayStatus = resolveStatusFromRawStatus(row.status);
         acc.total += row.cnt;
         if (bucket === "distributed") acc.distributed += row.cnt;
         else if (bucket === "pending") acc.pending += row.cnt;

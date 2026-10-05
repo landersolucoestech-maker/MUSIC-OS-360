@@ -49,6 +49,11 @@ export class InvoicesService {
     const mapped: Record<string, unknown> = { ...raw };
     mapped['tomador_cnpj'] = raw['tomador_cnpj'] ?? decrypted ?? null;
     delete mapped['tomador_doc_encrypted'];
+    // One-window read compat: file_url is canonical (url_pdf mirrored on write); tomador_legal_name
+    // is canonical (tomador_name is the legacy column, still read for rows not yet backfilled).
+    mapped['file_url'] = raw['file_url'] ?? raw['url_pdf'] ?? null;
+    mapped['url_pdf'] = raw['file_url'] ?? raw['url_pdf'] ?? null;
+    mapped['tomador_legal_name'] = raw['tomador_legal_name'] ?? raw['tomador_name'] ?? null;
     return mapped;
   }
 
@@ -80,6 +85,8 @@ export class InvoicesService {
 
     if (input['tipo_nota'] !== undefined) payload['type'] = input['tipo_nota'];
     if (input['service_amount'] !== undefined) payload['legacy_amount'] = input['service_amount'];
+    // url_pdf is mirrored from file_url for one deploy window (old readers).
+    if (input['file_url'] !== undefined) payload['url_pdf'] = input['file_url'];
 
     const cnpj = input['tomador_cnpj'];
     if (cnpj !== undefined) {

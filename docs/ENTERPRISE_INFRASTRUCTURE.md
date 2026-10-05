@@ -35,7 +35,7 @@ pg_restore \
 ```
 
 **Post-restore checklist**:
-- [ ] Run pending migrations: `pnpm --filter api db:migrate`
+- [ ] Run pending migrations: `pnpm --filter @music-os-360/api db:migrate`, then `pnpm --filter @music-os-360/api db:check` (see `docs/engineering/database.md`)
 - [ ] Verify RLS policies are intact: `SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public'`
 - [ ] Validate row counts for critical tables
 - [ ] Re-enable Supabase Auth hooks if needed (`supabase-jwt-hook.sql`)
@@ -46,7 +46,7 @@ pg_restore \
 Redis holds BullMQ job queues and optional idempotency keys. Redis is **not** the source of truth — all critical state is in PostgreSQL.
 
 **After Redis data loss**:
-1. Restart API: `pnpm --filter api start:prod`
+1. Restart the API (build with `pnpm build`, start with `pnpm --filter @music-os-360/api start`)
 2. BullMQ reconnects automatically
 3. In-flight jobs (pending at time of loss) are retried if they had `attempts > 1`
 4. Idempotency keys reset — duplicate requests may re-execute; monitor for 15 minutes
@@ -83,14 +83,13 @@ STRIPE_WEBHOOK_SECRET=whsec_test_...
 REDIS_URL=redis://...staging-redis...
 CORS_ORIGINS=http://localhost:5173,https://staging.music-os-360.app
 SENTRY_DSN=...staging-sentry-dsn...
-MOCK_MODE=false
 ```
 
 ### Staging Deployment Checklist
 
 - [ ] Migrations run against staging DB first
 - [ ] Smoke-test: auth, tenant isolation, billing webhooks
-- [ ] No `MOCK_MODE=true` or `AUTH_BYPASS=true`
+- [ ] No bypass flag enabled (`AUTH_DISABLED`, `DEV_SOCIAL_METRICS_MOCK`, `USE_MOCK`, `DEV_AUTH_ENDPOINT_ENABLED`); `pnpm --filter @music-os-360/api verify:production-flags` enforces it
 - [ ] Stripe webhooks pointed to staging API endpoint
 - [ ] Sentry release tag set to staging build
 
@@ -146,13 +145,9 @@ When Redis is down, the API continues in **degraded mode**:
 
 ### Queue Monitoring
 
-Access BullMQ dashboard via:
-```bash
-# Run Bull-Board (dev only)
-pnpm --filter api queue:dashboard
-```
+The BullMQ dashboard (Bull-Board) is mounted by the API itself at `/admin/queues`, protected by HTTP basic auth (`ADMIN_QUEUES_USER` / `ADMIN_QUEUES_PASS`; in production it is disabled unless both are set). There is no separate dashboard script. The authoritative queue list is `QUEUE_NAMES` in `apps/api/src/queues/queue.constants.ts`.
 
-Critical queues:
+Examples of queues (retry counts below are not verified against the code):
 | Queue | Purpose | DLQ behavior |
 |-------|---------|-------------|
 | `notifications` | Email/WS notifications, workflow automation | Retry 3x with exponential backoff |
@@ -188,7 +183,7 @@ Rate limit responses: HTTP 429 with `Retry-After` header.
 ### Security
 
 - [ ] All env vars validated at startup (fails closed in production)
-- [ ] `MOCK_MODE=false` and `AUTH_BYPASS` not present in production env
+- [ ] None of the bypass flags (`PROD_FORBIDDEN_BYPASS_FLAGS` in `apps/api/src/core/config/env.schema.ts`) is enabled in the production env
 - [ ] `CORS_ORIGINS` explicitly set (no wildcard `*`)
 - [ ] HTTPS enforced (Cloudflare or load balancer TLS termination)
 - [ ] PostgreSQL: SSL enabled (`ssl: { rejectUnauthorized: false }` in TypeORM)

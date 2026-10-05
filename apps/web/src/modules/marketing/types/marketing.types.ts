@@ -54,11 +54,13 @@ export type ProjectType =
   | "special_project";
 
 export type ProjectStatus =
+  | "draft"
   | "planning"
   | "active"
   | "paused"
   | "completed"
-  | "cancelled";
+  | "cancelled"
+  | "archived";
 
 export type CampaignType =
   | "institutional"

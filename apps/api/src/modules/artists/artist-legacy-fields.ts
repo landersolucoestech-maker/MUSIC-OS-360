@@ -10,6 +10,7 @@
  * only the metadata-only fields (ARTIST_METADATA_ONLY_FIELDS). Responses are
  * canonical (English keys and values).
  */
+import { ARTIST_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 
 /** Pre-CZ-042 request key -> canonical key (column name, encrypted wire key or metadata key). */
@@ -132,6 +133,31 @@ const mapValue = (map: Readonly<Record<string, string>>, value: unknown): unknow
   return Object.prototype.hasOwnProperty.call(map, key) ? map[key] : value;
 };
 
+/** Canonical categories of artists.team_contacts[].category (free-text column; the tuple is the vocabulary the UI offers). */
+export const ARTIST_TEAM_CONTACT_CATEGORY_VALUES = ARTIST_TEAM_CONTACT_CATEGORIES;
+
+/**
+ * Legacy team-contact category -> canonical (keys lower-case). Reuses the
+ * relationship_type vocabulary (empresario/gravadora/editora/juridico/
+ * financeiro/contador/assessoria) plus the two category-only spellings.
+ */
+export const LEGACY_TEAM_CONTACT_CATEGORIES: Readonly<Record<string, string>> = {
+  ...LEGACY_ARTIST_VALUES.relationship_type,
+  editora_musical: 'publisher',
+  gestor: 'agent',
+};
+
+/** Canonical team-contact category: legacy values mapped, unknown values preserved (the column is free text). */
+export const canonicalArtistTeamContactCategory = (value: unknown): unknown => mapValue(LEGACY_TEAM_CONTACT_CATEGORIES, value);
+
+/** Applies canonicalArtistTeamContactCategory to every item of a team_contacts list. */
+export function canonicalArtistTeamContacts(value: unknown): unknown {
+  if (!Array.isArray(value)) return value;
+  return value.map((item) =>
+    isPlainObject(item) && item.category !== undefined ? { ...item, category: canonicalArtistTeamContactCategory(item.category) } : item,
+  );
+}
+
 export const canonicalArtistProfileType = (value: unknown): unknown => mapValue(LEGACY_ARTIST_VALUES.profile_type, value);
 export const canonicalArtistGender = (value: unknown): unknown => mapValue(LEGACY_ARTIST_VALUES.gender, value);
 
@@ -176,6 +202,7 @@ function canonicalDistributorIds(column: string, value: unknown): unknown {
 /** Canonical jsonb value of a nested-item column (keys, distributor ids) — relationships also get canonical `type` values. */
 export function canonicalArtistNestedColumn(column: string, value: unknown): unknown {
   const out = canonicalDistributorIds(column, canonicalNestedKeys(value));
+  if (column === 'team_contacts') return canonicalArtistTeamContacts(out);
   if (column !== 'relationships' || !Array.isArray(out)) return out;
   return out.map((item) =>
     isPlainObject(item) && item.type !== undefined

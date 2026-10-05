@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time audit (2026-09-13). Current contract: `docs/engineering/README.md`.
+
 # Repository Inventory Ledger
 
 Baseline: `dev@506de92fbcb1cd0a9a67b27e0a90bb41f3ce9f48`

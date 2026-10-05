@@ -61,7 +61,6 @@ export interface Release {
   cover_url?: string | null;
   distributor?: string | null;
   platforms?: string[] | null;
-  phonogram_ids?: string[] | null;
   notes?: string | null;
   isrc_global?: string | null;
   upc?: string | null;

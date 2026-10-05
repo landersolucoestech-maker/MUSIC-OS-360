@@ -18,7 +18,7 @@ const IGNORED_DIRECTORIES = new Set([
   'test-results',
   // .claude/** is the Engineering OS governance framework layered on top of
   // this repo -- explicitly "not part of the product runtime" (see
-  // docs/CODEBASE_MAP.md's Directory Structure section). It includes
+  // docs/CODEBASE_MAP.md (historical snapshot)'s Directory Structure section). It includes
   // append-only mission-evidence records (.claude/ops/**, which must never be
   // edited after the fact -- .claude/rules/evidence-governance.md) and
   // generic, project-agnostic skill-pack documentation/examples
@@ -28,7 +28,7 @@ const IGNORED_DIRECTORIES = new Set([
   '.claude',
   // docs/backend-v2/** documents a proposed "API v2" rewrite that was never
   // built, plus a frozen point-in-time code-grounded audit snapshot -- see
-  // docs/CODEBASE_MAP.md's Specification & Planning Documentation section.
+  // docs/CODEBASE_MAP.md (historical snapshot)'s Specification & Planning Documentation section.
   // Historical/reference content, not a live spec being built against; one
   // of its own audit findings is literally the sentence proving CSV support
   // doesn't exist ("CSV_EXPORTS: 0 -- confirmed no CSV generation exists

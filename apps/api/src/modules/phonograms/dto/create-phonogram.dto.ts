@@ -72,12 +72,12 @@ export class CreatePhonogramDto {
   @MaxLength(500)
   titulo?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-da-obra', deprecated: true, description: 'Legacy alias. Use "work_id".' })
+  @ApiPropertyOptional({ example: '00000000-0000-4000-8000-000000000001', deprecated: true, description: 'Legacy alias. Use "work_id".' })
   @IsOptional()
   @IsUUID()
   workId?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-do-artista', deprecated: true, description: 'Legacy alias. Use "artist_id".' })
+  @ApiPropertyOptional({ example: '00000000-0000-4000-8000-000000000002', deprecated: true, description: 'Legacy alias. Use "artist_id".' })
   @IsOptional()
   @IsUUID()
   artistId?: string;

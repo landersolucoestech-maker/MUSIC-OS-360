@@ -20,7 +20,7 @@
 
 ### Security
 - [ ] No hardcoded key, token, or secret
-- [ ] Inputs validated with Zod at the endpoint (backend) or in the form (frontend)
+- [ ] Inputs validated with class-validator DTOs at the endpoint (backend, see `docs/engineering/backend.md`) or in the form (frontend)
 - [ ] RBAC permissions checked (which role may access this resource?)
 - [ ] Sensitive data (CPF, CNPJ, PIX, bank accounts) handled with care
 
@@ -38,7 +38,7 @@
 - [ ] No existing data broken
 
 ### Documentation
-- [ ] `docs/GOVERNANCE.md` updated if a new entity or module was created
+- [ ] `docs/naming/canonical-naming-map.json` and the matching `docs/engineering/*.md` updated if a new entity or module was created
 - [ ] New fields documented in the matching DTO
 
 ## How to test

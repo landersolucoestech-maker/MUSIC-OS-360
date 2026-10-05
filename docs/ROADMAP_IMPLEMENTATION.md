@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time planning document (2026-05). Current contract: `docs/engineering/README.md`.
+
 # 🗺️ MUSIC OS 360 — EXECUTIVE ROADMAP & MIGRATION STRATEGY
 
 **Master Document: Timeline, Priorities and Zero-Breaking-Changes Strategy**

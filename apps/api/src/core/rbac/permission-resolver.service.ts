@@ -95,11 +95,21 @@ type DualReadPath = 'role_id' | 'fallback';
 type DivergenceClass =
   | 'MATCH'
   | 'ALIAS'
-  | 'DIVERGENTE'
-  | 'REMOVIDA'
-  | 'ARQUIVADA'
+  | 'DIVERGENT'
+  | 'REMOVED'
+  | 'ARCHIVED'
   | 'CROSS_TENANT'
   | 'NO_ROLE_ID';
+
+/**
+ * Previous Portuguese telemetry values, emitted as `divergence_legacy` in the `rbac_dual_read` log for one
+ * release so external dashboards keep their signal. Remove together with the `divergence_legacy` field.
+ */
+const LEGACY_DIVERGENCE_LABEL: Partial<Record<DivergenceClass, string>> = {
+  DIVERGENT: 'DIVERGENTE',
+  REMOVED: 'REMOVIDA',
+  ARCHIVED: 'ARQUIVADA',
+};
 
 interface RoleIdentity {
   slug: string;
@@ -311,6 +321,7 @@ export class PermissionResolverService implements OnModuleInit {
           role_id: input.roleId,
           tenant_id: input.tenantId,
           divergence,
+          divergence_legacy: LEGACY_DIVERGENCE_LABEL[divergence] ?? divergence,
           used_count: input.usedPermissions.length,
           legacy_count: input.legacyPermissions.length,
           // shadow: legacy keys missing from the set used (potential gating regression)
@@ -333,16 +344,16 @@ export class PermissionResolverService implements OnModuleInit {
   ): Promise<DivergenceClass> {
     if (!roleId || !ds || !ds.isInitialized) return 'NO_ROLE_ID';
     const identity = await this.loadRoleIdentity(ds, roleId);
-    if (!identity) return 'REMOVIDA';
-    if (identity.deleted) return 'REMOVIDA';
-    if (identity.archived) return 'ARQUIVADA';
+    if (!identity) return 'REMOVED';
+    if (identity.deleted) return 'REMOVED';
+    if (identity.archived) return 'ARCHIVED';
     if (identity.tenant_id !== null && tenantId !== null && identity.tenant_id !== tenantId) {
       return 'CROSS_TENANT';
     }
     const roleStr = typeof member.role === 'string' ? member.role : null;
     if (identity.canonical_slug) return 'ALIAS';
     // A canonical English slug (legal) and the legacy slug of the role row (juridico) are the same role.
-    if (roleStr && roleStr !== identity.slug && !areEquivalentRoleSlugs(roleStr, identity.slug)) return 'DIVERGENTE';
+    if (roleStr && roleStr !== identity.slug && !areEquivalentRoleSlugs(roleStr, identity.slug)) return 'DIVERGENT';
     return 'MATCH';
   }
 

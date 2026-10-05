@@ -517,7 +517,6 @@ export const FIELD_LABELS_PT_BR = {
   netAmount: 'Valor líquido',
   formaPagamento: 'Forma de pagamento', // reader: request-field
   condicaoPagamento: 'Condição de pagamento', // reader: request-field
-  urlPdf: 'PDF da nota',
   // ── Licenses (2026-07-12 rule: 1 column per field) ──────────────────────────
   remunerationType: 'Tipo de remuneração',
   // ── Takedowns (2026-07-12 rule: 1 column per field) ─────────────────────────
@@ -671,6 +670,7 @@ export const FIELD_LABELS_PT_BR = {
   paymentMethod: 'Forma de pagamento',
   paymentTerms: 'Condição de pagamento',
   invoiceDueAt: 'Data de vencimento',
+  invoiceFileUrl: 'PDF da nota',
   serviceCode: 'Código do serviço',
   campaignId: 'Campanha',
 

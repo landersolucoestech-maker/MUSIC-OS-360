@@ -44,7 +44,7 @@ export const invoiceSchema = z.object({
   payment_method: z.string().optional().or(z.literal("")),
   payment_terms: z.string().optional().or(z.literal("")),
   items: z.array(invoiceLineItemSchema).optional(),
-  url_pdf: z.string().max(500, "URL deve ter no máximo 500 caracteres").optional().or(z.literal("")),
+  file_url: z.string().max(500, "URL deve ter no máximo 500 caracteres").optional().or(z.literal("")),
   notes: z.string().max(2000, "Observações deve ter no máximo 2000 caracteres").optional().or(z.literal("")),
 });
 

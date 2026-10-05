@@ -38,7 +38,8 @@ import { usePagination } from "@/shared/hooks/usePagination";
 import { Badge } from "@/shared/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { parseOperationType, type InvoiceOperationType } from "@/modules/accounting/types/invoice-type";
+import { invoiceFileUrl } from "@/modules/accounting/types/invoice-type";
+import { readInvoiceOperationType, type InvoiceOperationType } from "@/modules/accounting/types/invoice-operation-type";
 import { formatCurrency, getCurrencyToneClass, getMonetarySemanticClass } from "@/shared/lib/format-utils";
 import { openStoredFile } from "@/shared/lib/stored-file";
 import { toast } from "sonner";
@@ -84,7 +85,7 @@ export default function Invoices() {
     () =>
       invoices.map((n: any) => ({
         ...n,
-        _operationType: parseOperationType(n.notes).type,
+        _operationType: readInvoiceOperationType(n).type,
       })),
     [invoices],
   );
@@ -409,8 +410,8 @@ export default function Invoices() {
                         </TableCell>
                         <TableCell className="py-3">{getStatusBadge(invoice.status)}</TableCell>
                         <TableCell className="py-3">
-                          {invoice.url_pdf ? (
-                            <Button variant="ghost" size="sm" onClick={() => { openStoredFile(invoice.url_pdf).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}>
+                          {invoiceFileUrl(invoice) ? (
+                            <Button variant="ghost" size="sm" onClick={() => { openStoredFile(invoiceFileUrl(invoice)).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}>
                               <ExternalLink className="h-4 w-4" />
                             </Button>
                           ) : (

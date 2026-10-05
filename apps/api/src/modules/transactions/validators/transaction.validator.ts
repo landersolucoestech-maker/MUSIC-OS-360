@@ -7,7 +7,6 @@ import {
   TRANSACTION_TYPES,
   canonicalizeTransactionInput,
 } from '../transaction-legacy-fields';
-import { canonicalTransactionSlug } from '../transaction-category-slugs';
 
 // ── Canonical enum values (CZ-041; PT-BR labels live in the web UI) ───────────
 // 'aprovado'/'atrasado' were UI-only decorative labels with zero backend
@@ -157,13 +156,13 @@ function validateInstallments(data: PartialPayloadForValidation, ctx: z.Refineme
 /**
  * Validates all transaction-type-specific conditional fields.
  * Requires transactionType to be present — enforced by both schemas.
- * Category/subcategory slugs are the canonical English taxonomy ids (the preprocess maps the legacy ones).
+ * Category/subcategory slugs are the canonical English taxonomy ids: every schema runs this only after z.preprocess(canonicalizeTransactionInput) has mapped the legacy ones, so they are not mapped again here.
  */
 function validateConditionalByType(data: PayloadForValidation, ctx: z.RefinementCtx): void {
   const type              = data.transactionType;
   const counterpartyType  = data.counterpartyType;
-  const category          = canonicalTransactionSlug(data.category);
-  const subcategory       = canonicalTransactionSlug(data.subcategory ?? '') as string;
+  const category          = data.category;
+  const subcategory       = data.subcategory ?? '';
   const linkedArtist      = data.artistId;
 
   const isTax             = type === 'tax';

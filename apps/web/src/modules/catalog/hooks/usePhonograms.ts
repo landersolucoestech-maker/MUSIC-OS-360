@@ -9,7 +9,7 @@ import type {
   PhonogramWithRelations,
 } from "../types/catalog.types";
 
-export type { Phonogram as Fonograma, PhonogramInsert as FonogramaInsert, PhonogramUpdate as FonogramaUpdate, PhonogramWithRelations as FonogramaWithRelations };
+export type { Phonogram, PhonogramInsert, PhonogramUpdate, PhonogramWithRelations };
 
 export function usePhonograms(enabled = true, artistId?: string) {
   const { tenant } = useTenant();

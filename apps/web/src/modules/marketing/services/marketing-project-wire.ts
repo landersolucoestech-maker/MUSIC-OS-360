@@ -58,21 +58,23 @@ const TYPE_FROM_API: Record<MarketingProjectApiType, ProjectType> = {
 };
 
 const STATUS_TO_API: Record<ProjectStatus, MarketingProjectApiStatus> = {
+  draft: "draft",
   planning: "planning",
   active: "active",
   paused: "paused",
   completed: "completed",
   cancelled: "cancelled",
+  archived: "archived",
 };
 
 const STATUS_FROM_API: Record<MarketingProjectApiStatus, ProjectStatus> = {
-  draft: "planning",
+  draft: "draft",
   planning: "planning",
   active: "active",
   paused: "paused",
   completed: "completed",
   cancelled: "cancelled",
-  archived: "completed",
+  archived: "archived",
 };
 
 function has<T extends object>(map: T, key: unknown): key is keyof T {

@@ -105,6 +105,10 @@ export interface Invoice {
   tipo_nota?: InvoiceType | string | null;
   status?: InvoiceStatusValue | string | null;
   tomador_name?: string | null;
+  /** Document (PDF) URL; canonical name. */
+  file_url?: string | null;
+  /** Pre-rename name of file_url, still returned by the API for one deploy window. */
+  url_pdf?: string | null;
   tomador_cnpj?: string | null;
   total_amount?: number | null;
   service_amount?: number | null;

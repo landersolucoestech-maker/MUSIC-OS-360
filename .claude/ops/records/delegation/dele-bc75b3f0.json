@@ -1,0 +1,9 @@
+{
+  "agent": "implementation-engineer",
+  "objective": "Wave 2a: MusicChat canonical routing keys end to end (API vocabulary/DTO/service, additive migration, verify script, web labels and fallbacks)",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-bc75b3f0",
+  "createdAt": "2026-10-05T01:41:54.433Z"
+}

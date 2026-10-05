@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time planning document (2026-05). Current contract: `docs/engineering/README.md`.
+
 # 🎵 MUSIC OS 360 — PHASE 1 PRACTICAL IMPLEMENTATION GUIDE
 
 **Phase 1: Technical Foundation and Workspace Infrastructure**  

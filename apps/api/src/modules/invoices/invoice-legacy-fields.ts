@@ -20,6 +20,10 @@ export const INVOICE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   forma_pagamento: 'payment_method',
   condicao_pagamento: 'payment_terms',
   itens: 'items',
+  // Expand window: legacy_amount is still a NOT NULL column derived from service_amount
+  // by InvoicesService; url_pdf is mirrored from file_url on write.
+  legacy_amount: 'service_amount',
+  url_pdf: 'file_url',
 };
 
 export const INVOICE_ITEM_DEPRECATED_FIELDS: DeprecatedFieldAliases = {

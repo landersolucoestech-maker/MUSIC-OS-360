@@ -22,13 +22,9 @@ interface UserFormModalProps {
 }
 
 // Machine values are canonical English role slugs (PT-BR only in `label`/`description`).
-// GATED (product decision, see docs/engineering/rbac-retirement-plan.md): admin_master, ar_gestao and
-// financeiro_contabil have no roles row and no unambiguous canonical slug; the API rejects them
-// (ROLE_UNKNOWN, fail-closed). They are kept verbatim and must not be guessed.
+// Only roles the API accepts are offered (admin_master, ar_gestao and financeiro_contabil were removed:
+// they have no canonical role and the API rejects them with ROLE_UNKNOWN).
 const ACCESS_LEVELS = [
-  { value: "admin_master", label: "Administrador Master", description: "Acesso total a todos os módulos e configurações do sistema." },
-  { value: "ar_gestao", label: "A&R / Gestão Artística", description: "Gestão de artistas, projetos, lançamentos e repertório." },
-  { value: "financeiro_contabil", label: "Contabilidade", description: "Acesso ao módulo de Contabilidade: transações e notas fiscais." },
   { value: "legal", label: "Jurídico", description: "Gestão de contratos, licenciamentos e questões legais." },
   { value: "marketing", label: "Marketing", description: "Campanhas, métricas e gestão de conteúdo promocional." },
   { value: "artist", label: "Artista", description: "Acesso restrito aos próprios dados e projetos vinculados." },

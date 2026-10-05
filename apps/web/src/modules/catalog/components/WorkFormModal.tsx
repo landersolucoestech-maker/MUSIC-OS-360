@@ -41,7 +41,7 @@ import {
   Briefcase,
   Eye,
 } from "lucide-react";
-import type { ProjectWithRelations as ProjetoWithRelations } from "@/modules/projects/hooks/useProjects";
+import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { ParticipantViewModal } from "@/modules/catalog/components/ParticipantViewModal";
@@ -259,7 +259,7 @@ export function WorkFormModal({
   // records loaded (Task J: it used to use an unfiltered useProjetos(), which
   // truncated at 50 projects per tenant).
   const linkedProjectId: string | undefined = work?.project_id ?? undefined;
-  const { entity: linkedProject } = useEntityById<ProjetoWithRelations>(
+  const { entity: linkedProject } = useEntityById<ProjectWithRelations>(
     "projects",
     open ? linkedProjectId : undefined,
   );
@@ -286,7 +286,7 @@ export function WorkFormModal({
   // unfiltered useProjetos(); now each typed (internally debounced)
   // key re-runs the search in the backend, reaching any completed
   // project of the tenant.
-  const { items: filteredCompletedProjects } = useEntityLookup<ProjetoWithRelations>({
+  const { items: filteredCompletedProjects } = useEntityLookup<ProjectWithRelations>({
     table: "projects",
     search: searchProject,
     filters: { status: "completed" },
@@ -576,7 +576,7 @@ export function WorkFormModal({
                           : "Projetos concluídos disponíveis"}
                       </p>
                       {filteredCompletedProjects.length > 0 ? (
-                        (filteredCompletedProjects as ProjetoWithRelations[]).map((p) => {
+                        (filteredCompletedProjects as ProjectWithRelations[]).map((p) => {
                           const pId = p.id as string;
                           const pNameDisplay = (p.title ?? "") as string;
                           const pArtistNameDisplay = (p.artist?.stage_name ?? "") as string;

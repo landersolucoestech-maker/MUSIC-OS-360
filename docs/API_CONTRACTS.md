@@ -1,12 +1,13 @@
 # API Contracts — Priority Flows (Music OS 360)
 
-> **Contracts** document for connecting the validated frontend to the real backend
-> (NestJS + TypeORM). It does not implement endpoints or change logic. Based on what
-> **already exists** in the backend and on what **will be needed** for the future wiring.
+> **Contracts** document for the API consumed by the frontend (NestJS + TypeORM). It does not
+> implement endpoints or change logic. The controllers and DTOs under `apps/api/src/modules/**` are
+> authoritative; this file summarises them and must be corrected when they change.
+> Naming authority: `docs/naming/canonical-naming-map.json` and `docs/engineering/backend.md`.
 >
 > **Global conventions** (apply to every flow unless noted otherwise):
 > - **Base URL:** `/{API_BASE_URL}/api/v1`
-> - **Authentication:** JWT Bearer (`Authorization: Bearer <token>`) — `@ApiBearerAuth`, global `AuthGuard`.
+> - **Authentication:** JWT Bearer (`Authorization: Bearer <token>`) — `@ApiBearerAuth`, global `JwtAuthGuard`.
 > - **Tenant isolation:** `@CurrentTenant()` injects `{ id }`; every query is filtered by `tenant_id` (+ RLS in Postgres). The client does **not** send `tenant_id` in the body.
 > - **RBAC:** `@RequireRole('viewer' | 'editor' | 'manager' | 'admin' | 'owner')` (hierarchical).
 > - **Common errors:** `401` (missing/invalid token), `403` (RBAC/tenant), `404` (not found in the tenant), `400` (validation), `503` (database unavailable).
@@ -35,13 +36,13 @@
 | `/marketing/campaign-builder/config` | GET | viewer | existing |
 
 - **Path/query:** `:id` (uuid). `GET /marketing/campaigns` accepts filters (`status`, `type`) + pagination.
-- **Request (draft/patch):** `{ name, targetType: 'empresa'|'artista', platforms: ContentChannel[], objective, budget, startDate, endDate, audience, creatives[], placements[], contentIds[], notes }`.
+- **Request (draft/patch):** `{ name, targetType: 'music_project'|'artist'|'company', platforms: ContentChannel[], objective, budget, startDate, endDate, audience, creatives[], placements[], contentIds[], notes }`.
 - **Response:** `MarketingCampaign` `{ id, name, targetType, targetName, platforms, status, budget, metrics, startDate, endDate, contentIds, createdAt, updatedAt }`.
 - **Errors:** 400 (step/budget/period validation), 404, 403.
 - **Events emitted:** `campaign.started` (publish), `campaign.ended` (archive/closure).
 - **Entities/tables:** `campaigns`, `campaign_assets`, `campaign_tasks`.
-- **Current status:** `partial`.
-- **Wiring notes:** the frontend already adopts an **exclusive Company/Artist context** (`empresa`/`artista`) and **multi-platform selection** (`publishChannels[]`). The backend persists `targetType` (including the legacy `projeto_musical` value) and `platforms` — align by: (a) restricting `targetType` to `empresa|artista`; (b) guaranteeing `platforms: ContentChannel[]` is multi-valued (Instagram, Facebook, TikTok, YouTube, X/Twitter, Threads). Today the frontend uses an in-memory service (pattern B) — replace it with these endpoints.
+- **Current status:** `existing`; the web campaigns pages consume these routes through `apps/web/src/modules/marketing/services/marketing.service.ts`.
+- **Vocabulary:** canonical `targetType` values are `music_project`, `artist`, `company` (`MARKETING_TARGETS` in `apps/api/src/modules/marketing/marketing-vocabulary.ts`). The deprecated Portuguese spellings (for example `projeto_musical`) are accepted on input only, mapped to `music_project` (and `artista` to `artist`, `empresa` to `company`), and responses are canonical only. See `docs/naming/canonical-naming-map.json`.
 
 ---
 
@@ -60,13 +61,13 @@
 | `/marketing/contents/:id` | DELETE | editor | existing |
 
 - **Path/query:** `:id` (uuid). GET accepts filters (`channel`, `type`, `status`, period) + pagination.
-- **Request (POST/PATCH):** `{ title, targetType: 'empresa'|'artista', targetName, type, channel, channels?: ContentChannel[], status, publishDate, publishTime, copy, files[], notes, integratedAccountId? }`.
+- **Request (POST/PATCH):** `{ title, targetType: 'music_project'|'artist'|'company', targetName, type, channel, status?, publishDate, publishTime, copy, files[], notes, owner, campaignId, releaseId, format, metadata }`. Multi-channel selection and the approval state travel inside `metadata` (`metadata.channels`, `metadata.approval`); a top-level `channels` property is rejected by the DTO (`apps/api/src/modules/marketing/dto/marketing-contents.dto.ts`). `status` is one of `draft|scheduled|published|cancelled|failed`.
 - **Response:** `MarketingContent` `{ id, title, targetType, type, channel, channels?, status, publishDate, publishTime, files[], copy, createdAt, updatedAt }`.
 - **Errors:** 400 (invalid date/time, incompatible platform), 404, 403.
 - **Events emitted:** when an associated asset is approved → `marketing.asset_available_for_content` (asset flow).
 - **Entities/tables:** `marketing_content_posts`.
-- **Current status:** `partial`.
-- **Wiring notes:** the frontend already implements **multi-platform** (`channels[]`) and the **Company publishes / Artist only schedules** rule. The backend today has a **single** `channel` in `marketing_content_posts` → add `channels[]` (column/table) + server-side enforcement: `targetType !== 'empresa'` ⇒ `status` forced to `agendado` (scheduled) and no connected account. The frontend uses pattern B (in-memory) — migrate to `/marketing/contents`.
+- **Current status:** `existing`; the content calendar (`apps/web/src/modules/marketing/pages/Calendar.tsx`) consumes `/marketing/contents`.
+- **Wiring notes:** canonical status is `scheduled` (legacy `agendado` is mapped on input only); `late` is derived from the schedule and never stored. Not verified here: the server-side rule "only `company` content may be published through a connected account".
 
 ---
 
@@ -93,7 +94,7 @@
 - **Events emitted (in the originating automatic flow):** `asset.linked_to_project`, `asset.linked_to_task`; classification is recorded in `asset_usage_logs` (`classified`).
 - **Entities/tables:** `assets`, `asset_versions`, `project_assets`, `task_assets`, `asset_usage_logs` (additive core layer).
 - **Current status:** `existing` (backend ready and tested; **not yet consumed by the frontend**).
-- **Wiring notes:** Content/Scheduling must list `GET /projects/:projectId/assets` filtering by `assetType` (e.g. `cover_art`, `videoclipe` (music video), `reel`) and `status='active'`. `fileUrl` currently holds the storage key (R2) — future delivery through a signed URL.
+- **Wiring notes:** Content/Scheduling must list `GET /projects/:projectId/assets` filtering by `assetType` (e.g. `cover_art`, `music_video`, `reel`; the legacy Portuguese `videoclipe` is accepted on input and mapped to `music_video`) and `status='active'`. `fileUrl` currently holds the storage key (R2) — future delivery through a signed URL.
 
 ---
 
@@ -140,15 +141,16 @@
 
 ---
 
-## 6. AdminAudit using `/audit-logs`
+## 6. Audit trail using `/audit-logs`
 
-**Purpose:** append-only audit trail (all `@Audit`-decorated actions) for the AdminAudit screen (currently mocked).
+**Purpose:** append-only audit trail (all `@Audit`-decorated actions) for the tenant audit trail and, through `/audit-logs/admin`, the SaaS admin panel.
 
 **Real controller:** `apps/api/src/modules/audit-log/audit-log.controller.ts` (`@Controller('audit-logs')`).
 
 | Route | Method | RBAC | Status |
 |---|---|---|---|
 | `/audit-logs` | GET | viewer | existing |
+| `/audit-logs/admin` | GET | super_admin | existing (all tenants) |
 | `/audit-logs/:id` | GET | admin | existing |
 
 - **Query (`QueryAuditLogDto`):** `action?`, `userId?`, `entity?`, `entityId?` (uuid), `actorRole?`, `correlationId?`, `fromDate?`/`toDate?` (ISO) + pagination (`PaginationDto`).
@@ -157,34 +159,36 @@
 - **Errors:** 403 (detail requires admin), 404.
 - **Events emitted:** n/a (read-only; the log is populated by the `@Audit` interceptor).
 - **Entities/tables:** `audit_logs`.
-- **Current status:** `existing` (frontend `AdminAudit` still uses `MOCK_AUDIT_LOGS`; the dashboard's `useActivityHistory` already consumes real data).
-- **Wiring notes:** replace `MOCK_AUDIT_LOGS` with `GET /audit-logs` using the filters above; detail with diff only for admin/owner.
+- **Current status:** `existing`. The admin screen reads `GET /audit-logs/admin` (`apps/web/src/modules/admin/services/admin-audit.service.ts`); the settings audit trail reads `GET /audit-logs` (`apps/web/src/modules/settings/hooks/useAuditTrail.ts`).
+- **Wiring notes:** detail with the before/after diff is restricted to admin/owner.
 
 ---
 
 ## 7. Real OAuth integrations
 
-**Purpose:** connect corporate accounts (Meta/Instagram, TikTok, YouTube, Spotify, Google Ads) via real OAuth, replacing the current mock (`useMarketingOAuth`, sessionStorage).
+**Purpose:** connect corporate accounts (Meta/Instagram, TikTok, YouTube, Spotify, Google Ads) via OAuth driven by the backend. Tokens never cross the browser boundary: the backend exchanges the authorization code, encrypts the credentials in `oauth_connections` and exposes only status and disconnect to the frontend (`apps/web/src/modules/integrations/hooks/useMarketingOAuth.ts`).
 
 **Real controller:** `apps/api/src/modules/integrations/integrations.controller.ts` (`@Controller('integrations')`).
 
 | Route | Method | RBAC | Status |
 |---|---|---|---|
 | `/integrations/oauth/init` | POST | editor | existing |
-| `/integrations/oauth/exchange` | POST | editor | existing |
-| `/integrations/spotify/callback` | GET/POST | (callback) | existing |
-| `/integrations/instagram/callback` | POST | (callback) | existing |
-| `/integrations/tiktok/callback` | POST | (callback) | existing |
-| `/integrations/google-ads/callback` | POST | (callback) | existing |
+| `/integrations/oauth/exchange` | POST | public, protected by the single-use `exchange_token` | existing |
+| `/integrations/oauth/status` | GET | viewer | existing |
+| `/integrations/oauth/disconnect` | DELETE | admin | existing |
+| `/integrations/spotify/callback` | GET (public) / POST (editor) | callback | existing |
+| `/integrations/instagram/callback` | POST | callback | existing |
+| `/integrations/tiktok/callback` | POST | callback | existing |
+| `/integrations/google-ads/callback` | POST | callback | existing |
 
-- **Request (`oauth/init`):** `{ platform: 'meta_business'|'corp_tiktok'|'corp_youtube'|'corp_spotify'|'google_ads'|... , scopes?: string[], redirectUri? }` → **Response:** `{ authorizationUrl, state }`.
-- **Request (`oauth/exchange`):** `{ platform, code, state }` → **Response:** `{ connected: true, accountName, accountId, scopes, expiresAt }`.
+- **Request (`oauth/init`):** `{ platform }` (allow-list in `OAuthInitDto`, `apps/api/src/modules/integrations/dto/integrations.dto.ts`) → **Response:** `{ exchange_token }` (single-use, 10-minute lifetime, bound to the authenticated tenant and user).
+- **Request (`oauth/exchange`):** `{ platform, code, exchange_token }` → **Response:** `{ connected: true, platform }`. The redirect URI is built server-side from `APP_URL`; the client never supplies it.
 - **Per-platform callbacks:** receive `code`/`state` from the provider and persist the connection.
 - **Errors:** 400 (invalid state, missing code), 401/403, 502 (provider failure).
 - **Events emitted:** none required (may emit an integration event on connect — future).
 - **Entities/tables:** `integrations`, `oauth_connections`.
-- **Current status:** `partial` — routes exist; **the real flow depends on per-provider OAuth credentials/secrets** (not available in the current environment). The frontend uses a mock (`useMarketingOAuth`) in dev.
-- **Wiring notes:** replace the mock handshake with: `oauth/init` → popup → callback → `oauth/exchange`; read real connections (not sessionStorage). The product rule (corporate accounts = publishing; artists via automatic registration) is already reflected in the frontend.
+- **Current status:** `existing`; the real flow depends on per-provider OAuth credentials supplied through the environment.
+- **Flow:** `oauth/init` → provider popup → callback page → `oauth/exchange`; connection state is read from `oauth/status`.
 
 ---
 
@@ -192,14 +196,12 @@
 
 | Flow | Backend | Frontend | Main action |
 |---|---|---|---|
-| 1. Campaigns | partial | mock (B) | align `targetType` Company/Artist + `platforms[]`; migrate B→HTTP |
-| 2. Content Calendar | partial | mock (B) | add `channels[]` + server-side rule; migrate B→HTTP |
+| 1. Campaigns | existing | HTTP | none |
+| 2. Content Calendar | existing | HTTP | none |
 | 3. Core assets | existing | no screen | consume in the Content/Scheduling flows |
 | 4. Skill-runs | existing | no screen | "Execution History" (`Histórico de Execuções`) view |
 | 5. Release Readiness | existing | no screen | distribution checklist |
-| 6. AdminAudit | existing | mock | replace the mock with `/audit-logs` |
-| 7. OAuth Integrations | partial | mock | real handshake (depends on credentials) |
+| 6. Audit trail | existing | HTTP | none |
+| 7. OAuth Integrations | existing | backend-driven | depends on provider credentials |
 
-> Nothing implemented/changed here — contracts only. The real wiring (TypeORM/NestJS,
-> Domain Events, BullMQ, RBAC, tenant isolation, logs, persistence) happens after the
-> validation of the flows in the frontend.
+> Contracts only: this file documents routes and shapes; it implements nothing.

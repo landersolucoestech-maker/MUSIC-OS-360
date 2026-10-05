@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time snapshot (mapped 2026-09-14). Current contract: `docs/engineering/architecture.md` and `docs/engineering/README.md`. Section and gotcha numbers are kept unchanged because code comments cite them.
+
 ---
 last_mapped: 2026-09-14T09:42:09Z
 total_files: 3409

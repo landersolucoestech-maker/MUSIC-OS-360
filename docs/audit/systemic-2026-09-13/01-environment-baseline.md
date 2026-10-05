@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time audit (2026-09-13). Current contract: `docs/engineering/README.md`.
+
 # Environment Baseline
 
 ## Mission

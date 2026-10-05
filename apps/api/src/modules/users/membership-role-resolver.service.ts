@@ -16,11 +16,11 @@ import { DATA_SOURCE } from '../../database/database.module';
 export type RoleResolutionClass =
   | 'OK'
   | 'ALIAS'
-  | 'SEM_CORRESPONDENCIA'
+  | 'NO_MATCH'
   | 'CROSS_TENANT'
-  | 'ARQUIVADA'
-  | 'REMOVIDA'
-  | 'ALIAS_INVALIDO';
+  | 'ARCHIVED'
+  | 'REMOVED'
+  | 'INVALID_ALIAS';
 
 export interface RoleResolution {
   roleId: string | null;
@@ -53,14 +53,14 @@ export class MembershipRoleResolverService {
         [roleSlug, tenantId],
       )) as unknown[];
       if (other.length > 0) {
-        return { roleId: null, classification: 'CROSS_TENANT', detail: `role '${roleSlug}' existe apenas em outro tenant` };
+        return { roleId: null, classification: 'CROSS_TENANT', detail: `role '${roleSlug}' exists only in another tenant` };
       }
-      return { roleId: null, classification: 'SEM_CORRESPONDENCIA', detail: `role '${roleSlug}' sem role canônica` };
+      return { roleId: null, classification: 'NO_MATCH', detail: `role '${roleSlug}' has no canonical role` };
     }
 
     const r = rows[0];
-    if (r.deleted_at) return { roleId: null, classification: 'REMOVIDA', detail: `role '${roleSlug}' soft-deletada` };
-    if (r.archived_at) return { roleId: null, classification: 'ARQUIVADA', detail: `role '${roleSlug}' arquivada` };
+    if (r.deleted_at) return { roleId: null, classification: 'REMOVED', detail: `role '${roleSlug}' is soft-deleted` };
+    if (r.archived_at) return { roleId: null, classification: 'ARCHIVED', detail: `role '${roleSlug}' is archived` };
 
     if (r.canonical_role_id) {
       const can = (await this.ds.query(
@@ -68,9 +68,9 @@ export class MembershipRoleResolverService {
         [r.canonical_role_id],
       )) as Array<{ id: string; archived_at: Date | null; deleted_at: Date | null }>;
       if (can.length === 0 || can[0].deleted_at || can[0].archived_at) {
-        return { roleId: null, classification: 'ALIAS_INVALIDO', detail: `alias '${roleSlug}' aponta para role inválida` };
+        return { roleId: null, classification: 'INVALID_ALIAS', detail: `alias '${roleSlug}' points to an invalid role` };
       }
-      return { roleId: can[0].id, classification: 'ALIAS', detail: `alias '${roleSlug}' → canônico` };
+      return { roleId: can[0].id, classification: 'ALIAS', detail: `alias '${roleSlug}' → canonical` };
     }
 
     return { roleId: r.id, classification: 'OK', detail: `role '${roleSlug}'` };

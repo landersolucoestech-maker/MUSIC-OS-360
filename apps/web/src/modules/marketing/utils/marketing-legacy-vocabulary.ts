@@ -183,7 +183,7 @@ export const LEGACY_PROJECT_STATUS_TO_CANONICAL: Readonly<Record<string, Project
   cancelado: "cancelled",
 };
 
-const CANONICAL_PROJECT_STATUSES: ReadonlySet<string> = new Set<ProjectStatus>(["planning", "active", "paused", "completed", "cancelled"]);
+const CANONICAL_PROJECT_STATUSES: ReadonlySet<string> = new Set<ProjectStatus>(["draft", "planning", "active", "paused", "completed", "cancelled", "archived"]);
 export const canonicalProjectStatus = (value: unknown): ProjectStatus | undefined =>
   resolve(value, CANONICAL_PROJECT_STATUSES, LEGACY_PROJECT_STATUS_TO_CANONICAL);
 

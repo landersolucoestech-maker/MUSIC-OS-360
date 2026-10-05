@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "data-architecture-engineer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "p4 invoices design delivered (read-only): R2 legacy_amount and R4 tomador_name and R5 url_pdf=file_url and R7 TIPO_OPERACAO->operation_type are technically deducible (additive migrations, deprecated aliases, dual-read windows); R1 type/tipo_nota overlap needs an owner decision (REM-06 barrier, L5); R3 prestador_id is NOT proven to be an artist FK (owner decision); R6 due_date/due_at distinct (Stripe vs NFS-e); destructive dependencies DD-INV-* recorded; slices S1-S6.",
+  "workspaceFingerprint": "f386a7c431c228b4ac39a7832e297a66cd5c7edee4c08722a63ec0bbba9fd61d",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-db6547e1",
+  "createdAt": "2026-10-05T01:40:25.375Z"
+}

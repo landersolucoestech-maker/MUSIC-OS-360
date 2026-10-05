@@ -10,9 +10,9 @@
  *                  callers fall back to the local workflow-transitions mirror.
  *
  * Usage in detail modals:
- *   const { data: detail } = useEntityDetail('lancamentos', lancamento?.id, open);
+ *   const { data: detail } = useEntityDetail('releases', release?.id, open);
  *   const allowedTransitions = resolveAllowedTransitions(
- *     'release', detail?.status ?? lancamento?.status, detail?.allowed_transitions
+ *     'release', detail?.status ?? release?.status, detail?.allowed_transitions
  *   );
  */
 

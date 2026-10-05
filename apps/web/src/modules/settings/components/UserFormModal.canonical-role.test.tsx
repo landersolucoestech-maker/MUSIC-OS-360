@@ -24,9 +24,9 @@ describe("UserFormModal ACCESS_LEVELS", () => {
     }
   });
 
-  it("keeps the three options without a canonical role verbatim (product decision gated, API rejects them)", () => {
-    for (const gated of ["admin_master", "ar_gestao", "financeiro_contabil"]) expect(values).toContain(gated);
-    expect(SOURCE).toMatch(/GATED/);
+  it("does not offer the roles the API rejects with ROLE_UNKNOWN", () => {
+    for (const rejected of ["admin_master", "ar_gestao", "financeiro_contabil"]) expect(values).not.toContain(rejected);
+    expect(values).toHaveLength(5);
   });
 
   it("keeps PT-BR labels", () => {

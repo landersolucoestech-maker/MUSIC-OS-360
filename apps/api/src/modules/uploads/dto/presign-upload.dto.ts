@@ -46,7 +46,7 @@ export class PresignUploadDto {
   @MaxLength(100)
   entity?: string;
 
-  @ApiPropertyOptional({ example: 'uuid-do-contrato' })
+  @ApiPropertyOptional({ example: '00000000-0000-4000-8000-000000000003' })
   @IsOptional()
   @IsString()
   @MaxLength(255)

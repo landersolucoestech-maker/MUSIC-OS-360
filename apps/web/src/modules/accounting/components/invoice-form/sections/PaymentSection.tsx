@@ -75,14 +75,14 @@ export function PaymentSection({ formData, disabled, updateField }: PaymentSecti
           category="documents"
           entity="invoice"
           disabled={disabled}
-          value={currentPdf(formData.url_pdf)}
+          value={currentPdf(formData.file_url)}
           onChange={(files) => {
             const uploaded = files[0];
-            updateField("url_pdf", uploaded?.url ?? uploaded?.path ?? "");
+            updateField("file_url", uploaded?.url ?? uploaded?.path ?? "");
           }}
           onUploadComplete={(files) => {
             const uploaded = files[0];
-            updateField("url_pdf", uploaded?.url ?? uploaded?.path ?? "");
+            updateField("file_url", uploaded?.url ?? uploaded?.path ?? "");
           }}
         />
         <p className="text-xs text-muted-foreground">

@@ -2,7 +2,7 @@ import { api } from "@/lib/api";
 import type {
   AudiovisualProject, AudiovisualBriefing, AudiovisualDeliverable,
   AudiovisualApproval, AudiovisualDashboard,
-  AudiovisualProjectType, AudiovisualProjectStatus, DeliverableType, ApprovalStatus,
+  AudiovisualProjectType, AudiovisualProjectStatus, DeliverableType, ApprovalDecisionStatus,
   AudiovisualShot, AudiovisualProductionDay, AudiovisualTeamMember, TeamRole,
   AudiovisualTask, TaskStatus, TaskPriority,
   AudiovisualAsset, AssetKind,
@@ -100,12 +100,12 @@ export const audiovisualService = {
   },
 
   approvals: {
-    list:     (p: { audiovisual_project_id?: string; deliverable_id?: string; status?: ApprovalStatus; limit?: number; offset?: number } = {}) =>
+    list:     (p: { audiovisual_project_id?: string; deliverable_id?: string; status?: ApprovalDecisionStatus; limit?: number; offset?: number } = {}) =>
       api.get<AudiovisualApproval[]>(`/audiovisual/approvals${q(p)}`),
     findById: (id: string) => api.get<AudiovisualApproval>(`/audiovisual/approvals/${id}`),
     request:  (projectId: string, data: { deliverable_id?: string; comments?: string }) =>
       api.post<AudiovisualApproval>(`/audiovisual/projects/${projectId}/approvals`, data),
-    decide:   (id: string, status: ApprovalStatus, comments?: string, expectedUpdatedAt?: string) =>
+    decide:   (id: string, status: ApprovalDecisionStatus, comments?: string, expectedUpdatedAt?: string) =>
       api.post<AudiovisualApproval>(`/audiovisual/approvals/${id}/decision`, { status, comments, expectedUpdatedAt }),
   },
 };

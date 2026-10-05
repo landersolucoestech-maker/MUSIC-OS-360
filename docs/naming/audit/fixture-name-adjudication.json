@@ -1,0 +1,4246 @@
+{
+ "$comment": "Independent adjudication (plan orch-4281815e task n7, naming-analyzer, read-only) of legacy names that tests use as fixtures AND that occur as whole words in production files without a proven/exempt ledger row. UI_TEXT = user-visible text or natural-language AI/heuristic text (stays Portuguese); COMMENT_OR_DOC = comment only; FRAGMENT = hyphen-split piece of a compound legacy slug already covered by full-slug rows; TECH and MISSING_ROW are open defects until the entry is resolved (class changed to RESOLVED with a reason).",
+ "schemaVersion": 1,
+ "entries": [
+  {
+   "name": "notas",
+   "file": "apps/api/src/modules/reports/definitions/report-entity-definition.service.ts",
+   "class": "TECHNICAL_OPERATIONAL"
+  },
+  {
+   "name": "notas",
+   "file": "apps/web/src/modules/accounting/pages/FinancialRules.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "notas",
+   "file": "apps/web/src/modules/accounting/pages/Invoices.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "notas",
+   "file": "apps/web/src/modules/integrations/components/NfeConfigDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "notas",
+   "file": "apps/web/src/modules/settings/components/UserFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "notas",
+   "file": "packages/ai-skills/src/ad-creative/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "notas",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autor",
+   "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autor",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autor",
+   "file": "apps/web/src/modules/settings/pages/AuditTrail.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "expirado",
+   "file": "apps/api/src/modules/integrations/docusign/docusign.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "expirado",
+   "file": "apps/web/src/modules/contracts/components/DocumentTimeline.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "imposto",
+   "file": "apps/api/src/database/migrate-application.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "imposto",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "imposto",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "parcial",
+   "file": "apps/api/src/modules/reports/export/export-engine.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "parcial",
+   "file": "apps/web/src/modules/contracts/hooks/useCategoryRegistry.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "empresariamento_360",
+   "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "empresariamento_360",
+   "file": "apps/web/src/modules/contracts/components/ContractFormModal.tsx",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "subcategoria",
+   "file": "apps/api/src/modules/transactions/validators/transaction.validator.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "subcategoria",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/sections/TransactionTypeSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "subcategoria",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/validation/financial-form-validation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/api/src/modules/audiovisual/tasks/tasks.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/api/src/modules/marketing/marketing-tasks.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/web/src/modules/audiovisual/hooks/useAudiovisual.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/web/src/modules/marketing/components/MarketingDeliverableSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PlanningTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "apps/web/src/modules/marketing/pages/Tasks.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tarefa",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "referencia",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "referencia",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "referencia",
+   "file": "apps/web/src/modules/monitoring/rights/components/DetectionDetailModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "bastidores",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PitchingTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "bastidores",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/aiCreative.utils.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "bastidores",
+   "file": "apps/web/src/modules/marketing/services/marketing-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "bastidores",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePlanning.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "bastidores",
+   "file": "apps/web/src/modules/marketing/types/marketing.types.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "bastidores",
+   "file": "packages/ai-skills/src/marketing-calendar-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/core/automation/native-skill-automation.runner.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/modules/events/events.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/modules/transactions/validators/transaction.validator.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/api/src/modules/uploads/handlers/upload-events.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/sections/TransactionTypeSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/validation/financial-form-validation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/accounting/pages/FinancialRules.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/admin/pages/AdminAudit.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/contracts/components/DocumentTimeline.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/events/components/SchedulerFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/events/components/SchedulerViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/events/hooks/useEvents.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/events/schemas/event-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/leads/constants/index.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/leads/modals/LeadFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/marketing/services/marketing-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/settings/pages/AuditTrail.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "apps/web/src/shared/components/EntityCalendarView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "packages/ai-skills/src/analytics-tracking/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "packages/ai-skills/src/automation-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "evento",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/api/src/core/workflow/definitions/releases.workflow.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/api/src/modules/assets/asset-classification.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/api/src/modules/marketing/marketing-projects.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/api/src/modules/releases/handlers/release-events.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PitchingTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/web/src/modules/marketing/services/marketing-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeTrends.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "capa",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "roteiro",
+   "file": "apps/api/src/modules/ai/dto/ai.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "roteiro",
+   "file": "apps/web/src/modules/audiovisual/modals/AudiovisualProjectFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "roteiro",
+   "file": "packages/ai-skills/src/ad-creative/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "roteiro",
+   "file": "packages/ai-skills/src/audiovisual-briefing/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "roteiro",
+   "file": "packages/ai-skills/src/audiovisual-briefing/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legenda",
+   "file": "apps/api/src/modules/ai/dto/ai.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "legenda",
+   "file": "apps/web/src/modules/marketing/forms/content-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legenda",
+   "file": "apps/web/src/modules/marketing/pages/Calendar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legenda",
+   "file": "apps/web/src/shared/lib/skill-output-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legenda",
+   "file": "packages/ai-skills/src/postiz/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legenda",
+   "file": "packages/ai-skills/src/social-content/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "sugestao_conteudo",
+   "file": "apps/api/src/modules/ai/dto/ai.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "cancelada",
+   "file": "apps/api/src/core/events/notification.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cancelada",
+   "file": "apps/api/src/modules/invoices/i18n/invoice-copy.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cancelada",
+   "file": "apps/api/src/modules/invoices/invoices.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cancelada",
+   "file": "apps/api/src/modules/transactions/i18n/transaction-copy.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cancelada",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cancelada",
+   "file": "packages/ai-skills/src/campaign-report/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cancelada",
+   "file": "packages/ai-skills/src/campaign-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "emocionais",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/mergeAudioLyricsInsights.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "confirmado",
+   "file": "apps/web/src/modules/artist/components/ArtistPlatformMetrics.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "confirmado",
+   "file": "apps/web/src/modules/integrations/pages/OAuthPopupPage.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "confirmado",
+   "file": "apps/web/src/modules/leads/constants/lead-form-options.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "confirmado",
+   "file": "apps/web/src/shared/lib/auth-error-messages.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "negociacao",
+   "file": "apps/web/src/modules/licensing/hooks/useLicensesPaginated.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "planejado",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PlanningTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "planejado",
+   "file": "apps/web/src/modules/marketing/pages/Briefing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "planejado",
+   "file": "packages/ai-skills/src/launch-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "realizado",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "realizado",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "realizado",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/api/src/core/interceptors/idempotency.interceptor.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/admin/pages/AdminSupport.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/artist/hooks/useArtistPlatformProfiles.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/licensing/pages/Licensing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "apps/web/src/modules/support/pages/SupportStatus.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "packages/ai-skills/src/deals-crm/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "andamento",
+   "file": "packages/types/src/status-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/api/src/modules/artists/handlers/artist-workflow.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/api/src/modules/contracts/handlers/contract-workflow.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/web/src/modules/artist/components/TeamContactsCRM.tsx",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/web/src/shared/pages/landing/data.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "alto",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/mergeAudioLyricsInsights.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "alto",
+   "file": "packages/ai-skills/src/analytics-tracking/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "alto",
+   "file": "packages/ai-skills/src/audiovisual-briefing/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "alto",
+   "file": "packages/ai-skills/src/automation-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "alto",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carrossel",
+   "file": "apps/web/src/modules/marketing/pages/Calendar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/api/src/common/registry-fields/registry-fields.util.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/api/src/core/pipes/validation-messages.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/api/src/modules/ai/ai.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/modules/admin/components/knowledge/KnowledgeBaseManager.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePitching.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/modules/musicchat/components/MenuQueueAccordionItem.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "apps/web/src/shared/lib/skill-output-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/ad-creative/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/analytics-tracking/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/audience-health/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/audiovisual-briefing/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/automation-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/automation-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/campaign-plan/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/campaign-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/campaign-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/contact-operations/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/crm-followup/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/deals-crm/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/launch-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/marketing-calendar-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/onboarding-cro/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/paid-ads/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/performance-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/postiz/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/project-planning/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/seo-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/social-content/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "texto",
+   "file": "packages/ai-skills/src/support-triage/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "chines-mandarim",
+   "file": "apps/api/src/modules/projects/project-track-vocabulary.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "portugues",
+   "file": "apps/api/src/modules/projects/project-track-vocabulary.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "portugues",
+   "file": "apps/web/src/modules/catalog/constants/work-options.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "portugues",
+   "file": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "todos",
+   "file": "apps/api/src/core/config/env.schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/api/src/modules/releases/handlers/release-events.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/hooks/useTransactionFormController.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/accounting/pages/Accounting.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/accounting/pages/FinanceCategoryRules.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/accounting/pages/FinancialCategories.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/accounting/pages/Invoices.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/admin/pages/AdminDashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/artist/pages/Artists.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/audiovisual/components/AudiovisualProductionTable.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/catalog/pages/MusicRegistration.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/contracts/pages/ContractTemplates.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/contracts/pages/Contracts.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/contracts/pages/VariableRegistry.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/crm-relationships/components/ContactsTable.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/hr/pages/HR.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/inventory/pages/Inventory.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/leads/tables/LeadsTable.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/licensing/pages/Licensing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/marketing/components/MarketingDataTable.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/marketing/pages/Campaigns.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/monitoring/pages/Takedowns.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/monitoring/rights/components/DivergencesPanel.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/projects/pages/Projects.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/releases/pages/Releases.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/releases/pages/Shares.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/settings/components/UserFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/modules/support/pages/SupportDashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "apps/web/src/shared/components/DataTable.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/ad-creative/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/analytics-tracking/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/audience-health/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/audiovisual-briefing/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/automation-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/automation-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/campaign-plan/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/campaign-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/campaign-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/contact-operations/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/crm-followup/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/deals-crm/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/launch-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/marketing-calendar-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/onboarding-cro/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/paid-ads/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/performance-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/postiz/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/project-planning/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/seo-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/social-content/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "todos",
+   "file": "packages/ai-skills/src/support-triage/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "ingles",
+   "file": "apps/api/src/modules/projects/project-track-vocabulary.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "ingles",
+   "file": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/api/src/core/mail/mail.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/api/src/modules/marketing/marketing-projects.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/api/src/modules/registry/society/society-sync.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/api/src/queues/services/notifications-queue.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/integrations/pages/OAuthCallbackPage.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/monitoring/pages/Takedowns.tsx",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/monitoring/rights/components/RightsKPICards.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/reports/pages/Reports.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/shared/infrastructure/RealtimeLayer.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/shared/lib/skill-output-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "packages/ai-skills/src/campaign-report/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "packages/ai-skills/src/campaign-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "packages/ai-skills/src/onboarding-cro/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "conclu",
+   "file": "packages/ai-skills/src/onboarding-cro/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "seguros",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "segmento",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "segmento",
+   "file": "packages/ai-skills/src/campaign-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "apple_music_albuns",
+   "file": "apps/web/src/modules/artist/components/ArtistPlatformMetrics.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "status_cadastro",
+   "file": "packages/types/src/enums.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/admin/pages/AdminPlans.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/artist/components/ArtistEvolutionSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/hr/components/EmployeeFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/leads/modals/LeadFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/marketing/pages/Calendar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/monitoring/pages/Takedowns.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/releases/pages/Releases.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "apps/web/src/modules/support/pages/SupportDashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "packages/ai-skills/src/audience-health/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "packages/ai-skills/src/contact-operations/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "novo",
+   "file": "packages/ai-skills/src/deals-crm/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "despesa",
+   "file": "apps/api/src/database/migrate-application.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "despesa",
+   "file": "apps/api/src/modules/transactions/dto/query-transaction.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "despesa",
+   "file": "apps/web/src/modules/accounting/pages/FinancialCategories.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "despesa",
+   "file": "apps/web/src/shared/infrastructure/RealtimeLayer.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "despesa",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "despesa",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "despesa",
+   "file": "packages/ai-skills/src/performance-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "arquivada",
+   "file": "apps/api/src/modules/users/membership-role-resolver.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "arquivada",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "critica",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PitchingTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "engano",
+   "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/api/src/modules/auth/auth-password.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/artist/components/PositioningCard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/auth/pages/Auth.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/auth/pages/ChangeRequiredPassword.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/auth/pages/ResetPassword.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/hr/components/LeaveRequestFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/AnalyticsTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/marketing/hooks/useMarketingDeliverables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/marketing/pages/Tasks.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/musicchat-internal/components/InternalChatView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "packages/ai-skills/src/automation-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nova",
+   "file": "packages/ai-skills/src/contact-operations/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "resolvida",
+   "file": "apps/web/src/modules/monitoring/rights/components/ResolveDivergenceModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/modules/artist/components/PositioningCard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PitchingTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeArtistProfile.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/shared/pages/landing/components/AudienceSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/shared/pages/landing/components/Hero.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "apps/web/src/shared/pages/landing/data.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "carreira",
+   "file": "packages/ai-skills/src/audience-health/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cor",
+   "file": "apps/api/src/core/pipes/validation-messages.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "cor",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/api/src/modules/artists/platform-profiles/analytics/career-stage.engine.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/artist/components/ArtistEvolutionCard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/artist/components/ArtistEvolutionSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/artist/components/PlatformMiniTrend.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/crm-relationships/constants/index.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PlanningTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/TrendsTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeArtistProfile.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePlanning.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/loadArtistContext.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/utils.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "apps/web/src/shared/lib/skill-output-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "crescimento",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "expirada",
+   "file": "apps/api/src/core/guards/auth.guard.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "expirada",
+   "file": "apps/web/src/modules/marketing/creative/static-export.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "expirada",
+   "file": "packages/ai-skills/src/postiz/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "apps/api/src/database/migrate-application.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "receita",
+   "file": "apps/api/src/modules/transactions/dto/query-transaction.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "receita",
+   "file": "apps/web/src/modules/accounting/pages/FinancialCategories.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "apps/web/src/shared/infrastructure/RealtimeLayer.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "apps/web/src/shared/integrations/registry.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "receita",
+   "file": "packages/ai-skills/src/performance-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "semanal",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "semanal",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "corpo",
+   "file": "apps/web/src/modules/admin/components/knowledge/KnowledgeBaseManager.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "corpo",
+   "file": "apps/web/src/modules/catalog/components/WorkTypeSelectorModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "corpo",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "proposta",
+   "file": "apps/web/src/modules/licensing/hooks/useLicensesPaginated.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "proposta",
+   "file": "apps/web/src/modules/licensing/pages/Licensing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "proposta",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "proposta",
+   "file": "packages/ai-skills/src/crm-followup/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/common/validators/safe-url.validation.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/core/events/notification.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/core/filters/global-exception.filter.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/modules/clients/clients.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/modules/contracts/handlers/contract-events.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/modules/reports/reports.controller.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/api/src/modules/shares/dto/shares.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/sections/PaymentSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/auth/pages/Auth.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/contracts/components/SendForSigningDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/crm-relationships/constants/timeline.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/dashboard/lib/audit-activity.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/marketing/hooks/useMarketingDeliverables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/projects/components/ProjectFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/settings/components/UserEditorModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "apps/web/src/shared/lib/api-client.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "enviado",
+   "file": "packages/ai-skills/src/postiz/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/api/src/modules/reports/import/import-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/api/src/modules/uploads/uploads.controller.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/web/src/modules/contracts/components/DocumentTimeline.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/web/src/modules/integrations/components/EcadConfigDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "recebido",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "desconhecida",
+   "file": "apps/api/src/modules/registry/society/society-sync.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "desconhecida",
+   "file": "apps/api/src/modules/reports/import/import-validation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "desconhecida",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "desconhecida",
+   "file": "packages/ai-skills/src/postiz/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legado",
+   "file": "apps/api/src/database/seeds/04_rbac_seed.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "legado",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/aiCreative.utils.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/api/src/modules/auth/auth-password.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/api/src/modules/marketing/marketing-assets.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/artist/components/ArtistEvolutionSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/artist/components/ArtistFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/artist/components/PositioningCard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/contracts/components/ContractFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/integrations/components/EcadConfigDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/integrations/components/NfeConfigDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/integrations/hooks/useExternalProviders.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/marketing/campaigns/domain/allocation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/ProfileTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/TrendsTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/modules/settings/pages/Users.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "apps/web/src/shared/lib/skill-output-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/artist-profile-analysis/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/automation-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/crm-followup/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "atual",
+   "file": "packages/ai-skills/src/social-content/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "trafego",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "trafego",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "trafego",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/api/src/database/seeds/03_operational_seed.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/api/src/modules/artists/handlers/artist-workflow.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/api/src/modules/contracts/handlers/contract-workflow.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/api/src/modules/integrations/governance/integration-usage.guard.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/admin/pages/AdminDashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/auth/pages/Auth.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/integrations/hooks/useExternalProviders.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/integrations/pages/OAuthPopupPage.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/leads/pages/LeadsPage.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PlanningTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/marketing/forms/briefing-strategy-forms.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/marketing/pages/Briefing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/marketing/pages/Overview.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/marketing/pages/Tasks.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/loadArtistContext.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/releases/pages/Releases.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/modules/workspace/layouts/ArtistWorkspaceLayout.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/shared/lib/ws-events.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "operacional",
+   "file": "apps/web/src/shared/pages/landing/components/Hero.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/automation-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/project-planning/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/project-planning/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "operacional",
+   "file": "packages/ai-skills/src/support-triage/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/catalog/components/AbramusSearchRow.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Banco",
+   "file": "apps/web/src/modules/crm-relationships/constants/contact-classification.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/events/components/SchedulerFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/hr/components/EmployeeFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/hr/components/HRViewModals.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/hr/schemas/employee-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/leads/constants/lead-form-options.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/leads/modals/LeadFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/leads/modals/LeadViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/musicchat/components/NewConversationDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/components/UserEditorModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/components/UserFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/components/UserViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/pages/Profile.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/pages/Users.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/modules/settings/schemas/user-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "apps/web/src/shared/lib/audit/runner.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Telefone",
+   "file": "packages/schemas/src/common.schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "apps/api/src/modules/reports/import/import-mapper.service.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "origem",
+   "file": "apps/web/src/modules/accounting/components/TransactionViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/sections/TransactionTypeSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "apps/web/src/modules/accounting/pages/FinanceCategoryRules.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "apps/web/src/modules/marketing/pages/Briefing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "origem",
+   "file": "packages/ai-skills/src/seo-audit/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "gravadoras",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "gravadoras",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "gravadoras",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "gravadoras",
+   "file": "apps/web/src/shared/pages/landing/components/Footer.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "gravadoras",
+   "file": "apps/web/src/shared/pages/landing/components/Hero.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "gravadoras",
+   "file": "packages/ai-skills/src/onboarding-cro/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/api/src/modules/projects/dto/projects.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/api/src/modules/reports/i18n/entity-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/api/src/modules/reports/report-module-registry.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/accounting/pages/ProfitAndLoss.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/admin/pages/DataAudit.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/catalog/pages/MusicRegistration.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/dashboard/lib/audit-activity.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/marketing/pages/Overview.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/modules/projects/pages/Projects.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/shared/components/layout/AppSidebar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Projetos",
+   "file": "apps/web/src/shared/lib/audit/types.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/artists/artists.service.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/reports/i18n/entity-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/reports/i18n/report-copy.pt-br.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/reports/report-module-registry.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/api/src/modules/reports/reportable.decorator.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/accounting/pages/ProfitAndLoss.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/admin/pages/AdminClients.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/admin/pages/AdminPlans.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/admin/pages/DataAudit.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/artist/pages/Artists.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/contracts/constants/contract-types.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/contracts/services/contract-party-origin.mapper.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/integrations/pages/OAuthPopupPage.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/inventory/components/InventoryFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/leads/constants/lead-form-options.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/marketing/analytics/analytics-hub.format.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/TrendsTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/releases/pages/Releases.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/releases/pages/Shares.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/modules/settings/pages/Billing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/shared/components/layout/AppSidebar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/shared/lib/audit/types.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Artistas",
+   "file": "apps/web/src/shared/pages/landing/data.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "localidade",
+   "file": "apps/web/src/shared/lib/masks.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "uf",
+   "file": "apps/web/src/shared/lib/masks.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "autonomo",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "autonomo",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "faixa",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "faixa",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/generatePitching.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "faixa",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fixo",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fixo",
+   "file": "apps/web/src/modules/accounting/pages/FinancialRules.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fixo",
+   "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fixo",
+   "file": "apps/web/src/modules/contracts/lib/contract-service-type-vocabulary.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fixo",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "taxa",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "taxa",
+   "file": "apps/web/src/modules/marketing/pages/Campaigns.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "taxa",
+   "file": "packages/ai-skills/src/onboarding-cro/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/api/src/core/mail/mail.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/api/src/modules/registry/rights-holders.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/contracts/components/DocumentTimeline.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/marketing/constants/marketing.constants.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/releases/components/ShareFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/modules/releases/components/ShareViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Documento",
+   "file": "apps/web/src/shared/lib/skill-output-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "ferramenta",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "muito",
+   "file": "apps/api/src/storage/storage.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "muito",
+   "file": "apps/web/src/modules/events/pages/Schedule.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "muito",
+   "file": "apps/web/src/modules/settings/services/company-logo.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "muito",
+   "file": "apps/web/src/shared/components/FileUpload.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/api/src/core/events/notification.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/api/src/modules/invoices/i18n/invoice-copy.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/api/src/modules/invoices/invoices.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/sections/PaymentSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/accounting/hooks/useInvoices.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/accounting/pages/Invoices.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "apps/web/src/modules/musicchat/components/SupportCenterView.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "packages/ai-skills/src/postiz/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "packages/ai-skills/src/seo-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "nota",
+   "file": "packages/ai-skills/src/social-content/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "parcerias",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "parcerias",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autoral",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autoral",
+   "file": "apps/web/src/modules/catalog/components/WorkTypeSelectorModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autoral",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autoral",
+   "file": "apps/web/src/modules/leads/constants/index.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "autoral",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "musica",
+   "file": "apps/api/src/core/automation/project-planning.automation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "musica",
+   "file": "apps/web/src/modules/marketing/pages/Calendar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "parcialmente",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/core/automation/project-planning.automation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/core/events/notification.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/core/external-data/external-data-exchange.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/modules/assets/release-readiness.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/modules/shares/shares.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/catalog/components/PhonogramViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/catalog/hooks/usePhonograms.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/catalog/pages/MusicRegistration.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/catalog/schemas/phonogram-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/dashboard/pages/Dashboard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/integrations/hooks/useAbramus.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "apps/web/src/modules/marketing/services/marketing-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "packages/ai-skills/src/project-planning/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fonograma",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/core/automation/project-planning.automation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/core/events/notification.handler.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/core/external-data/external-data-exchange.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/assets/release-readiness.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/shares/shares.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "obra",
+   "file": "apps/api/src/modules/works/works.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/components/AbramusSearchRow.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/components/PhonogramViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/components/WorkTypeSelectorModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/components/WorkViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/hooks/useWorks.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/pages/MusicRegistration.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/catalog/schemas/work-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/integrations/hooks/useAbramus.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/integrations/hooks/useUbc.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/licensing/components/LicenseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/licensing/pages/Licensing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/marketing/services/marketing-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/components/ECADViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/components/TakedownFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/rights/components/DetectionDetailModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/rights/components/DetectionsTable.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/rights/pages/RightsMonitoring.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/rights/services/catalog-lookup.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/schemas/takedown-schema.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/projects/components/ProjectViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/releases/pages/Shares.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/shared/infrastructure/RealtimeLayer.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "packages/ai-skills/src/project-planning/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "obra",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/api/src/modules/financial-rules/financial-rules.service.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/api/src/modules/reports/computed-fields/release-tracks.field.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/web/src/modules/accounting/pages/FinancialRules.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PitchingTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/web/src/modules/releases/lib/legacy-reads.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Faixa",
+   "file": "apps/web/src/shared/integrations/contracts/music-monitoring.contract.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Distribuidoras",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Distribuidoras",
+   "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Distribuidoras",
+   "file": "apps/web/src/modules/artist/components/TeamContactsCRM.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Distribuidoras",
+   "file": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Distribuidoras",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/api/src/modules/registry/registry-operations.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/main.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/sections/PaymentSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/modules/admin/pages/AdminClients.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/modules/admin/pages/AdminSubscriptions.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/modules/integrations/components/AbramusConfigDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/modules/monitoring/rights/components/EcadImportModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/shared/infrastructure/ErrorFallback.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "apps/web/src/shared/lib/masks.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "erro",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "packages/ai-skills/src/postiz/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "packages/ai-skills/src/support-triage/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "erro",
+   "file": "packages/ai-skills/src/support-triage/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "apps/api/src/core/automation/project-planning.automation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "apps/api/src/modules/assets/asset-classification.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "apps/web/src/modules/marketing/services/marketing-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "packages/ai-skills/src/financial-classification/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "clipe",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "compilacao",
+   "file": "apps/api/src/modules/releases/dto/releases.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/api/src/modules/reports/import/import-engine.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/auth/pages/ArtistSignupPublic.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/contracts/components/ContractFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/contracts/components/ContractWizard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/hr/components/EmployeeFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "exemplo",
+   "file": "apps/web/src/modules/leads/modals/LeadFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/api/src/core/errors/integration-not-configured.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/api/src/modules/users/membership-role-resolver.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/api/src/modules/users/rbac-admin.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/api/src/storage/storage.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/web/src/modules/auth/pages/Register.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "administrador",
+   "file": "apps/web/src/shared/hooks/useUploadToR2.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "no-projeto",
+   "file": "apps/api/src/modules/works/dto/query-work.dto.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "totalmente",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "fone",
+   "file": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "fone",
+   "file": "apps/web/src/modules/accounting/constants/transaction-category-slugs.ts",
+   "class": "BOUNDARY_COVERED_BY_COMPOUND_ROW"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/core/automation/campaign-builder-insights.automation.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/core/guards/must-change-password.guard.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/core/workflow/definitions/contracts.workflow.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/core/workflow/definitions/releases.workflow.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/modules/integrations/governance/integration-usage.guard.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/modules/marketing/marketing-campaign-builder.controller.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/modules/registry/registry-operations.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/api/src/modules/registry/society/society-submission.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/accounting/components/invoice-form/sections/PaymentSection.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/admin/components/knowledge/KnowledgeBaseManager.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/artist/hooks/useArtistPlatformProfiles.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/auth/pages/ChangeRequiredPassword.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/catalog/components/WorkFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/catalog/components/WorkTypeSelectorModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/catalog/pages/MusicRegistration.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/contracts/components/ContractImportWorkspace.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/contracts/components/SendForSigningDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/integrations/components/AbramusConfigDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/integrations/components/MarketingOAuthDialog.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/integrations/pages/OAuthPopupPage.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/integrations/services/signing.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/leads/modals/LeadFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/components/MarketingFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/components/ai-creative/PitchingTab.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/components/campaign-builder/steps.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/forms/marketing-forms.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/pages/Briefing.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeTrends.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/mergeAudioLyricsInsights.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/releases/components/ReleaseFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/settings/pages/AuditTrail.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/shared/components/AIGenerateButton.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/shared/hooks/useConcurrencyConflict.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/shared/lib/auth-error-messages.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/shared/lib/errors.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/ad-creative/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/ad-creative/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/analytics-tracking/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/artist-profile-analysis/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/artist-profile-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/audience-health/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/audiovisual-briefing/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/audiovisual-briefing/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/automation-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/automation-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/campaign-plan/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/campaign-plan/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/campaign-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/campaign-strategy/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/campaign-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/catalog-metadata-validator/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/contact-operations/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/copywriting/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/copywriting/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/crm-followup/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/deals-crm/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/launch-strategy/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/launch-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/marketing-calendar-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/onboarding-cro/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/paid-ads/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/paid-ads/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/performance-report/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/postiz/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/postiz/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/project-planning/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/project-planning/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/release-checklist/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/reporting-analysis/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/seo-audit/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/social-content/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/support-triage/parser.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/ai-skills/src/support-triage/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "antes",
+   "file": "packages/types/src/api-error-codes.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/api/src/modules/users/users.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/web/src/modules/accounting/components/transaction-form/hooks/useTransactionFormController.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/web/src/modules/catalog/components/ParticipantViewModal.tsx",
+   "class": "COMMENT_OR_DOC"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/web/src/modules/crm-relationships/modals/ContactFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/web/src/modules/inventory/components/InventoryFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "apps/web/src/shared/hooks/useConcurrencyConflict.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "pessoa",
+   "file": "packages/ai-skills/src/contact-operations/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/api/src/database/tenant-zero.constants.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/api/src/modules/registry/adapters/partner-api.adapter.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/app/providers/AuthContext.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/artist/components/PositioningCard.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/contracts/services/semantic-parser.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/marketing/creative/static-export.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/marketing/pages/Calendar.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/monitoring/rights/components/EcadImportModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/musicchat/components/EscalationRulesEditor.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "apps/web/src/modules/settings/pages/Settings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "packages/ai-skills/src/audiovisual-briefing/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "packages/ai-skills/src/campaign-plan/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "packages/ai-skills/src/campaign-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "packages/ai-skills/src/launch-strategy/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tico",
+   "file": "packages/ai-skills/src/marketing-calendar-builder/prompt.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "contratante",
+   "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "contratante",
+   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "contratante",
+   "file": "apps/web/src/modules/musicchat/pages/MusicChatAutomationSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Administração Musical",
+   "file": "apps/web/src/modules/marketing/constants/marketing.constants.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Administração Musical",
+   "file": "apps/web/src/modules/marketing/services/marketing-integration.contract.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/api/src/modules/operational-lists/operational-lists.defaults.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/modules/admin/pages/AdminSettings.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/modules/inventory/components/InventoryFormModal.tsx",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/modules/marketing/constants/marketing.constants.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/modules/marketing/services/marketing-integration.contract.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
+   "class": "BOUNDARY"
+  },
+  {
+   "name": "Comunicação",
+   "file": "apps/web/src/shared/integrations/registry.ts",
+   "class": "UI_TEXT"
+  },
+  {
+   "name": "tema",
+   "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeLyrics.ts",
+   "class": "UI_TEXT"
+  }
+ ]
+}

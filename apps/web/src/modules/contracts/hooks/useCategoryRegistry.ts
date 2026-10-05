@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { localStore } from "@/shared/lib/local-store";
+import { readWithLegacyKeyMigration } from "@/modules/contracts/lib/local-key-migration";
 import { canonicalContractCategorySlug, sameContractCategory } from "@/modules/contracts/lib/contract-category-slugs";
 
-const STORAGE_KEY = "contract_categories";
+const STORAGE_KEY = "musicos360_contract_categories";
+// Key used before the `musicos360_` prefix; read once and migrated to STORAGE_KEY.
+const LEGACY_STORAGE_KEY = "contract_categories";
 
 export interface ContractCategory {
   id: string;
@@ -86,7 +89,7 @@ export function canonicalizeStoredCategories(stored: ReadonlyArray<ContractCateg
 }
 
 function load(): ContractCategory[] {
-  const stored = localStore.get<ContractCategory[]>(STORAGE_KEY);
+  const stored = readWithLegacyKeyMigration<ContractCategory[]>(STORAGE_KEY, LEGACY_STORAGE_KEY);
   return Array.isArray(stored) ? canonicalizeStoredCategories(stored) : buildSeeds();
 }
 

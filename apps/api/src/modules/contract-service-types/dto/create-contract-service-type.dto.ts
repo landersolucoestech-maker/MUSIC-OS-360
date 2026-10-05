@@ -20,7 +20,7 @@ export class CreateContractServiceTypeDto {
   @IsString() @MaxLength(255)
   name!: string;
 
-  @ApiProperty({ example: 'contrato_de_distribuicao' })
+  @ApiProperty({ example: 'distribution_contract' })
   @IsString() @MaxLength(255)
   slug!: string;
 

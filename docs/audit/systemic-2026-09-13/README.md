@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time audit (2026-09-13). Current contract: `docs/engineering/README.md`.
+
 # Systemic audit — 2026-09-13 (consolidated from `audit/systemic-2026-09-13`)
 
 These three documents are the only work unique to the remote branch

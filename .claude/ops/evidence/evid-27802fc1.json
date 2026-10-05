@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/naming/historical-records-audit.mjs --check",
+  "command": "node scripts/naming/historical-records-audit.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "historical-records audit: 144 records, MISCLASSIFIED_HISTORICAL_RECORDS=0, violations=0",
+  "stderrTail": "",
+  "workspaceFingerprint": "f386a7c431c228b4ac39a7832e297a66cd5c7edee4c08722a63ec0bbba9fd61d",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "durationMs": 2635,
+  "id": "evid-27802fc1",
+  "createdAt": "2026-10-05T01:37:21.071Z"
+}

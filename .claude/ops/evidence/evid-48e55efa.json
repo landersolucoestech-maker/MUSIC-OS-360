@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "naming-analyzer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "n3 API/frontend independent residue scan: PASS_WITH_FINDINGS. 1566 production files scanned; web/API routes, query/storage keys, flags, analytics events English; NOT_NORMALIZED: PT type aliases (Obra*, Fonograma*, ProjetoWithRelations), field data in DivergencesPanel/ArtistVision360Modal, PT strings as discriminator values, [TIPO_OPERACAO:*] marker written to invoice notes, PT swagger text/examples, dead UserFormModal role options; 8 cross-layer divergences (marketing project type vocabularies, approval status, enum case, priority scales, provider spellings, artist mapper, signup categories, storage keys); ledger anomalies (pro_labore misclassified, tipo_nota blanket exemption, MusicChat PT queue/sector masked, contract signer roles).",
+  "workspaceFingerprint": "77f4cbd39fc629641ff9746b8037b84a810600f4ac6d73a76cee20c3d93975a4",
+  "fingerprintStatus": "BOUND",
+  "head": "d7a98fe260e83723ce5cf1942b2c56ec410a030d",
+  "id": "evid-48e55efa",
+  "createdAt": "2026-10-05T01:27:06.013Z"
+}

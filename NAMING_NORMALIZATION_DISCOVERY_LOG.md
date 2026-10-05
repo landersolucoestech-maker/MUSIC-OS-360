@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Point-in-time discovery artifact. Current contract: `docs/naming/canonical-naming-map.json`.
+
 # MUSIC OS 360 — Naming Normalization Discovery Log
 
 **Scope:** full-schema English-normalization mandate. **Method:** 4 parallel read-only discovery passes over `apps/api/src/database/entities.ts` (3645 lines / 136 entities, split in quarters), zero code changed yet. **Baseline:** `dev @ 56b55c46f35d92cabdd8a98bebf7fdfe3a9c1cac`.

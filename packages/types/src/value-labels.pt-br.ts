@@ -61,3 +61,18 @@ export const PHONOGRAM_RECORDING_CLASSIFICATION_LABELS_PT_BR: Readonly<Record<st
   demo: "Demo",
   other: "Outra",
 };
+
+// ── priorities (see priorities.ts; SupportTicketPriority adds "critical") ────
+// One label per persisted value; "medium" and "normal" keep their own labels
+// because they belong to different scales.
+export const PRIORITY_LABEL_PT_BR: Readonly<
+  Record<"low" | "medium" | "high" | "strategic" | "normal" | "urgent" | "critical", string>
+> = {
+  low: "Baixa",
+  medium: "Média",
+  high: "Alta",
+  strategic: "Estratégica",
+  normal: "Normal",
+  urgent: "Urgente",
+  critical: "Crítica",
+};

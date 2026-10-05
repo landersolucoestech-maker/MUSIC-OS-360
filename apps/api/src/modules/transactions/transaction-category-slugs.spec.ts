@@ -136,3 +136,14 @@ describe('transaction taxonomy slugs (TX1)', () => {
     });
   });
 });
+
+describe('canonicalTransactionSlug is idempotent (evidence for the wiring exemption of the second application in transaction.validator.ts)', () => {
+  it('f(f(x)) === f(x) for every legacy key, every canonical value and unmapped or non-string inputs', () => {
+    const inputs: unknown[] = [
+      ...Object.keys(LEGACY_TRANSACTION_CATEGORY_SLUGS),
+      ...Object.values(LEGACY_TRANSACTION_CATEGORY_SLUGS),
+      'unmapped_value', '', null, undefined, 42, 'constructor', '__proto__',
+    ];
+    for (const x of inputs) expect(canonicalTransactionSlug(canonicalTransactionSlug(x))).toEqual(canonicalTransactionSlug(x));
+  });
+});

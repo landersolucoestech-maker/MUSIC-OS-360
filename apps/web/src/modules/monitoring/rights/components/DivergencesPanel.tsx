@@ -11,22 +11,33 @@ import { formatRightsDate } from "../utils/date-format";
 
 export type DivergenceSeverity = "critical" | "high" | "medium" | "low";
 
+export type DivergenceType = "work_without_ecad_code" | "detection_without_work";
+
+export const DIVERGENCE_TYPE_LABELS: Record<DivergenceType, string> = {
+  work_without_ecad_code: "Obra sem código ECAD",
+  detection_without_work: "Detecção sem obra vinculada",
+};
+
+export function divergenceTypeLabel(type: DivergenceType): string {
+  return DIVERGENCE_TYPE_LABELS[type] ?? "Divergência";
+}
+
 export interface DivergenceHistoryEntry {
-  data: string;
+  date: string;
   action: string;
   by?: string;
 }
 
 export interface Divergence {
   id: string;
-  type: string;
+  type: DivergenceType;
   description: string;
   work?: string;
   isrc?: string;
   origin?: string;
   severity: DivergenceSeverity;
   risk_score: number;
-  data: string;
+  date: string;
   status: "open" | "in_resolution" | "resolved";
   // Traceability fields (optional; fed by the resolution flow)
   created_at?: string;
@@ -50,12 +61,12 @@ interface Props {
   onBulkDelete?: (ids: string[]) => void;
 }
 
-type SortKey = "type" | "work" | "isrc" | "origin" | "severity" | "risk_score" | "data" | "status";
+type SortKey = "type" | "work" | "isrc" | "origin" | "severity" | "risk_score" | "date" | "status";
 type SortDirection = "asc" | "desc";
 
 export function DivergencesPanel({ divergences, onResolve, onBulkDelete }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [sortKey, setSortKey] = useState<SortKey>("data");
+  const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const openDivergences = divergences.filter(d => d.status !== "resolved");
   const sortedDivergences = useMemo(() => {
@@ -172,7 +183,7 @@ export function DivergencesPanel({ divergences, onResolve, onBulkDelete }: Props
             <TableHead><SortButton keyName="origin" label="Origem" /></TableHead>
             <TableHead><SortButton keyName="severity" label="Severidade" /></TableHead>
             <TableHead><SortButton keyName="risk_score" label="Risco" /></TableHead>
-            <TableHead><SortButton keyName="data" label="Data" /></TableHead>
+            <TableHead><SortButton keyName="date" label="Data" /></TableHead>
             <TableHead><SortButton keyName="status" label="Status" /></TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
@@ -186,12 +197,12 @@ export function DivergencesPanel({ divergences, onResolve, onBulkDelete }: Props
                   <Checkbox
                     checked={selectedIds.includes(div.id)}
                     onCheckedChange={() => toggleSelect(div.id)}
-                    aria-label={`Selecionar divergência ${div.type}`}
+                    aria-label={`Selecionar divergência ${divergenceTypeLabel(div.type)}`}
                     data-testid={`checkbox-divergence-${div.id}`}
                   />
                 </TableCell>
                 <TableCell>
-                  <p className="max-w-[260px] truncate font-medium">{div.type}</p>
+                  <p className="max-w-[260px] truncate font-medium">{divergenceTypeLabel(div.type)}</p>
                   <p className="max-w-[320px] truncate text-xs text-muted-foreground">{div.description}</p>
                 </TableCell>
                 <TableCell className="text-sm">{div.work || "—"}</TableCell>
@@ -201,7 +212,7 @@ export function DivergencesPanel({ divergences, onResolve, onBulkDelete }: Props
                   <Badge variant={cfg.variant} className="gap-1">{cfg.icon}{cfg.label}</Badge>
                 </TableCell>
                 <TableCell className="text-sm">Risco {div.risk_score}/100</TableCell>
-                <TableCell className="text-sm whitespace-nowrap">{formatRightsDate(div.data)}</TableCell>
+                <TableCell className="text-sm whitespace-nowrap">{formatRightsDate(div.date)}</TableCell>
                 <TableCell>
                   {div.status === "in_resolution" ? <Badge variant="info">Em resolução</Badge> : <Badge variant="warning">Aberta</Badge>}
                 </TableCell>

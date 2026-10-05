@@ -1,0 +1,28 @@
+{
+ "schemaVersion": 1,
+ "checkScript": "apps/api/scripts/verify-schema-compat-boundaries.ts",
+ "checkScriptSha256": "a4e172cd9a83a310c0e41921512f3abc71d64e52bbc109cb619c60193dd086a1",
+ "generatedAt": "2026-10-05T01:22:13.181Z",
+ "baseline": {
+  "status": 0,
+  "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 6/6 checks passed"
+ },
+ "mutants": [
+  {
+   "id": "payment-method-legacy-value",
+   "ledgerName": "transferencia",
+   "sqlSha256": "878d7cd70d0596383b0e2460f112cfa4b198f568e351571fdef76df7c2a9a4ea",
+   "status": 1,
+   "killed": true,
+   "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 5/6 checks passed"
+  },
+  {
+   "id": "events-data-sync-trigger",
+   "ledgerName": "events.data",
+   "sqlSha256": "fcda1238cdf40331c335a0c6652ec1eee9939ab575b4d9e65a05b367192a7e26",
+   "status": 1,
+   "killed": true,
+   "tail": "FAIL  updating starts_at alone moves the legacy data column (unexpected behavior) | FAIL  updating the legacy data column alone moves starts_at (unexpected behavior) | schema compat boundaries: 3/6 checks passed"
+  }
+ ]
+}

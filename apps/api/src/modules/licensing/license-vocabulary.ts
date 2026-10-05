@@ -47,7 +47,9 @@ const LEGACY_VALUES: Readonly<Record<string, Readonly<Record<string, string>>>> 
 export const ACCEPTED_LICENSE_STATUSES = [...LICENSE_STATUSES, ...Object.keys(LEGACY_VALUES['status'])];
 
 export function canonicalLicenseValue(field: keyof typeof LEGACY_VALUES | string, value: unknown): unknown {
-  return typeof value === 'string' ? (LEGACY_VALUES[field]?.[value] ?? value) : value;
+  if (typeof value !== 'string' || !Object.prototype.hasOwnProperty.call(LEGACY_VALUES, field)) return value;
+  const map = LEGACY_VALUES[field as keyof typeof LEGACY_VALUES] as Readonly<Record<string, string>>;
+  return Object.prototype.hasOwnProperty.call(map, value) ? map[value] : value;
 }
 
 /** Comma-separated status filter ("negotiation,proposal") with legacy values mapped. */

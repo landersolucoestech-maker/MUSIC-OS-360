@@ -102,7 +102,8 @@ export class ImportMapperService {
         ignoredColumns.push(header);
         continue;
       }
-      const legacyTarget = LEGACY_IMPORT_HEADERS[def.tableName]?.[hl];
+      const legacyHeaders = Object.prototype.hasOwnProperty.call(LEGACY_IMPORT_HEADERS, def.tableName) ? LEGACY_IMPORT_HEADERS[def.tableName] : undefined;
+      const legacyTarget = legacyHeaders && Object.prototype.hasOwnProperty.call(legacyHeaders, hl) ? legacyHeaders[hl] : undefined;
       const col =
         byName.get(hl) ??
         byLabel.get(hl) ??

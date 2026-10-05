@@ -1,3 +1,7 @@
+> Historical record. Kept as recorded; not the current contract.
+
+> Current documentation index: `docs/engineering/README.md`. This file indexes the May 2026 restructuring planning set only (also frozen, point-in-time).
+
 # 📚 DOCUMENTATION INDEX — Music OS 360 Operational Restructuring
 
 **Complete index and navigation guide for the 6 main documents**

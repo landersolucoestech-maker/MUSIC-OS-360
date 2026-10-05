@@ -38,3 +38,29 @@ describe('AbramusService.registerWork (adapter boundary)', () => {
     for (const k of ['composer', 'co_composers', 'genre', 'duration', 'publisher']) expect(body).not.toHaveProperty(k);
   });
 });
+
+describe('AbramusService.getStatements (adapter boundary)', () => {
+  const build = () => {
+    const service = new AbramusService(null, {} as never);
+    jest.spyOn(service, 'loadCredentials').mockResolvedValue({
+      username: 'u', password: 'p', base_url: 'https://abramus.example.test',
+    } as never);
+    const fetchMock = jest.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'tok' }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ([]) });
+    (service as unknown as { fetch: jest.Mock }).fetch = fetchMock;
+    return { service, fetchMock };
+  };
+
+  it('sends the canonical period as the external `periodo` query parameter', async () => {
+    const { service, fetchMock } = build();
+    await service.getStatements('tenant-1', '2026-01', 5);
+    expect((fetchMock.mock.calls[1] as [string])[0]).toBe('https://abramus.example.test/api/v1/statements?limit=5&periodo=2026-01');
+  });
+
+  it('omits the period parameter when absent', async () => {
+    const { service, fetchMock } = build();
+    await service.getStatements('tenant-1', undefined, 20);
+    expect((fetchMock.mock.calls[1] as [string])[0]).toBe('https://abramus.example.test/api/v1/statements?limit=20');
+  });
+});

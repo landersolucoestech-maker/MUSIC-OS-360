@@ -9,7 +9,16 @@ import {
   UpdateConversationDto,
 } from './dto/conversations.dto';
 import { MusicChatAutomationService } from './musicchat-automation.service';
-import { canonicalMenuOption, canonicalTemplate } from './musicchat-vocabulary';
+import {
+  LEGACY_QUEUE_LABELS,
+  LEGACY_SECTOR_LABELS,
+  ROUTING_KEY_PATTERN,
+  canonicalMenuOption,
+  canonicalRoutingKeys,
+  canonicalTemplate,
+  withCanonicalRoutingKeys,
+} from './musicchat-vocabulary';
+import { MusicChatMenuOptionDto, UpdateMusicChatAutomationSettingsDto } from './dto/musicchat-automation.dto';
 
 /**
  * CZ-045: MusicChat service statuses, priorities and default menu option ids
@@ -169,20 +178,25 @@ describe('MusicChatAutomationService (CZ-045 values)', () => {
 
     const shows = makeService();
     await shows.svc.handleInboundMessage('t1', { externalContactId: 'ext-1', customerName: 'Fulano', channel: 'internal', body: '1' });
-    expect(routedMetadata(shows.convRepo)).toMatchObject({ service_status: 'waiting_agent', priority: 'medium', selected_menu_option: 'shows' });
+    expect(routedMetadata(shows.convRepo)).toMatchObject({ service_status: 'waiting_agent', priority: 'medium', selected_menu_option: 'shows', queue: 'Comercial', sector: 'Shows', queue_key: 'commercial', sector_key: 'shows' });
   });
 
-  it('creates the default settings with the pinned capitalized queue/sector values (R3-03 pending canonical slugs)', async () => {
+  it('creates the default settings with canonical queue/sector keys next to the PT-BR labels', async () => {
     const { svc, settingsRepo } = makeService();
     Object.assign(settingsRepo, {
       create: jest.fn((v: unknown) => v),
       save: jest.fn(async (v: unknown) => v),
     });
     settingsRepo.findOne.mockResolvedValueOnce(null);
-    const created = (await svc.getSettings('t-new')) as unknown as { menu_options: Array<{ id: string; queue: string; sector: string }> };
-    const routing = Object.fromEntries(created.menu_options.map((o) => [o.id, [o.queue, o.sector]]));
-    expect(routing['other']).toEqual(['Atendimento', 'Suporte']);
-    expect(routing['wrong_contact']).toEqual(['Atendimento', 'Triagem']);
+    const created = (await svc.getSettings('t-new')) as unknown as { menu_options: Array<{ id: string; queue: string; queueKey: string; sector: string; sectorKey: string }> };
+    const routing = Object.fromEntries(created.menu_options.map((o) => [o.id, [o.queueKey, o.sectorKey, o.queue, o.sector]]));
+    expect(routing['other']).toEqual(['customer_service', 'support', 'Atendimento', 'Suporte']);
+    expect(routing['wrong_contact']).toEqual(['customer_service', 'triage', 'Atendimento', 'Triagem']);
+    expect(routing['shows']).toEqual(['commercial', 'shows', 'Comercial', 'Shows']);
+    for (const option of created.menu_options) {
+      expect(option.queueKey).toMatch(ROUTING_KEY_PATTERN);
+      expect(option.sectorKey).toMatch(ROUTING_KEY_PATTERN);
+    }
   });
 
   it('the default menu pins the full queue/sector/tags/label/priority routing of every option (Comercial and Financeiro included)', async () => {
@@ -231,6 +245,22 @@ describe('MusicChatAutomationService (CZ-045 values)', () => {
       { id: 'wrong_contact', title: 'Engano', body: 'x' },
       { id: 'opcao-1700000000000', title: 'Custom', body: 'y' },
     ]);
+  });
+
+  it('a settings save derives keys from exact legacy labels, keeps an edited label key-less and never overwrites a sent key', async () => {
+    const { svc, settingsRepo } = makeService();
+    await svc.updateSettings('t1', 'u1', {
+      menu_options: [
+        { id: 'a', order: 1, label: 'A', responseTemplateId: 'a', queue: 'Comercial', sector: 'Shows', active: true },
+        { id: 'b', order: 2, label: 'B', responseTemplateId: 'b', queue: 'Vendas', sector: 'Triagem', active: true },
+        { id: 'c', order: 3, label: 'C', responseTemplateId: 'c', queue: 'Comercial', queueKey: 'my_queue', sector: 'Suporte', active: true },
+      ],
+    });
+    const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<Record<string, unknown>> }];
+    expect(updates.menu_options[0]).toMatchObject({ queue: 'Comercial', queueKey: 'commercial', sector: 'Shows', sectorKey: 'shows' });
+    expect(updates.menu_options[1]).toMatchObject({ queue: 'Vendas', sector: 'Triagem', sectorKey: 'triage' });
+    expect(updates.menu_options[1]).not.toHaveProperty('queueKey');
+    expect(updates.menu_options[2]).toMatchObject({ queueKey: 'my_queue', sectorKey: 'support' });
   });
 
   it('a settings save without menu options or templates does not touch them', async () => {
@@ -407,5 +437,86 @@ describe('MusicChat manual notifications and escalation recipients', () => {
     await svc.updateSettings('t1', 'u1', { menu_options: [legacyOption] });
     const [, updates] = settingsRepo.update.mock.calls[0] as [unknown, { menu_options: Array<{ id: string; responseTemplateId: string }> }];
     expect(updates.menu_options.map((o) => [o.id, o.responseTemplateId])).toEqual([['outros', 'outros']]);
+  });
+});
+
+describe('MusicChat routing keys (additive canonical keys next to editable labels)', () => {
+  it('every legacy map value matches the key pattern', () => {
+    for (const key of [...Object.values(LEGACY_QUEUE_LABELS), ...Object.values(LEGACY_SECTOR_LABELS)]) expect(key).toMatch(ROUTING_KEY_PATTERN);
+  });
+
+  it('derives keys only from an exact legacy label; an edited or unknown label gets none', () => {
+    expect(canonicalRoutingKeys({ queue: 'Produção Musical', sector: 'Editora/Distribuição' })).toEqual({ queueKey: 'music_production', sectorKey: 'publishing_distribution' });
+    expect(canonicalRoutingKeys({ queue: 'Vendas', sector: 'shows' })).toEqual({});
+    expect(canonicalRoutingKeys({ queue: 'comercial ', sector: 'Triagem' })).toEqual({ sectorKey: 'triage' });
+  });
+
+  it('never overwrites an existing key and never matches a prototype property name', () => {
+    expect(canonicalRoutingKeys({ queue: 'Comercial', queueKey: 'my_queue' })).toEqual({});
+    expect(canonicalRoutingKeys({ queue: 'constructor', sector: '__proto__' })).toEqual({});
+    expect(canonicalRoutingKeys({ queue: 'toString', sector: 'hasOwnProperty' })).toEqual({});
+  });
+
+  it('withCanonicalRoutingKeys keeps every other key and the labels untouched', () => {
+    const option = { id: 'c', queue: 'Comercial', sector: 'Vendas', tags: ['Livre'], extra: { a: 1 } };
+    expect(withCanonicalRoutingKeys(option)).toEqual({ ...option, queueKey: 'commercial' });
+    const edited = { id: 'c', queue: 'Vendas', sector: 'Outro' };
+    expect(withCanonicalRoutingKeys(edited)).toBe(edited);
+  });
+
+  it('the DTO accepts well-formed keys and rejects malformed ones (forbidNonWhitelisted pipe)', async () => {
+    const base = { id: 'a', order: 1, label: 'L', responseTemplateId: 'a', queue: 'Q', sector: 'S' };
+    await expect(validate(UpdateMusicChatAutomationSettingsDto, { menu_options: [{ ...base, queueKey: 'customer_service', sectorKey: 'triage' }] })).resolves.toBeDefined();
+    await expect(validate(UpdateMusicChatAutomationSettingsDto, { menu_options: [{ ...base, queueKey: 'Customer Service' }] })).rejects.toThrow(BadRequestException);
+    await expect(validate(UpdateMusicChatAutomationSettingsDto, { menu_options: [{ ...base, sectorKey: '1triage' }] })).rejects.toThrow(BadRequestException);
+    expect(MusicChatMenuOptionDto).toBeDefined();
+  });
+});
+
+describe('legacy routing labels map to canonical keys, one by one (CZ-045)', () => {
+  it.each([
+    ['Comercial', 'commercial'],
+    ['Produção Musical', 'music_production'],
+    ['Catálogo', 'catalog'],
+    ['Marketing', 'marketing'],
+    ['Financeiro', 'finance'],
+    ['Atendimento', 'customer_service'],
+  ])('queue label %s gets queueKey %s', (label, key) => {
+    expect(canonicalRoutingKeys({ queue: label })).toEqual({ queueKey: key });
+  });
+
+  it.each([
+    ['Shows', 'shows'],
+    ['Produção', 'production'],
+    ['Editora/Distribuição', 'publishing_distribution'],
+    ['Criação', 'creative'],
+    ['Financeiro', 'finance'],
+    ['Conteúdo', 'content'],
+    ['Suporte', 'support'],
+    ['Triagem', 'triage'],
+  ])('sector label %s gets sectorKey %s', (label, key) => {
+    expect(canonicalRoutingKeys({ sector: label })).toEqual({ sectorKey: key });
+  });
+});
+
+describe('routing events carry canonical keys even for options stored before the keys existed (CZ-045)', () => {
+  const routeLegacyOption = async () => {
+    const harness = makeService();
+    const options = harness.settings.menu_options as Array<Record<string, unknown>>;
+    harness.settings.menu_options = options.map(({ queueKey: _queueKey, sectorKey: _sectorKey, ...rest }) => rest) as never;
+    await harness.svc.handleInboundMessage('t1', { externalContactId: 'ext-1', customerName: 'Fulano', channel: 'internal', body: '1' });
+    return harness.eventRepo.create.mock.calls.map(([row]) => row as { event_type: string; payload: Record<string, any> });
+  };
+
+  it('automation.routed records the selected option with queueKey and sectorKey', async () => {
+    const events = await routeLegacyOption();
+    const routed = events.find((e) => e.event_type === 'automation.routed');
+    expect(routed?.payload['selectedOption']).toMatchObject({ queue: 'Comercial', sector: 'Shows', queueKey: 'commercial', sectorKey: 'shows' });
+  });
+
+  it('automation.queue_notification records queue_key and sector_key', async () => {
+    const events = await routeLegacyOption();
+    const notification = events.find((e) => e.event_type === 'automation.queue_notification');
+    expect(notification?.payload).toMatchObject({ queue_key: 'commercial', sector_key: 'shows' });
   });
 });

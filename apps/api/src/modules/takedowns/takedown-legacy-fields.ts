@@ -8,6 +8,7 @@
  * place that knows this vocabulary — before persistence. Responses are
  * canonical.
  */
+import { TRIAGE_PRIORITIES } from '@music-os-360/types';
 import type { DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 
 export const TAKEDOWN_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
@@ -24,7 +25,7 @@ export const TAKEDOWN_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
 export const TAKEDOWN_QUERY_DEPRECATED_FIELDS: DeprecatedFieldAliases = { plataforma: 'platform' };
 
 export const TAKEDOWN_TYPES = ['sent', 'received'] as const;
-export const TAKEDOWN_PRIORITIES = ['high', 'medium', 'low'] as const;
+export const TAKEDOWN_PRIORITIES = TRIAGE_PRIORITIES;
 
 const LEGACY_TYPES: Readonly<Record<string, (typeof TAKEDOWN_TYPES)[number]>> = { enviado: 'sent', recebido: 'received' };
 const LEGACY_PRIORITIES: Readonly<Record<string, (typeof TAKEDOWN_PRIORITIES)[number]>> = {
@@ -35,10 +36,13 @@ const LEGACY_PRIORITIES: Readonly<Record<string, (typeof TAKEDOWN_PRIORITIES)[nu
 export const ACCEPTED_TAKEDOWN_TYPES = [...TAKEDOWN_TYPES, ...Object.keys(LEGACY_TYPES)];
 export const ACCEPTED_TAKEDOWN_PRIORITIES = [...TAKEDOWN_PRIORITIES, ...Object.keys(LEGACY_PRIORITIES)];
 
+const mapOwn = <T>(map: Readonly<Record<string, string>>, value: T): T | string =>
+  typeof value === 'string' && Object.prototype.hasOwnProperty.call(map, value) ? map[value] : value;
+
 export function canonicalTakedownType<T>(value: T): T | string {
-  return typeof value === 'string' ? (LEGACY_TYPES[value] ?? value) : value;
+  return mapOwn(LEGACY_TYPES, value);
 }
 
 export function canonicalTakedownPriority<T>(value: T): T | string {
-  return typeof value === 'string' ? (LEGACY_PRIORITIES[value] ?? value) : value;
+  return mapOwn(LEGACY_PRIORITIES, value);
 }

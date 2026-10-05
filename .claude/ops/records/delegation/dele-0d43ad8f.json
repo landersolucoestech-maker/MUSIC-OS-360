@@ -1,0 +1,9 @@
+{
+  "agent": "frontend-architecture-engineer",
+  "objective": "Design the single-source resolution of the cross-layer enum/vocabulary divergences found by n3 (marketing project type, approval status, enum case, priority scales, provider spellings, artist mapper, signup categories, storage/query keys)",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "CLOSED",
+  "id": "dele-0d43ad8f",
+  "createdAt": "2026-10-05T01:36:40.414Z"
+}

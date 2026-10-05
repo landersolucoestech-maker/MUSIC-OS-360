@@ -7,7 +7,8 @@ import { Button } from "@/shared/ui/button";
 import { FileText, Calendar, Building2, MapPin, Mail, ExternalLink, Pencil, Receipt, CreditCard, Calculator, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { formatCurrency, formatDate, getCurrencyToneClass } from "@/shared/lib/format-utils";
 import { formatCpfCnpj } from "@/shared/lib/br-validators";
-import { parseOperationType } from "@/modules/accounting/types/invoice-type";
+import { invoiceFileUrl } from "@/modules/accounting/types/invoice-type";
+import { invoiceOperationTypeLabel, readInvoiceOperationType } from "@/modules/accounting/types/invoice-operation-type";
 import { invoicePaymentMethodLabel } from "@/modules/accounting/constants/invoice-payment-methods";
 import { openStoredFile } from "@/shared/lib/stored-file";
 import { toast } from "sonner";
@@ -58,7 +59,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
   // Hook before the early return (rules of hooks).
   const partyName = useInvoicePartyName(invoice);
   if (!invoice) return null;
-  const { type: operationType, cleanedNotes: cleanedNotes } = parseOperationType(invoice.notes);
+  const { type: operationType, cleanedNotes: cleanedNotes } = readInvoiceOperationType(invoice);
   const isInflow = operationType === "inflow";
   const items: any[] = Array.isArray(invoice.items) ? invoice.items : [];
   const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
@@ -86,7 +87,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           <DialogDescription className="flex gap-2 items-center mt-1">
             <Badge variant={isInflow ? "secondary" : "default"} className="gap-1" data-testid={`badge-type-${operationType}`}>
               {isInflow ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
-              {isInflow ? "Entrada" : "Saída"}
+              {invoiceOperationTypeLabel(operationType)}
             </Badge>
             <Badge variant="outline">{invoiceTypeLabels[invoice.tipo_nota] || invoice.tipo_nota || "NFS-e"}</Badge>
             {getStatusBadge(invoice.status)}
@@ -224,12 +225,12 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
           </Card>
 
           {/* Anexo + Obs */}
-          {invoice.url_pdf && (
+          {invoiceFileUrl(invoice) && (
             <Card>
               <CardContent className="p-4 flex items-center gap-3">
                 <FileText className="h-5 w-5 text-primary" />
                 <span className="text-sm flex-1">PDF da Nota Fiscal</span>
-                <Button variant="outline" size="sm" onClick={() => { openStoredFile(invoice.url_pdf).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}>
+                <Button variant="outline" size="sm" onClick={() => { openStoredFile(invoiceFileUrl(invoice)).catch(() => toast.error("Não foi possível abrir o arquivo.")); }}>
                   <ExternalLink className="h-4 w-4 mr-1" />Abrir
                 </Button>
               </CardContent>

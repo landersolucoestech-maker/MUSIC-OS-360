@@ -22,7 +22,7 @@ export class AudiovisualProjectsController {
     return this.svc.list(t.id, q);
   }
 
-  @Get('dashboard') @RequireRole('viewer') @ApiOperation({ summary: 'KPIs do dashboard audiovisual' })
+  @Get('dashboard') @RequireRole('viewer') @ApiOperation({ summary: 'Audiovisual dashboard KPIs' })
   dashboard(@CurrentTenant() t: { id: string }, @Query() q: QueryDashboardDto) {
     return this.svc.dashboard(t.id, q);
   }

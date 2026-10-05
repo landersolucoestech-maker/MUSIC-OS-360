@@ -130,21 +130,25 @@ export const PROJECT_TYPE_OPTIONS: Option<ProjectType>[] = [
 export const PROJECT_TYPE_LABEL = optionLabels(PROJECT_TYPE_OPTIONS);
 
 export const PROJECT_STATUS_OPTIONS: Option<ProjectStatus>[] = [
+  { value: "draft", label: "Rascunho" },
   { value: "planning", label: "Planejamento" },
   { value: "active", label: "Em Andamento" },
   { value: "paused", label: "Pausado" },
   { value: "completed", label: "Concluído" },
   { value: "cancelled", label: "Cancelado" },
+  { value: "archived", label: "Arquivado" },
 ];
 
 export const PROJECT_STATUS_LABEL = optionLabels(PROJECT_STATUS_OPTIONS);
 
 export const PROJECT_STATUS_TONE: Record<ProjectStatus, Tone> = {
+  draft: "neutral",
   planning: "info",
   active: "success",
   paused: "warning",
   completed: "neutral",
   cancelled: "danger",
+  archived: "neutral",
 };
 
 // ---------------------------------------------------------------------------

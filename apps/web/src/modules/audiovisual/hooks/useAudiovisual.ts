@@ -4,7 +4,7 @@ import { audiovisualService } from "../services/audiovisual.service";
 import { handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import type {
   AudiovisualProject, AudiovisualProjectStatus, AudiovisualProjectType,
-  DeliverableType, ApprovalStatus,
+  DeliverableType, ApprovalDecisionStatus,
 } from "../types/audiovisual.types";
 
 import { toUserMessage } from "@/shared/lib/errors";
@@ -340,7 +340,7 @@ export function useApprovalMutations() {
       onError:   (e: Error) => toast.error(toUserMessage(e)),
     }),
     decide: useMutation({
-      mutationFn: ({ id, status, comments, expectedUpdatedAt }: { id: string; status: ApprovalStatus; comments?: string; expectedUpdatedAt?: string }) =>
+      mutationFn: ({ id, status, comments, expectedUpdatedAt }: { id: string; status: ApprovalDecisionStatus; comments?: string; expectedUpdatedAt?: string }) =>
         audiovisualService.approvals.decide(id, status, comments, expectedUpdatedAt),
       onSuccess: () => { invalidate(); toast.success("Decisão registrada"); },
       onError:   (e: Error) => {

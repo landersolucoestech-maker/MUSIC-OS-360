@@ -582,7 +582,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
     col('service_description'), col('service_amount'), col('deductions_amount'), col('base_calculo'),
     col('aliquota_iss'), col('iss_amount'), col('iss_retido'), col('pis_amount'), col('cofins_amount'),
     col('ir_amount'), col('csll_amount'), col('inss_amount'), col('net_amount'),
-    col('payment_method'), col('payment_terms'), col('invoiceDueAt', 'due_at'), col('url_pdf'),
+    col('payment_method'), col('payment_terms'), col('invoiceDueAt', 'due_at'), col('invoiceFileUrl', 'file_url'),
     col('notes'),
   ],
   excludedFormFields: {},
@@ -590,6 +590,12 @@ const INVOICES_CONTRACT: ReportFormContract = {
   // header stays "Data de vencimento" (the generic dueAt label is "Prazo").
   formFieldAliases: {
     due_at: 'invoiceDueAt',
+    file_url: 'invoiceFileUrl',
+  },
+  // `url_pdf` (pre-file_url export/import id, one deploy window) -> canonical contract key.
+  // `invoiceFileUrl` (not `file_url`) keeps the header "PDF da nota"; the generic fileUrl label is "Arquivo".
+  deprecatedColumnAliases: {
+    url_pdf: 'invoiceFileUrl',
   },
   repeatingGroup: {
       key: 'items',
