@@ -459,8 +459,8 @@ test("SQL_WORD: a legacy name inside a SQL statement is a site per whole-word oc
     assert.equal(out.split("faixas").length - 1, 1, "exactly one occurrence is replaced, the other survives untouched");
     assert.ok(out.includes(m.replacement));
   }
-  const rh = sqlSites("const q = `UPDATE \"permissions\" SET \"resource\" = 'hr' WHERE \"resource\" = 'rh' OR \"key\" LIKE 'rh:%'`;", ["rh"]);
-  assert.equal(rh.length, 3 - 1, "quoted value 'rh' and the namespace 'rh:%' are sites (the `hr` value is not)");
+  const hrSites = sqlSites("const q = `UPDATE \"permissions\" SET \"resource\" = 'hr' WHERE \"resource\" = 'rh' OR \"key\" LIKE 'rh:%'`;", ["rh"]);
+  assert.equal(hrSites.length, 3 - 1, "quoted value 'rh' and the namespace 'rh:%' are sites (the `hr` value is not)");
   assert.ok(rh.every((m) => !/_/.test(m.replacement)), "no `_` in the token (a LIKE wildcard would keep the mutant matching)");
 });
 
