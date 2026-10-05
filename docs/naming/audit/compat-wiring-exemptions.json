@@ -39,17 +39,17 @@
   {
    "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
    "text": "canonicalVariableCategory(a.category)",
-   "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
+   "reason": "Unreachable in production: the call sits inside resolveAllVariables, which no production file references; only contract-variable-vocabulary.test.ts calls it. The module is imported in production only for contractRoleLabel (ContractWizard.tsx), which is unrelated to this call; utils/index.ts re-exports the module but the barrel has no importer. Unreferenced exports of this file: generateParticipantVariables, resolveAllVariables, SYSTEM_VARIABLES, CATEGORY_LABELS, PARTICIPANT_ROLE_OPTIONS. Owner decision pending: wire the contract variable resolution or remove those exports (D-06)."
   },
   {
    "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
    "text": "canonicalVariableCategory(b.category)",
-   "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
+   "reason": "Unreachable in production: the call sits inside resolveAllVariables, which no production file references; only contract-variable-vocabulary.test.ts calls it. The module is imported in production only for contractRoleLabel (ContractWizard.tsx), which is unrelated to this call; utils/index.ts re-exports the module but the barrel has no importer. Unreferenced exports of this file: generateParticipantVariables, resolveAllVariables, SYSTEM_VARIABLES, CATEGORY_LABELS, PARTICIPANT_ROLE_OPTIONS. Owner decision pending: wire the contract variable resolution or remove those exports (D-06)."
   },
   {
    "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
    "text": "canonicalEntityType(entityType)",
-   "reason": "Reachable only from tests: no production importer of contract-variables (the utils barrel has none either); the resolver is test-only scaffolding. Owner decision pending: wire the contract variable resolution or remove it (D-06)."
+   "reason": "Unreachable in production: the call sits inside generateParticipantVariables, which no production file references (its only non-test caller is resolveAllVariables, itself unreferenced); only contract-variable-vocabulary.test.ts calls it. The module is imported in production only for contractRoleLabel (ContractWizard.tsx), which is unrelated to this call; utils/index.ts re-exports the module but the barrel has no importer. Unreferenced exports of this file: generateParticipantVariables, resolveAllVariables, SYSTEM_VARIABLES, CATEGORY_LABELS, PARTICIPANT_ROLE_OPTIONS. Owner decision pending: wire the contract variable resolution or remove those exports (D-06)."
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistFormModal.tsx",

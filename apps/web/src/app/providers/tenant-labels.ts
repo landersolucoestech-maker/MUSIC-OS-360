@@ -17,6 +17,7 @@ import type {
   TenantModuleKey,
   TenantModulePermission,
 } from "./TenantContext";
+import { hasOwnKey } from "@/shared/lib/own-property";
 
 export type { TenantPlan, TenantBillingStatus, TenantIndustry, TenantRole };
 
@@ -72,6 +73,11 @@ export const ROLE_PERMISSIONS: Record<TenantRole, TenantPermissions> = {
   viewer:  Object.fromEntries(MODULE_KEYS.map(k => [k, k === "audit" || k === "settings" ? NO_ACCESS : READ_ONLY])) as TenantPermissions,
 };
 
+/** True only for an own key of ROLE_PERMISSIONS (never an inherited member such as "constructor"). */
+export function isTenantRole(value: unknown): value is TenantRole {
+  return typeof value === "string" && hasOwnKey(ROLE_PERMISSIONS, value);
+}
+
 /** Derives permissions from the real JWT. */
 export function getPermissionsFromToken(): TenantPermissions {
   try {
@@ -80,10 +86,7 @@ export function getPermissionsFromToken(): TenantPermissions {
     const base64Payload = token.split(".")[1];
     if (!base64Payload) return ROLE_PERMISSIONS.viewer;
     const payload = JSON.parse(atob(base64Payload)) as { role?: TenantRole };
-    const role: TenantRole =
-      payload.role && payload.role in ROLE_PERMISSIONS
-        ? payload.role
-        : "viewer";
+    const role: TenantRole = isTenantRole(payload.role) ? payload.role : "viewer";
     return ROLE_PERMISSIONS[role];
   } catch {
     return ROLE_PERMISSIONS.viewer;

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+import { WORK_PRIORITIES } from '@music-os-360/types';
 import {
   IsDateString,
   IsIn,
@@ -39,7 +40,8 @@ export const MARKETING_PROJECT_STATUSES = [
   'archived',
 ] as const;
 
-export const MARKETING_PROJECT_PRIORITIES = ['low', 'normal', 'high', 'urgent'] as const;
+/** Shared work-item scale (packages/types priorities.ts). */
+export const MARKETING_PROJECT_PRIORITIES = WORK_PRIORITIES;
 
 export class CreateMarketingProjectDto {
   @ApiProperty({ enum: MARKETING_PROJECT_TYPES })

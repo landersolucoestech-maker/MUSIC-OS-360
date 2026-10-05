@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { MUSICAL_GENRES } from "@/constants/musicalGenres";
 import { safeImageSrc } from "@/shared/lib/safe-url";
 import {
   Dialog,
@@ -71,6 +70,7 @@ import {
   projectToReleaseSeed,
 } from "@/modules/releases/mappers";
 
+import { GENRE_OPTS, GENRE_LABELS, genreLabel, matchGenre, normStr } from "@/modules/releases/lib/genre-match";
 import { toUserMessage } from "@/shared/lib/errors";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 // ─────────────────────────────────────────────────────────────────────────────
@@ -90,38 +90,6 @@ const STEPS = [
 const sortOptionsByLabel = <T extends { label: string }>(items: T[]) =>
   [...items].sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
 
-const GENRE_OPTIONS = MUSICAL_GENRES;
-const GENRE_OPTS = GENRE_OPTIONS.map((o) => o.value);
-const GENRE_LABELS: Record<string, string> = Object.fromEntries(
-  GENRE_OPTIONS.map((o) => [o.value, o.label]),
-);
-const GENRE_ALIASES: Record<string, string> = {
-  eletronico: "eletronica",
-  electronico: "eletronica",
-  electronica: "eletronica",
-  "hip hop": "hip-hop",
-  rap: "rap",
-  "bossa nova": "bossa-nova",
-  "mpb/bossa nova": "bossa-nova",
-  forro: "forro",
-};
-const normStr = (s: string) =>
-  s
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-const matchGenre = (raw: string): string => {
-  if (!raw) return "";
-  const n = normStr(raw);
-  const exact = GENRE_OPTS.find((g) => normStr(g) === n);
-  if (exact) return exact;
-  if (GENRE_ALIASES[n]) return GENRE_ALIASES[n];
-  const partial = GENRE_OPTS.find(
-    (g) => n.startsWith(normStr(g)) || normStr(g).startsWith(n),
-  );
-  return partial ?? raw.toLowerCase();
-};
 const splitNames = (s: string | null | undefined): string[] => {
   if (!s) return [""];
   const parts = s
@@ -2456,9 +2424,8 @@ export function ReleaseFormModal({
                   <span className="text-muted-foreground">Gêneros:</span>
                   <span>
                     {[
-                      GENRE_LABELS[formData.genre] ?? formData.genre,
-                      GENRE_LABELS[extraFields.secondaryGenre] ??
-                        extraFields.secondaryGenre,
+                      genreLabel(formData.genre),
+                      genreLabel(extraFields.secondaryGenre),
                     ]
                       .filter(Boolean)
                       .join(", ") || "—"}

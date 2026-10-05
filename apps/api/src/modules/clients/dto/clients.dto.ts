@@ -1,11 +1,12 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { IsString, IsOptional, IsIn, IsEmail, MaxLength, IsInt, Min, IsNotEmpty, IsArray, IsObject, ValidateNested } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
+import { RELATIONSHIP_PRIORITIES } from '@music-os-360/types';
 import { transformClientProfile } from '../client-profile-vocabulary';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 const PERSON_TYPES = ['individual', 'company'] as const;
-const PRIORITIES = ['low', 'medium', 'high', 'strategic'] as const;
+const PRIORITIES = RELATIONSHIP_PRIORITIES; // shared CRM relationship scale (packages/types priorities.ts)
 const INTERACTION_TYPES = ['call', 'whatsapp', 'email', 'meeting', 'proposal', 'follow_up', 'note'] as const;
 const TIMELINE_TYPES = ['note', 'call', 'meeting', 'email', 'whatsapp', 'other'] as const;
 const STATUSES = ['active', 'inactive', 'prospect'] as const;

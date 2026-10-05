@@ -105,12 +105,12 @@ describe('SharesService — split budget invariant (P1)', () => {
       } as unknown as CreateShareDto)).rejects.toBeInstanceOf(BadRequestException);
     });
 
-    it('does not validate budget when there is no work_id or fonograma_id (share without registry context)', async () => {
+    it('does not validate budget when there is no work_id or phonogram_id (share without registry context)', async () => {
       const { svc, repo } = makeService();
       await expect(svc.create('tenant-1', {
         holderName: 'Sem Obra', percentage: 50,
       } as unknown as CreateShareDto)).resolves.toBeDefined();
-      // A sum query never needed to run — no work_id/fonograma_id to scope it.
+      // A sum query never needed to run — no work_id/phonogram_id to scope it.
       expect(repo.createQueryBuilder).not.toHaveBeenCalled();
     });
   });
@@ -188,7 +188,7 @@ describe('SharesService — concurrent write serialization (find-a192e412)', () 
     );
   });
 
-  it('does not acquire a lock when the write has no work_id/fonograma_id scope', async () => {
+  it('does not acquire a lock when the write has no work_id/phonogram_id scope', async () => {
     const repo = makeRepo();
     const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
     const ds = {
@@ -212,7 +212,7 @@ describe('SharesService.create — FK cross-tenant (P1)', () => {
     } as unknown as CreateShareDto)).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('rejects fonograma_id (trackId) from another tenant (or nonexistent)', async () => {
+  it('rejects phonogram_id (trackId) from another tenant (or nonexistent)', async () => {
     const { svc } = makeService({}, jest.fn(async () => []));
     await expect(svc.create('tenant-1', {
       holderName: 'X', percentage: 10, trackId: 'track-from-another-tenant',

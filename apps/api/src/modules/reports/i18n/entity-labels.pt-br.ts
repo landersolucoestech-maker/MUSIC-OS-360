@@ -67,5 +67,5 @@ export const ENTITY_LABELS_PT_BR: Readonly<Record<string, string>> = {
  * the caller decides whether to flag it (risk) or fall back to tableName, never invent.
  */
 export function resolveEntityLabel(tableName: string): string | null {
-  return ENTITY_LABELS_PT_BR[tableName] ?? null;
+  return Object.prototype.hasOwnProperty.call(ENTITY_LABELS_PT_BR, tableName) ? ENTITY_LABELS_PT_BR[tableName] : null;
 }

@@ -183,3 +183,40 @@ describe('SharesService — total_amount/settled_amount persistence (Task T)', (
     expect(updated(repo)['settled_amount']).toBe(0);
   });
 });
+
+function toColumns(svc: SharesService, dto: CreateShareDto): Record<string, unknown> {
+  return (svc as unknown as { toColumns(d: CreateShareDto): Record<string, unknown> }).toColumns(dto);
+}
+
+describe('SharesService.toColumns — canonical columns win over EN aliases (technical normalization finding 4)', () => {
+  it('canonical party_role/work_id/phonogram_id/holder_name/holder_document are not overwritten by role/workId/trackId/holderName/holderDoc', async () => {
+    const { svc } = makeService();
+    const row = toColumns(svc, {
+      party_role: 'author', role: 'producer',
+      work_id: 'work-canonical', workId: 'work-legacy',
+      phonogram_id: 'phono-canonical', trackId: 'track-legacy',
+      holder_name: 'Canonical', holderName: 'Legacy',
+      holder_document: 'DOC-C', holderDoc: 'DOC-L',
+    } as unknown as CreateShareDto);
+
+    expect(row['party_role']).toBe('author');
+    expect(row['work_id']).toBe('work-canonical');
+    expect(row['phonogram_id']).toBe('phono-canonical');
+    expect(row['holder_name']).toBe('Canonical');
+    expect(row['holder_document']).toBe('DOC-C');
+    for (const k of ['role', 'workId', 'trackId', 'holderName', 'holderDoc']) expect(row).not.toHaveProperty(k);
+  });
+
+  it('legacy aliases alone still map to the canonical columns', async () => {
+    const { svc } = makeService();
+    const row = toColumns(svc, {
+      role: 'producer', workId: 'work-legacy', trackId: 'track-legacy', holderName: 'Legacy', holderDoc: 'DOC-L',
+    } as unknown as CreateShareDto);
+
+    expect(row['party_role']).toBe('producer');
+    expect(row['work_id']).toBe('work-legacy');
+    expect(row['phonogram_id']).toBe('track-legacy');
+    expect(row['holder_name']).toBe('Legacy');
+    expect(row['holder_document']).toBe('DOC-L');
+  });
+});

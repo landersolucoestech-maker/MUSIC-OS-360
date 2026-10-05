@@ -1,5 +1,6 @@
 import type { OperationalListItem } from "@/modules/settings/hooks/useOperationalSettings";
 import { canonicalOperationalSlug, legacyOperationalSlugs } from "@/modules/settings/lib/operational-vocabulary";
+import { hasOwnKey } from "@/shared/lib/own-property";
 
 /** Enum actually persisted in events.type (CreateEventDto.type on the backend). */
 export const BACKEND_EVENT_TYPES = ["show", "festival", "recording", "meeting", "interview", "tour", "other"] as const;
@@ -153,12 +154,12 @@ const EXTRA_INPUT_TO_BACKEND_TYPE: Readonly<Record<string, BackendEventType>> = 
  */
 export function eventCategoryToBackendType(category: string, granularMap: Record<string, BackendEventType>): BackendEventType {
   const raw = (category || "").trim().toLowerCase();
-  if (granularMap[raw]) return granularMap[raw];
+  if (hasOwnKey(granularMap, raw)) return granularMap[raw];
   const canonical = canonicalEventCategory(raw);
-  if (granularMap[canonical]) return granularMap[canonical];
-  if (EXTRA_INPUT_TO_BACKEND_TYPE[raw]) return EXTRA_INPUT_TO_BACKEND_TYPE[raw];
+  if (hasOwnKey(granularMap, canonical)) return granularMap[canonical];
+  if (hasOwnKey(EXTRA_INPUT_TO_BACKEND_TYPE, raw)) return EXTRA_INPUT_TO_BACKEND_TYPE[raw];
   if (isBackendEventType(raw)) return raw;
-  return EVENT_CATEGORY_BACKEND_TYPE[canonical as EventCategoryId] ?? "other";
+  return hasOwnKey(EVENT_CATEGORY_BACKEND_TYPE, canonical) ? EVENT_CATEGORY_BACKEND_TYPE[canonical as EventCategoryId] : "other";
 }
 
 /** Normalizes a free value (granular slug OR already a coarse enum) to the real coarse enum. */
@@ -169,7 +170,9 @@ export function normalizeToBackendType(
   if (!value) return "other";
   const v = value.trim().toLowerCase();
   if (isBackendEventType(v)) return v;
-  return granularMap[v] ?? granularMap[canonicalOperationalSlug("event_type", v)] ?? "other";
+  if (hasOwnKey(granularMap, v)) return granularMap[v];
+  const canonical = canonicalOperationalSlug("event_type", v);
+  return hasOwnKey(granularMap, canonical) ? granularMap[canonical] : "other";
 }
 
 /** pt-BR label for the real coarse value of an already-persisted event. */

@@ -5,6 +5,9 @@ import {
 import { Type } from 'class-transformer';
 
 const TASK_STATUSES   = ['pending', 'in_progress', 'done', 'cancelled'] as const;
+// Campaign-task scale (low/medium/high/urgent). Deliberately NOT the shared WORK_PRIORITIES
+// (low/normal/high/urgent) nor RELATIONSHIP_PRIORITIES: it differs in meaning/values, and merging
+// the medium/normal scales is a pending owner decision (technical normalization handoff, finding 11).
 const TASK_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
 const ASSET_TYPES     = ['image', 'video', 'audio', 'document', 'link', 'other'] as const;
 

@@ -4,6 +4,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { WORK_PRIORITIES } from '@music-os-360/types';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 import { IsHttpOrStorageUrl, MAX_URL_LENGTH } from '../../../common/validators/safe-url.validation';
@@ -22,7 +23,8 @@ export const PROJECT_STATUSES = [
   'approval', 'delivered', 'published', 'cancelled',
 ] as const;
 
-export const PROJECT_PRIORITIES = ['low', 'normal', 'high', 'urgent'] as const;
+/** Shared work-item scale (packages/types priorities.ts). */
+export const PROJECT_PRIORITIES = WORK_PRIORITIES;
 
 export const DELIVERABLE_TYPES = [
   'youtube_master', 'vertical_reels', 'tiktok_cut', 'teaser', 'thumbnail',

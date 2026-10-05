@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, "../..");
 
+tree.cleanEntities = "@Entity('artists') export class ArtistEntity { @Column() stage_name: string; }\n";
 function tree(extra = {}, ledger = null) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "naming-mutation-"));
   fs.mkdirSync(path.join(root, "scripts/naming"), { recursive: true });
@@ -27,7 +28,7 @@ function tree(extra = {}, ledger = null) {
   fs.writeFileSync(path.join(root, "docs/naming/canonical-naming-map.json"), JSON.stringify(map));
   fs.writeFileSync(path.join(root, "package.json"), JSON.stringify({ name: "fixture", private: true }));
   fs.symlinkSync(path.join(repo, "node_modules"), path.join(root, "node_modules"));
-  fs.writeFileSync(path.join(root, "baseline.json"), JSON.stringify({ totals: {}, debt: {} }));
+  fs.writeFileSync(path.join(root, "baseline.json"), JSON.stringify({ totals: {}, debt: {}, wildcardCoverage: {} }));
   fs.writeFileSync(path.join(root, "apps/api/src/database/entities.ts"), "@Entity('artists') export class ArtistEntity { @Column() stage_name: string; }\n");
   fs.writeFileSync(path.join(root, "apps/api/src/clean.ts"), "export const stageName = 'active';\n");
   for (const [rel, content] of Object.entries(extra)) {
@@ -35,6 +36,18 @@ function tree(extra = {}, ledger = null) {
     fs.writeFileSync(path.join(root, rel), content);
   }
   execFileSync("git", ["init", "-q"], { cwd: root });
+  execFileSync("git", ["add", "-A"], { cwd: root, stdio: "ignore" });
+  // baseline of the CLEAN fixture (the ledger file's own whole-file row hides some names); the mutation is the only change after it
+  const clean = tree.cleanEntities;
+  const mutated = {};
+  for (const rel of Object.keys(extra)) {
+    const abs = path.join(root, rel);
+    mutated[rel] = fs.readFileSync(abs, "utf8");
+    if (rel === "apps/api/src/database/entities.ts") fs.writeFileSync(abs, clean); else fs.rmSync(abs);
+  }
+  execFileSync("git", ["add", "-A"], { cwd: root, stdio: "ignore" });
+  execFileSync(process.execPath, [path.join(root, "scripts/naming/technical-naming-census.mjs"), "--write"], { cwd: root, stdio: "ignore", env: { ...process.env, NAMING_BASELINE_PATH: path.join(root, "baseline.json") } });
+  for (const [rel, content] of Object.entries(mutated)) fs.writeFileSync(path.join(root, rel), content);
   execFileSync("git", ["add", "-A"], { cwd: root, stdio: "ignore" });
   return root;
 }
@@ -61,6 +74,15 @@ const MUTATIONS = [
   ["tooling message", { "scripts/m.mjs": "console.log('Registro criado com sucesso para o artista');\n" }, /toolMessage::scripts\/m\.mjs/],
   ["SQL identifier outside migrations", { "apps/api/seed.sql": "INSERT INTO artists (stage_name, nome_artistico) VALUES ('a', 'b');\n" }, /dataFile::apps\/api\/seed\.sql::nome_artistico/],
   ["JSON key", { "apps/api/data.json": "{ \"artista_id\": 1 }\n" }, /dataFile::apps\/api\/data\.json::artista_id/],
+  ["database column (entity)", { "apps/api/src/database/entities.ts": "@Entity('artists') export class ArtistEntity { @Column() stage_name: string; @Column() nome_artistico: string; }\n" }, /dbColumn::artists\.nome_artistico/],
+  ["shared types package", { "packages/types/src/m.ts": "export interface Contrato { valorTotal: number }\n" }, /identifier::packages\/types\/src\/m\.ts/],
+  ["API route", { "apps/api/src/m.controller.ts": "@Controller('contratos') export class MController {}\n" }, /apiRoute::apps\/api\/src\/m\.controller\.ts/],
+  ["env var", { "apps/api/src/m.ts": "export const k = process.env.CHAVE_SECRETA_API;\n" }, /envVar::apps\/api\/src\/m\.ts/],
+  ["event / queue name", { "apps/api/src/m.ts": "export const q = new Queue('envio-relatorio');\n" }, /envio-relatorio/],
+  ["YAML / config key", { "infra/m.yaml": "nome_servico: api\n" }, /dataFile::infra\/m\.yaml::nome_servico/],
+  ["e2e helper identifier", { "e2e/m.ts": "export function criarContrato() { return 1; }\n" }, /identifier::e2e\/m\.ts/],
+  ["Portuguese technical name in a backtick span of a current doc", { "docs/engineering/guide.md": "# Guide\n\nThe field is `valor_total` in the payload.\n" }, /docCode::docs\/engineering\/guide\.md/],
+  ["Portuguese technical name in a fenced block of a current doc", { "docs/engineering/guide.md": "# Guide\n\n```ts\nconst payload = { data_inicio: 1 };\n```\n" }, /docCode::docs\/engineering\/guide\.md/],
   ["Portuguese prose in a document", { "docs/guia.md": "# Guia\n\nEste documento descreve como configurar o ambiente de desenvolvimento local para a equipe.\n" }, /doc::docs\/guia\.md/],
 ];
 

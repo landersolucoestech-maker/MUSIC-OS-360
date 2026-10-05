@@ -1,3 +1,4 @@
+import { hasOwnKey } from "@/shared/lib/own-property";
 /**
  * category-labels — PT-BR (presentation) formatting of technical categories/identifiers.
  * NEVER displays an underscore: matches the dictionary (correct accents) or,
@@ -63,8 +64,8 @@ export function formatCategoryLabel(value: unknown): string {
   const raw = String(value).trim();
   // Accent-blind lookup: a stored "cachê" resolves to the unaccented slug key.
   const key = raw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  if (CATEGORY_LABELS[key]) return CATEGORY_LABELS[key];
-  if (CATEGORY_LABELS[raw]) return CATEGORY_LABELS[raw];
+  if (hasOwnKey(CATEGORY_LABELS, key)) return CATEGORY_LABELS[key];
+  if (hasOwnKey(CATEGORY_LABELS, raw)) return CATEGORY_LABELS[raw];
   // Fallback: removes underscores and applies Title Case (guarantees no "_").
   return titleCase(raw.replace(/_/g, " "));
 }

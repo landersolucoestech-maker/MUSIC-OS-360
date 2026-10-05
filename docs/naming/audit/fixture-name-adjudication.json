@@ -1,11 +1,12 @@
 {
- "$comment": "Independent adjudication (plan orch-4281815e task n7, naming-analyzer, read-only) of legacy names that tests use as fixtures AND that occur as whole words in production files without a proven/exempt ledger row. UI_TEXT = user-visible text or natural-language AI/heuristic text (stays Portuguese); COMMENT_OR_DOC = comment only; FRAGMENT = hyphen-split piece of a compound legacy slug already covered by full-slug rows; TECH and MISSING_ROW are open defects until the entry is resolved (class changed to RESOLVED with a reason).",
+ "$comment": "Independent adjudication (plan orch-4281815e task n7, naming-analyzer, read-only) of legacy names that tests use as fixtures AND that occur as whole words in production files without a proven/exempt ledger row. UI_TEXT = user-visible text or natural-language AI/heuristic text (stays Portuguese); COMMENT_OR_DOC = comment only; FRAGMENT = hyphen-split piece of a compound legacy slug already covered by full-slug rows; TECH and MISSING_ROW are open defects until the entry is resolved (class changed to RESOLVED with a reason). Entries may carry a `reason` (added when the pair was adjudicated by reading the code); BOUNDARY entries are real legacy boundaries that cannot get a census-visible ledger row until the census gap named in their reason is closed.",
  "schemaVersion": 1,
  "entries": [
   {
    "name": "notas",
    "file": "apps/api/src/modules/reports/definitions/report-entity-definition.service.ts",
-   "class": "TECHNICAL_OPERATIONAL"
+   "class": "COMMENT_OR_DOC",
+   "reason": "Only occurrence is inside the doc comment of HIDDEN_INTERNAL_HINT that names the retired Portuguese columns (notas_internas / observacoes_internas / comentarios_internos); the regex itself matches English names only and a reintroduced Portuguese column is guarded by report-entity-definition.service.spec.ts. No operational use remained after the rename to internal_notes."
   },
   {
    "name": "notas",
@@ -65,7 +66,8 @@
   {
    "name": "imposto",
    "file": "apps/api/src/database/migrate-application.ts",
-   "class": "BOUNDARY"
+   "class": "BOUNDARY",
+   "reason": "Real legacy boundary: the read-only preflight in migrate-application.ts lists the pre-CZ-041 persisted transactions.type values (receita, despesa, investimento, imposto, transferencia) next to the canonical English ones to warn about rows outside both vocabularies (chk_transactions_type is NOT VALID). A ledger row cannot be added today: the census does not scan names inside SQL template strings, so a row for this pair is reported as OBSOLETE_BOUNDARY and fails the census. Open until the census covers SQL string values (gap reported) or the legacy list is dropped with the type backfill."
   },
   {
    "name": "imposto",
@@ -1400,7 +1402,8 @@
   {
    "name": "despesa",
    "file": "apps/api/src/database/migrate-application.ts",
-   "class": "BOUNDARY"
+   "class": "BOUNDARY",
+   "reason": "Real legacy boundary: the read-only preflight in migrate-application.ts lists the pre-CZ-041 persisted transactions.type values (receita, despesa, investimento, imposto, transferencia) next to the canonical English ones to warn about rows outside both vocabularies (chk_transactions_type is NOT VALID). A ledger row cannot be added today: the census does not scan names inside SQL template strings, so a row for this pair is reported as OBSOLETE_BOUNDARY and fails the census. Open until the census covers SQL string values (gap reported) or the legacy list is dropped with the type backfill."
   },
   {
    "name": "despesa",
@@ -1685,7 +1688,8 @@
   {
    "name": "receita",
    "file": "apps/api/src/database/migrate-application.ts",
-   "class": "BOUNDARY"
+   "class": "BOUNDARY",
+   "reason": "Real legacy boundary: the read-only preflight in migrate-application.ts lists the pre-CZ-041 persisted transactions.type values (receita, despesa, investimento, imposto, transferencia) next to the canonical English ones to warn about rows outside both vocabularies (chk_transactions_type is NOT VALID). A ledger row cannot be added today: the census does not scan names inside SQL template strings, so a row for this pair is reported as OBSOLETE_BOUNDARY and fails the census. Open until the census covers SQL string values (gap reported) or the legacy list is dropped with the type backfill."
   },
   {
    "name": "receita",
@@ -2465,7 +2469,8 @@
   {
    "name": "origem",
    "file": "apps/api/src/modules/reports/import/import-mapper.service.ts",
-   "class": "BOUNDARY"
+   "class": "RESOLVED",
+   "reason": "Fragment of the multi-word legacy spreadsheet header key 'país de origem' (LEGACY_IMPORT_HEADERS.phonograms -> country_of_recording): header text exported before the rename, i.e. user-visible spreadsheet text, not an identifier; sibling phrase headers ('nome civil', 'letra completa', ...) have no ledger row for the same reason (the census does not report phrase keys). Gap: no spec names this header, only 'letristas' is covered by import-mapper.service.legacy-compat.spec.ts."
   },
   {
    "name": "origem",
@@ -2750,12 +2755,14 @@
   {
    "name": "localidade",
    "file": "apps/web/src/shared/lib/masks.ts",
-   "class": "BOUNDARY"
+   "class": "RESOLVED",
+   "reason": "Wire field of the external ViaCEP response (interface ViaCEPResponse; addressFromPostalLookup is the only reader and maps it to the English city/state fields). Covered by the ledger row EXTERNAL_CONTRACT `ViaCEPResponse` (path masks.ts) and by the census exemption EXM-EXTERNAL-PROPERTY-NAMES (exact file + name); a per-name ledger row would be OBSOLETE_BOUNDARY because the census never reports these names."
   },
   {
    "name": "uf",
    "file": "apps/web/src/shared/lib/masks.ts",
-   "class": "BOUNDARY"
+   "class": "RESOLVED",
+   "reason": "Wire field of the external ViaCEP response (interface ViaCEPResponse; addressFromPostalLookup is the only reader and maps it to the English city/state fields). Covered by the ledger row EXTERNAL_CONTRACT `ViaCEPResponse` (path masks.ts) and by the census exemption EXM-EXTERNAL-PROPERTY-NAMES (exact file + name); a per-name ledger row would be OBSOLETE_BOUNDARY because the census never reports these names."
   },
   {
    "name": "autonomo",
@@ -3470,7 +3477,8 @@
   {
    "name": "erro",
    "file": "apps/web/src/shared/lib/masks.ts",
-   "class": "BOUNDARY"
+   "class": "RESOLVED",
+   "reason": "Wire field of the external ViaCEP response (interface ViaCEPResponse; addressFromPostalLookup is the only reader and maps it to the English city/state fields). Covered by the ledger row EXTERNAL_CONTRACT `ViaCEPResponse` (path masks.ts) and by the census exemption EXM-EXTERNAL-PROPERTY-NAMES (exact file + name); a per-name ledger row would be OBSOLETE_BOUNDARY because the census never reports these names."
   },
   {
    "name": "erro",
@@ -4195,7 +4203,8 @@
   {
    "name": "Comunicação",
    "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
-   "class": "BOUNDARY"
+   "class": "BOUNDARY",
+   "reason": "Real legacy boundary: key of the legacy marketing_sector slug map (pre-AP3 persisted sector label 'Comunicação' -> 'communication'); the sibling keys (Design, Audiovisual, Marketing) are English-like and the other map keys already have rows. A ledger row cannot be added today: the census data-position rule (isDataPosition) only reports capitalized literals that are values of sector/department/queue/segment/stage/phase properties or compared against them, never object-literal keys, so the row would be OBSOLETE_BOUNDARY. The behavior is exercised by marketing.service.legacy-wiring.test.ts (own row). Open until the census covers capitalized map keys (gap reported)."
   },
   {
    "name": "Comunicação",
@@ -4230,7 +4239,8 @@
   {
    "name": "Comunicação",
    "file": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
-   "class": "BOUNDARY"
+   "class": "BOUNDARY",
+   "reason": "Real legacy boundary: key of the legacy marketing_sector slug map (pre-AP3 persisted sector label 'Comunicação' -> 'communication'); the sibling keys (Design, Audiovisual, Marketing) are English-like and the other map keys already have rows. A ledger row cannot be added today: the census data-position rule (isDataPosition) only reports capitalized literals that are values of sector/department/queue/segment/stage/phase properties or compared against them, never object-literal keys, so the row would be OBSOLETE_BOUNDARY. The behavior is exercised by marketing.service.legacy-wiring.test.ts (own row). Open until the census covers capitalized map keys (gap reported)."
   },
   {
    "name": "Comunicação",
@@ -4241,6 +4251,42 @@
    "name": "tema",
    "file": "apps/web/src/modules/marketing/services/musicIntelligenceEngine/analyzeLyrics.ts",
    "class": "UI_TEXT"
+  },
+  {
+   "name": "observacoes_internas",
+   "file": "apps/api/src/modules/reports/definitions/report-entity-definition.service.ts",
+   "class": "COMMENT_OR_DOC",
+   "reason": "Retired column name quoted in the HIDDEN_INTERNAL_HINT doc comment; not code."
+  },
+  {
+   "name": "comentarios_internos",
+   "file": "apps/api/src/modules/reports/definitions/report-entity-definition.service.ts",
+   "class": "COMMENT_OR_DOC",
+   "reason": "Retired column name quoted in the HIDDEN_INTERNAL_HINT doc comment; not code."
+  },
+  {
+   "name": "nota",
+   "file": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
+   "class": "COMMENT_OR_DOC",
+   "reason": "Word of the quoted export header \"PDF da nota\" inside a code comment (line 596); the header is user-visible Brazilian text, the column id is invoiceFileUrl."
+  },
+  {
+   "name": "Vendas",
+   "file": "apps/web/src/modules/marketing/components/campaign-builder/campaign-builder.helpers.ts",
+   "class": "UI_TEXT",
+   "reason": "Display label of the English key SALES in a label map (SALES: \"Vendas\"); user-visible PT-BR text, not an identifier."
+  },
+  {
+   "name": "nova",
+   "file": "apps/web/src/modules/releases/lib/genre-match.ts",
+   "class": "UI_TEXT",
+   "reason": "Word of the musical genre proper name \"bossa nova\" (free-text genre phrase mapped to the slug bossa-nova); natural-language user data, not a technical name."
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/rights/components/DivergencesPanel.tsx",
+   "class": "UI_TEXT",
+   "reason": "Word of the user-visible label \"Detecção sem obra vinculada\" (DivergencesPanel); end-user PT-BR text."
   }
  ]
 }

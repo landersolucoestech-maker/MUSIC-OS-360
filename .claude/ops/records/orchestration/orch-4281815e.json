@@ -4,8 +4,8 @@
   "workflow": "naming-normalization",
   "intent": null,
   "status": "ACTIVE",
-  "stopBlocks": 0,
-  "lastProgressAt": "2026-10-05T06:29:44.464Z",
+  "stopBlocks": 1,
+  "lastProgressAt": "2026-10-05T17:57:13.636Z",
   "tasks": [
     {
       "id": "census",
@@ -62,9 +62,9 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "READY",
+      "status": "RUNNING",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-e8fb99cb",
       "approvalId": null,
       "evidenceRefs": [],
       "result": null,

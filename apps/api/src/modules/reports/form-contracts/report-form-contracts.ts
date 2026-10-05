@@ -839,7 +839,7 @@ export const REPORT_FORM_CONTRACTS: Record<string, ReportFormContract> = {
 };
 
 export function getReportFormContract(tableName: string): ReportFormContract | null {
-  return REPORT_FORM_CONTRACTS[tableName] ?? null;
+  return Object.prototype.hasOwnProperty.call(REPORT_FORM_CONTRACTS, tableName) ? REPORT_FORM_CONTRACTS[tableName] : null;
 }
 
 export function contractFieldByKey(
@@ -908,7 +908,9 @@ export function contractMetadataFields(contract: ReportFormContract): Record<str
  * validated downstream exactly as before).
  */
 export function canonicalizeDeprecatedColumnId(tableName: string, id: string): string {
-  const aliases = REPORT_FORM_CONTRACTS[tableName]?.deprecatedColumnAliases;
+  const aliases = Object.prototype.hasOwnProperty.call(REPORT_FORM_CONTRACTS, tableName)
+    ? REPORT_FORM_CONTRACTS[tableName]?.deprecatedColumnAliases
+    : undefined;
   if (!aliases || !Object.prototype.hasOwnProperty.call(aliases, id)) return id;
   return aliases[id]!;
 }

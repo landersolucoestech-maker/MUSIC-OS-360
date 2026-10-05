@@ -1,3 +1,4 @@
+import { hasOwnKey } from "@/shared/lib/own-property";
 /**
  * PT-BR labels for AI Skill outputs rendered by SkillRunPanel.
  *
@@ -367,7 +368,7 @@ const PLATFORM_FIELDS = new Set(["platform", "channel", "channels"]);
 export const UNKNOWN_FIELD_LABEL = "Detalhe";
 
 export function skillFieldLabel(key: string): string {
-  return SKILL_OUTPUT_FIELD_LABELS_PT_BR[key] ?? UNKNOWN_FIELD_LABEL;
+  return hasOwnKey(SKILL_OUTPUT_FIELD_LABELS_PT_BR, key) ? SKILL_OUTPUT_FIELD_LABELS_PT_BR[key] : UNKNOWN_FIELD_LABEL;
 }
 
 /** Display value of a skill output field: enum values mapped, booleans as yes/no labels, numbers in pt-BR format. */
@@ -375,8 +376,13 @@ export function skillValueLabel(key: string, value: unknown): string {
   if (typeof value === "boolean") return value ? "Sim" : "Não";
   if (typeof value === "number") return value.toLocaleString("pt-BR");
   const text = String(value);
-  const enumLabel = SKILL_OUTPUT_VALUE_LABELS_PT_BR[key]?.[text];
-  if (enumLabel) return enumLabel;
-  if (PLATFORM_FIELDS.has(key)) return PLATFORM_NAMES[text.toLowerCase()] ?? text;
+  if (hasOwnKey(SKILL_OUTPUT_VALUE_LABELS_PT_BR, key)) {
+    const byValue = SKILL_OUTPUT_VALUE_LABELS_PT_BR[key];
+    if (hasOwnKey(byValue, text) && byValue[text]) return byValue[text];
+  }
+  if (PLATFORM_FIELDS.has(key)) {
+    const platformKey = text.toLowerCase();
+    return hasOwnKey(PLATFORM_NAMES, platformKey) ? PLATFORM_NAMES[platformKey] : text;
+  }
   return text;
 }

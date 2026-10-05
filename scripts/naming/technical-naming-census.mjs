@@ -64,7 +64,7 @@ export const BASELINE = process.env.NAMING_BASELINE_PATH ? path.resolve(process.
 const require = createRequire(path.join(ROOT, "package.json"));
 const ts = require("typescript");
 
-export const SURFACES = ["apiRoute", "comment", "dbColumn", "dataFile", "toolMessage", "directory", "doc", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value"];
+export const SURFACES = ["apiRoute", "comment", "dbColumn", "dataFile", "toolMessage", "directory", "doc", "docCode", "envVar", "eventQueueJob", "filename", "frontendRoute", "identifier", "objectKey", "testTitle", "value"];
 const ENTITIES = "apps/api/src/database/entities.ts";
 
 /** Third-party bundles committed as static assets: not our names. ledger: EXM-VENDORED */
@@ -161,8 +161,8 @@ export const UX_ARGUMENT_CALLEES = new Set(["handleConcurrencyConflict", "report
 export const EXTERNAL_TOOL_NAMES = new Set(["Cargo.lock", "Cargo.toml"]);
 /** Published migrations are immutable history (class names are tracked in musicos360_migrations). */
 export const isMigration = (f) => /(^|\/)migrations\//.test(f);
-/** Mission bookkeeping and generated EVIDENCE: the mutation proof records the legacy names it mutated (evidence about a boundary, not a product surface). Only that one generated file is exempt; any other file under docs/naming/audit is scanned. */
-export const GENERATED_EVIDENCE = new Set(["docs/naming/audit/compat-mutation-proof.json"]);
+/** Mission bookkeeping and generated EVIDENCE: the mutation proof records the legacy names it mutated (evidence about a boundary, not a product surface). Only these generated/adjudication files are exempt (the schema boundary proof and the fixture-name adjudication also list legacy names as data); any other file under docs/naming/audit is scanned. */
+export const GENERATED_EVIDENCE = new Set(["docs/naming/audit/compat-mutation-proof.json", "docs/naming/audit/schema-boundary-proof.json", "docs/naming/audit/fixture-name-adjudication.json"]);
 export const isBookkeeping = (f) => f.startsWith(".claude/ops/") || GENERATED_EVIDENCE.has(f);
 
 export const layerOf = (f) => (f.startsWith("apps/web") ? "web" : f.startsWith("apps/api") ? "api" : f.startsWith("packages") ? "packages" : "scripts");
@@ -495,6 +495,36 @@ export function scanData(relPath, text) {
   return [...names].sort();
 }
 
+/**
+ * CURRENT documents whose code spans and fenced blocks are checked for Portuguese technical names (coverage gap of the prose
+ * scan). Frozen history (banner), the generated registries, the naming decision records and the point-in-time product task specs
+ * are out of scope: they document legacy names by design and have their own gates (historical-records-audit, render --check).
+ */
+export const isCurrentDocForCode = (f) =>
+  /^(docs\/engineering\/|docs\/runbooks\/|docs\/naming\/[^/]+\.md$|apps\/[^/]+\/[^/]+\.md$|CLAUDE\.md$|\.claude\/.*\.md$)/.test(f) &&
+  !/^docs\/naming\/decision-records\.md$/.test(f);
+const LEGACY_MARKER = /legacy|deprecated|alias|formerly|\bold\b|\bbefore\b|renam|->|→|compat|persisted|preflight|census|not translated|migration|dropped|historical|\bwas\b|\bwere\b|\bfrom\b|\binput\b/i;
+const HISTORICAL_BANNER = /^>\s*Historical record\./m;
+
+/** Distinct Portuguese technical tokens in backtick spans / fenced blocks of one current document (pure). Lines that name the token as legacy are documentation of the boundary, not a divergence. */
+export function scanMarkdownCode(text) {
+  if (HISTORICAL_BANNER.test(text)) return [];
+  let inFence = false;
+  const found = new Set();
+  for (const line of text.split("\n")) {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; continue; }
+    if (LEGACY_MARKER.test(line)) continue;
+    const segs = inFence ? [line] : [...line.matchAll(/`([^`]+)`/g)].map((m) => m[1]);
+    for (const span of segs) {
+      for (const tok of span.match(/[A-Za-z_][A-Za-z0-9_-]*/g) ?? []) {
+        if (!/[_-]|[a-z][A-Z]/.test(tok)) continue; // identifier-shaped only (snake, kebab, camel)
+        if (ptWords(tok).length) found.add(tok);
+      }
+    }
+  }
+  return [...found].sort();
+}
+
 /** Portuguese prose lines of a Markdown document (fenced code blocks are skipped). */
 export function scanMarkdown(text) {
   let inFence = false;
@@ -522,6 +552,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const debt = {};
   const excepted = {};
   const exceptedClass = {};
+  const wildcardNames = new Map();
   const reportOnly = { migrationFiles: 0 };
   const surfaces = Object.fromEntries(SURFACES.map((k) => [k, { candidates: 0, exceptions: 0 }]));
   let filesScanned = 0;
@@ -533,6 +564,11 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     if (exc) { usedRows.add(exc); for (const w of exceptions.wordRows?.(name) ?? []) usedRows.add(w); }
     const bucket = exc ? excepted : debt;
     if (exc) exceptedClass[key] = exc.exceptionClass ?? exc.disposition ?? "UNCLASSIFIED";
+    // a whole-file (`*`) row blinds the census inside that file, so the DISTINCT names it hides are ratcheted per file (see compareWildcard)
+    if (exc && exc.currentName === "*" && surface !== "doc" && file !== "docs/naming/canonical-naming-map.json") { // the ledger is the registry itself: its own rows are the data, not hidden names
+      if (!wildcardNames.has(file)) wildcardNames.set(file, new Set());
+      wildcardNames.get(file).add(key);
+    }
     bucket[key] = (bucket[key] ?? 0) + count;
     surfaces[surface].candidates += count;
     if (exc) surfaces[surface].exceptions += count;
@@ -565,6 +601,10 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     if (isDoc(f)) {
       const n = scanMarkdown(fs.readFileSync(path.join(ROOT, f), "utf8"));
       if (n) record("doc", `doc::${f}`, f, "*", n);
+      if (isCurrentDocForCode(f)) {
+        const toks = scanMarkdownCode(fs.readFileSync(path.join(ROOT, f), "utf8"));
+        if (toks.length) record("docCode", `docCode::${f}`, f, null, toks.length);
+      }
     }
   }
   for (const [table, cols] of physicalColumns()) {
@@ -577,6 +617,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     debt: sorted(debt),
     excepted: sorted(excepted),
     exceptedClass: sorted(exceptedClass),
+    wildcardCoverage: sorted(Object.fromEntries([...wildcardNames].map(([f, set]) => [f, set.size]))),
     reportOnly,
     /** ACTIVE ledger rows that matched no occurrence in the tree (obsolete boundaries: the code they documented is gone). */
     // rows of the migrated-schema surface (path `database-schema`) are matched against the live catalog by schema-naming-census.mjs, which owns their stale check
@@ -588,6 +629,18 @@ export function totalsBySurface(debt) {
   const t = {};
   for (const [k, v] of Object.entries(debt)) { const s = k.split("::")[0]; t[s] = (t[s] ?? 0) + v; }
   return Object.fromEntries(Object.entries(t).sort());
+}
+
+/**
+ * Per-file ratchet of the distinct names hidden by whole-file (`*`) ledger rows: a new legacy name added to a wildcard-covered
+ * file (or a new wildcard-covered file) changes the count and fails until the baseline is regenerated in a reviewed commit.
+ */
+export function compareWildcard(current, baseline) {
+  const grown = [];
+  const shrunk = [];
+  for (const [f, n] of Object.entries(current)) if (n > (baseline[f] ?? 0)) grown.push(`${f} (${baseline[f] ?? 0} -> ${n} names hidden by a wildcard row)`);
+  for (const [f, n] of Object.entries(baseline)) if ((current[f] ?? 0) < n) shrunk.push(`${f} (${n} -> ${current[f] ?? 0})`);
+  return { grown, shrunk };
 }
 
 /** Compares a census with a baseline; returns { grown, shrunk }. */
@@ -603,7 +656,7 @@ function main() {
   const mode = process.argv[2] ?? "--check";
   const c = census();
   if (mode === "--write") {
-    const out = { totals: totalsBySurface(c.debt), debt: c.debt };
+    const out = { totals: totalsBySurface(c.debt), debt: c.debt, wildcardCoverage: c.wildcardCoverage };
     fs.writeFileSync(BASELINE, JSON.stringify(out, null, 1) + "\n");
     console.log("baseline written", out.totals);
     return;
@@ -622,6 +675,10 @@ function main() {
   const base = JSON.parse(fs.readFileSync(BASELINE, "utf8"));
   if (!base.debt || typeof base.debt !== "object") throw new Error("baseline has no debt section");
   const { grown, shrunk } = compare(c.debt, base.debt);
+  if (!base.wildcardCoverage || typeof base.wildcardCoverage !== "object") throw new Error("baseline has no wildcardCoverage section (run --write)");
+  const wc = compareWildcard(c.wildcardCoverage, base.wildcardCoverage);
+  grown.push(...wc.grown);
+  shrunk.push(...wc.shrunk);
   console.log(`technical-naming census: ${c.filesScanned} files, debt ${JSON.stringify(totalsBySurface(c.debt))}`);
   if (grown.length) {
     console.error(`\nNEW Portuguese technical names (engineering = English; Portuguese only in user-visible UX text):\n  ${grown.slice(0, 200).join("\n  ")}${grown.length > 200 ? `\n  … ${grown.length - 200} more (--list)` : ""}`);

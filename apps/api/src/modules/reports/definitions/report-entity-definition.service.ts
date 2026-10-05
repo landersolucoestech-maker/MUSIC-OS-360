@@ -10,7 +10,14 @@ import {
 
 const JSON_TYPES = new Set(['json', 'jsonb', 'simple-json', 'simple-array']);
 const BLOB_NAME_HINT = /(^|_)(html|raw|payload|snapshot|dump|debug|xml)(_|$)/i;
-/** Deny-list: internal-notes style columns are never exposed by reports (English forms only; the legacy Portuguese columns were renamed). */
+/**
+ * Deny-list for the DERIVED filter/sort/search columns: internal-notes style columns (English names only; the legacy
+ * Portuguese columns notas_internas / observacoes_internas / comentarios_internos were renamed to internal_notes and
+ * are no longer matched) are never searchable/filterable/sortable by fallback. It does NOT govern export/import:
+ * those columns are the explicit contract fields (report-form-contracts.ts), where an internal-notes field is
+ * either excluded (artists) or deliberately round-tripped (releases, same field the release form edits).
+ * A reintroduced Portuguese-named column is guarded by report-entity-definition.service.spec.ts.
+ */
 export const HIDDEN_INTERNAL_HINT = /^(internal_notes?|internal_comments?|internal_observations?)$/i;
 
 function isInternalColumn(c: ColumnMeta): boolean {

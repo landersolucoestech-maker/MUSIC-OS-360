@@ -196,6 +196,46 @@ describe('ReportEntityDefinitionService — contracts', () => {
       }
     });
 
+    describe('derived columns on a contract table with a reintroduced internal-notes column', () => {
+      function releasesDefWith(extra: string[]) {
+        const real = inv.entities.find((e) => e.tableName === 'releases')!;
+        const fake = {
+          scan: () => ({
+            entities: [{
+              ...real,
+              columns: [
+                ...real.columns,
+                ...extra.map((name) => ({
+                  name, label: null, type: 'text', nullable: true, primary: false, generated: false,
+                  isEnum: false, isCreatedAt: false, isUpdatedAt: false, isDeletedAt: false, isTenantId: false,
+                })),
+              ],
+            }],
+          }),
+        } as unknown as EntityMetadataService;
+        return new ReportEntityDefinitionService(fake).getDefinitions().find((d) => d.tableName === 'releases')!;
+      }
+
+      it('the real releases definition never derives internal_notes into filter/sort/search (positive control: notes is searchable)', () => {
+        const d = releasesDefWith([]);
+        const derived = [...d.filterableColumns, ...d.sortableColumns, ...d.searchableColumns];
+        expect(d.searchableColumns).toContain('notes');
+        expect(derived).not.toContain('internal_notes');
+      });
+
+      it.each(['internal_note', 'internal_comments', 'internal_observations'])('a reintroduced English %s column is hidden from derived columns', (name) => {
+        const d = releasesDefWith([name]);
+        expect([...d.filterableColumns, ...d.sortableColumns, ...d.searchableColumns]).not.toContain(name);
+      });
+
+      it.each(['notas_internas', 'observacoes_internas', 'comentarios_internos'])('a reintroduced Portuguese %s column is not in the contract, so it is never exported, imported or searched', (name) => {
+        const d = releasesDefWith([name]);
+        expect(d.exportableColumns).not.toContain(name);
+        expect(d.importableColumns).not.toContain(name);
+        expect([...d.filterableColumns, ...d.sortableColumns, ...d.searchableColumns]).not.toContain(name);
+      });
+    });
+
     it('no real column name matches the dead Portuguese filter hints (situacao|categoria|prioridade|ativo)', () => {
       expect(allColumnNames.filter((n) => /^(situacao|categoria|prioridade|ativo)$/.test(n))).toEqual([]);
     });

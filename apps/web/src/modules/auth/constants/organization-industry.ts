@@ -1,3 +1,4 @@
+import { hasOwnKey } from "@/shared/lib/own-property";
 /**
  * Organization industry (workspace segment) -- web mirror of the API vocabulary
  * apps/api/src/modules/auth/organization-industry.ts (a test keeps the two in
@@ -61,7 +62,7 @@ export const ONBOARDING_INDUSTRY_OPTIONS: ReadonlyArray<{ value: OrganizationInd
 export function normalizeOrganizationIndustry(value: string | null | undefined): OrganizationIndustry {
   const key = (value ?? "").trim().toLowerCase();
   if ((ORGANIZATION_INDUSTRIES as readonly string[]).includes(key)) return key as OrganizationIndustry;
-  return LEGACY_ORGANIZATION_INDUSTRIES[key] ?? "other";
+  return hasOwnKey(LEGACY_ORGANIZATION_INDUSTRIES, key) ? LEGACY_ORGANIZATION_INDUSTRIES[key] : "other";
 }
 
 export function organizationIndustryLabel(value: string | null | undefined): string {

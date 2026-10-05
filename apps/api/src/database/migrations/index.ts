@@ -353,6 +353,7 @@ import { BackfillPhonogramDerivedFields20260930000038 } from './20260930000038_B
 import { AddArtistsPiiEncryptedColumns20261002000001 } from './20261002000001_AddArtistsPiiEncryptedColumns';
 import { RenameLeadInteractionsDataToOccurredAt20261003000001 } from './20261003000001_RenameLeadInteractionsDataToOccurredAt';
 import { BackfillMusicChatRoutingKeys20261005100001 } from './20261005100001_BackfillMusicChatRoutingKeys';
+import { BackfillInvoicesFileUrlFromUrlPdf20261005200001 } from './20261005200001_BackfillInvoicesFileUrlFromUrlPdf';
 
 export const ALL_MIGRATIONS = [
   InitialSchema20240101000000,
@@ -689,4 +690,5 @@ export const ALL_MIGRATIONS = [
   AddArtistsPiiEncryptedColumns20261002000001,
   RenameLeadInteractionsDataToOccurredAt20261003000001,
   BackfillMusicChatRoutingKeys20261005100001,
+  BackfillInvoicesFileUrlFromUrlPdf20261005200001,
 ] as const;

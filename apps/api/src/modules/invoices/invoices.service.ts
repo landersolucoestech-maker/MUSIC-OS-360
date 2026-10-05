@@ -15,6 +15,7 @@ import {
   INVOICE_ITEM_DEPRECATED_FIELDS,
   INVOICE_PAYMENT_METHODS,
   canonicalInvoicePaymentMethod,
+  FISCAL_INVOICE_ROW_TYPE,
 } from './invoice-legacy-fields';
 
 const CANCELLED_STATUSES = new Set(['cancelled']);
@@ -83,7 +84,6 @@ export class InvoicesService {
 
     if (input['payment_method'] !== undefined) payload['payment_method'] = this.canonicalPaymentMethod(input['payment_method']);
 
-    if (input['tipo_nota'] !== undefined) payload['type'] = input['tipo_nota'];
     if (input['service_amount'] !== undefined) payload['legacy_amount'] = input['service_amount'];
     // url_pdf is mirrored from file_url for one deploy window (old readers).
     if (input['file_url'] !== undefined) payload['url_pdf'] = input['file_url'];
@@ -159,6 +159,10 @@ export class InvoicesService {
     const payload = this.normalizePayload(dto);
     const entity = this.repository.create({
       tenant_id: tenantId,
+      // `type` is the row-kind discriminator (stripe_subscription vs fiscal), NOT the fiscal note
+      // type: that is `tipo_nota` and is persisted in its own column. Owner decision R1 (handoff
+      // section 11) still decides whether `type` stays the discriminator or is replaced.
+      type: FISCAL_INVOICE_ROW_TYPE,
       ...payload,
       created_by: userId,
     } as Partial<InvoiceEntity>);

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import type { FeatureFlags } from "@/shared/lib/feature-flags";
 import { DEFAULT_FEATURE_FLAGS, canonicalFeatureKeys } from "@/shared/lib/feature-flags";
 import { AUTH_DISABLED, DEV_AUTH_BYPASS, IS_DEV } from "@/shared/lib/env";
-import { ROLE_PERMISSIONS } from "./tenant-labels";
+import { ROLE_PERMISSIONS, isTenantRole } from "./tenant-labels";
 import { tenantModulePermissionKeys } from "@/shared/lib/permission-map";
 import { api, getAccessToken } from "@/shared/lib/api-client";
 import { IntegrationError } from "@/shared/lib/errors";
@@ -237,7 +237,7 @@ function buildInitialTenant(): Tenant {
  */
 function appRoleToTenantRole(appRole: string): TenantRole {
   if (appRole === "tenant_owner") return "owner";
-  if (appRole in ROLE_PERMISSIONS)  return appRole as TenantRole;
+  if (isTenantRole(appRole)) return appRole;
   return "viewer";
 }
 

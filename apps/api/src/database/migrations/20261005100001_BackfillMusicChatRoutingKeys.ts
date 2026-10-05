@@ -16,7 +16,13 @@ import { backfillRows, createBackfillLogTable, restoreRows, type RowBackfillSpec
  * A key is added ONLY to an option object whose key is absent (or null) and whose label matches a legacy label
  * EXACTLY (case-sensitive, own-property lookup). An edited or unknown label ("Vendas") gets no key and is never
  * guessed; the labels themselves and every other key/option/array order are preserved byte for byte.
- * Conversations are not migrated: the web derives the key from `metadata.queue_key`, falling back to the label.
+ * Conversations are not migrated. The API also writes `queue_key`/`sector_key` into new conversation metadata
+ * (musicchat-automation.service.ts), but NO consumer reads any of these keys yet: apps/web only shows the stored
+ * PT-BR labels (`metadata.queue`/`metadata.sector`) and never derives or reads a key.
+ * STATUS: additive scaffolding (write-only). Adoption condition: the first feature that filters, groups or routes
+ * by queue/sector must read `queueKey`/`sectorKey` (and `metadata.queue_key`/`sector_key`) instead of the label.
+ * Removal condition: if no such reader exists when the MusicChat routing feature is next reviewed, drop the keys
+ * (DTO fields, vocabulary maps, this backfill's successor cleanup) rather than keep them unread.
  * The maps are a frozen copy of musicchat-vocabulary.ts (the spec asserts they are equal).
  *
  * Rules of jsonb-row-backfill.ts: candidate rows only, idempotent, `updated_at` untouched, guarded UPDATE,

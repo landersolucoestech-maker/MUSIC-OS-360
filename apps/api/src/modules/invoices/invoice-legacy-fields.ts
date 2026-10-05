@@ -26,6 +26,14 @@ export const INVOICE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   url_pdf: 'file_url',
 };
 
+/**
+ * invoices.type is the row-kind discriminator of the shared table: 'stripe_subscription' (the tenant's
+ * own SaaS billing invoice, written by billing) versus a tenant-issued fiscal invoice. The fiscal note
+ * type (nfse | nfe | nfce) lives in invoices.tipo_nota and is never copied into `type`. Rows written
+ * before this fix may hold the note type in `type`: they are only ever tested with `!= 'stripe_subscription'`.
+ */
+export const FISCAL_INVOICE_ROW_TYPE = 'fiscal';
+
 export const INVOICE_ITEM_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   codigo_servico: 'service_code',
   quantidade: 'quantity',

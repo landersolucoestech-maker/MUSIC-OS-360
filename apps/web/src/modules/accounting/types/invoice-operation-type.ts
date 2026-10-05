@@ -1,9 +1,9 @@
 import { parseOperationType } from "@/modules/accounting/types/invoice-type";
 
 /**
- * Canonical operation type of an invoice (inflow = nota de entrada, outflow = nota de saída).
+ * Canonical operation type of an invoice (inflow = incoming invoice, outflow = outgoing invoice).
  * Until the `operation_type` column exists (later migration), the value is carried by the
- * machine marker `[TIPO_OPERACAO:ENTRADA]` in the notes (see invoice-type.ts). Every reader
+ * machine marker `[TIPO_OPERACAO:ENTRADA]` (a persisted legacy marker) in the notes (see invoice-type.ts). Every reader
  * goes through readInvoiceOperationType so the storage can change in one place.
  */
 export const INVOICE_OPERATION_TYPES = ["inflow", "outflow"] as const;

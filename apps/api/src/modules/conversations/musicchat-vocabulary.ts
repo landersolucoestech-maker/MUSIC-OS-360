@@ -45,6 +45,10 @@ export const canonicalServiceStatus = ({ value }: { value: unknown }) => canonic
  * Queue and sector of a menu option are tenant-editable DISPLAY LABELS (free strings). The canonical machine keys
  * (`queueKey`/`sectorKey`, pattern ROUTING_KEY_PATTERN) live next to them. These frozen maps are the labels the
  * pre-key defaults shipped; they are only used to ADD a key to an option still carrying exactly such a label.
+ *
+ * STATUS: additive, write-only scaffolding. Nothing outside the API reads these keys (apps/web displays the labels
+ * only). Adoption condition: the first filter/grouping/routing feature on queue or sector reads the key instead of
+ * the label. Removal condition: if no reader exists at the next MusicChat routing review, remove the keys.
  */
 export const ROUTING_KEY_PATTERN = /^[a-z][a-z0-9_]{0,39}$/;
 

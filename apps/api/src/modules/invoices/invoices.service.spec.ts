@@ -216,3 +216,44 @@ describe('InvoicesService - legacy names accepted, canonical persisted (R2/R5)',
     expect(await both.svc.findById('t', 'i')).toMatchObject({ tomador_legal_name: 'Novo LTDA' });
   });
 });
+
+/**
+ * Finding 5: `invoices.type` is the row-kind discriminator (stripe_subscription vs fiscal); the
+ * fiscal note type (nfse|nfe|nfce) is `tipo_nota`. The note type must never be copied into `type`.
+ */
+describe('InvoicesService - tipo_nota is never written into type (finding 5)', () => {
+  function setup() {
+    const repo = {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => ({ id: 'invoice-1', ...(v as object) })),
+      manager: { connection: { query: jest.fn(async () => []) } },
+    };
+    const ds = { getRepository: jest.fn(() => repo) } as any;
+    const enc = { decryptNullable: jest.fn(() => null), encryptNullable: jest.fn(() => null) } as any;
+    return { svc: new InvoicesService(ds, enc), repo };
+  }
+
+  it('create: tipo_nota is persisted in tipo_nota and `type` stays the fiscal row kind', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { tipo_nota: 'nfse', service_amount: 10 } as any);
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row['tipo_nota']).toBe('nfse');
+    expect(row['type']).toBe('fiscal');
+  });
+
+  it('create: a payload without tipo_nota still gets the NOT NULL discriminator and never the Stripe kind', async () => {
+    const { svc, repo } = setup();
+    await svc.create('tenant-1', 'user-1', { notes: 'x' } as any);
+    const row = repo.create.mock.calls[0][0] as Record<string, unknown>;
+    expect(row['type']).toBe('fiscal');
+    expect(row['type']).not.toBe('stripe_subscription');
+    expect(row).not.toHaveProperty('tipo_nota');
+  });
+
+  it('update: a tipo_nota patch never touches `type`', () => {
+    const { svc } = setup();
+    const patch = (svc as any).normalizePayload({ tipo_nota: 'nfe' }) as Record<string, unknown>;
+    expect(patch['tipo_nota']).toBe('nfe');
+    expect(patch).not.toHaveProperty('type');
+  });
+});

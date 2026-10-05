@@ -75,5 +75,26 @@
     "scope": "runtime",
     "createdAt": "2026-09-29T15:14:16.159Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-f027d772",
+    "text": ".claude/rules/naming-canonical.md and 14 skills cite docs/NAMING_NORMALIZATION_CANONICAL_MAP.md as the single registry, but it is GENERATED from docs/naming/canonical-naming-map.json (the real source of truth); also cite non-existent .claude/contracts/finding.schema.json (real: finding-record.schema.json) and docs/MISSION_SYSTEMIC_AUDIT.md",
+    "scope": "rules",
+    "createdAt": "2026-10-05T17:52:00.664Z",
+    "appliedAt": null
+  },
+  {
+    "id": "imp-2f3a5d4d",
+    "text": "canonical-map-entry.schema.json omits keys the ledger concepts really carry (id, section, disposition, notes, owner, layer, evidence) and has no additionalProperties:false, so schema drift is silent; verify-naming-cluster-residual.mjs is a weak check; .audit-runtime/ holds tracked executables",
+    "scope": "runtime",
+    "createdAt": "2026-10-05T17:52:00.744Z",
+    "appliedAt": null
+  },
+  {
+    "id": "imp-81723156",
+    "text": "naming pack dispositions (DIVIDA_ACEITA, DADO_HISTORICO, FALSO_POSITIVO, CONTRATO_EXTERNO) are Portuguese enum values inside skills/rules; docCode census baselines them (4 files)",
+    "scope": "skills",
+    "createdAt": "2026-10-05T17:52:00.811Z",
+    "appliedAt": null
   }
 ]

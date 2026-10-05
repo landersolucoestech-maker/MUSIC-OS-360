@@ -206,7 +206,7 @@ describe('WorksService', () => {
 
   describe('update() — partial PATCH does not force a type default', () => {
     it('does not include type in the update payload when the DTO does not send it', async () => {
-      await service.update(TENANT, 'u1', WORK_ID, { observacoes: 'x' } as any);
+      await service.update(TENANT, 'u1', WORK_ID, { title: 'x' } as any);
       const updateCall = mockDs._repo.update.mock.calls[0];
       expect(updateCall[1]).not.toHaveProperty('type');
     });
@@ -268,7 +268,7 @@ describe('WorksService', () => {
     });
 
     it('update() does not touch participants when the DTO does not send the field', async () => {
-      await service.update(TENANT, 'u1', WORK_ID, { observacoes: 'x' } as any);
+      await service.update(TENANT, 'u1', WORK_ID, { title: 'x' } as any);
       expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
       expect(mockDs._participantsRepo.save).not.toHaveBeenCalled();
     });
@@ -277,7 +277,7 @@ describe('WorksService', () => {
   describe('Task L — work + participants atomicity (casUpdate + replaceParticipants in the same transaction)', () => {
     it('update() runs inside ds.transaction() (work and participants are not independent operations)', async () => {
       await service.update(TENANT, 'u1', WORK_ID, {
-        observacoes: 'x',
+        title: 'x',
         participants: [{ id: 'p1', name: 'X', role: 'composer_author', link: '', percentage: '100' }],
       } as any);
       expect(mockDs.transaction).toHaveBeenCalledTimes(1);
@@ -295,7 +295,7 @@ describe('WorksService', () => {
       mockDs._participantsRepo.save.mockRejectedValueOnce(new Error('constraint violation'));
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
-          observacoes: 'x',
+          title: 'x',
           participants: [{ id: 'p1', name: 'X', role: 'composer_author', link: '', percentage: '100' }],
         } as any),
       ).rejects.toThrow('constraint violation');
@@ -318,7 +318,7 @@ describe('WorksService', () => {
       mockDs._repo.update.mockResolvedValueOnce({ affected: 0 });
       await expect(
         service.update(TENANT, 'u1', WORK_ID, {
-          observacoes: 'edição de B',
+          title: 'edição de B',
           participants: [{ id: 'pB', name: 'Participante de B', role: 'composer_author', link: '', percentage: '100' }],
           expectedUpdatedAt: new Date('2026-08-14T10:00:00.000Z').toISOString(),
         } as any),

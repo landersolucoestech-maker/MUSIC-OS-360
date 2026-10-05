@@ -97,12 +97,18 @@ export class SharesService {
     );
     const out: Record<string, unknown> = { ...d };
     if (out['history'] !== undefined) out['history'] = canonicalizeShareHistory(out['history']);
-    // EN aliases → legacy columns (never overwrite form fields)
-    if (d['holderName'] !== undefined) out['holder_name']     = d['holderName'];
-    if (d['holderDoc']  !== undefined) out['holder_document'] = d['holderDoc'];
-    if (d['role']       !== undefined) out['party_role']      = d['role'];
-    if (d['workId']     !== undefined) out['work_id']         = d['workId'];
-    if (d['trackId']    !== undefined) out['phonogram_id']    = d['trackId'];
+    // EN aliases → physical columns. A canonical column key already present in
+    // the input always wins; the alias only fills it when absent.
+    const aliasToColumn: Array<[alias: string, column: string]> = [
+      ['holderName', 'holder_name'],
+      ['holderDoc', 'holder_document'],
+      ['role', 'party_role'],
+      ['workId', 'work_id'],
+      ['trackId', 'phonogram_id'],
+    ];
+    for (const [alias, column] of aliasToColumn) {
+      if (d[alias] !== undefined && out[column] === undefined) out[column] = d[alias];
+    }
     for (const k of ['holderName', 'holderDoc', 'role', 'workId', 'trackId', 'expectedUpdatedAt']) delete out[k];
     Object.keys(out).forEach((k) => out[k] === undefined && delete out[k]);
     return out;

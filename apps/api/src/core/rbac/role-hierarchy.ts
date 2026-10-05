@@ -11,12 +11,17 @@ export {
 } from '@music-os-360/types';
 
 /**
- * RBAC expand step (English naming): each English slug is an ALIAS of the Portuguese slug that is
- * still persisted in org_members.role / roles.slug. An alias must resolve to exactly the same
- * hierarchy level, permissions and workflow transitions as its canonical role (pinned by
- * role-hierarchy.spec.ts and workflow-role-matrix.spec.ts). The rows are seeded non-assignable
- * (migration 20260930000001), so no member can hold an English slug until the org_members backfill.
- * Portuguese slugs are never removed in this step.
+ * RBAC expand step (English naming, S4a): each English slug is an ALIAS of the Portuguese slug that is
+ * still the persisted `roles.slug` of the global role row (S4b rename and S5 retirement are gated, see
+ * docs/engineering/rbac-retirement-plan.md; nothing here retires them). An alias must resolve to exactly
+ * the same hierarchy level, permissions and workflow transitions as its canonical role (pinned by
+ * role-hierarchy.spec.ts and workflow-role-matrix.spec.ts).
+ *
+ * The alias rows are seeded non-assignable (migration 20260930000001), but that does not mean no member
+ * can hold an English slug: UsersService treats an alias as assignable exactly when its Portuguese twin
+ * is, and persists the English slug in org_members.role when the roles table proves it resolves to the same
+ * role_id (kill switch RBAC_CANONICAL_ROLE_WRITE=false writes the Portuguese form). So org_members.role
+ * can hold either form today, and every reader accepts both. Portuguese slugs are never removed in this step.
  */
 export const ENGLISH_ROLE_ALIASES: Readonly<Record<string, string>> = {
   [FunctionalRole.LEGAL]: FunctionalRole.JURIDICO,

@@ -25,7 +25,7 @@ Status: derived from `docs/naming/canonical-naming-map.json` (97 concepts), `app
 | Finance | Transaction (ledger entry) | `Transaction` | Lançamento financeiro | A revenue or expense ledger entry. | Release (the PT-BR word for a music release must not mean ledger) | `transactions` v1, `financial_transactions` v2 (scaffold) | `transactionId` | `modules/accounting` | `forma_pagamento` | DTO canonical | CZ-041: DONE |
 | Identity | Artist | `Artist` | Artista | A performer or creator managed by the tenant. | An external platform profile | `artists`; `artist_id` | `artistId`; external ids are namespaced, for example `spotifyArtistId` | `modules/artist` | `artista_id` | Alias input | NC-001, CZ-042: DONE |
 | CRM | Client / Contact | `Client` (a contact is a `clients` row) | Cliente / Contato | A CRM contact of the tenant. | Lead, the Stripe customer | `clients`; `client_id` | `clientId`, `contactId` equals `clientId` | `modules/crm-relationships` | `cliente_id` | Facade `ContactsService` | NC-003, CZ-043: DONE |
-| CRM | Lead | `Lead` | Lead | A prospect not yet converted. | Contact | `leads` | `leadId` | `modules/leads` | `origem_lead`, `proximo_follow_up` | Dual storage (NC-037) | CZ-033: DONE; NC-037 open |
+| CRM | Lead | `Lead` | Lead | A prospect not yet converted. | Contact | `leads` | `leadId` | `modules/leads` | `origem_lead`, `proximo_follow_up` | The seven legacy physical columns were dropped (migration 20260921000005); the CRM data lives only in the `crm_internal_data` jsonb | CZ-033: DONE; NC-037: DONE |
 | Isolation | Tenant, Organization | `tenantId`, `orgId` | Workspace (product term) | Tenant is the isolation boundary. Organization owns the tenants. Workspace is the (org, tenant) pair and has no table. | Account, user | `tenants`, `organizations` | RLS keys `app_current_tenant_id()`, `app_current_org_id()` | not applicable | none | none | glossary |
 
 Other map concepts (campaigns, takedowns, sync licenses, HR, inventory, events, ECAD reports, content detections, artist goals) follow the same rule: the English technical name and legacy aliases are in the map under NC-005, CZ-022 to CZ-035 and CZ-044 to CZ-048. They are referenced by map id and not individually described here (UNVERIFIED coverage of each).
@@ -45,13 +45,13 @@ Other map concepts (campaigns, takedowns, sync licenses, HR, inventory, events, 
 
 - `invoices.due_date` versus `invoices.due_at`. `due_date` is Stripe-owned and mirrors the provider field 1:1 (NC-025, only on `type='stripe_subscription'` rows, never renamed). `due_at` is the NFS-e due date (NC-024, renamed by CZ-036). Never merge them.
 - `shares` versus financial split. The `shares` table holds both rights shares (`party_role`, `percentage`) and the financial receivable form. Qualify as rights share or financial share (CZ-037).
-- `shares.type` versus `party_role` (NC-038, RESOLVED), and `shares.role` (NC-039, open product decision): `party_role` is the canonical role. The columns `type` and `role` still exist on the entity.
+- `shares.type` versus `party_role` (NC-038, RESOLVED), and `shares.role` (NC-039, open product decision): `party_role` is the canonical role. The entity has `party_role` and `role` (`role` is the open NC-039 decision); the `type` column no longer exists.
 - Generic `type` columns exist on works, phonograms, projects, releases, contracts and invoices with different vocabularies. Always qualify by aggregate (NC-009).
 - `invoices.type` (`stripe_subscription` versus fiscal) versus `invoices.tipo_nota` (fiscal note type). Two different discriminators on one table.
 - `release` (music) versus a software release or ledger entry. `track` versus `phonogram`. `contract` versus an API contract. `account` must never be bare (glossary).
-- `works.type`, which holds a catalog-origin value (NC-031: `tipo_obra` versus `type`), versus the work origin value.
-- `arquivo_audio` (display jsonb) versus `audio_file_id` (FK to uploads), both live (NC-029).
-- `events.data` versus `starts_at`: dual-write during migration CZ-029 (MIGRATION_REQUIRED, drop blocked by BLK-C3-E6).
+- `works.type` versus the work origin: resolved by NC-031 (DONE, migration 20260921000001). `tipo_obra` is now only a deprecated input alias of `work_origin` (`work-legacy-fields.ts`).
+- `audio_file` (display jsonb) versus `audio_file_id` (FK to uploads): two different fields on `phonograms` that must not be merged. NC-029 is DONE; `arquivo_audio` is only a deprecated DTO input alias of `audio_file`.
+- `events.data` versus `starts_at` (CZ-029): `EventEntity` maps only `starts_at` (NOT NULL). The physical `events.data` column and its sync trigger still exist in the database until the destructive drop, which is blocked by BLK-C3-E6 (owner authorization required).
 
 ## 5. Compatibility policy (summary)
 

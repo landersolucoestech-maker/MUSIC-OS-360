@@ -18,7 +18,7 @@ describe("registry localStorage key migration", () => {
   });
 
   it("moves the legacy contract categories to the prefixed key without losing data", () => {
-    const legacy = [{ id: "c1", label: "Minha", value: "minha", createdAt: "2024-01-01" }];
+    const legacy = [{ id: "c1", label: "My", value: "my", createdAt: "2024-01-01" }];
     window.localStorage.setItem("musicos360:contract_categories", JSON.stringify(legacy));
     const { result } = renderHook(() => useCategoryRegistry());
     expect(result.current.categories).toEqual(legacy);
@@ -27,7 +27,7 @@ describe("registry localStorage key migration", () => {
   });
 
   it("prefers the prefixed key when both exist and seeds when neither exists", () => {
-    const current = [{ id: "c2", label: "Nova", value: "nova", createdAt: "2024-01-01" }];
+    const current = [{ id: "c2", label: "New", value: "new", createdAt: "2024-01-01" }];
     window.localStorage.setItem("musicos360:musicos360_contract_categories", JSON.stringify(current));
     window.localStorage.setItem("musicos360:contract_categories", JSON.stringify([]));
     expect(renderHook(() => useCategoryRegistry()).result.current.categories).toEqual(current);

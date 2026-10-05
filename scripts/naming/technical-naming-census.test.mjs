@@ -9,7 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { scanSource, compare, census, stripRecordId, isBookkeeping } from "./technical-naming-census.mjs";
+import { scanSource, compare, compareWildcard, scanMarkdownCode, isCurrentDocForCode, census, stripRecordId, isBookkeeping } from "./technical-naming-census.mjs";
 import { loadAuthority } from "./canonical-map.mjs";
 import { ptWords, isPtProse } from "./pt-lexicon.mjs";
 
@@ -637,4 +637,38 @@ test("evidence: generated audit evidence and mission bookkeeping are not product
   assert.equal(isBookkeeping("apps/api/src/data/seed.json"), false);
   assert.equal(isBookkeeping("docs/naming/auditoria/x.json"), false);
   assert.equal(isBookkeeping("docs/naming/audit/other-evidence.json"), false);
+});
+
+test("wildcard ratchet: a new name hidden by a whole-file row, or a new wildcard file, is reported; fewer names is a stale baseline", () => {
+  const base = { "a.ts": 2 };
+  assert.deepEqual(compareWildcard({ "a.ts": 2 }, base), { grown: [], shrunk: [] });
+  assert.equal(compareWildcard({ "a.ts": 3 }, base).grown.length, 1);
+  assert.equal(compareWildcard({ "a.ts": 2, "b.ts": 1 }, base).grown.length, 1);
+  assert.equal(compareWildcard({ "a.ts": 1 }, base).shrunk.length, 1);
+  assert.equal(compareWildcard({}, base).shrunk.length, 1);
+});
+
+test("wildcard ratchet: the census exposes per-file wildcard coverage and --check fails without the baseline section", () => {
+  const c = census();
+  assert.ok(Object.keys(c.wildcardCoverage).length > 100, "wildcard-covered files are counted");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "naming-wc-"));
+  const baselinePath = path.join(dir, "no-wildcard.json");
+  fs.writeFileSync(baselinePath, JSON.stringify({ totals: {}, debt: {} }));
+  try {
+    const r = spawnSync(process.execPath, [path.join(here, "technical-naming-census.mjs"), "--check"], { env: { ...process.env, NAMING_BASELINE_PATH: baselinePath }, encoding: "utf8" });
+    assert.equal(r.status, 2, r.stdout + r.stderr);
+    assert.match(r.stderr, /wildcardCoverage/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("markdown code spans: a Portuguese technical name in a backtick span or fenced block of a current doc is found; English, legacy-marked lines and historical records are not", () => {
+  assert.deepEqual(scanMarkdownCode("The field is `valor_total` here."), ["valor_total"]);
+  assert.deepEqual(scanMarkdownCode("```ts\nconst x = { data_inicio: 1 };\n```\n"), ["data_inicio"]);
+  assert.deepEqual(scanMarkdownCode("The field is `total_amount` here."), []);
+  assert.deepEqual(scanMarkdownCode("Deprecated input alias `valor_total` maps to `total_amount`."), []);
+  assert.deepEqual(scanMarkdownCode("> Historical record. Kept as recorded; not the current contract.\n\nThe field is `valor_total`."), []);
+  assert.deepEqual(scanMarkdownCode("Plain prose with valor_total outside code is the prose scan's job."), []);
+  assert.ok(isCurrentDocForCode("docs/engineering/security.md") && !isCurrentDocForCode("docs/backend-v2/01-x.md") && !isCurrentDocForCode("docs/product-tasks/task-1.md"));
 });

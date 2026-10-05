@@ -15,6 +15,7 @@ import {
   IntegrationLogo,
   type IntegrationLogoId,
 } from "@/shared/integrations";
+import { hasOwnKey } from "@/shared/lib/own-property";
 
 type OAuthPlatform =
   | "meta_business"
@@ -884,11 +885,11 @@ const secondaryButton: CSSProperties = {
 };
 
 function isOAuthPlatform(value: string): value is OAuthPlatform {
-  return value in OAUTH_DEFINITIONS;
+  return hasOwnKey(OAUTH_DEFINITIONS, value);
 }
 
 function isDistributorPlatform(value: string): value is DistributorPlatform {
-  return value in DISTRIBUTOR_DEFINITIONS;
+  return hasOwnKey(DISTRIBUTOR_DEFINITIONS, value);
 }
 
 export default function OAuthPopupPage() {

@@ -9,6 +9,7 @@
  * removed once the legacy paths stop receiving traffic.
  */
 import { Navigate, Route, generatePath, useLocation, useParams } from "react-router-dom";
+import { hasOwnKey } from "@/shared/lib/own-property";
 
 export const LEGACY_QUERY_KEYS: Readonly<Record<string, string>> = {
   projeto: "project",
@@ -70,7 +71,7 @@ export const LEGACY_ROUTES: ReadonlyArray<{ from: string; to: string }> = [
 /** English URL for a legacy location: path params, renamed query keys and hash carried over. */
 export function legacyTarget(to: string, params: Record<string, string | undefined>, search: string, hash: string): string {
   const query = new URLSearchParams();
-  new URLSearchParams(search).forEach((value, key) => query.append(LEGACY_QUERY_KEYS[key] ?? key, value));
+  new URLSearchParams(search).forEach((value, key) => query.append(hasOwnKey(LEGACY_QUERY_KEYS, key) ? LEGACY_QUERY_KEYS[key] : key, value));
   const qs = query.toString();
   return `${generatePath(to, params)}${qs ? `?${qs}` : ""}${hash}`;
 }

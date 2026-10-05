@@ -1,4 +1,5 @@
 import { MUSICAL_GENRE_LABEL_BY_VALUE } from "@/constants/musicalGenres";
+import { hasOwnKey } from "@/shared/lib/own-property";
 function parseDateParts(value: string | Date): { day: number; month: number; year: number } | null {
   if (value instanceof Date) {
     if (Number.isNaN(value.getTime())) return null;
@@ -61,7 +62,7 @@ export const RELEASE_TYPE_LABELS: Record<string, string> = {
 };
 
 export const releaseTypeLabel = (type?: string | null): string =>
-  (type && RELEASE_TYPE_LABELS[type]) || "Tipo não informado";
+  (type && hasOwnKey(RELEASE_TYPE_LABELS, type) && RELEASE_TYPE_LABELS[type]) || "Tipo não informado";
 
 /** Release language options (value = language code stored in `language`, label = PT-BR). */
 export const RELEASE_LANGUAGE_OPTIONS = [
@@ -87,4 +88,4 @@ export const releaseLanguageLabel = (code?: string | null): string | null => {
 
 /** PT-BR label of a stored genre slug (e.g. "sertanejo-universitario" → "Sertanejo Universitário"). */
 export const musicGenreLabel = (genre?: string | null): string | null =>
-  genre ? (MUSICAL_GENRE_LABEL_BY_VALUE[genre] ?? genre) : null;
+  genre ? (hasOwnKey(MUSICAL_GENRE_LABEL_BY_VALUE, genre) ? MUSICAL_GENRE_LABEL_BY_VALUE[genre] : genre) : null;

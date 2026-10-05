@@ -1,0 +1,9 @@
+{
+  "agent": "naming-analyzer",
+  "objective": "Phase \"classify\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: duplication-detector, dead-code-detector.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-e8fb99cb",
+  "createdAt": "2026-10-05T17:57:13.633Z"
+}

@@ -1,3 +1,4 @@
+import { hasOwnKey } from "@/shared/lib/own-property";
 /**
  * Canonical user (org member) status. Machine values are English and match the
  * API vocabulary (`active | inactive | suspended | invited`, users.dto.ts STATUSES).
@@ -23,8 +24,8 @@ const LEGACY_USER_STATUS: Record<string, UserStatus> = {
 export function normalizeUserStatus(value: unknown, fallback: UserStatus = "active"): UserStatus {
   if (typeof value !== "string") return fallback;
   const key = value.trim().toLowerCase();
-  if (key in USER_STATUS_LABELS) return key as UserStatus;
-  return LEGACY_USER_STATUS[key] ?? fallback;
+  if (hasOwnKey(USER_STATUS_LABELS, key)) return key as UserStatus;
+  return hasOwnKey(LEGACY_USER_STATUS, key) ? LEGACY_USER_STATUS[key] : fallback;
 }
 
 export function userStatusLabel(value: unknown): string {
