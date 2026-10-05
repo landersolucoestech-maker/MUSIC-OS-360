@@ -38,3 +38,10 @@ test("merge: a strict (exhaustive) record outranks a non-exhaustive one with mor
     assert.equal(out[0].verdict, "PARTIAL");
   }
 });
+
+test("merge: among fresh copies the record produced by the newer operator set wins, whatever its mutation count", () => {
+  const sha = shaOf({ "apps/api/src/a.ts": "F1", "apps/api/src/a.spec.ts": "T1" });
+  const old = rec({ exhaustive: true, mutations: [{}, {}, {}] });
+  const fresh = rec({ exhaustive: true, operatorsVersion: 2, mutations: [{}] });
+  for (const lists of [[[old], [fresh]], [[fresh], [old]]]) assert.equal(mergeResults(lists, sha)[0].operatorsVersion, 2);
+});

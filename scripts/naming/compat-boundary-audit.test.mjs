@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { runnerConfigSha, runnerConfigFiles, audit, categoryOf, boundaryKind, bindingOf, counters, moduleOf, groupRows, pairEvidence } from "./compat-boundary-audit.mjs";
-import { findMutations, apply, classifyRun, pairsFromLedger, routeAliases } from "./compat-mutation-proof.mjs";
+import { findMutations, apply, classifyRun, pairsFromLedger, routeAliases, pairVerdict, needsOperatorRerun, blankSqlComments, OPERATORS_VERSION } from "./compat-mutation-proof.mjs";
 
 const sha = (s) => createHash("sha256").update(s).digest("hex");
 const row = (o) => ({ item: "x", path: "apps/api/src/modules/a/a.service.ts", currentName: "legacyfield", surface: "identifier", exceptionClass: "TEMPORARY_MIGRATION_COMPATIBILITY", reason: "Legacy reader.", consumer: "web", owner: "o", removalCondition: "remove after release", status: "ACTIVE", coveringTest: "apps/api/src/modules/a/a.service.spec.ts", ...o });
@@ -440,4 +440,109 @@ test("exemption: a text equal to a legacy NAME of the ledger is refused, and com
   const c = counters(audit({ exceptions: [row({ path: F, coveringTest: T })], concepts: [] }, { readFile: (p) => (p === T ? "legacyfield" : read(p)), mutation: { results: [{ ...compiler, testSha256: sha("legacyfield") }] } }));
   assert.equal(c.COMPATIBILITY_ROWS_PROVEN_BY_COMPILER_CHECK, 1);
   assert.equal(c.COMPATIBILITY_ROWS_PROVEN_BY_MUTATION, 0);
+});
+
+// ---- SQL_WORD: legacy names that live only inside SQL text ----
+const SQL_F = "apps/api/src/modules/a/a.field.ts";
+const sqlSites = (src, names = ["faixas"]) => findMutations(src, SQL_F, new Set(names)).lit.filter((m) => m.operator === "SQL_WORD");
+
+test("SQL_WORD: a legacy name inside a SQL statement is a site per whole-word occurrence, mutated alone with a same-length neutral token", () => {
+  const src = "const q = `SELECT COALESCE(\"metadata\"->'tracks', \"metadata\"->'faixas') AS t FROM \"releases\" WHERE x = 1`;\nconst u = `UPDATE \"releases\" SET \"metadata\" = \"metadata\" - 'faixas' WHERE \"id\" = $1`;";
+  const sites = sqlSites(src);
+  assert.deepEqual(sites.map((m) => [m.line, m.label]), [[1, "faixas"], [2, "faixas"]], "one mutant per occurrence, with its own line");
+  for (const m of sites) {
+    assert.equal(m.end - m.start, "faixas".length);
+    assert.equal(m.replacement.length, "faixas".length, "same length");
+    assert.notEqual(m.replacement, "faixas");
+    const out = apply(src, m);
+    assert.equal(out.length, src.length);
+    assert.equal(out.split("faixas").length - 1, 1, "exactly one occurrence is replaced, the other survives untouched");
+    assert.ok(out.includes(m.replacement));
+  }
+  const rh = sqlSites("const q = `UPDATE \"permissions\" SET \"resource\" = 'hr' WHERE \"resource\" = 'rh' OR \"key\" LIKE 'rh:%'`;", ["rh"]);
+  assert.equal(rh.length, 3 - 1, "quoted value 'rh' and the namespace 'rh:%' are sites (the `hr` value is not)");
+  assert.ok(rh.every((m) => !/_/.test(m.replacement)), "no `_` in the token (a LIKE wildcard would keep the mutant matching)");
+});
+
+test("SQL_WORD: the neutral token is never another ledger name", () => {
+  const src = "const q = `SELECT 1 FROM t WHERE a = 'xx'`;";
+  const [m] = sqlSites(src.replace("'xx'", "'aa'"), ["aa", "xx"]);
+  assert.ok(m && m.replacement !== "xx" && m.replacement !== "aa" && m.replacement.length === 2);
+});
+
+test("SQL_WORD: a word inside a longer identifier, a SQL comment or a non-SQL string is not a site", () => {
+  assert.equal(sqlSites("const q = `SELECT \"id\" FROM \"faixas_extra\" WHERE a = 1`;").length, 0, "embedded in a longer identifier (suffix)");
+  assert.equal(sqlSites("const q = `SELECT \"id\" FROM \"xfaixas\" WHERE a = 1`;").length, 0, "embedded in a longer identifier (prefix)");
+  assert.equal(sqlSites("const q = `SELECT \"id\" -- legacy faixas key\n FROM \"t\"`;").length, 0, "line comment");
+  assert.equal(sqlSites("const q = `SELECT /* faixas */ \"id\" FROM \"t\"`;").length, 0, "block comment");
+  assert.equal(sqlSites("const msg = 'the faixas key is legacy';\nconst k = `faixas`;").length, 0, "a string that is not SQL is untouched");
+  assert.equal(blankSqlComments("a -- b\nc /* d\ne */ f").length, "a -- b\nc /* d\ne */ f".length, "blanking preserves offsets");
+  assert.equal(sqlSites("const q = `SELECT \"id\" -- c\n FROM \"t\" WHERE \"k\" = 'faixas'`;").length, 1, "a word after a comment line is still a site");
+});
+
+test("SQL_WORD: template parts around placeholders are scanned and the census does not report them as unmutated template parts", () => {
+  const src = "const q = `SELECT 1 FROM t WHERE lower(x) NOT IN ('despesa', 'receita') AND y = ${v} AND z = 'despesa'`;";
+  const r = findMutations(src, SQL_F, new Set(["despesa", "receita"]));
+  const sites = r.lit.filter((m) => m.operator === "SQL_WORD");
+  assert.deepEqual(sites.map((m) => m.label).sort(), ["despesa", "despesa", "receita"]);
+  assert.equal(r.census.siteCount, 3, "census siteCount counts SQL sites (SITES_NOT_MUTATED stays honest)");
+  assert.deepEqual(r.census.unmutatedNameSites, [], "template parts holding a mutated SQL word are accounted for");
+  for (const m of sites) assert.equal(apply(src, m).length, src.length);
+});
+
+test("SQL_WORD: a name with an ordinary site AND SQL sites needs every site killed; a SQL survivor is SURVIVED and blocks the credit", () => {
+  const F = "apps/api/src/m/a.ts";
+  const T = "apps/api/src/m/a.spec.ts";
+  const src = "export const k = 'legacyname';\nexport const q = `SELECT 1 FROM t WHERE a = 'legacyname'`;";
+  const files = { [F]: src, [T]: "y" };
+  const read = (p) => files[p] ?? null;
+  const m = findMutations(src, F, new Set(["legacyname"]));
+  assert.deepEqual(m.lit.map((x) => x.operator).sort(), ["LEGACY_LITERAL", "SQL_WORD"]);
+  const mk = (outcomes) => m.lit.map((x, i) => ({ operator: x.operator, line: x.line, label: x.label, outcome: outcomes[x.operator] }));
+  const expected = { sites: m.lit.map((x) => `${x.operator}:${x.line}:${x.label}`).sort(), census: m.census, sqlWordSites: 1, operatorsVersion: OPERATORS_VERSION };
+  const rec = (mutations, over = {}) => new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha(src), testSha256: sha("y"), operatorsVersion: OPERATORS_VERSION, verdict: pairVerdict(mutations), exhaustive: true, inconclusive: 0, mutations, census: m.census, ...over }]]);
+  const ev = (r) => pairEvidence(r, F, T, read, "legacyname", [], expected);
+  const allKilled = ev(rec(mk({ LEGACY_LITERAL: "KILLED", SQL_WORD: "KILLED" })));
+  assert.equal(allKilled.proven, true);
+  const sqlSurvives = ev(rec(mk({ LEGACY_LITERAL: "KILLED", SQL_WORD: "SURVIVED" })));
+  assert.equal(sqlSurvives.proven, false, "the ordinary kill does not cover the SQL site");
+  assert.equal(sqlSurvives.state, "SURVIVED");
+  assert.equal(sqlSurvives.verdict, "PARTIAL");
+  const onlySqlSurvives = ev(rec(mk({ LEGACY_LITERAL: "SURVIVED", SQL_WORD: "SURVIVED" })));
+  assert.equal(onlySqlSurvives.verdict, "SURVIVED");
+  const sqlNotRun = ev(rec(mk({ LEGACY_LITERAL: "KILLED", SQL_WORD: "KILLED" }).filter((x) => x.operator !== "SQL_WORD")));
+  assert.equal(sqlNotRun.proven, false, "a present-but-not-mutated SQL site is never credit");
+  assert.equal(sqlNotRun.state, "SITES_NOT_MUTATED");
+  const inconclusive = ev(rec(mk({ LEGACY_LITERAL: "KILLED", SQL_WORD: "INCONCLUSIVE" })));
+  assert.equal(inconclusive.state === "PROVEN", true, "INCONCLUSIVE neither credits nor blocks (unchanged rule); the kill of the other site credits");
+});
+
+test("pairVerdict: SQL_WORD is a name operator (SURVIVED/PARTIAL), the other operators keep their strong verdict", () => {
+  const o = (operator, outcome) => ({ operator, outcome });
+  assert.equal(pairVerdict([o("SQL_WORD", "SURVIVED")]), "SURVIVED");
+  assert.equal(pairVerdict([o("SQL_WORD", "SURVIVED"), o("LEGACY_LITERAL", "KILLED")]), "PARTIAL");
+  assert.equal(pairVerdict([o("SQL_WORD", "KILLED")]), "PROVEN");
+  assert.equal(pairVerdict([o("CANONICAL_FIRST", "SURVIVED"), o("SQL_WORD", "KILLED")]), "CANONICAL_FIRST_UNENFORCED");
+  assert.equal(pairVerdict([]), "NO_MUTATION_SITE");
+  assert.equal(pairVerdict([], 1), "COMPILER_CHECKED");
+});
+
+test("operators version: a record without the SQL_WORD operator is re-judged for a file that now has SQL sites, and not credited by the audit", () => {
+  const F = "apps/api/src/m/a.ts";
+  const T = "apps/api/src/m/a.spec.ts";
+  const withSql = "export const q = `SELECT 1 FROM t WHERE a = 'legacyname'`;";
+  const noSql = "export const k = 'legacyname';";
+  const found = (src) => findMutations(src, F, new Set(["legacyname"]));
+  assert.equal(needsOperatorRerun({ verdict: "PROVEN" }, found(withSql)), true, "no operatorsVersion = produced before SQL_WORD");
+  assert.equal(needsOperatorRerun({ operatorsVersion: 1 }, found(withSql)), true);
+  assert.equal(needsOperatorRerun({ operatorsVersion: OPERATORS_VERSION }, found(withSql)), false);
+  assert.equal(needsOperatorRerun({ verdict: "PROVEN" }, found(noSql)), false, "files without SQL sites keep their records (resume intact)");
+  // audit side: even a record whose mutations were hand-completed is stale without the version
+  const files = { [F]: withSql, [T]: "y" };
+  const m = found(withSql);
+  const mutations = m.lit.map((x) => ({ operator: x.operator, line: x.line, label: x.label, outcome: "KILLED" }));
+  const expected = { sites: m.lit.map((x) => `${x.operator}:${x.line}:${x.label}`).sort(), census: m.census, sqlWordSites: 1, operatorsVersion: OPERATORS_VERSION };
+  const mk = (over) => new Map([[`${F}\u0000${T}`, { file: F, test: T, fileSha256: sha(withSql), testSha256: sha("y"), verdict: "PROVEN", exhaustive: true, inconclusive: 0, mutations, census: m.census, ...over }]]);
+  assert.equal(pairEvidence(mk({}), F, T, (p) => files[p] ?? null, "legacyname", [], expected).fresh, false);
+  assert.equal(pairEvidence(mk({ operatorsVersion: OPERATORS_VERSION }), F, T, (p) => files[p] ?? null, "legacyname", [], expected).fresh, true);
 });

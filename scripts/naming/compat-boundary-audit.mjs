@@ -152,7 +152,9 @@ export function pairEvidence(results, file, test, readFile, name = "*", exemptio
   if (!rec) return { verdict: "NOT_RUN", fresh: false };
   const f = readFile(file);
   const t = readFile(test);
-  const fresh = f != null && t != null && sha256(f) === rec.fileSha256 && sha256(t) === rec.testSha256 && (rec.configSha256 ?? null) === runnerConfigSha(test, readFile);
+  // a record produced by an operator set older than the one that now finds sites in this file (SQL_WORD) never ran those mutants: stale, not credit
+  const operatorsStale = Boolean(expected?.sqlWordSites > 0) && (rec.operatorsVersion ?? 1) < (expected.operatorsVersion ?? 1);
+  const fresh = f != null && t != null && sha256(f) === rec.fileSha256 && sha256(t) === rec.testSha256 && (rec.configSha256 ?? null) === runnerConfigSha(test, readFile) && !operatorsStale;
   // a mutation belongs to a name through its label (literal rename) or its labels (canonical-first swap / alias guard that reads the name)
   const own = name === "*" ? null : (rec.mutations ?? []).filter((m) => m.label === name || (m.labels ?? []).includes(name));
   const ownKilled = own ? own.some((m) => m.outcome === "KILLED") : false;
@@ -297,7 +299,7 @@ export async function buildOracle(map) {
     let out = null;
     if (pair && text != null) {
       const m = proof.findMutations(text, file, pair.names, pair.wildcard ? wildcard : null, { ptWords });
-      out = { sites: [...m.swap, ...m.guard, ...m.lit].map((x) => `${x.operator}:${x.line}:${x.label}`).sort(), census: m.census };
+      out = { sites: [...m.swap, ...m.guard, ...m.lit].map((x) => `${x.operator}:${x.line}:${x.label}`).sort(), census: m.census, sqlWordSites: m.lit.filter((x) => x.operator === "SQL_WORD").length, operatorsVersion: proof.OPERATORS_VERSION };
     }
     cache.set(key, out);
     return out;

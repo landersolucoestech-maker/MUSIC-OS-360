@@ -49,7 +49,7 @@ export function mergeResults(lists, fileSha = sha) {
   for (const records of byKey.values()) {
     const fresh = records.filter((r) => fileSha(path.join(REPO, r.file)) === r.fileSha256 && (!r.testSha256 || fileSha(path.join(REPO, r.test)) === r.testSha256));
     // a strict (exhaustive) record always outranks a non-exhaustive one from an older run, whatever its mutation count; then the most mutations
-    fresh.sort((a, b) => Number(b.exhaustive === true) - Number(a.exhaustive === true) || (b.mutations?.length ?? 0) - (a.mutations?.length ?? 0));
+    fresh.sort((a, b) => (b.operatorsVersion ?? 1) - (a.operatorsVersion ?? 1) || Number(b.exhaustive === true) - Number(a.exhaustive === true) || (b.mutations?.length ?? 0) - (a.mutations?.length ?? 0));
     out.push(fresh[0] ?? records[0]);
   }
   return out.sort((a, b) => (a.file + a.test).localeCompare(b.file + b.test));

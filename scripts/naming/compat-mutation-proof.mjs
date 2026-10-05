@@ -12,6 +12,11 @@
  *   CANONICAL_FIRST  `canonical ?? legacy` / `canonical || legacy` is swapped to `legacy ?? canonical`;
  *   ALIAS_OVERRIDE   the guard `if (x[canonical] === undefined) x[canonical] = x[legacy]` is replaced by `true`,
  *                    so the legacy value overrides the canonical one.
+ *   SQL_WORD         a ledger legacy name that lives ONLY inside SQL text (a string/template literal that is a SQL statement, by the
+ *                    census's SQL_START): one mutant per WHOLE-WORD occurrence (bare identifier or quoted value `'name'`, `"name"`, `'name:%'`),
+ *                    replacing only that occurrence with a same-length neutral token. Occurrences inside SQL comments (line and block comments) and
+ *                    inside a longer identifier are not sites. It is a name-level operator exactly like LEGACY_LITERAL (a survivor makes the
+ *                    name SURVIVED/PARTIAL; a name with ordinary AND SQL sites needs every site killed).
  * A mutation that makes the suite fail to compile or run (no failed assertion) is INCONCLUSIVE, never a kill.
  * The unmutated test must pass first (otherwise the pair is BASELINE_RED).
  *
@@ -26,6 +31,8 @@ import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { isVerificationScript, isTestFile, PROOF_CLASSES, runnerConfigSha } from "./compat-boundary-audit.mjs";
+// SQL detection is the census's own (`sqlString` surface): one definition of "this literal is a SQL statement"
+import { SQL_START } from "./technical-naming-census.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(here, "../..");
@@ -109,6 +116,90 @@ function inNamePosition(node) {
   return false;
 }
 
+/**
+ * Version of the operator set. A record produced by an older set is not reused (resume) and is not credited (audit oracle) for a file
+ * that now has a site of an operator the record never ran. 2 = SQL_WORD added.
+ */
+export const OPERATORS_VERSION = 2;
+
+/** Operators that rename a legacy NAME at one site: a survivor blocks that name only (the verdict is SURVIVED/PARTIAL, never the strong CANONICAL_FIRST_UNENFORCED). */
+export const NAME_OPERATORS = new Set(["LEGACY_LITERAL", "SQL_WORD"]);
+
+/** Pair verdict from the executed mutations (pure; the harness and its tests share it). */
+export function pairVerdict(mutations, declarationCount = 0) {
+  const killed = mutations.filter((m) => m.outcome === "KILLED").length;
+  const survivedStrong = mutations.some((m) => m.outcome === "SURVIVED" && !NAME_OPERATORS.has(m.operator));
+  const survivedName = mutations.some((m) => m.outcome === "SURVIVED" && NAME_OPERATORS.has(m.operator));
+  return mutations.length === 0 ? (declarationCount > 0 ? "COMPILER_CHECKED" : "NO_MUTATION_SITE") : survivedStrong ? "CANONICAL_FIRST_UNENFORCED" : survivedName ? (killed ? "PARTIAL" : "SURVIVED") : killed ? "PROVEN" : "SURVIVED";
+}
+
+/** Same text with SQL comments (`-- ...`, `/* ... *\/`) blanked to spaces (length and offsets preserved); quoted strings are respected. */
+export function blankSqlComments(raw) {
+  const out = raw.split("");
+  let i = 0;
+  while (i < raw.length) {
+    const c = raw[i];
+    if (c === "'" || c === '"') { // skip a quoted run ('' / "" are escaped quotes: the loop simply re-enters)
+      i++;
+      while (i < raw.length && raw[i] !== c) i++;
+      i++;
+    } else if (c === "-" && raw[i + 1] === "-") {
+      while (i < raw.length && raw[i] !== "\n") out[i++] = " ";
+    } else if (c === "/" && raw[i + 1] === "*") {
+      const end = raw.indexOf("*/", i + 2);
+      const stop = end < 0 ? raw.length : end + 2;
+      for (; i < stop; i++) if (raw[i] !== "\n") out[i] = " ";
+    } else i++;
+  }
+  return out.join("");
+}
+
+/** A same-length token that is neither the legacy name nor any other ledger name; letters only (`_` would be a LIKE wildcard). */
+export function neutralToken(name, names) {
+  for (const ch of "xyzqwk") { const t = ch.repeat(name.length); if (t !== name && !names.has(t)) return t; }
+  return "x".repeat(name.length - 1) + "0";
+}
+
+/**
+ * SQL_WORD sites of one source file (pure). A literal is SQL when the census's SQL_START matches it (a template with placeholders is judged
+ * on head + placeholders, as the census does); every part of it is then scanned on its RAW source text (so offsets are exact) for the ledger
+ * names as whole words outside SQL comments.
+ */
+export function findSqlWordSites(sf, text, names) {
+  const plain = [...names].filter((n) => typeof n === "string" && n !== "*" && !n.startsWith("/") && /[\p{L}\p{N}_]/u.test(n));
+  const out = [];
+  if (!plain.length) return out;
+  const boundary = "[^\\p{L}\\p{N}_]";
+  const regexes = plain.map((n) => [n, new RegExp(`(?<=^|${boundary})${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|${boundary})`, "gu")]);
+  const scanPart = (node, trimStart, trimEnd) => {
+    const from = node.getStart(sf) + trimStart;
+    const to = node.getEnd() - trimEnd;
+    const raw = text.slice(from, to);
+    const blanked = blankSqlComments(raw);
+    for (const [n, re] of regexes) {
+      re.lastIndex = 0;
+      for (const m of blanked.matchAll(re)) {
+        const start = from + m.index;
+        out.push({ operator: "SQL_WORD", line: sf.getLineAndCharacterOfPosition(start).line + 1, start, end: start + n.length, replacement: neutralToken(n, new Set(plain)), label: n });
+      }
+    }
+  };
+  const visit = (node) => {
+    if (ts.isNoSubstitutionTemplateLiteral(node) || ts.isStringLiteral(node)) {
+      if (SQL_START.test(node.text) && !(node.parent && (ts.isImportDeclaration(node.parent) || ts.isExportDeclaration(node.parent) || ts.isLiteralTypeNode(node.parent)))) scanPart(node, 1, 1);
+    } else if (ts.isTemplateExpression(node)) {
+      const sql = node.head.text + node.templateSpans.map((sp) => ` __ph__ ${sp.literal.text}`).join("");
+      if (SQL_START.test(sql)) {
+        scanPart(node.head, 1, 2); // `...${
+        for (const sp of node.templateSpans) scanPart(sp.literal, 1, sp.literal.kind === ts.SyntaxKind.TemplateTail ? 1 : 2);
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sf);
+  return out;
+}
+
 export function findMutations(text, file, names, wildcardWords = null, opts = {}) {
   const aliases = routeAliases(names);
   const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : undefined);
@@ -165,6 +256,8 @@ export function findMutations(text, file, names, wildcardWords = null, opts = {}
     ts.forEachChild(node, visit);
   };
   visit(sf);
+  // SQL_WORD: names that live inside SQL text (see findSqlWordSites); they are ordinary name sites for every later rule
+  lit.push(...findSqlWordSites(sf, text, names));
   // FALLBACK operators, only for a ledger name that has no ordinary site (no literal, key, member read, swap or guard):
   //   ENUM_MEMBER     the enum member named by the ledger row is renamed (the legacy member disappears from the exported enum);
   //   PREFIX_LITERAL  a namespaced key `<name>:<rest>` (the legacy permission/event namespace) loses its legacy namespace.
@@ -225,6 +318,14 @@ export function buildCensus(sf, text, names, wildcardWords, ptWords, sites) {
   };
   visit(sf);
   return { version: 1, names: [...names].filter((n) => typeof n === "string").sort(), wildcard: Boolean(wildcardWords), siteCount: sites.length, unmutatedPtSites, unmutatedNameSites };
+}
+
+/**
+ * True when a record was produced by an older operator set (no `operatorsVersion`, or lower) and the file NOW has SQL_WORD sites: such a
+ * record never ran those mutants, so it is neither resumed nor credited; the pair must be judged again.
+ */
+export function needsOperatorRerun(rec, found) {
+  return (rec?.operatorsVersion ?? 1) < OPERATORS_VERSION && (found?.lit ?? []).some((m) => m.operator === "SQL_WORD");
 }
 
 export const apply = (text, m) => text.slice(0, m.start) + m.replacement + text.slice(m.end);
@@ -304,7 +405,9 @@ async function main() {
       if (!rec) continue;
       const text = fs.readFileSync(path.join(ROOT, pair.file), "utf8");
       if (sha256(text) !== rec.fileSha256) { stale++; continue; }
-      rec.census = findMutations(text, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census;
+      const cm = findMutations(text, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords });
+      if (needsOperatorRerun(rec, cm)) { stale++; continue; } // judged without SQL_WORD: only a real run can re-judge it
+      rec.census = cm.census;
       rec.configSha256 = runnerConfigSha(pair.test, readRepoFile);
       n++;
     }
@@ -348,14 +451,15 @@ async function main() {
     const original = fs.readFileSync(abs, "utf8");
     // resume: a pair already judged against the SAME file and test bytes is not run again (an interrupted run continues where it stopped)
     const done = results.get(`${pair.file}\u0000${pair.test}`);
-    if (done && done.verdict && done.exhaustive === true && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !(pair.wildcard && done.wildcardPredicate !== 2) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { done.census = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }).census; done.configSha256 = runnerConfigSha(pair.test, readRepoFile); console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
+    const currentSites = done ? findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords }) : null;
+    if (done && done.verdict && done.exhaustive === true && !needsOperatorRerun(done, currentSites) && !(done.namesWithoutSite?.length && done.fallbackOperators !== 1) && !(pair.wildcard && done.wildcardPredicate !== 2) && !["NO_MUTATION_SITE", "COMPILER_CHECKED"].includes(done.verdict) && done.fileSha256 === sha256(original) && fs.existsSync(path.join(ROOT, pair.test)) && done.testSha256 === sha256(fs.readFileSync(path.join(ROOT, pair.test), "utf8"))) { done.census = currentSites.census; done.configSha256 = runnerConfigSha(pair.test, readRepoFile); console.log(`[${i + 1}/${pairs.length}] RESUMED ${done.verdict} ${pair.file} <= ${pair.test}`); continue; }
     // the hashes bind to the sources that were actually mutated and tested (the --root copy); the audit compares
     // them with the repository, so any later edit of either file makes the result stale
     const realText = original;
     const testAbs = path.join(ROOT, pair.test);
     if (!fs.existsSync(testAbs)) { results.set(`${pair.file}\u0000${pair.test}`, { file: pair.file, test: pair.test, fileSha256: sha256(realText), testSha256: null, verdict: "TEST_MISSING", mutations: [] }); continue; }
     if (!baselineCache.has(pair.test)) { const b = runTest(pair.test); baselineCache.set(pair.test, classifyRun(b.status, b.output)); }
-    const rec = { file: pair.file, test: pair.test, fileSha256: sha256(realText), testSha256: sha256(fs.readFileSync(testAbs, "utf8")), verdict: "", mutations: [], legacyFirst: [] };
+    const rec = { file: pair.file, test: pair.test, fileSha256: sha256(realText), testSha256: sha256(fs.readFileSync(testAbs, "utf8")), verdict: "", operatorsVersion: OPERATORS_VERSION, mutations: [], legacyFirst: [] };
     if (baselineCache.get(pair.test) !== "pass") { rec.verdict = "BASELINE_RED"; results.set(`${pair.file}\u0000${pair.test}`, rec); console.log(`[${i + 1}/${pairs.length}] BASELINE_RED ${pair.file} <= ${pair.test}`); continue; }
     const muts = findMutations(original, pair.file, pair.names, pair.wildcard ? wildcardWords : null, { ptWords });
     rec.census = muts.census;
@@ -383,10 +487,7 @@ async function main() {
     } finally { fs.writeFileSync(abs, original); }
     rec.inconclusive = rec.mutations.filter((m) => m.outcome === "INCONCLUSIVE").length;
     rec.diagnosticsRelaxed = ROOT !== REPO && pair.test.startsWith("apps/api/");
-    const killed = rec.mutations.filter((m) => m.outcome === "KILLED").length;
-    const survivedStrong = rec.mutations.some((m) => m.outcome === "SURVIVED" && m.operator !== "LEGACY_LITERAL");
-    const survivedName = rec.mutations.some((m) => m.outcome === "SURVIVED" && m.operator === "LEGACY_LITERAL");
-    rec.verdict = rec.mutations.length === 0 ? (muts.declarations.length > 0 ? "COMPILER_CHECKED" : "NO_MUTATION_SITE") : survivedStrong ? "CANONICAL_FIRST_UNENFORCED" : survivedName ? (killed ? "PARTIAL" : "SURVIVED") : killed ? "PROVEN" : "SURVIVED";
+    rec.verdict = pairVerdict(rec.mutations, muts.declarations.length);
     results.set(`${pair.file}\u0000${pair.test}`, rec);
     console.log(`[${i + 1}/${pairs.length}] ${rec.verdict} ${pair.file} <= ${pair.test} (${rec.mutations.map((m) => `${m.operator}:${m.outcome}`).join(" ") || "-"})`);
     fs.mkdirSync(path.dirname(out), { recursive: true });

@@ -71521,7 +71521,17 @@
       "blocker": "promotion of the draft requires explicit approval",
       "dependency": null,
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts"
+      "coveringTest": "apps/api/src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts",
+      "proofExemptions": [
+        {
+          "text": " rh permission row(s) left after rename; rolling back.",
+          "reason": "Operator-facing error message of the draft migration written in English prose; `rh` appears as a word of the sentence, not as a persisted name. The SQL occurrences of `rh` are mutated and killed by the covering spec."
+        },
+        {
+          "text": " rh permission row(s) exist. Nothing was changed.",
+          "reason": "Operator-facing error message of the draft migration written in English prose; `rh` appears as a word of the sentence, not as a persisted name. The SQL occurrences of `rh` are mutated and killed by the covering spec."
+        }
+      ]
     },
     {
       "item": "sqlString `faixas` (sql) in release-tracks.field.ts",
