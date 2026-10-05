@@ -62,7 +62,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
   const { type: operationType, cleanedNotes: cleanedNotes } = readInvoiceOperationType(invoice);
   const isInflow = operationType === "inflow";
   const items: any[] = Array.isArray(invoice.items) ? invoice.items : [];
-  const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ?? 0;
+  const servicesAmount = numberValue(invoice.service_amount, invoice.legacy_amount) ?? 0;
   const totalWithholdings =
     (invoice.iss_retido ? Number(invoice.iss_amount || 0) : 0) +
     Number(invoice.pis_amount || 0) +
@@ -71,7 +71,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
     Number(invoice.csll_amount || 0) +
     Number(invoice.inss_amount || 0);
   const netAmount =
-    numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount) ??
+    numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount) ??
     Math.max(servicesAmount - totalWithholdings, 0);
   const signedInvoiceValue = isInflow ? -netAmount : netAmount;
   const signedServicesValue = isInflow ? -servicesAmount : servicesAmount;

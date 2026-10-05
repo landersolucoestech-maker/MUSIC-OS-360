@@ -43,3 +43,22 @@ describe("InvoiceViewModal payment method label", () => {
     expect(paymentFieldText(null)).toBe("—");
   });
 });
+
+function netAmountText(invoice: Record<string, unknown>): string {
+  const { unmount } = render(<InvoiceViewModal open onOpenChange={() => {}} invoice={{ id: "i1", status: "issued", notes: "", ...invoice } as never} />);
+  const text = screen.getByTestId("text-invoice-net-amount").textContent ?? "";
+  unmount();
+  return text;
+}
+
+describe("InvoiceViewModal net amount source (no top-level total_amount on invoices)", () => {
+  const digits = (s: string) => s.replace(/\D/g, "");
+  it("uses net_amount, then service_amount, then legacy_amount", () => {
+    expect(digits(netAmountText({ net_amount: "100.00", service_amount: "200.00", legacy_amount: "300.00" }))).toBe("10000");
+    expect(digits(netAmountText({ service_amount: "200.00", legacy_amount: "300.00" }))).toBe("20000");
+    expect(digits(netAmountText({ legacy_amount: "300.00" }))).toBe("30000");
+  });
+  it("ignores a stray top-level total_amount (the API never emits it; only items carry it)", () => {
+    expect(digits(netAmountText({ total_amount: 999 }))).toBe("000");
+  });
+});

@@ -25,7 +25,16 @@ export const SHARE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   acordo_url: 'agreement_url',
   versao: 'version',
   historico: 'history',
+  // Former English aliases of the registry-share columns (integrations/registry writers).
+  holderName: 'holder_name',
+  holderDoc: 'holder_document',
+  workId: 'work_id',
+  trackId: 'phonogram_id', // a Phonogram (shares.phonogram_id), not a ReleaseTrack/ProjectTrack
+  role: 'party_role',
 };
+
+/** EN aliases whose explicit null clears the canonical column (pre-existing write behavior). */
+export const SHARE_NULLABLE_ALIAS_KEYS: readonly string[] = ['holderName', 'holderDoc', 'workId', 'trackId', 'role'];
 
 /**
  * Deprecated QUERY-string keys (list/stats filters) → canonical filter keys.

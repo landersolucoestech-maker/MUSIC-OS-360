@@ -1,7 +1,7 @@
 {
  "totals": {
   "doc": 8695,
-  "docCode": 161
+  "docCode": 176
  },
  "debt": {
   "doc::docs/BLUEPRINT_ENTERPRISE.md": 237,
@@ -119,21 +119,24 @@
   "doc::docs/backend-v2/review/00-master-domain-functional-verification.md": 1779,
   "doc::reports/CLEANUP_REPORT.md": 140,
   "doc::reports/phase3-architecture.md": 30,
+  "docCode::.claude/rules/naming-canonical.md": 2,
+  "docCode::.claude/skills/doc-writer/SKILL.md": 1,
   "docCode::.claude/skills/pr-writer/SKILL.md": 1,
   "docCode::.claude/skills/pr-writer/references/checklist.md": 1,
   "docCode::.claude/skills/pr-writer/references/examples.md": 1,
   "docCode::.claude/skills/release-checkpoint/SKILL.md": 1,
-  "docCode::.claude/skills/residue-search/SKILL.md": 4,
+  "docCode::.claude/skills/residue-search/SKILL.md": 7,
   "docCode::docs/engineering/backfill-side-tables-retention.md": 3,
   "docCode::docs/engineering/database.md": 1,
   "docCode::docs/engineering/legacy-column-drop-plan.md": 1,
   "docCode::docs/engineering/naming-state-separation.md": 1,
   "docCode::docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md": 6,
   "docCode::docs/engineering/pack/NORMALIZATION_REPORT.md": 2,
-  "docCode::docs/engineering/pack/TECHNICAL_NORMALIZATION_HANDOFF.md": 1,
+  "docCode::docs/engineering/pack/TECHNICAL_NORMALIZATION_HANDOFF.md": 2,
+  "docCode::docs/engineering/product-decision-packages.md": 1,
   "docCode::docs/engineering/rbac-retirement-plan.md": 2,
   "docCode::docs/engineering/security.md": 1,
-  "docCode::docs/runbooks/staging-to-production.md": 135
+  "docCode::docs/runbooks/staging-to-production.md": 142
  },
  "wildcardCoverage": {
   ".claude/contracts/finding-record.schema.json": 14,
@@ -253,5 +256,24 @@
   "e2e/p84-product-walkthrough.spec.ts": 2,
   "e2e/p86-reports-centralization.spec.ts": 13,
   "e2e/reports-export.spec.ts": 2
+ },
+ "wordRowCoverage": {
+  "aliquota": 19,
+  "boleto": 14,
+  "cfop": 18,
+  "clt": 13,
+  "cnpj": 215,
+  "cofins": 19,
+  "cpf": 184,
+  "csll": 19,
+  "inss": 20,
+  "ir": 17,
+  "iss": 53,
+  "pis": 19,
+  "pj": 25,
+  "prestador": 11,
+  "rg": 128,
+  "serie": 21,
+  "tomador": 115
  }
 }

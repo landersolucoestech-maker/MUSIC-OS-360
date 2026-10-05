@@ -36,13 +36,23 @@ import { api } from "@/shared/lib/api-client";
 
 // [legacy team-contact category key, label rendered for it]
 const LEGACY_TEAM_CATEGORIES: ReadonlyArray<readonly [string, string]> = [
-  ["assessoria", "Assessoria de Imprensa"],
+  ["assessoria", "Assessoria de imprensa"],
   ["contador", "Contador"],
   ["empresario", "Empresário"],
   ["juridico", "Jurídico"],
-  ["editora_musical", "Editora Musical"],
-  ["gestor", "Gestor"],
+  ["editora_musical", "Editora musical"],
+  ["gestor", "Empresário"],
   ["financeiro", "Financeiro"],
+  // canonical slugs (as the API returns them)
+  ["press_office", "Assessoria de imprensa"],
+  ["legal", "Jurídico"],
+  ["finance", "Financeiro"],
+  ["accountant", "Contador"],
+  ["agent", "Empresário"],
+  ["publisher", "Editora musical"],
+  ["record_label", "Gravadora"],
+  ["booker", "Booker"],
+  ["roadie", "Roadie"],
   ["categoria_desconhecida", "Outro"],
 ];
 

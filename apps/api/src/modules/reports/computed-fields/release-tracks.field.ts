@@ -42,7 +42,7 @@ export async function fetchReleaseTracksForExport(
   const out = new Map<string, ReleaseTrackItem[]>();
   if (releaseIds.length === 0) return out;
   const rows = (await ds.query(
-    `SELECT "id", COALESCE("metadata"->'tracks', "metadata"->'faixas') AS tracks FROM "releases" WHERE "tenant_id" = $1 AND "id" = ANY($2::uuid[])`,
+    `SELECT "id", COALESCE(NULLIF("metadata"->'tracks', 'null'::jsonb), "metadata"->'faixas') AS tracks FROM "releases" WHERE "tenant_id" = $1 AND "id" = ANY($2::uuid[])`,
     [tenantId, releaseIds],
   )) as { id: string; tracks: unknown }[];
   for (const row of rows) {

@@ -4,7 +4,7 @@
  * Base types introduced for the standalone mode (MOCK_DATA in
  * localStorage). Each domain hook declares the concrete fields
  * in its own interface by intersecting with these aliases
- * (e.g. `Tables<"artistas"> & { stage_name?: string }`).
+ * (e.g. `Tables<"artists"> & { stage_name?: string }`).
  *
  * `Tables<T>` is an empty base type (`object`) that, when intersected
  * with the hook-specific fields, results in exactly those fields

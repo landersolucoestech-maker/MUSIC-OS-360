@@ -7,7 +7,7 @@ import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-
 import { assertSplitBudgetNotExceeded } from './share-split-invariant.util';
 import { isRegistryEligibleShare, REGISTRY_ELIGIBLE_SHARE_SQL } from './share-eligibility.util';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
-import { SHARE_DEPRECATED_FIELDS, SHARE_QUERY_DEPRECATED_FIELDS, canonicalizeShareHistory, canonicalizeShareValues } from './share-legacy-fields';
+import { SHARE_DEPRECATED_FIELDS, SHARE_NULLABLE_ALIAS_KEYS, SHARE_QUERY_DEPRECATED_FIELDS, canonicalizeShareHistory, canonicalizeShareValues } from './share-legacy-fields';
 import type { CreateShareDto, UpdateShareDto, QueryShareDto } from './dto/shares.dto';
 
 @Injectable()
@@ -83,33 +83,27 @@ export class SharesService {
 
   /**
    * Form keys persist 1:1 into their columns (2026-07-12 rule).
-   * Legacy EN aliases (holderName/role/workId/trackId/holderDoc) are
-   * mapped to the physical columns; the NOT NULL ones (holder_name, percentage)
+   * Deprecated EN aliases (holderName/role/workId/trackId/holderDoc) are
+   * mapped to the canonical column names (SHARE_DEPRECATED_FIELDS); the NOT NULL ones (holder_name, percentage)
    * are mirrored from the form fields. `percentage` stopped
    * being an alias on 2026-09-13 (RenameSharePartyFieldsToEnglish): the form
    * field is already called `percentage` (it was `percentual`), so the old
    * alias and the direct field converged on the same name — nothing to map.
    */
   private toColumns(dto: CreateShareDto | UpdateShareDto): Record<string, unknown> {
-    // CZ-037: deprecated Portuguese field names and values → canonical.
-    const d = canonicalizeShareValues(
-      applyDeprecatedFieldAliases(dto as Record<string, unknown>, SHARE_DEPRECATED_FIELDS),
-    );
+    // Explicit null on a deprecated registry alias clears the canonical column
+    // (existing behavior); the shared mechanism would otherwise drop it as "empty".
+    const input: Record<string, unknown> = { ...(dto as Record<string, unknown>) };
+    for (const alias of SHARE_NULLABLE_ALIAS_KEYS) {
+      const canonical = SHARE_DEPRECATED_FIELDS[alias];
+      if (input[alias] === null && input[canonical] === undefined) input[canonical] = null;
+    }
+    // CZ-037: deprecated field names (PT and EN) and values → canonical. The
+    // canonical key wins when both are sent; deprecated keys never persist.
+    const d = canonicalizeShareValues(applyDeprecatedFieldAliases(input, SHARE_DEPRECATED_FIELDS));
     const out: Record<string, unknown> = { ...d };
     if (out['history'] !== undefined) out['history'] = canonicalizeShareHistory(out['history']);
-    // EN aliases → physical columns. A canonical column key already present in
-    // the input always wins; the alias only fills it when absent.
-    const aliasToColumn: Array<[alias: string, column: string]> = [
-      ['holderName', 'holder_name'],
-      ['holderDoc', 'holder_document'],
-      ['role', 'party_role'],
-      ['workId', 'work_id'],
-      ['trackId', 'phonogram_id'],
-    ];
-    for (const [alias, column] of aliasToColumn) {
-      if (d[alias] !== undefined && out[column] === undefined) out[column] = d[alias];
-    }
-    for (const k of ['holderName', 'holderDoc', 'role', 'workId', 'trackId', 'expectedUpdatedAt']) delete out[k];
+    delete out['expectedUpdatedAt'];
     Object.keys(out).forEach((k) => out[k] === undefined && delete out[k]);
     return out;
   }

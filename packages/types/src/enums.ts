@@ -95,7 +95,7 @@ export enum ArtistRegistrationStatus {
 
 /**
  * ArtistRelationshipType — classification of the artist's contractual link
- * (never persisted; computed at runtime from `contracts.exclusivo`
+ * (never persisted; computed at runtime from `contracts.exclusive`
  * + the active contract status — see `ArtistsService.vinculoStats`). Single
  * source: previously duplicated as a loose PT union type in 6 places (backend
  * service x3, DTO, and frontend types/labels x2).

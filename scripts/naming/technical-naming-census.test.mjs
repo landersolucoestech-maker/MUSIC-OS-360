@@ -728,3 +728,27 @@ test("caps values: a whole fixture record id (ABR-001-2025, ABR-TEST-001) is not
   assert.deepEqual(valueHits(`export const c = { society_code: "ABR-001-2025", other: "ABR-TEST-001" };`), []);
   assert.deepEqual(valueHits(`export const c = "META-BANCO";`), ["value:caps-string:META-BANCO"]);
 });
+
+test("markdown code spans: common English words (from, input, was, before, old, migration) do NOT exempt a line; only explicit legacy markers do", () => {
+  for (const word of ["from", "input", "was", "before", "old", "migration", "persisted", "census"]) {
+    assert.deepEqual(scanMarkdownCode(`Use \`valor_total\` ${word} the payload`), ["valor_total"], word);
+  }
+  assert.deepEqual(scanMarkdownCode("Deprecated alias `valor_total` maps to `total_amount`."), []);
+  assert.deepEqual(scanMarkdownCode("`valor_total` -> `total_amount`"), []);
+});
+
+test("legal-term word rows: the distinct (file, name) pairs hidden by a legal-term row are counted per word, and --check fails without that baseline section", () => {
+  const c = census();
+  assert.ok(Object.keys(c.wordRowCoverage).length > 0, "legal-term rows hide names that are counted");
+  assert.ok(Object.values(c.wordRowCoverage).every((n) => Number.isInteger(n) && n > 0));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "naming-wr-"));
+  const baselinePath = path.join(dir, "no-word-rows.json");
+  fs.writeFileSync(baselinePath, JSON.stringify({ totals: {}, debt: {}, wildcardCoverage: c.wildcardCoverage }));
+  try {
+    const r = spawnSync(process.execPath, [path.join(here, "technical-naming-census.mjs"), "--check"], { env: { ...process.env, NAMING_BASELINE_PATH: baselinePath }, encoding: "utf8" });
+    assert.equal(r.status, 2, r.stdout + r.stderr);
+    assert.match(r.stderr, /wordRowCoverage/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});

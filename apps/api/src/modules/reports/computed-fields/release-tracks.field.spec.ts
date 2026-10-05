@@ -66,7 +66,7 @@ describe('release tracks persisted keys (canonical write, dual-read)', () => {
       ]),
     };
     const out = await fetchReleaseTracksForExport(ds as never, 't', ['new', 'old']);
-    expect(ds.query.mock.calls[0][0]).toContain(`COALESCE("metadata"->'tracks', "metadata"->'faixas')`);
+    expect(ds.query.mock.calls[0][0]).toContain(`COALESCE(NULLIF("metadata"->'tracks', 'null'::jsonb), "metadata"->'faixas')`);
     expect(out.get('new')![0]).toMatchObject({ trackTitle: 'N', composers: ['c'], releaseTrackLanguage: 'en', lyrics: 'x', trackArtist: 'A' });
     expect(out.get('old')![0]).toMatchObject({ trackTitle: 'O', composers: ['d'], releaseTrackLanguage: 'pt-br', lyrics: 'y', trackArtist: 'B', isAlternateVersion: true, versionType: 'remix' });
   });

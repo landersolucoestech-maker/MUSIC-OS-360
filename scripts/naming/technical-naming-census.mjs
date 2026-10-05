@@ -169,8 +169,8 @@ export const UX_ARGUMENT_CALLEES = new Set(["handleConcurrencyConflict", "report
 export const EXTERNAL_TOOL_NAMES = new Set(["Cargo.lock", "Cargo.toml"]);
 /** Published migrations are immutable history (class names are tracked in musicos360_migrations). */
 export const isMigration = (f) => /(^|\/)migrations\//.test(f);
-/** Mission bookkeeping and generated EVIDENCE: the mutation proof records the legacy names it mutated (evidence about a boundary, not a product surface). Only these generated/adjudication files are exempt (the schema boundary proof and the fixture-name adjudication also list legacy names as data); any other file under docs/naming/audit is scanned. */
-export const GENERATED_EVIDENCE = new Set(["docs/naming/audit/compat-mutation-proof.json", "docs/naming/audit/schema-boundary-proof.json", "docs/naming/audit/fixture-name-adjudication.json"]);
+/** Mission bookkeeping and generated EVIDENCE: the mutation proof records the legacy names it mutated (evidence about a boundary, not a product surface). Only these generated/adjudication files are exempt (the schema boundary proof and the fixture-name adjudication also list legacy names as data; the census baseline is the generated ratchet record whose keys include the legal-term words); any other file under docs/naming/audit is scanned. */
+export const GENERATED_EVIDENCE = new Set(["docs/naming/audit/compat-mutation-proof.json", "docs/naming/audit/schema-boundary-proof.json", "docs/naming/audit/fixture-name-adjudication.json", "scripts/naming/technical-naming-baseline.json"]);
 export const isBookkeeping = (f) => f.startsWith(".claude/ops/") || GENERATED_EVIDENCE.has(f);
 
 export const layerOf = (f) => (f.startsWith("apps/web") ? "web" : f.startsWith("apps/api") ? "api" : f.startsWith("packages") ? "packages" : "scripts");
@@ -582,7 +582,7 @@ export function scanData(relPath, text) {
 export const isCurrentDocForCode = (f) =>
   /^(docs\/engineering\/|docs\/runbooks\/|docs\/naming\/[^/]+\.md$|apps\/[^/]+\/[^/]+\.md$|CLAUDE\.md$|\.claude\/.*\.md$)/.test(f) &&
   !/^docs\/naming\/decision-records\.md$/.test(f);
-const LEGACY_MARKER = /legacy|deprecated|alias|formerly|\bold\b|\bbefore\b|renam|->|→|compat|persisted|preflight|census|not translated|migration|dropped|historical|\bwas\b|\bwere\b|\bfrom\b|\binput\b/i;
+const LEGACY_MARKER = /legacy|deprecated|\balias(?:es)?\b|formerly|renamed|former name|->|→/i;
 const HISTORICAL_BANNER = /^>\s*Historical record\./m;
 
 /** Distinct Portuguese technical tokens in backtick spans / fenced blocks of one current document (pure). Lines that name the token as legacy are documentation of the boundary, not a divergence. */
@@ -632,6 +632,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const excepted = {};
   const exceptedClass = {};
   const wildcardNames = new Map();
+  const wordRowNames = new Map();
   const reportOnly = { migrationFiles: 0 };
   const surfaces = Object.fromEntries(SURFACES.map((k) => [k, { candidates: 0, exceptions: 0 }]));
   let filesScanned = 0;
@@ -640,7 +641,15 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
   const usedRows = new Set();
   const record = (surface, key, file, name, count = 1) => {
     const exc = name != null && exceptions.get(file, name, surface);
-    if (exc) { usedRows.add(exc); for (const w of exceptions.wordRows?.(name) ?? []) usedRows.add(w); }
+    if (exc) {
+      usedRows.add(exc);
+      for (const w of exceptions.wordRows?.(name) ?? []) {
+        usedRows.add(w);
+        // a legal-term row registered for every file ("*") exempts every name built from that word: the distinct (file, name) pairs it hides are ratcheted per word
+        if (!wordRowNames.has(w.currentName)) wordRowNames.set(w.currentName, new Set());
+        wordRowNames.get(w.currentName).add(key);
+      }
+    }
     const bucket = exc ? excepted : debt;
     if (exc) exceptedClass[key] = exc.exceptionClass ?? exc.disposition ?? "UNCLASSIFIED";
     // a whole-file (`*`) row blinds the census inside that file, so the DISTINCT names it hides are ratcheted per file (see compareWildcard)
@@ -696,6 +705,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
     debt: sorted(debt),
     excepted: sorted(excepted),
     exceptedClass: sorted(exceptedClass),
+    wordRowCoverage: sorted(Object.fromEntries([...wordRowNames].map(([w, set]) => [w, set.size]))),
     wildcardCoverage: sorted(Object.fromEntries([...wildcardNames].map(([f, set]) => [f, set.size]))),
     reportOnly,
     /** ACTIVE ledger rows that matched no occurrence in the tree (obsolete boundaries: the code they documented is gone). */
@@ -735,7 +745,7 @@ function main() {
   const mode = process.argv[2] ?? "--check";
   const c = census();
   if (mode === "--write") {
-    const out = { totals: totalsBySurface(c.debt), debt: c.debt, wildcardCoverage: c.wildcardCoverage };
+    const out = { totals: totalsBySurface(c.debt), debt: c.debt, wildcardCoverage: c.wildcardCoverage, wordRowCoverage: c.wordRowCoverage };
     fs.writeFileSync(BASELINE, JSON.stringify(out, null, 1) + "\n");
     console.log("baseline written", out.totals);
     return;
@@ -758,6 +768,10 @@ function main() {
   const wc = compareWildcard(c.wildcardCoverage, base.wildcardCoverage);
   grown.push(...wc.grown);
   shrunk.push(...wc.shrunk);
+  if (!base.wordRowCoverage || typeof base.wordRowCoverage !== "object") throw new Error("baseline has no wordRowCoverage section (run --write)");
+  const wr = compareWildcard(c.wordRowCoverage, base.wordRowCoverage);
+  grown.push(...wr.grown.map((x) => x.replace("hidden by a wildcard row", "hidden by a legal-term row")));
+  shrunk.push(...wr.shrunk);
   console.log(`technical-naming census: ${c.filesScanned} files, debt ${JSON.stringify(totalsBySurface(c.debt))}`);
   if (grown.length) {
     console.error(`\nNEW Portuguese technical names (engineering = English; Portuguese only in user-visible UX text):\n  ${grown.slice(0, 200).join("\n  ")}${grown.length > 200 ? `\n  … ${grown.length - 200} more (--list)` : ""}`);

@@ -11,17 +11,24 @@ const DEPRECATED = (canonical: string) => ({ deprecated: true, description: `Dep
 const ROLES = ['author', 'composer', 'producer', 'performer', 'publisher', 'master-owner', 'other'] as const;
 
 export class CreateShareDto {
-  // ── Legacy EN aliases (integrations/registry) — optional ────────────────────
-  // holderName is the only input that feeds holder_name (toColumns() in
-  // shares.service.ts) — there is no direct `holder_name` field in the DTO.
+  // ── Canonical registry-share inputs (same names as the entity columns and QueryShareDto) ──
   // Rejects empty/whitespace-only instead of accepting and persisting a blank holder.
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(255)
   @Matches(/\S/, { message: 'O nome do titular não pode ser vazio ou conter apenas espaços.' })
+  holder_name?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) holder_document?: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() work_id?: string;
+  @ApiPropertyOptional({ description: 'Phonogram (shares.phonogram_id), not a release/project track.' }) @IsOptional() @IsString() phonogram_id?: string;
+  @ApiPropertyOptional({ enum: ROLES }) @IsOptional() @IsIn(ROLES) party_role?: string;
+
+  // ── Deprecated EN aliases (SHARE_DEPRECATED_FIELDS): canonical wins when both are sent ──
+  @ApiPropertyOptional(DEPRECATED('holder_name')) @IsOptional() @IsString() @MaxLength(255)
+  @Matches(/\S/, { message: 'O nome do titular não pode ser vazio ou conter apenas espaços.' })
   holderName?: string;
-  @ApiPropertyOptional({ enum: ROLES }) @IsOptional() @IsIn(ROLES) role?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() workId?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() trackId?: string;
-  @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(50) holderDoc?: string;
+  @ApiPropertyOptional({ ...DEPRECATED('party_role'), enum: ROLES }) @IsOptional() @IsIn(ROLES) role?: string;
+  @ApiPropertyOptional(DEPRECATED('work_id')) @IsOptional() @IsString() workId?: string;
+  @ApiPropertyOptional(DEPRECATED('phonogram_id')) @IsOptional() @IsString() trackId?: string;
+  @ApiPropertyOptional({ ...DEPRECATED('holder_document') }) @IsOptional() @IsString() @MaxLength(50) holderDoc?: string;
   @ApiPropertyOptional() @IsOptional() metadata?: Record<string, unknown>;
 
   // ── Form fields (EXACT keys of the web share form (ShareFormModal)) ───────────────────────

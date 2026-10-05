@@ -2,7 +2,7 @@ import { fetchReleaseTracksForExport, writeReleaseTracksForImport } from './rele
 
 /**
  * Behavioral proof of the legacy releases.metadata key `faixas` in release-tracks.field.ts. The key only exists inside SQL text
- * (`COALESCE("metadata"->'tracks', "metadata"->'faixas')` on read, `"metadata" - 'faixas'` on write), never as a standalone
+ * (`COALESCE(NULLIF("metadata"->'tracks', 'null'::jsonb), "metadata"->'faixas')` on read, `"metadata" - 'faixas'` on write), never as a standalone
  * string literal, so it has no AST mutation site: the proof is that the SQL actually sent is evaluated here, key names taken from
  * the SQL text itself, against metadata documents. The same SQL is run on a real PostgreSQL (TEMP table) when PG_INTEGRATION_URL is set.
  */
@@ -10,9 +10,10 @@ type Meta = Record<string, unknown> | null;
 
 /** jsonb `->` / COALESCE / `- 'key'` / jsonb_set evaluation of exactly the shapes the module sends. */
 function evalRead(sql: string, metadata: Meta): unknown {
-  const m = /COALESCE\("metadata"->'([^']+)', "metadata"->'([^']+)'\)/.exec(sql);
+  const m = /COALESCE\(NULLIF\("metadata"->'([^']+)', 'null'::jsonb\), "metadata"->'([^']+)'\)/.exec(sql);
   if (!m) throw new Error(`unexpected read SQL: ${sql}`);
   const get = (k: string) => (metadata && k in metadata ? metadata[k] : null);
+  // NULLIF(x, 'null'::jsonb): a stored JSON null counts as absent, so the legacy key is still read
   return get(m[1]) ?? get(m[2]);
 }
 function evalWrite(sql: string, metadata: Meta, json: string): Record<string, unknown> {
@@ -38,6 +39,12 @@ describe('release tracks: legacy metadata key `faixas`', () => {
     const tracks = await exportOf({ faixas: [LEGACY_TRACK] });
     expect(tracks).toHaveLength(1);
     expect(tracks[0]).toMatchObject({ trackTitle: 'Old', composers: ['d'], releaseTrackLanguage: 'pt-br', lyrics: 'y', trackArtist: 'B' });
+  });
+
+  it('export falls back to the legacy `faixas` key when `tracks` is a stored JSON null', async () => {
+    const tracks = await exportOf({ tracks: null, faixas: [LEGACY_TRACK] });
+    expect(tracks).toHaveLength(1);
+    expect(tracks[0]).toMatchObject({ trackTitle: 'Old' });
   });
 
   it('export prefers the canonical `tracks` key over `faixas` when both exist', async () => {

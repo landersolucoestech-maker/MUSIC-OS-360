@@ -5,14 +5,15 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /**
- * CreateContractDto accepts BOTH English camelCase and pt-BR snake_case.
+ * CreateContractDto accepts the canonical English snake_case names plus deprecated aliases
+ * (legacy pt-BR snake_case and the original English camelCase).
  *
- * Phase 5 / C1: pt-BR is the canonical contract for artistId/value/fileUrl —
- * the corresponding EN aliases are temporarily deprecated, still
- * accepted, resolved and validated by contract-legacy-alias.util.ts, but
- * marked `deprecated` in Swagger.
- * Exception: `title`/`type`/`start_date`/`end_date` became the canonical
- * fields (naming normalization, 2026-09-05) — `titulo`/`tipo`
+ * Canonical: artist_id / fixed_value / file_url (and title / type / start_date / end_date /
+ * exclusive / versions). Deprecated aliases, still accepted, resolved and validated by
+ * contract-legacy-alias.util.ts and marked `deprecated` in Swagger: the camelCase English
+ * names artistId / value / fileUrl and the pt-BR names arquivo_url / valor / exclusivo / versoes.
+ * `title`/`type`/`start_date`/`end_date` became canonical
+ * (naming normalization, 2026-09-05) — `titulo`/`tipo`
  * (pt-BR) and, for the dates, both `data_inicio`/`data_fim` (pt-BR) and
  * `startsAt`/`expiresAt` (the EN alias that existed before this migration)
  * are now accepted as legacy aliases — three names per field.
@@ -98,12 +99,12 @@ export class CreateContractDto {
   @IsObject()
   metadata?: Record<string, unknown>;
 
-  // ── pt-BR (legacy + frontend) — passed straight through to the entity ────────
+  // ── Deprecated pt-BR aliases and remaining fields (resolved to the canonical names by contract-legacy-alias.util.ts) ──
   @ApiPropertyOptional({ example: 'Contrato de Gravação — Artista ABC', deprecated: true, description: 'Use "title".' })
   @IsOptional() @IsString() @MaxLength(500)
   titulo?: string;
 
-  @ApiPropertyOptional({ example: 'gravacao', deprecated: true, description: 'Use "type".' })
+  @ApiPropertyOptional({ example: 'recording', deprecated: true, description: 'Use "type".' })
   @IsOptional() @IsString() @MaxLength(100)
   tipo?: string;
 

@@ -110,7 +110,6 @@ export interface Invoice {
   /** Pre-rename name of file_url, still returned by the API for one deploy window. */
   url_pdf?: string | null;
   tomador_cnpj?: string | null;
-  total_amount?: number | null;
   service_amount?: number | null;
   iss_amount?: number | null;
   issued_at?: string | null;

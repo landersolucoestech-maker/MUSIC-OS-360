@@ -82,7 +82,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
 
   /**
    * Work/release/song title — mirrors EXACTLY the table's source
-   * (work_id → lançamento_id → nome_musica), with additional safe fallbacks.
+   * (work_id → release_id → music_title).
    */
   const pickShareTitle = (): string | null => {
     const workTitle = linkedWork?.title;
@@ -91,10 +91,6 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
       workTitle ||
       releaseTitle ||
       str("music_title") ||
-      str("trackTitle") ||
-      str("musicTitle") ||
-      str("songTitle") ||
-      str("title") ||
       null
     );
   };

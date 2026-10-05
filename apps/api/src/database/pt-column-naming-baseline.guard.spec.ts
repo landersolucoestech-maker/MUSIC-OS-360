@@ -36,15 +36,15 @@ import * as path from 'path';
 const ENTITIES_PATH = path.resolve(__dirname, 'entities.ts');
 const BASELINE_PATH = path.resolve(__dirname, '../../../../.audit-runtime/pt-column-census.jsonl');
 
-// Identical to .audit-runtime/census-pt-columns.ts — keep the two in sync.
+// Mirrors .audit-runtime/census-pt-columns.ts; the renamed tomador_nome / tomador_razao_social entries are no longer allowlisted here (the census script's copy still lists them: sync pending, outside this spec's ownership).
 const ALLOWLIST = new Set([
   'cpf', 'cpf_encrypted', 'cnpj', 'cnpj_encrypted', 'cpf_cnpj', 'cpf_cnpj_encrypted',
   'cfop', 'iss', 'issqn', 'aliquota_iss', 'iss_retido', 'pis', 'cofins', 'inss',
   'ir', 'ir_amount', 'csll', 'base_calculo', 'aliquota', 'natureza_operacao',
   'codigo_servico_municipal', 'codigo_municipio', 'inscricao_estadual', 'inscricao_municipal',
   'regime_tributario', 'simples_nacional', 'lucro_presumido', 'lucro_real',
-  'nfse', 'nfe', 'nfce', 'tipo_nota', 'serie', 'tomador', 'tomador_nome', 'tomador_cnpj',
-  'tomador_razao_social', 'tomador_inscricao_estadual', 'tomador_inscricao_municipal',
+  'nfse', 'nfe', 'nfce', 'tipo_nota', 'serie', 'tomador', 'tomador_cnpj',
+  'tomador_inscricao_estadual', 'tomador_inscricao_municipal',
   'tomador_email', 'tomador_uf', 'tomador_cep', 'tomador_doc_encrypted', 'prestador',
   'prestador_id', 'nota_fiscal', 'numero_nota_fiscal',
   'field-labels',
@@ -155,7 +155,7 @@ describe('Permanent guard: the census of PT-suspect physical columns does not di
 
     it.each([
       // LEGAL_DOMAIN_INTENTIONAL -- should never trigger the guard even though they are PT.
-      'cpf', 'cnpj', 'cpf_cnpj_encrypted', 'inscricao_estadual', 'tomador_razao_social',
+      'cpf', 'cnpj', 'cpf_cnpj_encrypted', 'inscricao_estadual', 'tomador_inscricao_estadual',
       'nfse', 'aliquota_iss', 'regime_tributario',
       // Pure EN terms -- must never trigger.
       'created_at', 'tenant_id', 'status', 'party_role', 'percentage',

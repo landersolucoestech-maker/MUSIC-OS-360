@@ -61,7 +61,7 @@ function InvoicePartyCell({ invoice }: { invoice: any }) {
 }
 
 function getInvoiceDisplayValue(invoice: any): number | null {
-  return numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount, invoice.total_amount);
+  return numberValue(invoice.net_amount, invoice.service_amount, invoice.legacy_amount);
 }
 
 export default function Invoices() {

@@ -1,4 +1,5 @@
 import { parseTracksFromProject, type TrackData } from "@/modules/projects/lib/track-helpers";
+import { teamContactCategoryLabel } from "@/modules/artist/lib/team-contact-category";
 import { useMemo, useState } from "react";
 import { useSkillRun } from "@/shared/hooks/useSkillRun";
 import { SkillRunPanel } from "@/shared/components/SkillRunPanel";
@@ -1632,11 +1633,6 @@ export function ArtistVision360Modal({
                   ? artist.teamContacts.filter((c) => c.name || c.email || c.phone)
                   : [];
                 if (team.length === 0) return null;
-                const CATEGORY_LABEL: Record<string, string> = {
-                  booker: "Booker", assessoria: "Assessoria de Imprensa", juridico: "Jurídico",
-                  financeiro: "Financeiro", contador: "Contador", editora_musical: "Editora Musical",
-                  roadie: "Roadie", gestor: "Gestor", empresario: "Empresário",
-                };
                 return (
                   <Card className="bg-muted/30">
                     <CardContent className="p-4">
@@ -1651,7 +1647,7 @@ export function ArtistVision360Modal({
                               <p className="text-sm font-semibold">{c.name || "—"}</p>
                               {c.category && (
                                 <Badge variant="outline" className="text-xs">
-                                  {CATEGORY_LABEL[c.category] ?? "Outro"}
+                                  {teamContactCategoryLabel(c.category)}
                                 </Badge>
                               )}
                             </div>

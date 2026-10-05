@@ -32,8 +32,8 @@ const ALLOWLIST = new Set([
   'ir', 'ir_amount', 'csll', 'base_calculo', 'aliquota', 'natureza_operacao',
   'codigo_servico_municipal', 'codigo_municipio', 'inscricao_estadual', 'inscricao_municipal',
   'regime_tributario', 'simples_nacional', 'lucro_presumido', 'lucro_real',
-  'nfse', 'nfe', 'nfce', 'tipo_nota', 'serie', 'tomador', 'tomador_nome', 'tomador_cnpj',
-  'tomador_razao_social', 'tomador_inscricao_estadual', 'tomador_inscricao_municipal',
+  'nfse', 'nfe', 'nfce', 'tipo_nota', 'serie', 'tomador', 'tomador_cnpj',
+  'tomador_inscricao_estadual', 'tomador_inscricao_municipal',
   'tomador_email', 'tomador_uf', 'tomador_cep', 'tomador_doc_encrypted', 'prestador',
   'prestador_id', 'nota_fiscal', 'numero_nota_fiscal',
   // display-label infra, not identifiers

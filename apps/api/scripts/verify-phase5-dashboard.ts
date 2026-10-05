@@ -375,8 +375,8 @@ async function f57(): Promise<void> {
 
 async function f58(): Promise<void> {
   section('5.8 — OPERATIONAL ALERTS');
-  // Expiring contracts: we create contracts with data_fim '2026-12-31' → they do not expire within 30 days
-  // So the `contracts_expiring_soon_count` counter reflects only real contracts with data_fim <30 days.
+  // Expiring contracts: we create contracts with end_date '2026-12-31' → they do not expire within 30 days
+  // So the `contracts_expiring_soon_count` counter reflects only real contracts with end_date <30 days.
   expect('contracts_expiring_soon_count is numeric', typeof DASH_A.contracts_expiring_soon_count === 'number');
   expect('open_tickets is numeric', typeof DASH_A.open_tickets === 'number');
   expect('overdue_invoices_count is numeric', typeof DASH_A.overdue_invoices_count === 'number');

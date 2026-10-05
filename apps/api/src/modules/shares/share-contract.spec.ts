@@ -141,6 +141,11 @@ const X_SHARE_FIELDS: Row2 = [
   ['acordo_url', 'agreement_url'],
   ['versao', 'version'],
   ['historico', 'history'],
+  ['holderName', 'holder_name'],
+  ['holderDoc', 'holder_document'],
+  ['workId', 'work_id'],
+  ['trackId', 'phonogram_id'],
+  ['role', 'party_role'],
 ];
 
 const X_SHARE_QUERY_FIELDS: Row2 = [
