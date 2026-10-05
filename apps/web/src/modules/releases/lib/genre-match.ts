@@ -9,6 +9,9 @@ export const GENRE_LABELS: Record<string, string> = Object.fromEntries(
 );
 export const genreLabel = (value: string): string =>
   hasOwnKey(GENRE_LABELS, value) ? GENRE_LABELS[value] : value;
+/** Review-step text of the primary and secondary genre labels ("—" when both are empty). */
+export const formatGenres = (genre: string, secondaryGenre: string): string =>
+  [genreLabel(genre), genreLabel(secondaryGenre)].filter(Boolean).join(", ") || "—";
 const GENRE_ALIASES: Record<string, string> = {
   eletronico: "eletronica",
   electronico: "eletronica",

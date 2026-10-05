@@ -57,7 +57,6 @@ import { formatReleaseDate, RELEASE_LANGUAGE_OPTIONS, RELEASE_TYPE_LABELS, relea
 import type { ProjectWithRelations } from "@/modules/projects/hooks/useProjects";
 import type { Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
-import type { PhonogramWithRelations } from "@/modules/catalog/hooks/usePhonograms";
 import { useEntityLookup, useEntityById } from "@/shared/hooks/useEntityLookup";
 import { storage } from "@/shared/lib/storage";
 import { canonicalReleaseMetadata } from "@/modules/releases/lib/release-metadata";
@@ -70,7 +69,9 @@ import {
   projectToReleaseSeed,
 } from "@/modules/releases/mappers";
 
-import { GENRE_OPTS, GENRE_LABELS, genreLabel, matchGenre, normStr } from "@/modules/releases/lib/genre-match";
+import { GENRE_OPTS, GENRE_LABELS, matchGenre } from "@/modules/releases/lib/genre-match";
+import { ReleaseGenresSummary } from "@/modules/releases/components/ReleaseGenresSummary";
+import { findPhonogramByTitle } from "@/modules/releases/lib/phonogram-title-lookup";
 import { toUserMessage } from "@/shared/lib/errors";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
 // ─────────────────────────────────────────────────────────────────────────────
@@ -98,23 +99,6 @@ const splitNames = (s: string | null | undefined): string[] => {
     .filter(Boolean);
   return parts.length > 0 ? parts : [""];
 };
-
-/**
- * Resolves a phonogram by exact title (after normalization) — server-side
- * search (ILIKE) instead of scanning the capped, unfiltered usePhonograms()
- * list (Task J). Used only for best-effort autofill (ISRC of a project track);
- * a few results are enough, so the small `pageSize` is intentional.
- */
-async function findPhonogramByTitle(title: string): Promise<PhonogramWithRelations | undefined> {
-  if (!title.trim()) return undefined;
-  const target = normStr(title);
-  const { items } = await storage.listPaged<PhonogramWithRelations & { id: string }>("phonograms", {
-    page: 1,
-    pageSize: 5,
-    filters: { search: title },
-  });
-  return items.find((f) => normStr(f.title ?? "") === target);
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NEW OPTION LISTS
@@ -2423,12 +2407,7 @@ export function ReleaseFormModal({
 
                   <span className="text-muted-foreground">Gêneros:</span>
                   <span>
-                    {[
-                      genreLabel(formData.genre),
-                      genreLabel(extraFields.secondaryGenre),
-                    ]
-                      .filter(Boolean)
-                      .join(", ") || "—"}
+                    <ReleaseGenresSummary genre={formData.genre} secondaryGenre={extraFields.secondaryGenre} />
                   </span>
 
                   <span className="text-muted-foreground">
