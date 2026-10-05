@@ -181,3 +181,13 @@ describe('isAllowedImportValue — invoices.payment_method', () => {
     expect(isAllowedImportValue('transactions', 'payment_method', 'alien')).toBe(true);
   });
 });
+
+describe('prototype keys are never tables, columns or canonicalizers', () => {
+  it.each(['constructor', 'toString', '__proto__', 'hasOwnProperty'])('%s leaves the value unchanged', (key) => {
+    expect(canonicalImportValue(key, 'status', 'x')).toBe('x');
+    expect(canonicalImportValue('shares', key, 'x')).toBe('x');
+    const obj = { a: 1 };
+    expect(canonicalImportJsonColumn(key, 'metadata', obj)).toBe(obj);
+    expect(canonicalImportJsonColumn('artists', key, obj)).toBe(obj);
+  });
+});

@@ -142,13 +142,13 @@ export type OperationalListOrigin = (typeof OPERATIONAL_ORIGINS)[number];
 
 /** Canonical slug for a (kind, slug) pair: legacy slugs are mapped, anything else is returned unchanged. */
 export function canonicalOperationalSlug(kind: string, slug: string): string {
-  const map = LEGACY_OPERATIONAL_SLUGS[kind];
+  const map = Object.prototype.hasOwnProperty.call(LEGACY_OPERATIONAL_SLUGS, kind) ? LEGACY_OPERATIONAL_SLUGS[kind] : undefined;
   return map && Object.prototype.hasOwnProperty.call(map, slug) ? map[slug] : slug;
 }
 
 /** Legacy slugs that the canonical slug replaced (reverse lookup, used by the read path). */
 export function legacyOperationalSlugs(kind: string, canonicalSlug: string): string[] {
-  const map = LEGACY_OPERATIONAL_SLUGS[kind] ?? {};
+  const map = Object.prototype.hasOwnProperty.call(LEGACY_OPERATIONAL_SLUGS, kind) ? LEGACY_OPERATIONAL_SLUGS[kind] : {};
   return Object.keys(map).filter((legacy) => map[legacy] === canonicalSlug);
 }
 

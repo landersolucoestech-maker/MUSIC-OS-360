@@ -1,0 +1,9 @@
+{
+  "agent": "security-reviewer",
+  "objective": "Phase \"review\" of workflow naming-normalization: Structural normalization of technical language, naming, internal contracts and compatibility: census, classification, canonical model, schema plan, destructive-approval gate, propagation, compatibility boundaries with tests, verification, residue scan and independent reviews. Never drops data without a recorded approval. Work together with: regression-reviewer.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-6910fce6",
+  "createdAt": "2026-10-04T23:20:10.768Z"
+}

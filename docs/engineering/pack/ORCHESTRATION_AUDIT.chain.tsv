@@ -6,14 +6,14 @@ schema-plan	naming-normalization	schema-plan	migration-planner	migration-audit,d
 destructive-approval	naming-normalization	destructive-approval	human-approval-agent	evaluate-human-approval,request-human-approval	specialist	none	-	-		WAITING_APPROVAL
 propagate	naming-normalization	propagate	implementation-engineer	safe-refactor,schema-normalization	specialist	none	-	incremental	evid-accfb061,evid-bdfe38bc,evid-020e8049,evid-b9ec999a,evid-7379e0f6,evid-c6821f1b,evid-2cf1b1f9,evid-79b01a2d,evid-ed4c11d7,evid-377f7d65,evid-fa0c763f,evid-52f91b3f,evid-a5a016cd	COMPLETED
 compatibility	naming-normalization	compatibility	qa-engineer	create-contract-tests,create-regression-tests	specialist	none	command evidence	-	evid-c2b94c2d,evid-574aea0e,evid-657fe67e	COMPLETED
-verify	naming-normalization	verify	migration-test-engineer	create-migration-tests,run-unit-tests,run-typecheck	specialist	none	-	global		RUNNING
-residue	naming-normalization	residue	dead-code-detector	residue-search,orphan-analysis	specialist	secrets-reviewer(r16-secrets); requirements-reviewer(r17-requirements); frontend-security-reviewer(r18-frontend-security); frontend-consistency-reviewer(r19-frontend-consistency)	-	-		PENDING
+verify	naming-normalization	verify	migration-test-engineer	create-migration-tests,run-unit-tests,run-typecheck	specialist	none	command evidence	global	evid-daf08923,evid-a910cdf8,evid-4e9d4248,evid-32863435,evid-aedad95d	COMPLETED
+residue	naming-normalization	residue	dead-code-detector	residue-search,orphan-analysis	specialist	secrets-reviewer(r16-secrets); requirements-reviewer(r17-requirements); frontend-security-reviewer(r18-frontend-security); frontend-consistency-reviewer(r19-frontend-consistency)	command evidence	-	evid-87a016cb,evid-a1839392,evid-2e084b0b	COMPLETED
 review	naming-normalization	review	security-reviewer	security-audit,diff-review,blast-radius-analysis	specialist	none	-	-		PENDING
 closure	naming-normalization	closure	git-auditor	definition-of-done	specialist	none	-	completion		PENDING
 r14-mutation	naming-normalization	compatibility	mutation-test-reviewer	create-regression-tests	n/a (review task)	-	-	-	evid-0f762c61	COMPLETED
-r16-secrets	naming-normalization	review	secrets-reviewer	secret-scan	n/a (review task)	-	-	-		PENDING
-r17-requirements	naming-normalization	review	requirements-reviewer	plan	n/a (review task)	-	-	-		PENDING
-r18-frontend-security	naming-normalization	review	frontend-security-reviewer	xss-audit	n/a (review task)	-	-	-		PENDING
-r19-frontend-consistency	naming-normalization	review	frontend-consistency-reviewer	naming-analysis	n/a (review task)	-	-	-		PENDING
+r16-secrets	naming-normalization	review	secrets-reviewer	secret-scan	n/a (review task)	-	-	-		RUNNING
+r17-requirements	naming-normalization	review	requirements-reviewer	plan	n/a (review task)	-	-	-		RUNNING
+r18-frontend-security	naming-normalization	review	frontend-security-reviewer	xss-audit	n/a (review task)	-	-	-		RUNNING
+r19-frontend-consistency	naming-normalization	review	frontend-consistency-reviewer	naming-analysis	n/a (review task)	-	-	-		RUNNING
 completion-gate	naming-normalization	completion-gate	completion-controller	definition-of-done	specialist	none	-	completion		PENDING
 r14-mutation-recovery-1	naming-normalization	r14-mutation-recovery-1	root-cause-investigator	root-cause-analysis	n/a (review task)	mutation-test-reviewer(r14-mutation)	command evidence	-	evid-8f9b8a3c	COMPLETED

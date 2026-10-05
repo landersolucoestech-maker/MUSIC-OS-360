@@ -76,9 +76,9 @@ export const LEGACY_LEAVE_TYPES: Readonly<Record<string, (typeof LEAVE_TYPES)[nu
 };
 
 export function canonicalContractType(value: unknown): unknown {
-  return typeof value === 'string' ? (LEGACY_CONTRACT_TYPES[value] ?? value) : value;
+  return typeof value === 'string' ? (Object.prototype.hasOwnProperty.call(LEGACY_CONTRACT_TYPES, value) ? LEGACY_CONTRACT_TYPES[value] : value) : value;
 }
 
 export function canonicalLeaveType(value: unknown): unknown {
-  return typeof value === 'string' ? (LEGACY_LEAVE_TYPES[value] ?? value) : value;
+  return typeof value === 'string' ? (Object.prototype.hasOwnProperty.call(LEGACY_LEAVE_TYPES, value) ? LEGACY_LEAVE_TYPES[value] : value) : value;
 }

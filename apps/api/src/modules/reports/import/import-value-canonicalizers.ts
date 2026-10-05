@@ -141,13 +141,18 @@ export function isAllowedImportValue(table: string, physicalColumn: string, valu
   return typeof canonical === 'string' && allowed.includes(canonical);
 }
 
+/** Own-property lookup: a prototype key (`constructor`, `__proto__`, ...) is never a table, column or canonicalizer. */
+function ownEntry<T>(map: Readonly<Record<string, T>>, key: string): T | undefined {
+  return Object.prototype.hasOwnProperty.call(map, key) ? map[key] : undefined;
+}
+
 /** Canonical value of an imported cell for `table.column` (unchanged when no mapping applies). */
 export function canonicalImportValue(table: string, physicalColumn: string, value: unknown): unknown {
   // An exported spreadsheet carries the PT-BR label of enum values (round-trip).
   // Multi-valued enum lists are split and mapped item by item by their canonicalizer.
   const fromLabel = isMultiValueLabelColumn(table, physicalColumn) ? null : valueFromExportLabel(table, physicalColumn, value);
   if (fromLabel !== null) return fromLabel;
-  const canonicalize = CANONICALIZERS[table]?.[physicalColumn];
+  const canonicalize = ownEntry(CANONICALIZERS, table) ? ownEntry(ownEntry(CANONICALIZERS, table)!, physicalColumn) : undefined;
   return canonicalize ? canonicalize(value) : value;
 }
 
@@ -163,6 +168,6 @@ const JSON_COLUMN_CANONICALIZERS: Readonly<Record<string, Readonly<Record<string
 
 /** Canonical jsonb object of an imported `table.column` (unchanged when no mapping applies). */
 export function canonicalImportJsonColumn(table: string, physicalColumn: string, value: Record<string, unknown>): unknown {
-  const canonicalize = JSON_COLUMN_CANONICALIZERS[table]?.[physicalColumn];
+  const canonicalize = ownEntry(JSON_COLUMN_CANONICALIZERS, table) ? ownEntry(ownEntry(JSON_COLUMN_CANONICALIZERS, table)!, physicalColumn) : undefined;
   return canonicalize ? canonicalize(value) : value;
 }

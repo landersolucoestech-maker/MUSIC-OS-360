@@ -209,8 +209,13 @@ const MULTI_VALUE_COLUMNS: Readonly<Record<string, ReadonlySet<string>>> = {
   artists: new Set(['specialties']),
 };
 
+/** Own-property test: a table or column named like a prototype member (`constructor`, `__proto__`) is never a label source. */
+function hasOwnKey(map: object, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(map, key);
+}
+
 export function isMultiValueLabelColumn(table: string, column: string): boolean {
-  return MULTI_VALUE_COLUMNS[table]?.has(column) ?? false;
+  return hasOwnKey(MULTI_VALUE_COLUMNS, table) ? MULTI_VALUE_COLUMNS[table].has(column) : false;
 }
 
 /**
@@ -221,11 +226,13 @@ export function isMultiValueLabelColumn(table: string, column: string): boolean 
 const LOGICAL_STATUS_COLUMN: Readonly<Record<string, string>> = { projects: 'projectStatus' };
 
 function labelsFor(table: string, column: string): Labels | null {
-  if (column === 'status' || LOGICAL_STATUS_COLUMN[table] === column) {
-    const domain = STATUS_DOMAIN_BY_TABLE[table];
+  if (column === 'status' || (hasOwnKey(LOGICAL_STATUS_COLUMN, table) && LOGICAL_STATUS_COLUMN[table] === column)) {
+    const domain = hasOwnKey(STATUS_DOMAIN_BY_TABLE, table) ? STATUS_DOMAIN_BY_TABLE[table] : undefined;
     return domain ? (STATUS_LABELS_PT_BR_BY_DOMAIN[domain] as Labels) : null;
   }
-  return COLUMN_LABELS[table]?.[column] ?? null;
+  if (!hasOwnKey(COLUMN_LABELS, table)) return null;
+  const byColumn = COLUMN_LABELS[table];
+  return hasOwnKey(byColumn, column) ? byColumn[column] : null;
 }
 
 const hasOwn = (labels: Labels, key: string): boolean => Object.prototype.hasOwnProperty.call(labels, key);

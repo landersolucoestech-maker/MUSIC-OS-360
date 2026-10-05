@@ -3,16 +3,16 @@
  "workflow": "naming-normalization",
  "counters": {
   "ORCHESTRATION_COVERAGE_GAPS": 4,
-  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 36,
-  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 33,
+  "APPLICABLE_AGENTS_WITHOUT_JUSTIFICATION": 34,
+  "APPLICABLE_SKILLS_WITHOUT_JUSTIFICATION": 31,
   "UNREVIEWED_CROSS_LAYER_CHANGES": 4,
   "UNVALIDATED_IMPLEMENTATIONS": 0
  },
  "gaps": [
-  "r16-secrets: PENDING",
-  "r17-requirements: PENDING",
-  "r18-frontend-security: PENDING",
-  "r19-frontend-consistency: PENDING"
+  "r16-secrets: RUNNING",
+  "r17-requirements: RUNNING",
+  "r18-frontend-security: RUNNING",
+  "r19-frontend-consistency: RUNNING"
  ],
  "applicableAgents": [
   {
@@ -83,8 +83,8 @@
   },
   {
    "name": "dead-code-detector",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "residue",
    "reason": ""
   },
   {
@@ -185,8 +185,8 @@
   },
   {
    "name": "migration-test-engineer",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "verify",
    "reason": ""
   },
   {
@@ -379,9 +379,9 @@
   },
   {
    "name": "create-migration-tests",
-   "used": "NO",
-   "tasks": "",
-   "reason": "no new migration beyond the guarded rename, whose spec already exists and was extended with the lock_timeout assertion"
+   "used": "YES",
+   "tasks": "verify",
+   "reason": ""
   },
   {
    "name": "create-regression-tests",
@@ -517,9 +517,9 @@
   },
   {
    "name": "orphan-analysis",
-   "used": "NO",
-   "tasks": "",
-   "reason": "applied by the residue phase (orphan-detector)"
+   "used": "YES",
+   "tasks": "residue",
+   "reason": ""
   },
   {
    "name": "pii-audit",
@@ -577,8 +577,8 @@
   },
   {
    "name": "residue-search",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "residue",
    "reason": ""
   },
   {
@@ -595,14 +595,14 @@
   },
   {
    "name": "run-typecheck",
-   "used": "NO",
-   "tasks": "",
-   "reason": "executed as command evidence (pnpm typecheck for api and web) in the final gates"
+   "used": "YES",
+   "tasks": "verify",
+   "reason": ""
   },
   {
    "name": "run-unit-tests",
-   "used": "NO",
-   "tasks": "",
+   "used": "YES",
+   "tasks": "verify",
    "reason": ""
   },
   {

@@ -273,3 +273,10 @@ describe('HR legacy vocabulary, one assertion per deprecated name (read-compat)'
     for (const t of LEAVE_TYPES) expect(canonicalLeaveType(t)).toBe(t);
   });
 });
+
+describe('hr legacy lookups never treat prototype keys as legacy values', () => {
+  it.each(['constructor', 'toString', 'hasOwnProperty', '__proto__'])('%s is returned unchanged', (key) => {
+    expect(canonicalContractType(key)).toBe(key);
+    expect(canonicalLeaveType(key)).toBe(key);
+  });
+});

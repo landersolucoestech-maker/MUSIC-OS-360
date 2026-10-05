@@ -5365,7 +5365,7 @@
    "file": "apps/api/src/modules/hr/dto/create-employee.dto.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "17cc56add06cb7c3f29ef0d3a28327cc6a83b092d8706fef4ed3e06eca77e7cb",
-   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
+   "testSha256": "2a93aa810c39072827fd66bdbe8946d92814b53c3e2d90ba7058c02bc92d5388",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -5394,11 +5394,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -5412,7 +5407,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
@@ -5482,7 +5483,7 @@
    "file": "apps/api/src/modules/hr/dto/create-leave-request.dto.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "efffb406dbc0cb76eaff6c91a0a7d2174fc4281e08fd97ab0aa0f0c85c58ee0c",
-   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
+   "testSha256": "2a93aa810c39072827fd66bdbe8946d92814b53c3e2d90ba7058c02bc92d5388",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -5517,11 +5518,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -5535,7 +5531,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
@@ -5618,7 +5620,7 @@
    "file": "apps/api/src/modules/hr/dto/create-payroll-entry.dto.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
    "fileSha256": "2e701047e34367d699a0861e10529445c50d9f2741bbdc01db0441179b5345b3",
-   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
+   "testSha256": "2a93aa810c39072827fd66bdbe8946d92814b53c3e2d90ba7058c02bc92d5388",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -5689,11 +5691,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -5710,13 +5707,19 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/hr/hr-legacy-fields.ts",
    "test": "apps/api/src/modules/hr/hr-contract.spec.ts",
-   "fileSha256": "e373dfad8685d01f24ecda9f5964bdbf9c16c0abdc35d22d1db017f56c1fd92b",
-   "testSha256": "a6797b76fbbe494349ca60a0dbbe2ad9924f7d9954703bb2dd2d2496d697ba66",
+   "fileSha256": "51bc7b68d37ff4f13358e32df24d0ce395ec01c4e12b242e733c24680993e96f",
+   "testSha256": "2a93aa810c39072827fd66bdbe8946d92814b53c3e2d90ba7058c02bc92d5388",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -5993,14 +5996,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
    "wildcardPredicate": 2,
    "declarations": [],
    "namesWithoutSite": [],
    "exhaustive": true,
    "fallbackOperators": 1,
    "inconclusive": 0,
-   "diagnosticsRelaxed": true,
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/hr/hr.controller.ts",
@@ -9021,7 +9024,7 @@
   {
    "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
    "test": "apps/api/src/database/operational-list-ap3.migration.spec.ts",
-   "fileSha256": "0dc7602ad3f60f3be44f53e485613e7cc1edcafb94fff3a55d879b203b2c244e",
+   "fileSha256": "af53a8cf37468b5bd8c58c12482506621a7a60931fb682f7802c43ba5c0b8fff",
    "testSha256": "4ae5368d6f4cc70610a0db843a064b18b53c3d388f76351b1026465fa7a1719a",
    "verdict": "PROVEN",
    "mutations": [
@@ -9033,11 +9036,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -9048,12 +9046,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/operational-lists/operational-list-vocabulary.ts",
    "test": "apps/api/src/database/operational-list-provenance.migration.spec.ts",
-   "fileSha256": "0dc7602ad3f60f3be44f53e485613e7cc1edcafb94fff3a55d879b203b2c244e",
+   "fileSha256": "af53a8cf37468b5bd8c58c12482506621a7a60931fb682f7802c43ba5c0b8fff",
    "testSha256": "68453ed8b6678bbac86ea23a11fa67b8c6bd677ef771a135633ecf1f13176380",
    "verdict": "PROVEN",
    "mutations": [
@@ -9311,11 +9315,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -9362,7 +9361,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/phonograms/dto/create-phonogram.dto.ts",
@@ -12413,8 +12418,8 @@
   {
    "file": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
    "test": "apps/api/src/modules/reports/import/import-value-canonicalizers.spec.ts",
-   "fileSha256": "ed60afdd8d485415d2391cc911970330eb941fa8febcfe90b93aa1a4eddc424d",
-   "testSha256": "9c03882288dd6b6eeee9fb470a27147fa37386a3380da63e2267b2c87ac9649e",
+   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
+   "testSha256": "d6a8dc54eaa8826d21899e232afed3cc616a61dbc5fe5b9bd9bd4452dbbd07b8",
    "verdict": "PROVEN",
    "mutations": [
     {
@@ -12431,11 +12436,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [],
@@ -12444,7 +12444,14 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "wildcardPredicate": 2,
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/shares/dto/shares.dto.ts",
