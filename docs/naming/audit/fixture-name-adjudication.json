@@ -4335,6 +4335,54 @@
    "file": "packages/types/src/status-labels.pt-br.ts",
    "class": "UI_TEXT",
    "reason": "pt-BR display label \"Período de teste\" of BillingStatus.TRIAL; the e2e fixtures use the word as test data and do not depend on it"
+  },
+  {
+   "name": "Contratação de Shows",
+   "file": "apps/api/src/modules/conversations/musicchat-automation.service.ts",
+   "class": "UI_TEXT",
+   "reason": "default MusicChat menu option label and response template title shown to the contact (tenant-editable display text); the routing identity is the English id/queueKey/sectorKey beside it"
+  },
+  {
+   "name": "despesas",
+   "file": "apps/web/src/modules/accounting/components/FinanceCategoryRuleModal.tsx",
+   "class": "UI_TEXT",
+   "reason": "user-visible pt-BR text (card description, label or heading) in the accounting UI; not a technical name"
+  },
+  {
+   "name": "despesas",
+   "file": "apps/web/src/modules/accounting/components/FinanceChart.tsx",
+   "class": "UI_TEXT",
+   "reason": "user-visible pt-BR text (card description, label or heading) in the accounting UI; not a technical name"
+  },
+  {
+   "name": "despesas",
+   "file": "apps/web/src/modules/accounting/pages/Accounting.tsx",
+   "class": "UI_TEXT",
+   "reason": "user-visible pt-BR text (card description, label or heading) in the accounting UI; not a technical name"
+  },
+  {
+   "name": "despesas",
+   "file": "apps/web/src/modules/accounting/pages/FinanceCategoryRules.tsx",
+   "class": "UI_TEXT",
+   "reason": "user-visible pt-BR text (card description, label or heading) in the accounting UI; not a technical name"
+  },
+  {
+   "name": "despesas",
+   "file": "apps/web/src/modules/accounting/pages/FinancialCategories.tsx",
+   "class": "UI_TEXT",
+   "reason": "user-visible pt-BR text (card description, label or heading) in the accounting UI; not a technical name"
+  },
+  {
+   "name": "despesas",
+   "file": "apps/web/src/modules/accounting/pages/ProfitAndLoss.tsx",
+   "class": "UI_TEXT",
+   "reason": "user-visible pt-BR text (card description, label or heading) in the accounting UI; not a technical name"
+  },
+  {
+   "name": "despesas",
+   "file": "packages/ai-skills/src/financial-classification/prompt.ts",
+   "class": "UI_TEXT",
+   "reason": "natural-language Portuguese instruction text of the financial classification prompt sent to the model (AI heuristic text stays Portuguese); not a technical name"
   }
  ]
 }
