@@ -851,7 +851,7 @@
    "line": 1071,
    "text": "applyDeprecatedFieldAliases(body, ABRAMUS_WORK_DEPRECATED_FIELDS)",
    "fileSha256": "2cb9eacbdafb2cffa1b3217885423100c7ab10349650118f08ae777622be9760",
-   "testsSha256": "3419173bd1ce7657fd8bc2d684142584f75ff2af6d9aae4e65defdec70e3b360",
+   "testsSha256": "bbe3990917a48857aacf152c1345830c1639834c3c5b0238eae4a33edaf1a641",
    "testDir": "apps/api/src/modules/integrations",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -862,7 +862,7 @@
    "line": 1095,
    "text": "applyDeprecatedFieldAliases({ period, periodo: legacyPeriod }, ABRAMUS_STATEMENTS_DEPRECATED_QUERY)",
    "fileSha256": "2cb9eacbdafb2cffa1b3217885423100c7ab10349650118f08ae777622be9760",
-   "testsSha256": "3419173bd1ce7657fd8bc2d684142584f75ff2af6d9aae4e65defdec70e3b360",
+   "testsSha256": "bbe3990917a48857aacf152c1345830c1639834c3c5b0238eae4a33edaf1a641",
    "testDir": "apps/api/src/modules/integrations",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
