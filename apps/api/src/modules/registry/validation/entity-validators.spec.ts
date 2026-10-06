@@ -102,12 +102,64 @@ describe('RecordingRegistryValidationService', () => {
     isrc: 'BRABC2600001',
   });
 
-  it('passes a valid recording', () => {
-    expect(errors(recording.validate(asRec(valid()), []))).toHaveLength(0);
+  // The Phonogram split totals exactly 100% before the formal registration.
+  const splits = (): ShareEntity[] => [
+    share({ party_role: 'performer', holder_name: 'A', percentage: 60 as never }),
+    share({ party_role: 'producer', holder_name: 'B', percentage: 40 as never }),
+  ];
+
+  it('passes a valid recording (splits total 100%)', () => {
+    expect(errors(recording.validate(asRec(valid()), splits()))).toHaveLength(0);
+  });
+
+  describe('the Phonogram split totals exactly 100% at the formal registry stage', () => {
+    it('flags a recording with no splits at all', () => {
+      expect(codes(recording.validate(asRec(valid()), []))).toContain('recording_split_not_100');
+    });
+
+    it('flags splits that do not sum to 100% and reports the actual sum', () => {
+      const issues = recording.validate(asRec(valid()), [share({ party_role: 'performer', holder_name: 'A', percentage: 60 as never })]);
+      expect(codes(issues)).toContain('recording_split_not_100');
+      expect(issues.find((i) => i.code === 'recording_split_not_100')?.message).toContain('60.00%');
+    });
+
+    it('flags splits above 100%', () => {
+      const issues = recording.validate(asRec(valid()), [
+        share({ party_role: 'performer', holder_name: 'A', percentage: 70 as never }),
+        share({ party_role: 'producer', holder_name: 'B', percentage: 50 as never }),
+      ]);
+      expect(codes(issues)).toContain('recording_split_not_100');
+    });
+
+    it('accepts exactly 100% within the rounding tolerance', () => {
+      const issues = recording.validate(asRec(valid()), [
+        share({ party_role: 'performer', holder_name: 'A', percentage: 33.34 as never }),
+        share({ party_role: 'producer', holder_name: 'B', percentage: 33.33 as never }),
+        share({ party_role: 'producer', holder_name: 'C', percentage: 33.33 as never }),
+      ]);
+      expect(codes(issues)).not.toContain('recording_split_not_100');
+    });
+
+    it('flags an eligible share without a percentage and an out-of-range percentage', () => {
+      const issues = recording.validate(asRec(valid()), [
+        share({ id: 's1', party_role: 'performer', holder_name: 'A', percentage: null as never }),
+        share({ party_role: 'producer', holder_name: 'B', percentage: 120 as never }),
+      ]);
+      expect(codes(issues)).toEqual(expect.arrayContaining(['recording_split_percentage_missing', 'recording_split_percentage_invalid']));
+    });
+
+    it('does not count financial shares or soft-deleted shares in the sum', () => {
+      const issues = recording.validate(asRec(valid()), [
+        ...splits(),
+        financialShare({ party_role: 'producer', holder_name: 'Financeiro', percentage: 30 as never }),
+        share({ party_role: 'producer', holder_name: 'Old', percentage: 50 as never, deleted_at: new Date() as never }),
+      ]);
+      expect(codes(issues)).not.toContain('recording_split_not_100');
+    });
   });
 
   it('does not require a linked work: a recording without a work has no work issue and is otherwise valid', () => {
-    const issues = recording.validate(asRec({ ...valid(), work_id: null }), []);
+    const issues = recording.validate(asRec({ ...valid(), work_id: null }), splits());
     expect(codes(issues)).not.toContain('recording_work_required');
     expect(errors(issues)).toHaveLength(0);
   });

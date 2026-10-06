@@ -144,6 +144,25 @@ export class RecordingRegistryValidationService {
       issues.push(issue(E, 'recording_no_interpreter', 'interpreters', 'Fonograma precisa de pelo menos um intérprete.'));
     }
 
+    // The Phonogram split is its own structure (independent of the Work split and of the Release shares) and must
+    // total exactly 100% before the formal registration. While the Phonogram is only being built (for example created
+    // from a Project) partial or empty splits are allowed; this check runs only at the registry stage.
+    let percentageSum = 0;
+    for (const s of eligible) {
+      if (s.percentage == null) {
+        issues.push(issue(E, 'recording_split_percentage_missing', 'splits.percentage', `Share ${s.id} elegível para registro está sem percentage.`));
+        continue;
+      }
+      const p = toPercent(s.percentage);
+      if (p < 0 || p > 100) {
+        issues.push(issue(E, 'recording_split_percentage_invalid', 'splits', `Percentual inválido (${p}). Deve estar entre 0 e 100.`));
+      }
+      percentageSum += p;
+    }
+    if (Math.abs(percentageSum - 100) > 0.01) {
+      issues.push(issue(E, 'recording_split_not_100', 'splits', `A soma dos splits do fonograma deve ser 100% (atual: ${percentageSum.toFixed(2)}%).`));
+    }
+
     if (recording.isrc && !isValidIsrc(recording.isrc)) {
       issues.push(issue(E, 'recording_isrc_invalid', 'isrc', 'ISRC inválido. Deixe vazio para PENDING_ISRC ou corrija o formato.'));
     }
