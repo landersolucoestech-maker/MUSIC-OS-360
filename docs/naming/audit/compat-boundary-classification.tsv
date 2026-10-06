@@ -1903,11 +1903,11 @@ apps/web/src/modules/releases/lib/genre-match.ts	eletronico	objectKey	PERSISTED_
 apps/web/src/modules/releases/lib/genre-match.ts	electronico	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/releases/lib/genre-match.ts	eletronica	value	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/releases/lib/genre-match.ts	bossa-nova	value	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	MODULE		
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	assessoria	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	contador	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	empresario	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	financeiro	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	juridico	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	assessoria	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	contador	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	empresario	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	financeiro	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	juridico	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/shared/lib/masks.ts	maskCPFCNPJ	identifier	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/shared/lib/masks.ts	maskCEP	identifier	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/shared/lib/masks.ts	cleanCEP	identifier	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
@@ -2157,8 +2157,8 @@ apps/api/src/modules/phonograms/phonograms.service.spec.ts	titulo	objectKey	LEGA
 apps/api/src/modules/works/works-field-contract.spec.ts	co_compositores	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
 apps/api/src/modules/works/works-field-contract.spec.ts	detentores	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
 apps/api/src/modules/works/works-field-contract.spec.ts	titulares	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	editora_musical	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/components/ArtistVision360Modal.tsx	gestor	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	editora_musical	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	gestor	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/contracts/pages/CategoryRegistry.tsx	Nome	objectKey	USER_FACING_TEXT	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/modules/contracts/pages/VariableRegistry.tsx	Campo	objectKey	USER_FACING_TEXT	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/modules/contracts/pages/VariableRegistry.tsx	Nome	objectKey	USER_FACING_TEXT	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
@@ -4334,3 +4334,14 @@ apps/web/src/modules/artist/components/TeamContactsCRM.category-labels.test.tsx	
 apps/web/src/modules/crm-relationships/components/ContactsTable.labels.test.tsx	VIDEOMAKER	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/events/hooks/useScheduleParticipants.contact-category.test.tsx	VIDEOMAKER	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/hr/pages/HR.employees-loading.test.tsx	Financeiro	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.ts	editora	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.ts	gravadora	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	assessoria	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	contador	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	editora	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	editora_musical	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	empresario	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	financeiro	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	gestor	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	gravadora	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/artist/lib/team-contact-category.test.ts	juridico	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	

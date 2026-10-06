@@ -11359,9 +11359,10 @@
   {
    "file": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "test": "apps/api/src/modules/reports/form-contracts/report-column-ids.spec.ts",
-   "fileSha256": "20bebdba2718cc74b8a83cfc69f5855d079890378e81d2a2a09800bc18b67db3",
+   "fileSha256": "4f0c5afd6399048888067aa164a48e0850f8289fe5dd06fc6bcec411711d258f",
    "testSha256": "49902458ea76428e6ee54b8fed20d8d19db2937ea040060fcce8e711799b8760",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
