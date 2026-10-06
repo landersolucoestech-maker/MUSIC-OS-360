@@ -5964,7 +5964,7 @@ BACKEND_API	identifier	apps/api/src/modules/contracts/contracts.service.ts	prope
 BACKEND_API	identifier	apps/api/src/modules/contracts/contracts.service.ts	property-read	observacoes	2	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/contracts/contracts.service.ts	property-read	tipo	6	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/contracts/contracts.service.ts	property-read	titulo	8	0	NORMALIZED	
-BACKEND_API	identifier	apps/api/src/modules/contracts/contracts.service.ts	property-read	versoes	2	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+BACKEND_API	identifier	apps/api/src/modules/contracts/contracts.service.ts	property-read	versoes	2	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/contracts/dto/contract-party-ref.dto.ts	property	artistas	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/contracts/dto/contract-party-ref.dto.ts	property	clientes	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/contracts/dto/contract-party-ref.dto.ts	property	nome	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14631,7 +14631,7 @@ TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	data_fim	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	data_inicio	2	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	documentos	1	0	NORMALIZED	
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	exclusivo	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	exclusivo	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	gravacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	nome	2	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contracts.service.spec.ts	object-key	notas	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY

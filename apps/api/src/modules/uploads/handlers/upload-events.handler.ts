@@ -12,18 +12,8 @@ import { UploadStatus } from '@music-os-360/types';
 import { DOMAIN_EVENTS } from '../../../core/events/events.service';
 import type { DomainEvent } from '../../../core/events/events.service';
 import type { AssetUploadedPayload } from '../../../core/events/domain-events.types';
-
-const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
-const ALLOWED_MIME_TYPES = new Set([
-  'audio/mpeg', 'audio/wav', 'audio/flac', 'audio/aac', 'audio/ogg',
-  'audio/x-m4a', 'audio/mp4',
-  'video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm',
-  'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml',
-  'application/pdf',
-  'text/plain',
-  XLSX_MIME,
-]);
+import { StorageService, ALLOWED_UPLOAD_MIME_TYPES } from '../../../storage/storage.service';
+import { contentMatchesDeclaredType } from '../content-signature';
 
 const MAX_SIZE_BYTES: Record<string, number> = {
   'audio/': 500 * 1024 * 1024,
@@ -48,8 +38,19 @@ export class UploadEventsHandler {
   constructor(
     @Inject(DATA_SOURCE) @Optional() dataSource: DataSource | null,
     @Optional() private readonly dbContext?: DatabaseContextService,
+    @Optional() private readonly storage?: StorageService,
   ) {
     if (dataSource) this.uploadRepo = dataSource.getRepository(UploadEntity);
+  }
+
+  /** Removes the stored object of a rejected upload so no orphan stays in the bucket. A failure is logged, never thrown. */
+  private async discardObject(r2Key: string | null | undefined, uploadId: string, tenantId: string): Promise<void> {
+    if (!r2Key || !this.storage) return;
+    try {
+      await this.storage.delete(r2Key);
+    } catch (error) {
+      this.logger.warn(`Rejected upload object could not be deleted: upload=${uploadId} tenant=${tenantId} - ${String(error)}`);
+    }
   }
 
   private async markRejected(
@@ -91,7 +92,7 @@ export class UploadEventsHandler {
 
       const record = await repository.findOne({
         where: { id: uploadId, tenant_id: tenantId },
-        select: ['size_bytes', 'mime_type'],
+        select: ['size_bytes', 'mime_type', 'r2_key'],
       });
       if (!record) {
         throw new Error(`Upload not found in tenant: upload=${uploadId} tenant=${tenantId}`);
@@ -99,15 +100,17 @@ export class UploadEventsHandler {
       if (record.mime_type && record.mime_type !== mimeType) {
         const reason = `MIME do evento diverge do registro persistido`;
         await this.markRejected(repository, uploadId, tenantId, reason);
+        await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(
           `${reason}: upload=${uploadId} tenant=${tenantId} event=${mimeType} stored=${record.mime_type}`,
         );
         return;
       }
 
-      if (!ALLOWED_MIME_TYPES.has(mimeType)) {
+      if (!ALLOWED_UPLOAD_MIME_TYPES.has(mimeType)) {
         const reason = `MIME não permitido: ${mimeType}`;
         await this.markRejected(repository, uploadId, tenantId, reason);
+        await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
         return;
       }
@@ -117,12 +120,45 @@ export class UploadEventsHandler {
       if (sizeBytes <= 0) {
         const reason = 'Tamanho de arquivo ausente ou inválido';
         await this.markRejected(repository, uploadId, tenantId, reason);
+        await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
         return;
       }
       if (sizeBytes > maxBytes) {
         const reason = `Tamanho ${sizeBytes} excede o limite ${maxBytes} para ${mimeType}`;
         await this.markRejected(repository, uploadId, tenantId, reason);
+        await this.discardObject(record.r2_key, uploadId, tenantId);
+        this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
+        return;
+      }
+
+      // The declared type and size come from the client. What is really stored decides.
+      if (!this.storage || !record.r2_key) {
+        throw new Error(`UploadEventsHandler cannot verify the stored object: upload=${uploadId} tenant=${tenantId}`);
+      }
+      let inspected: { size: number; head: Buffer };
+      try {
+        inspected = await this.storage.inspectObject(record.r2_key);
+      } catch (error) {
+        const status = (error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode;
+        const name = (error as { name?: string }).name;
+        if (status !== 404 && name !== 'NotFound' && name !== 'NoSuchKey') throw error;
+        const reason = 'Arquivo não encontrado no armazenamento';
+        await this.markRejected(repository, uploadId, tenantId, reason);
+        this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
+        return;
+      }
+      if (inspected.size !== sizeBytes) {
+        const reason = `Tamanho real ${inspected.size} diverge do declarado ${sizeBytes}`;
+        await this.markRejected(repository, uploadId, tenantId, reason);
+        await this.discardObject(record.r2_key, uploadId, tenantId);
+        this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
+        return;
+      }
+      if (!contentMatchesDeclaredType(mimeType, inspected.head)) {
+        const reason = `Conteúdo do arquivo não corresponde ao tipo declarado (${mimeType})`;
+        await this.markRejected(repository, uploadId, tenantId, reason);
+        await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
         return;
       }

@@ -67,6 +67,11 @@ function extractExtension(fileName: string): string | null {
 
 export type UploadCategory = keyof typeof ALLOWED_MIMES;
 
+/** Every content type the platform accepts at upload: the single source for presign and for the confirm-time validation. */
+export const ALLOWED_UPLOAD_MIME_TYPES: ReadonlySet<string> = new Set(
+  Object.values(ALLOWED_MIMES).flatMap((list) => [...list] as string[]),
+);
+
 export interface UploadOptions {
   key: string;
   body: Buffer | Uint8Array | string;
@@ -226,6 +231,25 @@ export class StorageService {
       contentType: res.ContentType,
       contentLength: res.ContentLength,
     };
+  }
+
+  /**
+   * Reads what is really stored: the object size from HEAD and its first bytes from a ranged GET, so the
+   * content can be checked against the declared type without downloading the file.
+   */
+  async inspectObject(key: string, headBytes = 1024): Promise<{ size: number; head: Buffer }> {
+    const client = this.getClient();
+    const meta = await client.send(new HeadObjectCommand({ Bucket: this.r2Bucket, Key: key }));
+    const size = meta.ContentLength ?? 0;
+    if (size <= 0) return { size, head: Buffer.alloc(0) };
+    const res = await client.send(new GetObjectCommand({
+      Bucket: this.r2Bucket,
+      Key: key,
+      Range: `bytes=0-${Math.min(headBytes, size) - 1}`,
+    }));
+    const chunks: Buffer[] = [];
+    for await (const chunk of res.Body as AsyncIterable<Uint8Array>) chunks.push(Buffer.from(chunk));
+    return { size, head: Buffer.concat(chunks) };
   }
 
   async delete(key: string): Promise<void> {
