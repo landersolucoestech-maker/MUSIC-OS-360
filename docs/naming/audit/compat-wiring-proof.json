@@ -533,8 +533,8 @@
    "line": 140,
    "text": "joinContractPartyRefs(this.repo!.createQueryBuilder('c'))",
    "target": "apps/api/src/modules/contracts/contract-party-refs.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -545,8 +545,8 @@
    "line": 145,
    "text": "toContractResponse(result)",
    "target": "apps/api/src/modules/contracts/contract-party-refs.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -557,8 +557,8 @@
    "line": 197,
    "text": "canonicalContractVersions((dto['versions'] ?? dto['versoes'] ?? []) as unknown[])",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -569,8 +569,8 @@
    "line": 223,
    "text": "resolveContractAliases(rest)",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -581,8 +581,8 @@
    "line": 236,
    "text": "canonicalContractCategorySlug(normalized['type'])",
    "target": "apps/api/src/modules/contracts/contract-category-slugs.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -593,8 +593,8 @@
    "line": 284,
    "text": "resolveContractAliases(restFields)",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -605,8 +605,8 @@
    "line": 291,
    "text": "canonicalContractCategorySlug(normalized['type'])",
    "target": "apps/api/src/modules/contracts/contract-category-slugs.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -617,8 +617,8 @@
    "line": 74,
    "text": "resolveContractQueryAliases(q)",
    "target": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -629,8 +629,8 @@
    "line": 77,
    "text": "joinContractPartyRefs(this.repo!.createQueryBuilder('c'))",
    "target": "apps/api/src/modules/contracts/contract-party-refs.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -641,8 +641,8 @@
    "line": 84,
    "text": "contractCategorySlugVariants(resolvedQuery.type)",
    "target": "apps/api/src/modules/contracts/contract-category-slugs.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
-   "testsSha256": "bc2cdb1cfb13b71e92d722df6c7e0e91b6012c7b63e77a29426c3b92e5bc64c2",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
+   "testsSha256": "efe0f9622fda7a926b70df022a18522b72d3e1360ddc7d960654b6e1c9d38c2d",
    "testDir": "apps/api/src/modules/contracts",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -842,28 +842,6 @@
    "fileSha256": "13f42c4b9ee1c87c8ef3629df1a29bb3b15e8393d45a8a63162379ef2d7aa8fe",
    "testsSha256": "bacbab947be1205312517bc56752834a1bc681fd282c4b1f348832cc0ff77e02",
    "testDir": "apps/api/src/modules/hr",
-   "operator": "CALL_BYPASS",
-   "verdict": "KILLED"
-  },
-  {
-   "kind": "HELPER",
-   "file": "apps/api/src/modules/integrations/integrations.controller.ts",
-   "line": 1071,
-   "text": "applyDeprecatedFieldAliases(body, ABRAMUS_WORK_DEPRECATED_FIELDS)",
-   "fileSha256": "2cb9eacbdafb2cffa1b3217885423100c7ab10349650118f08ae777622be9760",
-   "testsSha256": "4cd4a5541c65f389c9ab6f7c3a58107922e8e368070299e57e6c75e275291090",
-   "testDir": "apps/api/src/modules/integrations",
-   "operator": "CALL_BYPASS",
-   "verdict": "KILLED"
-  },
-  {
-   "kind": "HELPER",
-   "file": "apps/api/src/modules/integrations/integrations.controller.ts",
-   "line": 1095,
-   "text": "applyDeprecatedFieldAliases({ period, periodo: legacyPeriod }, ABRAMUS_STATEMENTS_DEPRECATED_QUERY)",
-   "fileSha256": "2cb9eacbdafb2cffa1b3217885423100c7ab10349650118f08ae777622be9760",
-   "testsSha256": "4cd4a5541c65f389c9ab6f7c3a58107922e8e368070299e57e6c75e275291090",
-   "testDir": "apps/api/src/modules/integrations",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
   },
@@ -1333,7 +1311,7 @@
    "text": "canonicalReleaseMetadata(columns.metadata)",
    "target": "apps/api/src/common/compat/release-metadata.ts",
    "fileSha256": "c9673536ebd227091352912ec035d3606880025848679185c14c2d2ebb8c3ccc",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1344,7 +1322,7 @@
    "line": 54,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, aliases)",
    "fileSha256": "eb6bc60c44a7fb779d10dbe2e56770d788f3c5a348d1bae04683e303301901c1",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1355,7 +1333,7 @@
    "line": 59,
    "text": "applyDeprecatedFieldAliases(input as Record<string, unknown>, RELEASE_DEPRECATED_FIELDS)",
    "fileSha256": "eb6bc60c44a7fb779d10dbe2e56770d788f3c5a348d1bae04683e303301901c1",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1367,7 +1345,7 @@
    "text": "canonicalReleaseMetadata(out['metadata'])",
    "target": "apps/api/src/common/compat/release-metadata.ts",
    "fileSha256": "eb6bc60c44a7fb779d10dbe2e56770d788f3c5a348d1bae04683e303301901c1",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1375,11 +1353,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/releases/releases.service.ts",
-   "line": 142,
+   "line": 143,
    "text": "joinReleaseArtistRef(this.repo!.createQueryBuilder('r'))",
    "target": "apps/api/src/modules/releases/release-artist-ref.ts",
-   "fileSha256": "c0b54973003bf6efdb5ed507061ce90f80372e04116cdece8ad63f8d2c1ef21e",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "fileSha256": "9e80e9486426757739674a360bb911798f607831615e1fb32f19678f4519b4db",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1387,11 +1365,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/releases/releases.service.ts",
-   "line": 147,
+   "line": 148,
    "text": "toReleaseResponse(result)",
    "target": "apps/api/src/modules/releases/release-artist-ref.ts",
-   "fileSha256": "c0b54973003bf6efdb5ed507061ce90f80372e04116cdece8ad63f8d2c1ef21e",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "fileSha256": "9e80e9486426757739674a360bb911798f607831615e1fb32f19678f4519b4db",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1399,11 +1377,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/releases/releases.service.ts",
-   "line": 151,
+   "line": 152,
    "text": "canonicalizeReleaseInput(input)",
    "target": "apps/api/src/modules/releases/release-legacy-fields.ts",
-   "fileSha256": "c0b54973003bf6efdb5ed507061ce90f80372e04116cdece8ad63f8d2c1ef21e",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "fileSha256": "9e80e9486426757739674a360bb911798f607831615e1fb32f19678f4519b4db",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1411,11 +1389,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/releases/releases.service.ts",
-   "line": 256,
+   "line": 257,
    "text": "canonicalizeReleaseInput(input)",
    "target": "apps/api/src/modules/releases/release-legacy-fields.ts",
-   "fileSha256": "c0b54973003bf6efdb5ed507061ce90f80372e04116cdece8ad63f8d2c1ef21e",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "fileSha256": "9e80e9486426757739674a360bb911798f607831615e1fb32f19678f4519b4db",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1423,11 +1401,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/releases/releases.service.ts",
-   "line": 91,
+   "line": 92,
    "text": "joinReleaseArtistRef(this.repo!.createQueryBuilder('r'))",
    "target": "apps/api/src/modules/releases/release-artist-ref.ts",
-   "fileSha256": "c0b54973003bf6efdb5ed507061ce90f80372e04116cdece8ad63f8d2c1ef21e",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "fileSha256": "9e80e9486426757739674a360bb911798f607831615e1fb32f19678f4519b4db",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1435,11 +1413,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/releases/releases.service.ts",
-   "line": 96,
+   "line": 97,
    "text": "canonicalReleaseType(q.type)",
    "target": "apps/api/src/modules/releases/release-legacy-fields.ts",
-   "fileSha256": "c0b54973003bf6efdb5ed507061ce90f80372e04116cdece8ad63f8d2c1ef21e",
-   "testsSha256": "df3dfcae52d59788ff550ea835bf8cdce3d77f468a3cd9695ceaeca6484aba28",
+   "fileSha256": "9e80e9486426757739674a360bb911798f607831615e1fb32f19678f4519b4db",
+   "testsSha256": "8d3772c79dd2e755b311e45d4a512476ee7ce17a27c804a61794b11467687a27",
    "testDir": "apps/api/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1451,7 +1429,7 @@
    "text": "projectTrackSoloFeatLabel(track.solo_feat)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1463,7 +1441,7 @@
    "text": "projectTrackOriginalRemixLabel(track.original_remix)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1475,7 +1453,7 @@
    "text": "projectTrackInstrumentalLabel(track.instrumental)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1487,7 +1465,7 @@
    "text": "projectTrackLanguageLabel(track.language)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "4ccf663c7fa5a0370a07be50b17d6cade287e07f2c6bbdfc76cd1a1bae3a1628",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1499,7 +1477,7 @@
    "text": "canonicalProjectTrackImportRows(items)",
    "target": "apps/api/src/modules/projects/project-track-vocabulary.ts",
    "fileSha256": "5838cb37505f21df986e5fd9db2e9b620a63450d71afe3e77f7f181c94148728",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1511,7 +1489,7 @@
    "text": "canonicalReleaseTrack(t)",
    "target": "apps/api/src/common/compat/release-metadata.ts",
    "fileSha256": "347baa6e82d691fefbdfe70def21e770da778c5ad97994769049db13ebbae953",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1523,7 +1501,7 @@
    "text": "getReportFormContract(entity.tableName)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "6373eb053c17757a781d37b4355860223bc6344e25e714376149633540a6d907",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1535,7 +1513,7 @@
    "text": "getReportFormContract(entity.tableName)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "6373eb053c17757a781d37b4355860223bc6344e25e714376149633540a6d907",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1547,7 +1525,7 @@
    "text": "contractDirectColumns(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "6373eb053c17757a781d37b4355860223bc6344e25e714376149633540a6d907",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1559,7 +1537,7 @@
    "text": "tryGetFieldLabelPtBr(dbName)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "9e5ff76517de9d1850746d2689a534ff7b75ba3ebe997422f54a67f0093d7558",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1571,7 +1549,7 @@
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "60cb5d3f63428ca4a47a44990623fc0f3fff95153220458a0039d29fadb29e8c",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1583,7 +1561,7 @@
    "text": "contractEncryptedFields(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "60cb5d3f63428ca4a47a44990623fc0f3fff95153220458a0039d29fadb29e8c",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1595,7 +1573,7 @@
    "text": "contractLegacyPlaintextColumns(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "60cb5d3f63428ca4a47a44990623fc0f3fff95153220458a0039d29fadb29e8c",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1607,7 +1585,7 @@
    "text": "getFieldLabelPtBr(key)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "0a3c8b9cc224db95ab34d14d8294d3edd56adc57806934b9f55cca261484492c",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1619,7 +1597,7 @@
    "text": "transactionSlugVariants(value)",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
    "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1631,7 +1609,7 @@
    "text": "getReportFormContract(def.tableName)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1643,7 +1621,7 @@
    "text": "contractLegacyPlaintextColumns(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1655,7 +1633,7 @@
    "text": "contractMetadataFields(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1667,7 +1645,7 @@
    "text": "contractMetadataLegacyKeys(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "074a0700cae3ab11a111f374310ca45fd563c6bf5a2840144c7b5fbcb118ba8a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1679,7 +1657,19 @@
    "text": "tryGetFieldLabelPtBr(columnKey)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "5e2254bc7b30dcaed920020d3810af42d0fa0394ec34798249f7acac3d880a36",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
+   "testDir": "apps/api/src/modules/reports",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "kind": "CONSUMER",
+   "file": "apps/api/src/modules/reports/import/import-catalog-rules.ts",
+   "line": 17,
+   "text": "importArtistSpecialties(values['specialties'])",
+   "target": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
+   "fileSha256": "5c8965a4e2b40abf41df583371a4d327498ac7f69f93deae420106a209e27b68",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1687,11 +1677,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 141,
+   "line": 143,
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1699,11 +1689,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 146,
+   "line": 148,
    "text": "getFieldLabelPtBr(error.column)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1711,11 +1701,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 211,
+   "line": 214,
    "text": "getFieldLabelPtBr(def.identityColumn)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1723,11 +1713,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 233,
+   "line": 236,
    "text": "getFieldLabelPtBr(column)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1735,11 +1725,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 309,
+   "line": 312,
    "text": "artistUrlFieldViolations(values)",
    "target": "apps/api/src/modules/artists/artist-input-sanitizer.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1747,11 +1737,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 310,
+   "line": 313,
    "text": "getFieldLabelPtBr(field)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1759,11 +1749,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 336,
+   "line": 354,
    "text": "contractEncryptedFields(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1771,11 +1761,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 337,
+   "line": 355,
    "text": "contractMetadataFields(contract)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1783,11 +1773,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 373,
+   "line": 396,
    "text": "canonicalImportValue(def.tableName, physicalColumn, rawValue)",
    "target": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1795,11 +1785,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 379,
+   "line": 402,
    "text": "canonicalImportJsonColumn(def.tableName, physicalColumn, object)",
    "target": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1807,11 +1797,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 439,
+   "line": 462,
    "text": "canonicalTransactionSlug((typeof raw === 'string' && raw.trim()) || UNCATEGORIZED_PLACEHOLDER)",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1819,11 +1809,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 441,
+   "line": 464,
    "text": "isUncategorizedCategory(category)",
    "target": "apps/api/src/modules/transactions/transaction-category-slugs.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1831,11 +1821,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/reports/import/import-commit.service.ts",
-   "line": 442,
+   "line": 465,
    "text": "canonicalTransactionType(rowData['transaction_type'])",
    "target": "apps/api/src/modules/transactions/transaction-legacy-fields.ts",
-   "fileSha256": "8d3e588728c44f8f9484e72b940135a635c613cbd17774c52e64202af048f7b5",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "03388dbbcd9123ee0b7204fdbb45f87accafb3848c8ac936458318449a7920a1",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1847,7 +1837,7 @@
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "91ef87db3c82a6185be339f606dcdbe41c0a222c14f71b4cd65c23fb54a123ee",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1859,7 +1849,7 @@
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "91ef87db3c82a6185be339f606dcdbe41c0a222c14f71b4cd65c23fb54a123ee",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1871,7 +1861,7 @@
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "91ef87db3c82a6185be339f606dcdbe41c0a222c14f71b4cd65c23fb54a123ee",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1883,7 +1873,7 @@
    "text": "normalizeFieldKey(h)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "bcfe9432656284f993f1490b23114cdd0bd961cad56e7a65c8ff519e5693bb3f",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1895,7 +1885,7 @@
    "text": "normalizeFieldKey(h)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "bcfe9432656284f993f1490b23114cdd0bd961cad56e7a65c8ff519e5693bb3f",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1907,7 +1897,7 @@
    "text": "getFieldLabelPtBr(col)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "bcfe9432656284f993f1490b23114cdd0bd961cad56e7a65c8ff519e5693bb3f",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1919,7 +1909,7 @@
    "text": "normalizeFieldKey(col)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "bcfe9432656284f993f1490b23114cdd0bd961cad56e7a65c8ff519e5693bb3f",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1931,7 +1921,7 @@
    "text": "getFieldLabelPtBr(column)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "21bbb5ff57fbbb071c12885056ca294821539910515dbe365e8bc2c925caa2f4",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1943,7 +1933,7 @@
    "text": "getReportFormContract(entity)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "21bbb5ff57fbbb071c12885056ca294821539910515dbe365e8bc2c925caa2f4",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1955,7 +1945,7 @@
    "text": "isAllowedImportValue(definition.tableName, column, coerced.value)",
    "target": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
    "fileSha256": "21bbb5ff57fbbb071c12885056ca294821539910515dbe365e8bc2c925caa2f4",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1967,7 +1957,7 @@
    "text": "normalizeFieldKey(column)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "21bbb5ff57fbbb071c12885056ca294821539910515dbe365e8bc2c925caa2f4",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1979,7 +1969,7 @@
    "text": "normalizeFieldKey(unknown)",
    "target": "apps/api/src/modules/reports/i18n/field-labels.pt-br.ts",
    "fileSha256": "21bbb5ff57fbbb071c12885056ca294821539910515dbe365e8bc2c925caa2f4",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -1990,8 +1980,8 @@
    "line": 52,
    "text": "canonicalArtistSpecialties(items.map((item) => valueFromExportLabel('artists', 'specialties', item) ?? item))",
    "target": "apps/api/src/modules/artists/artist-legacy-fields.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2002,8 +1992,8 @@
    "line": 65,
    "text": "canonicalArtistNestedColumn(column, v)",
    "target": "apps/api/src/modules/artists/artist-legacy-fields.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2014,8 +2004,8 @@
    "line": 88,
    "text": "canonicalLicenseValue('status', v)",
    "target": "apps/api/src/modules/licensing/license-vocabulary.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2026,8 +2016,8 @@
    "line": 89,
    "text": "canonicalLicenseValue('type', v)",
    "target": "apps/api/src/modules/licensing/license-vocabulary.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2038,8 +2028,8 @@
    "line": 90,
    "text": "canonicalLicenseValue('target_media', v)",
    "target": "apps/api/src/modules/licensing/license-vocabulary.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2050,8 +2040,8 @@
    "line": 91,
    "text": "canonicalLicenseValue('territory', v)",
    "target": "apps/api/src/modules/licensing/license-vocabulary.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2062,8 +2052,8 @@
    "line": 93,
    "text": "canonicalInventoryStatus(v)",
    "target": "apps/api/src/modules/inventory/inventory-legacy-fields.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2075,7 +2065,7 @@
    "text": "canonicalizeDeprecatedColumnId(tableName, params.sort)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "e3f5c0e0fa31353186141cd1b97d2add1c216156d8bedb6a63902ccf65334e23",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2087,7 +2077,7 @@
    "text": "canonicalizeDeprecatedColumnId(tableName, column)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "e3f5c0e0fa31353186141cd1b97d2add1c216156d8bedb6a63902ccf65334e23",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2099,7 +2089,7 @@
    "text": "canonicalizeDeprecatedColumnId(tableName, key)",
    "target": "apps/api/src/modules/reports/form-contracts/report-form-contracts.ts",
    "fileSha256": "e3f5c0e0fa31353186141cd1b97d2add1c216156d8bedb6a63902ccf65334e23",
-   "testsSha256": "e54643039dd94350094738bdf185e0525e0585bb43d0dc194f8a5c0bea4a7e2d",
+   "testsSha256": "c5abaaf8df13fcc3a50f2c2bdd14808ade4bed7b83c1317d2e6e7e4b06e0febc",
    "testDir": "apps/api/src/modules/reports",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2110,7 +2100,7 @@
    "line": 132,
    "text": "applyDeprecatedFieldAliases(entry as Record<string, unknown>, SHARE_HISTORY_ENTRY_DEPRECATED_FIELDS)",
    "fileSha256": "2dce7f6bed095e11a1b7dc04b78bb066bef95d2a1ba29effb2a988a4326f503e",
-   "testsSha256": "694644c18721ff0357774de7236c1b8a61a6fadfaf3963cae331d6ab3c07e03c",
+   "testsSha256": "4be8d3397c9251c3f6ca58ef625df426b9e3335fa7fb13e0edf690cd71fb77da",
    "testDir": "apps/api/src/modules/shares",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2120,8 +2110,8 @@
    "file": "apps/api/src/modules/shares/shares.service.ts",
    "line": 103,
    "text": "applyDeprecatedFieldAliases(input, SHARE_DEPRECATED_FIELDS)",
-   "fileSha256": "a4fbd540d009808f9e2a7ab9f6e8cf01c6a9919113aa1da1b66b737fab243d43",
-   "testsSha256": "694644c18721ff0357774de7236c1b8a61a6fadfaf3963cae331d6ab3c07e03c",
+   "fileSha256": "11dbb6be6f1d7876ebff000b43c7dd33caaf3fd91fc4304c59156728733d490d",
+   "testsSha256": "4be8d3397c9251c3f6ca58ef625df426b9e3335fa7fb13e0edf690cd71fb77da",
    "testDir": "apps/api/src/modules/shares",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2132,8 +2122,8 @@
    "line": 103,
    "text": "canonicalizeShareValues(applyDeprecatedFieldAliases(input, SHARE_DEPRECATED_FIELDS))",
    "target": "apps/api/src/modules/shares/share-legacy-fields.ts",
-   "fileSha256": "a4fbd540d009808f9e2a7ab9f6e8cf01c6a9919113aa1da1b66b737fab243d43",
-   "testsSha256": "694644c18721ff0357774de7236c1b8a61a6fadfaf3963cae331d6ab3c07e03c",
+   "fileSha256": "11dbb6be6f1d7876ebff000b43c7dd33caaf3fd91fc4304c59156728733d490d",
+   "testsSha256": "4be8d3397c9251c3f6ca58ef625df426b9e3335fa7fb13e0edf690cd71fb77da",
    "testDir": "apps/api/src/modules/shares",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2144,8 +2134,8 @@
    "line": 105,
    "text": "canonicalizeShareHistory(out['history'])",
    "target": "apps/api/src/modules/shares/share-legacy-fields.ts",
-   "fileSha256": "a4fbd540d009808f9e2a7ab9f6e8cf01c6a9919113aa1da1b66b737fab243d43",
-   "testsSha256": "694644c18721ff0357774de7236c1b8a61a6fadfaf3963cae331d6ab3c07e03c",
+   "fileSha256": "11dbb6be6f1d7876ebff000b43c7dd33caaf3fd91fc4304c59156728733d490d",
+   "testsSha256": "4be8d3397c9251c3f6ca58ef625df426b9e3335fa7fb13e0edf690cd71fb77da",
    "testDir": "apps/api/src/modules/shares",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2155,8 +2145,8 @@
    "file": "apps/api/src/modules/shares/shares.service.ts",
    "line": 24,
    "text": "applyDeprecatedFieldAliases(query as Record<string, unknown>, SHARE_QUERY_DEPRECATED_FIELDS)",
-   "fileSha256": "a4fbd540d009808f9e2a7ab9f6e8cf01c6a9919113aa1da1b66b737fab243d43",
-   "testsSha256": "694644c18721ff0357774de7236c1b8a61a6fadfaf3963cae331d6ab3c07e03c",
+   "fileSha256": "11dbb6be6f1d7876ebff000b43c7dd33caaf3fd91fc4304c59156728733d490d",
+   "testsSha256": "4be8d3397c9251c3f6ca58ef625df426b9e3335fa7fb13e0edf690cd71fb77da",
    "testDir": "apps/api/src/modules/shares",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2167,8 +2157,8 @@
    "line": 24,
    "text": "canonicalizeShareValues(applyDeprecatedFieldAliases(query as Record<string, unknown>, SHARE_QUERY_DEPRECATED_FIELDS))",
    "target": "apps/api/src/modules/shares/share-legacy-fields.ts",
-   "fileSha256": "a4fbd540d009808f9e2a7ab9f6e8cf01c6a9919113aa1da1b66b737fab243d43",
-   "testsSha256": "694644c18721ff0357774de7236c1b8a61a6fadfaf3963cae331d6ab3c07e03c",
+   "fileSha256": "11dbb6be6f1d7876ebff000b43c7dd33caaf3fd91fc4304c59156728733d490d",
+   "testsSha256": "4be8d3397c9251c3f6ca58ef625df426b9e3335fa7fb13e0edf690cd71fb77da",
    "testDir": "apps/api/src/modules/shares",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2451,7 +2441,7 @@
    "line": 125,
    "text": "applyDeprecatedFieldAliases(raw, WORK_DEPRECATED_FIELDS)",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2462,7 +2452,7 @@
    "line": 144,
    "text": "applyDeprecatedFieldAliases(query as Record<string, unknown>, { tipo_obra: 'work_origin' })",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2473,7 +2463,7 @@
    "line": 86,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, WORK_AI_ELEMENT_DEPRECATED_FIELDS)",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2484,7 +2474,7 @@
    "line": 91,
    "text": "applyDeprecatedFieldAliases(value as Record<string, unknown>, WORK_PARTICIPANT_DEPRECATED_FIELDS)",
    "fileSha256": "a96a1542ec723389e5ea1cf92bb35b72cb9a1f150a306975496f371f25c5fd79",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2492,11 +2482,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/works/works.service.ts",
-   "line": 105,
+   "line": 108,
    "text": "canonicalizeWorkQuery(query as Record<string, unknown>)",
    "target": "apps/api/src/modules/works/work-legacy-fields.ts",
-   "fileSha256": "5d6931735d6cb8440d07274c06b481ace3ec8aca213ea10358d304d24b372fcc",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "fileSha256": "ecfbab3b2bac99b5230b5b5c40d3ceda08119b6d6751b4be813ce9d9e218ab69",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2504,11 +2494,23 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/works/works.service.ts",
-   "line": 218,
+   "line": 220,
+   "text": "canonicalWorkParticipantRole((p as Record<string, unknown> | null)?.role)",
+   "target": "apps/api/src/modules/works/work-legacy-fields.ts",
+   "fileSha256": "ecfbab3b2bac99b5230b5b5c40d3ceda08119b6d6751b4be813ce9d9e218ab69",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
+   "testDir": "apps/api/src/modules/works",
+   "operator": "CALL_BYPASS",
+   "verdict": "KILLED"
+  },
+  {
+   "kind": "CONSUMER",
+   "file": "apps/api/src/modules/works/works.service.ts",
+   "line": 242,
    "text": "canonicalizeWorkInput(input)",
    "target": "apps/api/src/modules/works/work-legacy-fields.ts",
-   "fileSha256": "5d6931735d6cb8440d07274c06b481ace3ec8aca213ea10358d304d24b372fcc",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "fileSha256": "ecfbab3b2bac99b5230b5b5c40d3ceda08119b6d6751b4be813ce9d9e218ab69",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2516,11 +2518,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/works/works.service.ts",
-   "line": 272,
+   "line": 297,
    "text": "canonicalizeWorkInput(input, { update: true })",
    "target": "apps/api/src/modules/works/work-legacy-fields.ts",
-   "fileSha256": "5d6931735d6cb8440d07274c06b481ace3ec8aca213ea10358d304d24b372fcc",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "fileSha256": "ecfbab3b2bac99b5230b5b5c40d3ceda08119b6d6751b4be813ce9d9e218ab69",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2528,11 +2530,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/api/src/modules/works/works.service.ts",
-   "line": 94,
+   "line": 97,
    "text": "canonicalWorkParticipantRole(p.role)",
    "target": "apps/api/src/modules/works/work-legacy-fields.ts",
-   "fileSha256": "5d6931735d6cb8440d07274c06b481ace3ec8aca213ea10358d304d24b372fcc",
-   "testsSha256": "c0820ec89f93d691dba2edfbe2121bb926dfe4be7cc8c57158b815cd95a2ecb3",
+   "fileSha256": "ecfbab3b2bac99b5230b5b5c40d3ceda08119b6d6751b4be813ce9d9e218ab69",
+   "testsSha256": "1da4078e5fb4b38de9ddc72fe8e7481cb61705ad608da6310d454bd4f1b63e5e",
    "testDir": "apps/api/src/modules/works",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -2544,7 +2546,7 @@
    "text": "legacyRoutes()",
    "target": "apps/web/src/app/routes/legacy-redirects.tsx",
    "fileSha256": "6228ce73daea908d9f61d0f391d2b1823397bf4232fd959e07754b3b6f6871dc",
-   "testsSha256": "ca0e38544d51ad697e94f26cf969d3397891861a075da5980e0afadd5fb2963f",
+   "testsSha256": "4b527595e73ca1f3d423fa932ce8c196a48ab81b8f5be7d681b19b448ad921a3",
    "testDir": "apps/web/src",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3516,7 +3518,7 @@
    "text": "phonogramToFormFields(phonogram)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "7c4ff703d4e5f136685eb6a98e0209c922d37c2ed16b170d0cbc4b06a9d08e27",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3528,7 +3530,7 @@
    "text": "phonogramToFormFields(phonogram)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "7c4ff703d4e5f136685eb6a98e0209c922d37c2ed16b170d0cbc4b06a9d08e27",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3540,7 +3542,7 @@
    "text": "formToPhonogramPayload({\n      title: finalTitle,\n      status,\n      workId: linkedWork && typeof linkedWork.id === \"st",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "7c4ff703d4e5f136685eb6a98e0209c922d37c2ed16b170d0cbc4b06a9d08e27",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3552,7 +3554,7 @@
    "text": "joinIsrc({\n      countryCode: isrcCountryCode,\n      registrantCode: isrcRegistrantCode,\n      year: isrcYear,\n      des",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "7c4ff703d4e5f136685eb6a98e0209c922d37c2ed16b170d0cbc4b06a9d08e27",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3564,7 +3566,7 @@
    "text": "phonogramToFormFields(phonogram)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "d708a9b3e197eb75a4d053f6c6a28bc297e9ec0f0a622588c681e155e8ec6d35",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3575,8 +3577,8 @@
    "line": 206,
    "text": "workToFormFields(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
-   "fileSha256": "aa1a3584bb14c005c665a0ea4057669062b9b6c671e8e4efa6056244cead5f95",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "fileSha256": "c5ed7cafcdc96331bba6d081a45260b68485e3265e3199e9cafa81c755367c27",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3587,8 +3589,8 @@
    "line": 232,
    "text": "workToFormFields(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
-   "fileSha256": "aa1a3584bb14c005c665a0ea4057669062b9b6c671e8e4efa6056244cead5f95",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "fileSha256": "c5ed7cafcdc96331bba6d081a45260b68485e3265e3199e9cafa81c755367c27",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3599,8 +3601,8 @@
    "line": 424,
    "text": "formToWorkPayload({\n      title: workTitleValue,\n      musicGenre,\n      language,\n      iswc,\n      ecadCode,\n      soc",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
-   "fileSha256": "aa1a3584bb14c005c665a0ea4057669062b9b6c671e8e4efa6056244cead5f95",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "fileSha256": "c5ed7cafcdc96331bba6d081a45260b68485e3265e3199e9cafa81c755367c27",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3612,7 +3614,7 @@
    "text": "workAlternativeTitles(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3624,7 +3626,7 @@
    "text": "workRelatedReferences(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3636,7 +3638,7 @@
    "text": "workLyrics(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3648,7 +3650,7 @@
    "text": "workAiUsed(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3660,7 +3662,7 @@
    "text": "workAiUsageLevel(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3672,7 +3674,7 @@
    "text": "workAiHarmony(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3684,7 +3686,7 @@
    "text": "workAiMelody(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3696,7 +3698,7 @@
    "text": "workAiLyrics(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3708,7 +3710,7 @@
    "text": "workToParticipants(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3720,7 +3722,7 @@
    "text": "workIsInstrumental(work)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3732,7 +3734,7 @@
    "text": "parseDurationText(work.duration_text)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "f85eb723d49f1a59ff659f0e24e031f496dada0c2538b3c096cdbebd7f15fa61",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3744,7 +3746,7 @@
    "text": "projectToWorkSeed(project, tracks[0] ?? null)",
    "target": "apps/web/src/modules/catalog/services/music-registration.mapper.ts",
    "fileSha256": "3fb75fd79daa311d8635f4d0d442de02d88ffe85f36ee5c1538918ad5236bef8",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -3756,7 +3758,7 @@
    "text": "canonicalTrackInstrumental(track?.instrumental)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "94bdabd58269c7223b521bbf7ccb260726308107fa984a745f0a624f58e35cfd",
-   "testsSha256": "25b76a76b666e8f4988f59cdd994ab596e79976bc546a309a5735dd28c5a9e95",
+   "testsSha256": "28b7b197e58df216bf82e2bd325a2da6c1ca887f04ac821f3666ebeb46fe0dd2",
    "testDir": "apps/web/src/modules/catalog",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5567,8 +5569,8 @@
    "line": 197,
    "text": "canonicalTrackInstrumental(normEnum(m.instrumental, \"no\"))",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
-   "fileSha256": "b3c8a7ababf24304f0d33a5399280c35adef4375ddb9502b263d69b653bdf588",
-   "testsSha256": "4f471333e12224f75d31b321540afdc67ed9e71dcd7397c3d0781eccf25533d6",
+   "fileSha256": "2ad1fbb2b3967c481cb5d9c9f436466033b87f8de91ece830ef8368b1f794158",
+   "testsSha256": "4f8e6dbdbd34b6c737e1550c893dfc680c77967a4f49dcea7401f2d2b23bf604",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5579,8 +5581,8 @@
    "line": 199,
    "text": "canonicalTrackLanguage(normEnum(m.language, \"\"))",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
-   "fileSha256": "b3c8a7ababf24304f0d33a5399280c35adef4375ddb9502b263d69b653bdf588",
-   "testsSha256": "4f471333e12224f75d31b321540afdc67ed9e71dcd7397c3d0781eccf25533d6",
+   "fileSha256": "2ad1fbb2b3967c481cb5d9c9f436466033b87f8de91ece830ef8368b1f794158",
+   "testsSha256": "4f8e6dbdbd34b6c737e1550c893dfc680c77967a4f49dcea7401f2d2b23bf604",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5592,7 +5594,7 @@
    "text": "trackLanguageLabel(info.language)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "ea229fdd684a63071e401556d9b5f92ffcfb5d52c8aca1f7484909c73e189110",
-   "testsSha256": "4f471333e12224f75d31b321540afdc67ed9e71dcd7397c3d0781eccf25533d6",
+   "testsSha256": "4f8e6dbdbd34b6c737e1550c893dfc680c77967a4f49dcea7401f2d2b23bf604",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5604,7 +5606,7 @@
    "text": "canonicalTrackLanguage(m.language)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "24576437b4843fc1fcebfe5fe2e438646f354b406cf69d576ad9d1ac1eee532a",
-   "testsSha256": "4f471333e12224f75d31b321540afdc67ed9e71dcd7397c3d0781eccf25533d6",
+   "testsSha256": "4f8e6dbdbd34b6c737e1550c893dfc680c77967a4f49dcea7401f2d2b23bf604",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5616,7 +5618,7 @@
    "text": "canonicalTrackInstrumental(m.instrumental)",
    "target": "apps/web/src/modules/projects/utils/track-vocabulary.ts",
    "fileSha256": "24576437b4843fc1fcebfe5fe2e438646f354b406cf69d576ad9d1ac1eee532a",
-   "testsSha256": "4f471333e12224f75d31b321540afdc67ed9e71dcd7397c3d0781eccf25533d6",
+   "testsSha256": "4f8e6dbdbd34b6c737e1550c893dfc680c77967a4f49dcea7401f2d2b23bf604",
    "testDir": "apps/web/src/modules/projects",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5628,7 +5630,7 @@
    "text": "projectLabelOf(p as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5640,7 +5642,7 @@
    "text": "releaseStatusLabel(resolveReleaseStatus(release))",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5652,7 +5654,7 @@
    "text": "resolveReleaseStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5664,7 +5666,7 @@
    "text": "projectLabelOf(selectedProject as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5676,7 +5678,7 @@
    "text": "canonicalReleaseMetadata(release ? (release as Record<string, unknown>)[\"metadata\"] : {})",
    "target": "apps/web/src/modules/releases/lib/release-metadata.ts",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5688,7 +5690,7 @@
    "text": "matchGenre(rawGenre)",
    "target": "apps/web/src/modules/releases/lib/genre-match.ts",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5700,7 +5702,7 @@
    "text": "projectTracksForRelease(project as { tracks?: TrackData[]; description?: string | null })",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5712,7 +5714,7 @@
    "text": "canonicalReleaseMetadata(enrichedMeta)",
    "target": "apps/web/src/modules/releases/lib/release-metadata.ts",
    "fileSha256": "c181ea69ec359412fbb5890388feaaf26f3f78ef67d4a13b1a94c511550b9d71",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5724,7 +5726,7 @@
    "text": "formatGenres(genre, secondaryGenre)",
    "target": "apps/web/src/modules/releases/lib/genre-match.ts",
    "fileSha256": "6d7db6b5a2f79513a31f78125122d794ca29de5e835b5c0605a32f2dac11f6f5",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5732,11 +5734,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 147,
+   "line": 159,
    "text": "canonicalReleaseMetadata((release as Record<string, unknown>)[\"metadata\"])",
    "target": "apps/web/src/modules/releases/lib/release-metadata.ts",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5744,11 +5746,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 183,
+   "line": 195,
    "text": "resolvePlatformStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5756,11 +5758,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 215,
+   "line": 228,
    "text": "releaseStatusBadge(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5768,11 +5770,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 229,
+   "line": 242,
    "text": "releaseStatusLabel(resolveReleaseStatus(release))",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5780,11 +5782,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 229,
+   "line": 242,
    "text": "resolveReleaseStatus(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5792,11 +5794,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 263,
+   "line": 276,
    "text": "releaseStatusBadge(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5804,11 +5806,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 272,
+   "line": 285,
    "text": "platformStatusBadge(release)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5816,11 +5818,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 386,
+   "line": 399,
    "text": "trackTitle(f as Record<string, unknown>, idx + 1)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5828,11 +5830,11 @@
   {
    "kind": "CONSUMER",
    "file": "apps/web/src/modules/releases/components/ReleaseViewModal.tsx",
-   "line": 388,
+   "line": 401,
    "text": "trackArtist(f as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
-   "fileSha256": "89479d5001dd3362681bd4a2c17ecf8b11d7cf207700a47f45a46488e736bfe6",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "fileSha256": "04f8914dc1e5ec8cb28af6cbbaa1fd2d48120f96df64e17fe2cea8e6e1eff9d1",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5844,7 +5846,7 @@
    "text": "holderPercentage(h as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "dff06097807ef3ff68f687e20b7e389e50ef412c2db9cd64a90c4ef06f00d0d4",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5856,7 +5858,7 @@
    "text": "holderPercentage(h as unknown as Record<string, unknown>)",
    "target": "apps/web/src/modules/releases/lib/legacy-reads.ts",
    "fileSha256": "dff06097807ef3ff68f687e20b7e389e50ef412c2db9cd64a90c4ef06f00d0d4",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5868,7 +5870,7 @@
    "text": "resolveStatusFromRawStatus(row.status)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "70ed891d78fa706b60a1048b43481ff25d5df6027fe276f1e14125c8bcf4a66b",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5880,7 +5882,7 @@
    "text": "normStr(title)",
    "target": "apps/web/src/modules/releases/lib/genre-match.ts",
    "fileSha256": "0637bf0b261d27261c7c08f9e34e00eed0102e9037b37c2a0f98aabdcbfe435e",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5892,7 +5894,7 @@
    "text": "normStr(f.title ?? \"\")",
    "target": "apps/web/src/modules/releases/lib/genre-match.ts",
    "fileSha256": "0637bf0b261d27261c7c08f9e34e00eed0102e9037b37c2a0f98aabdcbfe435e",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
@@ -5904,7 +5906,7 @@
    "text": "cardStatusClasses(release, mode)",
    "target": "apps/web/src/modules/releases/lib/release-status.tsx",
    "fileSha256": "91b9f7503c20b53e773f490dddd9a54f76cd68ecba7d9814bdc952f3fce8d0b3",
-   "testsSha256": "369924a7a1b1491c977516e120633ff60a01f6e1680a503dfece48523189d0e2",
+   "testsSha256": "bfda38bd0e19820982b394fa19aa78281266ec45ad4fb4b191be405fd5e7684a",
    "testDir": "apps/web/src/modules/releases",
    "operator": "CALL_BYPASS",
    "verdict": "KILLED"
