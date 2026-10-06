@@ -72,6 +72,17 @@ export function validatePack(root = ROOT_DEFAULT, throughBatch = 24) {
   const capabilityIds = new Set(capDefs.map((c) => c.id));
   const ctx = { skillKnown, capabilityIds };
 
+  // B2. no physical definition may be invisible to the manifest
+  for (const f of existsSync(join(root, ".claude", "agents")) ? readdirSync(join(root, ".claude", "agents")) : []) {
+    if (!f.endsWith(".md")) continue;
+    const name = f.slice(0, -3);
+    if (!manifestAgents.has(name) && !supplementalAgents.has(name)) problems.push(`agent "${name}" exists on disk but is neither governed nor declared supplemental`);
+  }
+  for (const name of existsSync(join(root, ".claude", "skills")) ? readdirSync(join(root, ".claude", "skills")) : []) {
+    if (!existsSync(join(root, ".claude", "skills", name, "SKILL.md"))) continue;
+    if (!manifestSkills.has(name) && !supplementalSkills.has(name)) problems.push(`skill "${name}" exists on disk but is neither governed nor declared supplemental`);
+  }
+
   // C. per-file contracts
   for (const a of agents) {
     const item = manifestAgents.get(a.name);
