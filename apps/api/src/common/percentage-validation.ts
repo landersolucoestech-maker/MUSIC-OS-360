@@ -15,7 +15,8 @@ export interface PercentageIssue {
   reason: 'not_a_number' | 'out_of_range' | 'too_many_decimals';
 }
 
-const PLAIN_DECIMAL = /^\d+(?:[.,]\d+)?$/;
+// Dot decimals only: the stored value is the submitted text, and the column and its consumers cannot read a comma.
+const PLAIN_DECIMAL = /^\d+(?:\.\d+)?$/;
 
 /** Parses one informed percentage; returns null for blank. */
 function parse(raw: unknown): { value: number; decimals: number } | null | 'invalid' {
@@ -23,10 +24,9 @@ function parse(raw: unknown): { value: number; decimals: number } | null | 'inva
   const text = String(raw).trim();
   if (text === '') return null;
   if (!PLAIN_DECIMAL.test(text)) return 'invalid';
-  const normalized = text.replace(',', '.');
-  const value = Number(normalized);
+  const value = Number(text);
   if (!Number.isFinite(value)) return 'invalid';
-  return { value, decimals: (normalized.split('.')[1] ?? '').length };
+  return { value, decimals: (text.split('.')[1] ?? '').length };
 }
 
 export function checkPercentages(

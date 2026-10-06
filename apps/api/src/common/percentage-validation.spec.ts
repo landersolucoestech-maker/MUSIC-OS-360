@@ -10,7 +10,6 @@ describe('percentage validation', () => {
     [[50, 49.5]],
     [['33.333', '33.333', '33.334']],
     [['0', '100']],
-    [['40,5', '59,5']],
     [['10']],
   ])('accepts %j', (values) => {
     expect(run(values as unknown[])).not.toThrow();
@@ -25,6 +24,7 @@ describe('percentage validation', () => {
     ['1e2', 'not_a_number'],
     ['-5', 'not_a_number'],
     ['12%', 'not_a_number'],
+    ['40,5', 'not_a_number'],
     ['NaN', 'not_a_number'],
     ['101', 'out_of_range'],
     ['100.5', 'out_of_range'],
