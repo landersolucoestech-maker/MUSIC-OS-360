@@ -199,7 +199,7 @@ Every fix above was mutation checked by hand: the mutant fails its covering spec
 
 | Id | Severity | Description | Why it stays |
 |---|---|---|---|
-| RES-1 | medium, out of block | The spreadsheet import writes artists, works and phonograms by raw insert and bypasses the closed specialties list, the ISWC check and the percentage checks | pre-existing and outside this block: it needs the import to go through the domain layer (F-33, owner item) |
+| RES-1 | resolved in section 9 | The spreadsheet import writes by raw insert | it now applies the catalog invariants the module services enforce (closed specialties, ISWC, one structure per share, 0..100); `import-catalog-rules.ts` |
 | RES-2 | low | Saving credentials is not atomic: overlapping configure calls can restore credentials that were never verified or overwrite a verified connection, and a crash between the write and the restore leaves them stored; a first failed configuration leaves the tenant-chosen credentials in error status; the failure count is not restored; a restore failure is stored in the state but not logged | a lock or transaction cannot be proven without PostgreSQL |
 | RES-3 | low | Two different events of one type on one aggregate in the same millisecond collapse into one notification | the id is deterministic by design; widening it needs an event sequence number (schema) |
 | RES-4 | low | A frozen release with no stored tracklist accepts one placeholder that carries only an id and a language | it carries no content and nothing was delivered; recorded decision |
@@ -211,9 +211,40 @@ Every fix above was mutation checked by hand: the mutant fails its covering spec
 | RES-10 | low | The pinned request ignores an abort signal and header instances, strips no caller transfer-encoding header, supports string bodies only and reuses keep-alive sockets without a new lookup | no caller needs them; a reused socket points at an address that was validated |
 | RES-11 | low | A transient resolver failure on a stored endpoint is reported with the same 400 code as a rejected address; address classes such as ORCHID and operator-specific translation prefixes are not listed | acceptable classification; the connect-time lookup is the real guard |
 | RES-12 | low | A tenant admin trying more than 100 distinct hosts evicts the breaker of the shared Abramus host and resets its open state | bounded memory was chosen; harmless reset |
-| RES-13 | low | The percentage cap sums producers, performers and session musicians of a phonogram into one 100% | product question |
-| RES-14 | low | The project form shows two identical in-progress options while a project is in the internal review state | deliberate, it preserves the state on save; dropping the state is an owner decision |
+| RES-13 | resolved in section 9 | The percentage cap sums producers, performers and session musicians of a phonogram into one 100% | not a product question: the Phonogram is one economic structure that totals 100%, so the behaviour is correct |
+| RES-14 | resolved in section 9 | The project form showed two identical in-progress options | the select shows the product statuses only; the internal review state is shown as In progress and kept on save |
 | RES-15 | low | An asset-uploaded notification reads as sent before the upload is verified | wording in another module |
 | RES-16 | low, pre-block | The distributor field of the freeze (added in `a52b7a74`) rejects an untouched edit of a distributed release stored with no distributor, because the form defaults it | not part of this block; recorded for the owner |
 
 The earlier residuals F2 (DNS rebinding), the local-use NAT64 prefix, the whitespace ISWC and the placeholder flags are no longer open: they are fixed and listed in 8.2. The distributed-release placeholder language is RES-4.
+
+
+## 9. Closing slice: settled decisions applied, database proofs, integrity diagnostic and workflow hygiene
+
+### 9.1 Settled decisions applied (none asked again)
+
+| Decision | Rule in code | Proof |
+|---|---|---|
+| Manual or external contract signature is allowed and never faked as an electronic envelope | the workflow guard needs the signed document attached and a management role; the server stamps `signature_registration` (origin, actor, time), a server-owned key a client cannot forge | `contracts-manual-signature.spec.ts` |
+| Distributed only with a real confirmation or a registered manual operational conclusion | `release-distribution-confirmation.ts`: origin, reference, date supplied by the person; actor and time stamped by the server; a confirmation sent outside the transition is ignored; the web asks for it in a dialog | `release-distribution-confirmation.spec.ts`, web dialog tests |
+| Work split, Phonogram split and Release share are independent structures | a share belongs to a Work or a Phonogram, never both on a write that introduces the pair; legacy rows stay editable | `shares-structure.spec.ts` |
+| A Work has two kinds of participant: composer/author and publisher | closed list on create and update; a role already stored may be re-posted; the web form still shows a stored legacy role for that participant only | `works-participant-roles.spec.ts`, `work-options.test.ts` |
+| 100% is exact only at the formal stage | each percentage is within 0..100 and the running total never exceeds 100 at write; Work and Phonogram must total exactly 100 at the formal registry check | `entity-validators.spec.ts`, shares specs |
+
+Three acceptance criteria contradicted those decisions and were corrected through the new `ops.mjs criterion amend` (reasoned, history kept in `amendments`, evidence of the old text kept apart, criterion reopened and closed again by fresh evidence of the new text): the signature criterion, the distribution criterion and the percentage criterion.
+
+### 9.2 Database proofs
+
+Run on a disposable PostgreSQL 16 cluster (loopback, ephemeral credentials in the environment only, `DB_SSL=false` as in CI): `db:check` reports no pending migrations, the schema naming census finds no Portuguese name, the residue census is clean, `verify:rls`, `verify:tenant-isolation` (7/7), `verify:catalog-integrity` (15 read-only checks, 0 findings on the migrated schema, real-PostgreSQL spec of the diagnostic), the opt-in role-alias migration round trip on a scratch database, and the schema boundary proof (3/3).
+
+### 9.3 Integrations
+
+An integration is connected only after a real call of its provider succeeded. The probe is now mandatory in `saveCredentials`: Apple Music, SoundCloud, TikTok Ads and WhatsApp test when configured; Google Ads and Autentique are saved as connecting and become connected after the OAuth consent or the first document sent.
+
+### 9.4 Residuals reclassified
+
+RES-1 (import), RES-13 (phonogram total) and RES-14 (project select) are resolved. RES-2 is unchanged: saving credentials is still not atomic across overlapping configure calls.
+
+### 9.5 Orchestration hygiene
+
+Three older naming-normalization trackers were abandoned through the official command with a recorded reason (two superseded duplicates whose destructive-approval phases wait on drops that were never executed, and the verification mission whose own order excludes destructive approval). No destructive action ran and no approval was granted: a legacy-column drop needs a fresh exact-payload approval when the owner schedules it, and `destructive-dossier.mjs --check` stays green (12 package blocks, 0 problems). `orchestrate.mjs stop-check` returns immediately; it only blocks when run from a terminal because it reads the hook payload from stdin.
