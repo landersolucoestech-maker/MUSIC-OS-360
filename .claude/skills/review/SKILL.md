@@ -12,7 +12,7 @@ description: General-purpose "review this change" dispatcher — reads the actua
    `accessibility-reviewer`; auth/security-named paths -> `security-reviewer`; integration paths ->
    `integration-reviewer`; dependency manifest -> `dependency-reviewer`/`supply-chain-reviewer`.
 3. Delegate to only the matched agents — do not fan out to all 34 for a two-file change.
-4. Consolidate findings via `mission-orchestrator`'s usual finding/evidence recording; a conflict
+4. Consolidate findings via `music-os-360-orchestrator`'s usual finding/evidence recording; a conflict
    between two reviewers on the same file is a `conflict-record`, not something this skill
    resolves itself.
 
