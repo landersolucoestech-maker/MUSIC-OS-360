@@ -10,6 +10,7 @@
  * only the metadata-only fields (ARTIST_METADATA_ONLY_FIELDS). Responses are
  * canonical (English keys and values).
  */
+import { BadRequestException } from '@nestjs/common';
 import { ARTIST_TEAM_CONTACT_CATEGORIES, LEGACY_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 
@@ -149,6 +150,24 @@ export function canonicalArtistTeamContacts(value: unknown): unknown {
 
 export const canonicalArtistProfileType = (value: unknown): unknown => mapValue(LEGACY_ARTIST_VALUES.profile_type, value);
 export const canonicalArtistGender = (value: unknown): unknown => mapValue(LEGACY_ARTIST_VALUES.gender, value);
+
+/**
+ * The specialties are a closed list. Called after the legacy values are mapped: any other value is rejected,
+ * so a free-text specialty can never be stored. A write that does not carry the field is not a specialty write.
+ */
+export function assertArtistSpecialtiesInClosedList(value: unknown): void {
+  if (value === undefined || value === null) return;
+  const items = Array.isArray(value) ? value : [value];
+  const invalid = items.filter((item) => typeof item !== 'string' || !(ARTIST_SPECIALTIES as readonly string[]).includes(item));
+  if (!Array.isArray(value) || invalid.length > 0) {
+    throw new BadRequestException({
+      code: 'ARTIST_SPECIALTY_INVALID',
+      message: `Especialidade inválida. Valores permitidos: ${ARTIST_SPECIALTIES.join(', ')}.`,
+      allowed: [...ARTIST_SPECIALTIES],
+      invalid: Array.isArray(value) ? invalid.map(String) : [String(value)],
+    });
+  }
+}
 
 /** Canonical specialties list (legacy values mapped; unknown values kept). */
 export function canonicalArtistSpecialties(value: unknown): unknown {

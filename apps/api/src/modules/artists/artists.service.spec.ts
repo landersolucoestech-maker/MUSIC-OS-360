@@ -353,3 +353,56 @@ describe('ArtistsService', () => {
     );
   });
 });
+
+describe('ArtistsService: specialties are the closed list', () => {
+  const build = () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+    return { ds, service };
+  };
+
+  it.each([
+    [['dj']],
+    [['dj', 'producer']],
+    [['dj_producer', 'songwriter', 'performer']],
+    [[]],
+  ])('accepts %j and persists it', async (specialties) => {
+    const { ds, service } = build();
+    await service.create(TENANT_A, USER_ID, { stage_name: 'Alpha', specialties } as any);
+    expect((ds._repo.create as jest.Mock).mock.calls[0][0]).toMatchObject({ specialties });
+  });
+
+  it('a create without specialties stores none: nothing is invented', async () => {
+    const { ds, service } = build();
+    await service.create(TENANT_A, USER_ID, { stage_name: 'Alpha' } as any);
+    const written = (ds._repo.create as jest.Mock).mock.calls[0][0] as { specialties?: unknown[] };
+    expect(written.specialties ?? []).toEqual([]);
+  });
+
+  it.each([
+    [['singer']],
+    [['dj', 'drummer']],
+    [[42]],
+    [[null]],
+    [['DJ ']],
+  ])('rejects %j, names the invalid values and the allowed list, and saves nothing', async (specialties) => {
+    const { ds, service } = build();
+    await expect(service.create(TENANT_A, USER_ID, { stage_name: 'Alpha', specialties } as any))
+      .rejects.toMatchObject({ response: { code: 'ARTIST_SPECIALTY_INVALID', allowed: ['dj', 'dj_producer', 'songwriter', 'performer', 'producer'] } });
+    expect(ds._repo.save).not.toHaveBeenCalled();
+  });
+
+  it('rejects a specialties value that is not a list', async () => {
+    const { ds, service } = build();
+    await expect(service.create(TENANT_A, USER_ID, { stage_name: 'Alpha', specialties: 'dj' } as any))
+      .rejects.toMatchObject({ response: { code: 'ARTIST_SPECIALTY_INVALID' } });
+    expect(ds._repo.save).not.toHaveBeenCalled();
+  });
+
+  it('validates on update before anything is written', async () => {
+    const { ds, service } = build();
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { specialties: ['singer'] } as any))
+      .rejects.toMatchObject({ response: { code: 'ARTIST_SPECIALTY_INVALID' } });
+    expect(ds._repo.update).not.toHaveBeenCalled();
+  });
+});

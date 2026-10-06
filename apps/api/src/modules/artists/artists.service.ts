@@ -16,7 +16,7 @@ import type { CreateArtistDto } from './dto/create-artist.dto';
 import type { UpdateArtistDto } from './dto/update-artist.dto';
 import type { QueryArtistDto }  from './dto/query-artist.dto';
 import { ArtistStatus, ArtistRelationshipType } from '@music-os-360/types';
-import { ARTIST_METADATA_ONLY_FIELDS, canonicalizeArtistInput, canonicalizeArtistQuery } from './artist-legacy-fields';
+import { ARTIST_METADATA_ONLY_FIELDS, assertArtistSpecialtiesInClosedList, canonicalizeArtistInput, canonicalizeArtistQuery } from './artist-legacy-fields';
 import { sanitizeArtistMetadataInput } from './artist-input-sanitizer';
 
 /** Contract statuses treated as "active" for artist-relationship classification
@@ -498,6 +498,7 @@ export class ArtistsService {
    */
   private canonicalInput(dto: Record<string, unknown>, options: { update?: boolean } = {}): Record<string, unknown> {
     const input = canonicalizeArtistInput(dto, options);
+    assertArtistSpecialtiesInClosedList(input.specialties);
     if (input.metadata !== undefined) input.metadata = sanitizeArtistMetadataInput(input.metadata);
     return input;
   }
