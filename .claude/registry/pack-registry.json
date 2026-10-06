@@ -1,5 +1,5 @@
 {
- "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
+ "generatedFrom": ".claude/registry/pack-manifest.json + governed agent/skill definitions + .claude/registry/capabilities.json + .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
   "agents": 374,
