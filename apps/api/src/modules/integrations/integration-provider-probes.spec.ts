@@ -83,9 +83,10 @@ describe('TikTok Ads: connected only after the Ads API accepts the access token 
 });
 
 describe('Google Ads: saved credentials wait for the OAuth consent', () => {
+  const plainEnc = { encrypt: (v: string) => v, decrypt: (v: string) => v };
   it('configure() leaves it connecting and not verified; the OAuth callback with stored tokens connects it', async () => {
     const store = makeStore();
-    const svc = new GoogleAdsService(store.ds as never, enc as never, config as never);
+    const svc = new GoogleAdsService(store.ds as never, plainEnc as never, config as never);
     await svc.configure('t1', 'dev-token', '123-456-7890');
     expect(store.rows[0]).toMatchObject({ status: IntegrationStatus.CONNECTING, metadata: { verified: false } });
     expect(await svc.getProviderStatus('t1')).toMatchObject({ connected: false, status: 'connecting', verified: false });
@@ -99,12 +100,25 @@ describe('Google Ads: saved credentials wait for the OAuth consent', () => {
 
   it('a failed token exchange does not connect it', async () => {
     const store = makeStore();
-    const svc = new GoogleAdsService(store.ds as never, enc as never, config as never);
+    const svc = new GoogleAdsService(store.ds as never, plainEnc as never, config as never);
     await svc.configure('t1', 'dev-token', '123-456-7890');
     jest.spyOn(svc, 'verifySignedState' as never).mockReturnValue({ tenantId: 't1', userId: 'u1', provider: 'google_ads' } as never);
     (svc as unknown as { fetch: jest.Mock }).fetch = jest.fn().mockResolvedValue({ json: async () => ({ error: 'invalid_grant' }) });
     await expect(svc.handleOAuthCallback('code', 'state')).rejects.toThrow();
     expect(store.rows[0].status).toBe(IntegrationStatus.CONNECTING);
+  });
+
+  it('an OAuth callback for an integration whose credentials were removed does not mark it connected', async () => {
+    const store = makeStore();
+    const svc = new GoogleAdsService(store.ds as never, plainEnc as never, config as never);
+    await svc.configure('t1', 'dev-token', '123-456-7890');
+    await svc.disconnect('t1', 'google_ads');
+    store.rows[0].credentials_encrypted = null;
+    jest.spyOn(svc, 'verifySignedState' as never).mockReturnValue({ tenantId: 't1', userId: 'u1', provider: 'google_ads' } as never);
+    jest.spyOn(svc, 'saveOAuthTokens').mockResolvedValue(undefined);
+    (svc as unknown as { fetch: jest.Mock }).fetch = jest.fn().mockResolvedValue({ json: async () => ({ access_token: 'a' }) });
+    await svc.handleOAuthCallback('code', 'state');
+    expect(store.rows[0].status).not.toBe(IntegrationStatus.CONNECTED);
   });
 });
 
@@ -117,5 +131,44 @@ describe('Autentique: saved token waits for the first document sent', () => {
     await svc.configure('t1', 'api-token-2');
     expect(store.rows).toHaveLength(1);
     expect(store.rows[0]).toMatchObject({ status: IntegrationStatus.CONNECTING, metadata: { verified: false } });
+  });
+});
+
+describe('a probe error never carries the submitted credential', () => {
+  it('a token named in full by an HTTP client error is redacted from the response and the stored reason', async () => {
+    const store = makeStore();
+    const svc = new TikTokService(store.ds as never, enc as never, config as never);
+    const token = 'tok-with-newline-ÿ-secret';
+    (svc as unknown as { fetch: jest.Mock }).fetch = jest.fn().mockRejectedValue(new TypeError(`Headers.append: "${token}" is an invalid header value`));
+    let thrown: unknown;
+    await svc.configureAds('t1', 'app', 'secret', 'adv-1', token).catch((e) => { thrown = e; });
+    expect(JSON.stringify(thrown)).not.toContain(token);
+    expect(JSON.stringify(store.rows[0].metadata)).not.toContain(token);
+    expect(store.rows[0].metadata.last_failure_reason).toContain('[REDACTED]');
+  });
+
+  it('withoutCredentialValues removes every submitted value of four characters or more', () => {
+    const { withoutCredentialValues } = jest.requireActual('./integration-base.service');
+    expect(withoutCredentialValues('bad abcd1234 and wxyz', { a: 'abcd1234', b: 'wxyz', c: 'ab' })).toBe('bad [REDACTED] and [REDACTED]');
+  });
+});
+
+describe('Autentique waiting for the first document stays usable in the signing dialog', () => {
+  async function statusFor(state: 'connecting' | 'connected' | 'error' | 'disconnected') {
+    const { IntegrationsController } = jest.requireActual('./integrations.controller');
+    const result = (s: string) => ({ connected: s === 'connected', status: s, verified: s === 'connected' });
+    const integrationBase = { getStatus: jest.fn(async (_t: string, provider: string) => result(provider === 'autentique' ? state : 'disconnected')) };
+    const self = new Proxy({}, { get: (_t, key) => (key === 'integrationBase' ? integrationBase : { isConfigured: () => false }) });
+    return IntegrationsController.prototype.getStatus.call(self, { tenantId: 't1' });
+  }
+
+  it.each([
+    ['connecting', true, false],
+    ['connected', true, true],
+    ['error', false, false],
+    ['disconnected', false, false],
+  ] as const)('%s: configured=%s, connected=%s', async (state, configured, connected) => {
+    const status = await statusFor(state);
+    expect(status.autentique).toMatchObject({ configured, connected, verified: connected });
   });
 });

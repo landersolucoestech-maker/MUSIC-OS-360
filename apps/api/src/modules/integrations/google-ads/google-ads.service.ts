@@ -71,7 +71,8 @@ export class GoogleAdsService extends IntegrationBaseService {
     if (data.error) throw new Error(data.error_description ?? data.error);
 
     await this.saveOAuthTokens({ tenantId, userId, provider: PROVIDER, accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in, scopes: SCOPES });
-    await this.markConnected(tenantId, PROVIDER);
+    // Connected only when the developer token and customer id saved by configure() exist as well.
+    if (await this.loadCredentials<GAdsCreds>(tenantId, PROVIDER)) await this.markConnected(tenantId, PROVIDER);
     this.logger.log(`Google Ads OAuth: ${userId}@${tenantId} connected`);
   }
 

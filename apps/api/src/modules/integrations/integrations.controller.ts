@@ -473,7 +473,9 @@ export class IntegrationsController {
     ]);
     return {
       acrcloud:    { configured: this.acrCloud.isConfigured() },
-      autentique:  { configured: autentique.connected, ...autentique },
+      // Saved and awaiting the first document is usable: the first send is what proves the token (recordSuccess), so the
+      // signing dialog must offer it; `connected`/`verified` keep saying whether it was proven.
+      autentique:  { configured: autentique.connected || autentique.status === 'connecting', ...autentique },
       spotify:     { configured: this.spotify.isConfigured() },
       youtube:     { configured: this.youtube.isConfigured() },
       deezer:      { configured: this.deezer.isConfigured() },

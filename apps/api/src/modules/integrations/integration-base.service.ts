@@ -9,6 +9,18 @@ import { CircuitBreaker } from '../../core/resilience/circuit-breaker';
 import { resilientFetch, DEFAULT_TIMEOUT_MS } from '../../core/resilience/resilient-fetch';
 import { IntegrationStatus } from '@music-os-360/types';
 
+/**
+ * A probe error can echo what the person pasted (an HTTP client names a malformed header value in full). Whatever the
+ * wording, no submitted credential value reaches the response, the stored reason or the status endpoint.
+ */
+export function withoutCredentialValues(text: string, creds: Record<string, string>): string {
+  let out = text;
+  for (const value of Object.values(creds)) {
+    if (typeof value === 'string' && value.trim().length >= 4) out = out.split(value).join('[REDACTED]').split(value.trim()).join('[REDACTED]');
+  }
+  return out.slice(0, 500);
+}
+
 @Injectable()
 export class IntegrationBaseService {
   protected readonly logger = new Logger(IntegrationBaseService.name);
@@ -74,7 +86,7 @@ export class IntegrationBaseService {
     try {
       await verify();
     } catch (error) {
-      const reason = redactForStorage(error instanceof Error ? error.message : String(error));
+      const reason = withoutCredentialValues(redactForStorage(error instanceof Error ? error.message : String(error)), creds);
       // A mistyped re-configuration must not destroy a working connection: the previous credentials and status
       // come back, and only the failure is recorded.
       let restoreFailed = false;

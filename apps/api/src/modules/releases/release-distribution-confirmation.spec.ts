@@ -147,3 +147,14 @@ describe('ReleasesService.update: Distributed needs a real confirmation', () => 
     expect(metadata[DISTRIBUTION_CONFIRMATION_KEY]).toEqual(stored);
   });
 });
+
+describe('ReleasesService.create: a confirmation cannot be planted on a new release', () => {
+  it('strips distribution_confirmation from the metadata of a created release and keeps the rest', async () => {
+    const repo = { create: jest.fn((v: unknown) => v), save: jest.fn(async (v: unknown) => v) };
+    const ds = { getRepository: jest.fn(() => repo), query: jest.fn(async () => [{ exists: 1 }]) };
+    const svc = new ReleasesService(ds as never, {} as never, { emitTyped: jest.fn() } as never);
+    await svc.create('t1', 'u1', { title: 'A', type: 'single', metadata: { [DISTRIBUTION_CONFIRMATION_KEY]: { source: 'manual_operational' }, other: 1 } } as never);
+    const created = repo.create.mock.calls[0][0] as { metadata: Record<string, unknown> };
+    expect(created.metadata).toEqual({ other: 1 });
+  });
+});

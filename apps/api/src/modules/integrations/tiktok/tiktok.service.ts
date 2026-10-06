@@ -34,13 +34,14 @@ export class TikTokService extends IntegrationBaseService {
   }
 
   async configureAds(tenantId: string, appId: string, secret: string, advertiserId: string, accessToken: string): Promise<void> {
+    appId = String(appId ?? '').trim(); secret = String(secret ?? '').trim(); advertiserId = String(advertiserId ?? '').trim(); accessToken = String(accessToken ?? '').trim();
     // Connected only after the Ads API accepts the access token for this advertiser.
     await this.saveCredentials(tenantId, PROVIDER_ADS, { app_id: appId, secret, advertiser_id: advertiserId, access_token: accessToken }, async () => {
       const qs = new URLSearchParams({ advertiser_id: advertiserId, fields: '["campaign_id"]', page_size: '1' }).toString();
       const res = await this.fetch(`${TT_ADS_API}/campaign/get/?${qs}`, { headers: { 'Access-Token': accessToken } });
       if (!res.ok) throw new Error(`TikTok Ads rejected the access token (status ${res.status})`);
       const body = await res.json() as { code?: number; message?: string };
-      if (body.code !== 0) throw new Error(`TikTok Ads rejected the access token: ${body.message ?? 'error'}`);
+      if (body.code !== 0) throw new Error(`TikTok Ads rejected the access token (code ${Number(body.code)})`);
     });
   }
 

@@ -161,7 +161,7 @@ export class ReleasesService {
       platforms:       dto.platforms   ?? [],
       cover_url:       dto.coverUrl    ?? null,
       status:          ReleaseStatus.DRAFT,
-      metadata:        dto.metadata    ?? {},
+      metadata:        (({ [DISTRIBUTION_CONFIRMATION_KEY]: _ignored, ...rest }) => rest)((dto.metadata ?? {}) as Record<string, unknown>),
       isrc_global:     dto.isrc_global    ?? null,
       internal_notes:  dto.internal_notes ?? null,
       notes:           dto.notes          ?? null,
