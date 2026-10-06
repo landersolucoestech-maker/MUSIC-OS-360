@@ -218,4 +218,16 @@ describe('AbramusService.configure: connected only after a real login', () => {
     await expect(svc.searchWork('t1', 'x')).rejects.toThrow(/redirect/);
     expect((fetchImpl.mock.calls[1] as [string, RequestInit])[1].redirect).toBe('manual');
   });
+
+  it('closes DNS rebinding: a name that answers public for the checks and private at connect time is never connected', async () => {
+    const { svc, rows, resolveHost } = buildAbramus(jest.fn());
+    // buildAbramus replaced the injected fetch; restore the production one to exercise the connect-time lookup
+    delete (svc as unknown as { fetch?: unknown }).fetch;
+    resolveHost.mockReset();
+    resolveHost.mockResolvedValueOnce(['93.184.216.34']).mockResolvedValueOnce(['93.184.216.34']).mockResolvedValue(['169.254.169.254']);
+    await expect(svc.configure('t1', 'user', 'secret', 'https://abramus.example.test'))
+      .rejects.toMatchObject({ response: { code: 'INTEGRATION_CONNECTION_TEST_FAILED' } });
+    expect(resolveHost).toHaveBeenCalledTimes(3);
+    expect(rows[0].status).toBe(IntegrationStatus.ERROR);
+  });
 });

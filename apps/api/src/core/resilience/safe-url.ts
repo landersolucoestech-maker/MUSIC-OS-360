@@ -209,3 +209,26 @@ export async function assertResolvesToPublicAddresses(
     throw new UnsafeInputError('host must resolve to a public address');
   }
 }
+
+export type HostResolver = (name: string) => Promise<string[]>;
+
+/**
+ * A `dns.lookup`-compatible function for `https.request({ lookup })` that refuses private answers. The address it
+ * returns is the one the socket connects to, so validation and connection share one resolution and a name that
+ * answers differently the second time (DNS rebinding) cannot reach an address that was never checked.
+ */
+export function createPublicOnlyLookup(resolve: HostResolver) {
+  type Callback = (error: Error | null, address?: unknown, family?: number) => void;
+  const familyOf = (address: string): number => (address.includes(':') ? 6 : 4);
+  return (hostname: string, options: unknown, callback?: Callback): void => {
+    const done = (typeof options === 'function' ? options : callback) as Callback;
+    const wantsAll = typeof options === 'object' && options !== null && (options as { all?: boolean }).all === true;
+    resolve(hostname).then((addresses) => {
+      if (addresses.length === 0 || addresses.some(isPrivateAddress)) {
+        throw new UnsafeInputError('host must resolve to a public address');
+      }
+      if (wantsAll) done(null, addresses.map((address) => ({ address, family: familyOf(address) })));
+      else done(null, addresses[0], familyOf(addresses[0]));
+    }).catch((error: Error) => done(error));
+  };
+}

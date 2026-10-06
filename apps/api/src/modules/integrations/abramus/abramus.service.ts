@@ -5,8 +5,11 @@ import { DATA_SOURCE } from '../../../database/database.module';
 import { EncryptionService }    from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
+import { DEFAULT_TIMEOUT_MS } from '../../../core/resilience/resilient-fetch';
+import { pinnedHttpsFetch } from '../../../core/resilience/pinned-https-fetch';
 import {
   assertPublicHttpsUrl,
+  createPublicOnlyLookup,
   assertResolvesToPublicAddresses,
   UnsafeInputError,
 } from '../../../core/resilience/safe-url';
@@ -49,6 +52,15 @@ export class AbramusService extends IntegrationBaseService {
   /** Resolver used to prove the host is public; overridable so tests need no network. */
   protected resolveHost(name: string): Promise<string[]> {
     return dns.lookup(name, { all: true }).then((r) => r.map((a) => a.address));
+  }
+
+  /**
+   * The endpoint is tenant-supplied, so the call resolves the name itself and refuses a private answer at connect
+   * time: the address that was validated is the address that is connected (no second resolution to rebind).
+   */
+  protected fetch(url: string, init: RequestInit = {}, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<Response> {
+    const lookup = createPublicOnlyLookup((name) => this.resolveHost(name));
+    return this.cb.execute(() => pinnedHttpsFetch(url, init, { lookup, timeoutMs }));
   }
 
   private async validatedBaseUrl(raw: string): Promise<string> {
