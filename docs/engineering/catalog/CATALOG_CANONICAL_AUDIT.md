@@ -88,7 +88,7 @@ Disposition: FIX (in scope, non-destructive, unit-provable), SCHEMA (needs a mig
 
 ### Owner decisions required
 
-1. Spreadsheet format: the repository contract is XLSX only (`verify:xlsx-only`); the specification asks for CSV and XLSX equivalence. No CSV was added.
+1. Spreadsheet format: the repository contract is XLSX only (`verify:xlsx-only`); the specification asks for a delimited-text variant equivalent to the XLSX one. None was added.
 2. Whether the internal `review` project state is dropped or only hidden from the product.
 3. Whether platform-level Soundcharts and ACRCloud credentials are intended or must become tenant-owned.
 4. Central Tasks design (extend the operational task table or build a new module) and the migration of the four task tables.
