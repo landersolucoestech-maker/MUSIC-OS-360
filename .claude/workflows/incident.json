@@ -5,7 +5,7 @@
     {
       "id": "detect-classify",
       "requiredAgents": [
-        "repo-intelligence"
+        "repository-orchestrator"
       ],
       "requiredEvidence": [],
       "gates": [],
