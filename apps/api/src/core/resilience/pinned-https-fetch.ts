@@ -28,7 +28,11 @@ export function pinnedHttpsFetch(url: string, init: RequestInit, options: Pinned
     const fail = settle(reject);
     const request = https.request(target, {
       method: init.method ?? 'GET',
-      headers: (init.headers ?? {}) as Record<string, string>,
+      // A body is sent with its length, as fetch does: a server or gateway may refuse chunked request bodies.
+      headers: {
+        ...((init.headers ?? {}) as Record<string, string>),
+        ...(init.body != null ? { 'Content-Length': String(Buffer.byteLength(init.body as string)) } : {}),
+      },
       lookup: options.lookup,
       timeout: options.timeoutMs,
     }, (response) => {

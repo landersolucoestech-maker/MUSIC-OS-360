@@ -103,6 +103,20 @@ describe('pinnedHttpsFetch: request and response handling', () => {
     expect(await res.json()).toEqual({ token: 't' });
   });
 
+  it('sends the body with its byte length, never chunked', async () => {
+    const { spy } = fakeRequest(200, {}, [Buffer.from('{}')]);
+    await pinnedHttpsFetch('https://abramus.example.test/api', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"name":"çã"}' }, options);
+    const sent = (spy.mock.calls[0][1] as { headers: Record<string, string> }).headers;
+    expect(sent['Content-Length']).toBe(String(Buffer.byteLength('{"name":"çã"}')));
+    expect(sent['Content-Type']).toBe('application/json');
+  });
+
+  it('sends no Content-Length without a body', async () => {
+    const { spy } = fakeRequest(200, {}, []);
+    await pinnedHttpsFetch('https://abramus.example.test/api', { method: 'GET' }, options);
+    expect((spy.mock.calls[0][1] as { headers: Record<string, string> }).headers['Content-Length']).toBeUndefined();
+  });
+
   it('returns a redirect answer as is and never follows it', async () => {
     fakeRequest(307, { location: 'http://169.254.169.254/' }, []);
     const res = await pinnedHttpsFetch('https://abramus.example.test/api', {}, options);
