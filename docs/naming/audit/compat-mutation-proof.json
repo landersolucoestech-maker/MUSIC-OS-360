@@ -4506,7 +4506,7 @@
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "88062ffa35be1b33cf5a3bce2a5180f493e41561a142a2d930983094ab5295e2",
-   "testSha256": "73c4084d9bff6b9fb46c75979f1f056d690ec2ac81a25a91a123c29d2c6018ac",
+   "testSha256": "a171055a0210831ed145e64b66beccd1c863218b7d386890cd6ecad1ff66a108",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
@@ -4689,7 +4689,7 @@
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "109dbda31a6b9b1dcd04adaf6215ed3c8c2edeb1faf2e86783e912d9599f07c1",
-   "testSha256": "73c4084d9bff6b9fb46c75979f1f056d690ec2ac81a25a91a123c29d2c6018ac",
+   "testSha256": "a171055a0210831ed145e64b66beccd1c863218b7d386890cd6ecad1ff66a108",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
@@ -4811,14 +4811,14 @@
   {
    "file": "apps/api/src/modules/contracts/contracts.service.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
-   "fileSha256": "26b0f88ade6781f137f01a9a0936729d172ddc76a97e7759c3a8c83ad8fa9467",
-   "testSha256": "73c4084d9bff6b9fb46c75979f1f056d690ec2ac81a25a91a123c29d2c6018ac",
+   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
+   "testSha256": "a171055a0210831ed145e64b66beccd1c863218b7d386890cd6ecad1ff66a108",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "CANONICAL_FIRST",
-     "line": 188,
+     "line": 191,
      "label": "exclusivo",
      "labels": [
       "exclusivo"
@@ -4827,7 +4827,7 @@
     },
     {
      "operator": "CANONICAL_FIRST",
-     "line": 194,
+     "line": 197,
      "label": "versoes",
      "labels": [
       "versoes"
@@ -4836,19 +4836,19 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 188,
+     "line": 191,
      "label": "exclusivo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 193,
+     "line": 196,
      "label": "versoes",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 194,
+     "line": 197,
      "label": "versoes",
      "outcome": "KILLED"
     }
