@@ -1901,500 +1901,500 @@
   {
    "file": "apps/api/src/modules/artists/artist-legacy-fields.ts",
    "test": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
-   "fileSha256": "51433f7a44a93bf3a1504d0eeb057620a5e78c4a67df1284d75e45c015cb1eed",
-   "testSha256": "9bca75e6de54dae24c0a0a5dc1a3690177423908e1c17bb75f771687371d7e80",
+   "fileSha256": "f62850f27ff54ae56c24e0f33225012b562ecfcf4ec0bf2030404aed17c9a933",
+   "testSha256": "5d2be4e1fe3777410298651c381604e3df0de719d9a97dd9592c23f36f63c44f",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 237,
+     "line": 259,
      "label": "independente",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 237,
+     "line": 259,
      "label": "tipo_perfil",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 29,
-     "label": "agencia",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 61,
-     "label": "agencia_booking",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 69,
-     "label": "apple_music_albuns_url",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 122,
-     "label": "assessoria",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 28,
-     "label": "banco",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 101,
-     "label": "categoria",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 31,
-     "label": "chave_pix",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 119,
-     "label": "com_empresario",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "compositor_autor",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 30,
-     "label": "conta",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 122,
-     "label": "contador",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 56,
-     "label": "contatos_equipe",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 55,
-     "label": "contatos_vinculados",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 63,
-     "label": "contrato_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 25,
-     "label": "data_nascimento",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 68,
-     "label": "deezer_fas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 99,
-     "label": "distribuidoras",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 51,
-     "label": "distribuidoras_emails",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 53,
-     "label": "distribuidoras_empresa_emails",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 52,
-     "label": "distribuidoras_empresa_selecionadas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 54,
-     "label": "distribuidoras_gerais",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 50,
-     "label": "distribuidoras_selecionadas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "dj_produtor",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 23,
-     "label": "documentos_pessoais_url",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 119,
-     "label": "editora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "editora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "empresario",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 41,
-     "label": "empresario_email",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 38,
-     "label": "empresario_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 39,
-     "label": "empresario_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 40,
-     "label": "empresario_telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 26,
-     "label": "endereco",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 97,
-     "label": "escritorio",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 22,
-     "label": "especialidades",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 36,
-     "label": "fase_carreira",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 124,
-     "label": "feminino",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 122,
-     "label": "financeiro",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 20,
-     "label": "foto_url",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 21,
-     "label": "galeria_urls",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 65,
-     "label": "genero",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 119,
-     "label": "gravadora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "gravadora",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 45,
-     "label": "gravadora_email",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 42,
-     "label": "gravadora_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 43,
-     "label": "gravadora_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 49,
-     "label": "gravadora_responsavel_email",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 46,
-     "label": "gravadora_responsavel_id",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 47,
-     "label": "gravadora_responsavel_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 48,
-     "label": "gravadora_responsavel_telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 44,
-     "label": "gravadora_telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 119,
-     "label": "independente",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 71,
-     "label": "instagram_seguidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "interprete",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 121,
-     "label": "juridico",
+     "label": "agencia",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 62,
-     "label": "label_parceira",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 59,
-     "label": "manager_contato",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 58,
-     "label": "manager_nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 124,
-     "label": "masculino",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 95,
-     "label": "nome",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 18,
-     "label": "nome_artistico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 257,
-     "label": "nome_artistico",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 19,
-     "label": "nome_civil",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 100,
-     "label": "nomeCustom",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 57,
-     "label": "notas_internas",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 168,
-     "label": "outros",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 118,
-     "label": "produtor",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 60,
-     "label": "produtor_executivo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 37,
-     "label": "relacionamentos",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 98,
-     "label": "responsaveis",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 34,
-     "label": "slug_artistico",
+     "label": "agencia_booking",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 70,
-     "label": "soundcloud_seguidores_url",
+     "label": "apple_music_albuns_url",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 66,
-     "label": "spotify_ouvintes",
+     "line": 123,
+     "label": "assessoria",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 258,
-     "label": "status_cadastro",
+     "line": 29,
+     "label": "banco",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 35,
-     "label": "tags_musicais",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 27,
-     "label": "telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 96,
-     "label": "telefone",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 72,
-     "label": "tiktok_seguidores",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 33,
-     "label": "tipo_perfil",
+     "line": 102,
+     "label": "categoria",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 32,
-     "label": "titular_conta",
+     "label": "chave_pix",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 120,
+     "label": "com_empresario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "compositor_autor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 31,
+     "label": "conta",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 123,
+     "label": "contador",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 57,
+     "label": "contatos_equipe",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 56,
+     "label": "contatos_vinculados",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 64,
+     "label": "contrato_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 26,
+     "label": "data_nascimento",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 69,
+     "label": "deezer_fas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 100,
+     "label": "distribuidoras",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 52,
+     "label": "distribuidoras_emails",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 54,
+     "label": "distribuidoras_empresa_emails",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 53,
+     "label": "distribuidoras_empresa_selecionadas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 55,
+     "label": "distribuidoras_gerais",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 51,
+     "label": "distribuidoras_selecionadas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "dj_produtor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 24,
+     "label": "documentos_pessoais_url",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 120,
+     "label": "editora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 122,
+     "label": "editora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 122,
+     "label": "empresario",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 42,
+     "label": "empresario_email",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 39,
+     "label": "empresario_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 40,
+     "label": "empresario_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 41,
+     "label": "empresario_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 27,
+     "label": "endereco",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 98,
+     "label": "escritorio",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 23,
+     "label": "especialidades",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 37,
+     "label": "fase_carreira",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 125,
+     "label": "feminino",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 123,
+     "label": "financeiro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 21,
+     "label": "foto_url",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 22,
+     "label": "galeria_urls",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 66,
+     "label": "genero",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 120,
+     "label": "gravadora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 122,
+     "label": "gravadora",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 46,
+     "label": "gravadora_email",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 43,
+     "label": "gravadora_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 44,
+     "label": "gravadora_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 50,
+     "label": "gravadora_responsavel_email",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 47,
+     "label": "gravadora_responsavel_id",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 48,
+     "label": "gravadora_responsavel_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 49,
+     "label": "gravadora_responsavel_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 45,
+     "label": "gravadora_telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 120,
+     "label": "independente",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 72,
+     "label": "instagram_seguidores",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "interprete",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 122,
+     "label": "juridico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 63,
+     "label": "label_parceira",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 60,
+     "label": "manager_contato",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 59,
+     "label": "manager_nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 125,
+     "label": "masculino",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 96,
+     "label": "nome",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 19,
+     "label": "nome_artistico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 279,
+     "label": "nome_artistico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 20,
+     "label": "nome_civil",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 101,
+     "label": "nomeCustom",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 58,
+     "label": "notas_internas",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 190,
+     "label": "outros",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 119,
+     "label": "produtor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 61,
+     "label": "produtor_executivo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 38,
+     "label": "relacionamentos",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 99,
+     "label": "responsaveis",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 35,
+     "label": "slug_artistico",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 71,
+     "label": "soundcloud_seguidores_url",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 67,
+     "label": "spotify_ouvintes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 280,
+     "label": "status_cadastro",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 36,
+     "label": "tags_musicais",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 28,
+     "label": "telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 97,
+     "label": "telefone",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 73,
+     "label": "tiktok_seguidores",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 34,
+     "label": "tipo_perfil",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 33,
+     "label": "titular_conta",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 68,
      "label": "youtube_inscritos",
      "outcome": "KILLED"
     }
@@ -2405,7 +2405,13 @@
     "names": [],
     "wildcard": true,
     "siteCount": 82,
-    "unmutatedPtSites": [],
+    "unmutatedPtSites": [
+     {
+      "line": 168,
+      "kind": "string",
+      "text": "Especialidade inválida. Valores permitidos: "
+     }
+    ],
     "unmutatedNameSites": []
    },
    "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
@@ -2469,8 +2475,8 @@
   {
    "file": "apps/api/src/modules/artists/artists.service.ts",
    "test": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
-   "fileSha256": "4e34356ff66caad65e077e7fa8df82609cb83e86bc4871e5ee73b11fb6ea906a",
-   "testSha256": "9bca75e6de54dae24c0a0a5dc1a3690177423908e1c17bb75f771687371d7e80",
+   "fileSha256": "473c27c2c60fc068e61c01b5c538ba21e6e8d876451756f0ec2767d4d4e94d23",
+   "testSha256": "5d2be4e1fe3777410298651c381604e3df0de719d9a97dd9592c23f36f63c44f",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
@@ -4500,7 +4506,7 @@
    "file": "apps/api/src/modules/contracts/contract-category-slugs.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "88062ffa35be1b33cf5a3bce2a5180f493e41561a142a2d930983094ab5295e2",
-   "testSha256": "d65c155ae7016e4e843ada749678b8d1eeb6d3448b222c85f7382cdd7f533b31",
+   "testSha256": "73c4084d9bff6b9fb46c75979f1f056d690ec2ac81a25a91a123c29d2c6018ac",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
@@ -4683,8 +4689,9 @@
    "file": "apps/api/src/modules/contracts/contract-legacy-alias.util.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
    "fileSha256": "109dbda31a6b9b1dcd04adaf6215ed3c8c2edeb1faf2e86783e912d9599f07c1",
-   "testSha256": "d65c155ae7016e4e843ada749678b8d1eeb6d3448b222c85f7382cdd7f533b31",
+   "testSha256": "73c4084d9bff6b9fb46c75979f1f056d690ec2ac81a25a91a123c29d2c6018ac",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -4736,11 +4743,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -4751,7 +4753,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/contracts/contract-party-refs.ts",
@@ -4803,13 +4811,14 @@
   {
    "file": "apps/api/src/modules/contracts/contracts.service.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
-   "fileSha256": "45cf8d5a229664bfbd95307d934ebd6e99e000540c5b78b1957e54c86b367c53",
-   "testSha256": "d65c155ae7016e4e843ada749678b8d1eeb6d3448b222c85f7382cdd7f533b31",
+   "fileSha256": "26b0f88ade6781f137f01a9a0936729d172ddc76a97e7759c3a8c83ad8fa9467",
+   "testSha256": "73c4084d9bff6b9fb46c75979f1f056d690ec2ac81a25a91a123c29d2c6018ac",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "CANONICAL_FIRST",
-     "line": 146,
+     "line": 188,
      "label": "exclusivo",
      "labels": [
       "exclusivo"
@@ -4818,7 +4827,7 @@
     },
     {
      "operator": "CANONICAL_FIRST",
-     "line": 151,
+     "line": 194,
      "label": "versoes",
      "labels": [
       "versoes"
@@ -4827,23 +4836,24 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 146,
+     "line": 188,
      "label": "exclusivo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 151,
+     "line": 193,
+     "label": "versoes",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 194,
      "label": "versoes",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -4851,11 +4861,17 @@
      "versoes"
     ],
     "wildcard": false,
-    "siteCount": 4,
+    "siteCount": 5,
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/contracts/dto/contract-party-ref.dto.ts",
@@ -6630,25 +6646,26 @@
   {
    "file": "apps/api/src/modules/integrations/integrations.controller.ts",
    "test": "apps/api/src/modules/integrations/integrations-dto-wiring.spec.ts",
-   "fileSha256": "37091ea6f9be2011efda797888c759c69a2423bcdcbf300b044a802f18664d14",
+   "fileSha256": "2cb9eacbdafb2cffa1b3217885423100c7ab10349650118f08ae777622be9760",
    "testSha256": "88b4670125bbf60a2d5e180dfd0bf93ba6051dc4d74d17b0a9ce0dd60a5123d7",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1080,
+     "line": 1087,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1084,
+     "line": 1091,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1088,
+     "line": 1095,
      "label": "periodo",
      "outcome": "KILLED"
     }
@@ -10516,8 +10533,9 @@
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-alias.util.ts",
    "test": "apps/api/src/modules/phonograms/phonograms.service.spec.ts",
    "fileSha256": "cad14036512d39e6ef31491292b322063526d465a78f1e917d257ac16d485d50",
-   "testSha256": "1390f31ca43b19bc5b6efb9ed8f5c2b0bf7336d2c655e8e29da608db04032b57",
+   "testSha256": "e94ba56114ee4100229b0db0c0e55be12997c951f39e4f4f24efce6708182fd0",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -10569,11 +10587,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -10584,7 +10597,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/phonograms/phonogram-legacy-fields.ts",
@@ -10895,29 +10914,25 @@
   {
    "file": "apps/api/src/modules/phonograms/phonograms.service.ts",
    "test": "apps/api/src/modules/phonograms/phonograms.service.spec.ts",
-   "fileSha256": "862d18fbccb72f0b5953a130db0e2164f2f03e6837fbccd22bd4240e574280a4",
-   "testSha256": "1390f31ca43b19bc5b6efb9ed8f5c2b0bf7336d2c655e8e29da608db04032b57",
+   "fileSha256": "33434079a0cfa5d7cd6f18d2028ecace128a578d1178425b95036eb8d9b8894c",
+   "testSha256": "e94ba56114ee4100229b0db0c0e55be12997c951f39e4f4f24efce6708182fd0",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 147,
+     "line": 148,
      "label": "titulo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 177,
+     "line": 197,
      "label": "titulo",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -10928,7 +10943,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/projects/dto/projects.dto.ts",
@@ -11313,9 +11334,10 @@
   {
    "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
    "test": "apps/api/src/modules/registry/validation/entity-validators.legacy-compat.spec.ts",
-   "fileSha256": "e254aeed6f66c02e88e8a64bb97ba4018eed0619f45192e58c8ecf1f6c655963",
+   "fileSha256": "cb902aef893266ce6ce713a09b09a2ab9c5112ff524cc18016391664a3471977",
    "testSha256": "b3962da2becb22d34534f1388d2d6a11a5ab1b92f73a74f00e9863e3c805894e",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -11331,11 +11353,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -11347,7 +11364,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
