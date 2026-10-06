@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "git merge-base --is-ancestor 3d2793da origin/dev",
+  "command": "git merge-base --is-ancestor 3d2793da origin/dev",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "0ddd38e31760da851561b4c533fae1bee53c0444657b7617816cc918051a9f87",
+  "fingerprintStatus": "BOUND",
+  "head": "2c966b28ed61675355f0569b954e1c883d7c11d2",
+  "durationMs": 5,
+  "id": "evid-33e61918",
+  "createdAt": "2026-10-06T19:25:31.417Z"
+}

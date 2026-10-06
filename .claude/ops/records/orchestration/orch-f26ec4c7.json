@@ -5,7 +5,7 @@
   "intent": null,
   "status": "ACTIVE",
   "stopBlocks": 0,
-  "lastProgressAt": "2026-10-06T19:21:55.902Z",
+  "lastProgressAt": "2026-10-06T19:27:07.853Z",
   "tasks": [
     {
       "id": "discovery",
@@ -283,12 +283,15 @@
         "completion"
       ],
       "approvalClass": null,
-      "status": "RUNNING",
+      "status": "COMPLETED",
       "attempts": 0,
       "delegationId": "dele-525eaf62",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-60cd7d29",
+        "evid-33e61918"
+      ],
+      "result": "git-auditor PASS on the end state (branch, sync, scope, attribution, secrets, history, cited SHAs); regression gates passed; residuals documented in CATALOG_CANONICAL_AUDIT.md section 8.4",
       "failureReason": null,
       "recoveryOf": null,
       "blockedExternal": null,
@@ -323,15 +326,24 @@
         "completion"
       ],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "BLOCKED_EXTERNAL",
       "attempts": 0,
-      "delegationId": null,
+      "delegationId": "dele-eeca342e",
       "approvalId": null,
       "evidenceRefs": [],
       "result": null,
       "failureReason": null,
       "recoveryOf": null,
-      "blockedExternal": null
+      "blockedExternal": {
+        "capability": "Completion gate PASS for the catalog block of orchestration orch-f26ec4c7",
+        "cause": "The gate is BLOCKED by items that need a human decision, a human destructive approval or a PostgreSQL cluster, none of which this session can supply or self-grant",
+        "missingDependency": "A PostgreSQL cluster (database criteria ac-5305eb7b and ac-577b07af, referential integrity diagnostics R-CAT-9); owner decisions blk-94873ce2 (manual signature and distribution confirmation) and blk-97f0de4e (Work participant roles), the shares both-ids rule and exact-100 percentage rule; human destructive approvals for the older naming-normalization workflow instances",
+        "expectedContract": "completion-gate.mjs returns PASS: no open blockers, every acceptance criterion has fresh PASS evidence, all workflow instances COMPLETED",
+        "currentBehavior": "completion-gate.mjs returns BLOCKED (evid-00eb2e11): 4 open blockers, 10 criteria without fresh evidence, 4 workflow instances with phases waiting on human approval; every other criterion has fresh PASS evidence and all regression gates pass",
+        "fallback": "Code, proofs, gates and review verdicts are complete and recorded; the open criteria stay open and are listed in the audit doc section 8.4 and the final report; nothing was forced or faked",
+        "impact": "The mission cannot be declared complete: the database proof, the owner-decision rules and the integrity diagnostics remain undone",
+        "unblockCondition": "Provide a PostgreSQL cluster and run db:migrate, db:check and naming:schema then build the diagnostics; record the owner decisions; grant the destructive approvals through the approval mechanism; then re-run node .claude/runtime/completion-gate.mjs"
+      }
     }
   ],
   "missionId": "mission-c83f8d58",

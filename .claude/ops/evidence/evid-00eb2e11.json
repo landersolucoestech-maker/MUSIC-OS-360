@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node .claude/runtime/completion-gate.mjs",
+  "command": "node .claude/runtime/completion-gate.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "{\n  \"status\": \"BLOCKED\",\n  \"reasons\": [\n    \"4 open blocker(s): blk-94873ce2, blk-97f0de4e, blk-6e3eafe0, blk-b59ffabb\",\n    \"requirement req-04f1a6ac criterion ac-5305eb7b has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\",\n    \"requirement req-04f1a6ac criterion ac-577b07af has evidence but none is a fresh PASS bound to the current workspace fingerprint (stale or failing)\",\n    \"requirement req-5a613e56 criterion ac-a2a38906 has NO evidence\",\n    \"requirement req-83f5ac3a criterion ac-21489466 has NO evidence\",\n    \"requirement req-d28a0a6a criterion ac-efa1d7e8 has NO evidence\",\n    \"requirement req-d28a0a6a criterion ac-cf32c990 has NO evidence\",\n    \"requirement req-d28a0a6a criterion ac-8266fe4a has NO evidence\",\n    \"requirement req-efc9f58c criterion ac-05765362 has NO evidence\",\n    \"requirement req-efc9f58c criterion ac-262bf72b has NO evidence\",\n    \"requirement req-efc9f58c criterion ac-b49ff6dd has NO evidence\",\n    \"workflow instance work-de9faff1 (naming-normalization) has phases not COMPLETED: classify, canonical-model, schema-plan, destructive-approval, propagate, compatibility, verify, residue, review, closure, completion-gate\",\n    \"workflow instance work-8965dbca (naming-normalization) has phases not COMPLETED: destructive-approval, completion-gate\",\n    \"workflow instance work-c27898bd (naming-normalization) has phases not COMPLETED: destructive-approval, completion-gate, approve-drop-40\",\n    \"workflow instance work-2caaf80b (brownfield-change) has phases not COMPLETED: completion-gate\"\n  ],\n  \"warnings\": [\n    \"orchestration orch-e848167d was ABANDONED while bound to a workflow with 12 non-completed task(s) (reason: Superseded by orch-54733048: r14-mutation reached the 3-attempt loop breaker (FAIL x2 independent reviews, findings fixed in commits up to 9dafda6); completed work adopted by the new plan on the owner's decision to abandon and recreate. Pending approvals appr-c80c4e2f and appr-6570cc2f remain ungranted.)\"\n  ],\n  \"workspaceFingerprint\": \"0ddd38e31760da851561b4c533fae1bee53c0444657b7617816cc918051a9f87\",\n  \"missionId\": \"mission-c83f8d58\"\n}",
+  "stderrTail": "",
+  "workspaceFingerprint": "0ddd38e31760da851561b4c533fae1bee53c0444657b7617816cc918051a9f87",
+  "fingerprintStatus": "BOUND",
+  "head": "2c966b28ed61675355f0569b954e1c883d7c11d2",
+  "durationMs": 31613,
+  "id": "evid-00eb2e11",
+  "createdAt": "2026-10-06T19:26:45.590Z"
+}
