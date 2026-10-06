@@ -3540,6 +3540,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_ia		1	1	LEGITI
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_lancamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_lead		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_nota		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_notas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_obra		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_perfil		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tipo_pessoa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -4370,6 +4371,7 @@ DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPO
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	projeto_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_cliente		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_nota		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_notas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_obra		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_servico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	titular_nome		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -25251,6 +25253,7 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.t
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	string	tomador_razao_social	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	string	transferencia	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	string	vencimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-entity-fiscal-document-type.spec.ts	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/src/modules/invoices/invoice-legacy-fields.ts	string	tomador_legal_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/src/modules/invoices/invoice-legacy-fields.ts	string	transferencia	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoices.service.spec.ts	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
@@ -25902,6 +25905,8 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/form-cont
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/form-contracts.guard.spec.ts	string	chave_pix	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/form-contracts.guard.spec.ts	string	conta	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/form-contracts.guard.spec.ts	string	titular_conta	1	0	NORMALIZED	
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/invoices-fiscal-document-type.spec.ts	string	tipo_nota	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/invoices-fiscal-document-type.spec.ts	string	tipo_notas	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/report-column-ids.spec.ts	string	artista	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/report-column-ids.spec.ts	string	artistasAdicionaisAlbum	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/reports/form-contracts/report-column-ids.spec.ts	string	compositores	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY

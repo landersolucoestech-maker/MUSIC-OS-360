@@ -7,6 +7,11 @@ domain distinctions are in `docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY
 
 ## 1. Where the work stands
 
+Verdict of the latest checkpoint: `TECHNICAL NORMALIZATION: INCOMPLETE — DATABASE SCHEMA PROOF DEFERRED`. Three `database-schema`
+boundaries wait for a PostgreSQL-backed proof that cannot run now (external dependency). The resume command, the gates that depend
+only on that proof and the gates already green without it are in
+`docs/engineering/pack/TECHNICAL_NORMALIZATION_DEFERRED_DATABASE_PROOF.md`. Do not start new audits or new proof chains before that proof is regenerated.
+
 - Branch `dev` only. The resume started at the checkpoint above and every later step is a commit on `dev`
   (`git log 6b6db7a..HEAD`). No other branch, pull request or tag was created.
 - Nothing destructive was executed, no approval was granted, no `*_CONFIRM` token was set, and the Music Catalog

@@ -240,3 +240,7 @@
 {"name":"gate-run","at":"2026-10-05T00:57:20.708Z","gate":"security","status":"PASS","durationMs":17939,"reasonCount":0}
 {"name":"gate-run","at":"2026-10-05T00:57:38.857Z","gate":"completion","status":"BLOCKED","durationMs":18074,"reasonCount":2}
 {"name":"gate-run","at":"2026-10-05T22:49:35.481Z","gate":"security","status":"BLOCKED","durationMs":8527,"reasonCount":16}
+{"name":"gate-run","at":"2026-10-06T05:34:52.573Z","gate":"security","status":"BLOCKED","durationMs":23513,"reasonCount":16}
+{"name":"gate-run","at":"2026-10-06T06:00:40.592Z","gate":"security","status":"BLOCKED","durationMs":24664,"reasonCount":2}
+{"name":"gate-run","at":"2026-10-06T06:09:16.699Z","gate":"security","status":"BLOCKED","durationMs":24365,"reasonCount":2}
+{"name":"gate-run","at":"2026-10-06T06:16:42.776Z","gate":"security","status":"BLOCKED","durationMs":26599,"reasonCount":2}
