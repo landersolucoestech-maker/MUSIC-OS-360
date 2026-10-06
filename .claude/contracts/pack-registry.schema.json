@@ -8,7 +8,8 @@
     "generatedFrom",
     "counts",
     "agents",
-    "skills"
+    "skills",
+    "supplementalDefinitions"
   ],
   "properties": {
     "generatedFrom": {
