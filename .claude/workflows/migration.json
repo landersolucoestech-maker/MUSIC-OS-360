@@ -5,7 +5,7 @@
     {
       "id": "discovery",
       "requiredAgents": [
-        "repo-intelligence",
+        "repository-orchestrator",
         "database-reviewer"
       ],
       "requiredEvidence": [],
