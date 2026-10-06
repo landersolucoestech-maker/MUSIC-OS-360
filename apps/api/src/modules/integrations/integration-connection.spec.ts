@@ -230,4 +230,14 @@ describe('AbramusService.configure: connected only after a real login', () => {
     expect(resolveHost).toHaveBeenCalledTimes(3);
     expect(rows[0].status).toBe(IntegrationStatus.ERROR);
   });
+
+  it('one tenant-supplied host failing opens only its own breaker, never the breaker of another host', async () => {
+    const { svc, resolveHost } = buildAbramus(jest.fn());
+    delete (svc as unknown as { fetch?: unknown }).fetch;
+    resolveHost.mockResolvedValue(['10.0.0.9']); // every connect is refused by the lookup guard
+    const call = (host: string) => (svc as unknown as { fetch: (u: string) => Promise<Response> }).fetch(`https://${host}/api`);
+    for (let i = 0; i < 5; i += 1) await expect(call('down.example.test')).rejects.toThrow('public address');
+    await expect(call('down.example.test')).rejects.toThrow('temporariamente indisponível');
+    await expect(call('other.example.test')).rejects.toThrow('public address'); // reached the guard: its breaker is closed
+  });
 });

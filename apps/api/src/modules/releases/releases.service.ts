@@ -42,7 +42,8 @@ const isPlaceholderTrack = (track: unknown): boolean =>
 /** The posted tracklist is the stored one, or (when none is stored) only the untouched placeholder the form shows. */
 const tracksUnchanged = (sent: unknown, stored: unknown): boolean => {
   const storedEmpty = stored == null || (Array.isArray(stored) && stored.length === 0);
-  if (storedEmpty) return sent == null || (Array.isArray(sent) && sent.every(isPlaceholderTrack));
+  // The form shows one untouched placeholder; any more would add tracks to a frozen release.
+  if (storedEmpty) return sent == null || (Array.isArray(sent) && sent.length <= 1 && sent.every(isPlaceholderTrack));
   return jsonDeepEqual(sent, stored);
 };
 

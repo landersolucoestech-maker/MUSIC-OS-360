@@ -5,6 +5,7 @@ import { DATA_SOURCE } from '../../../database/database.module';
 import { EncryptionService }    from '../../../core/security/encryption.service';
 import { IntegrationBaseService } from '../integration-base.service';
 import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
+import { CircuitBreaker } from '../../../core/resilience/circuit-breaker';
 import { DEFAULT_TIMEOUT_MS } from '../../../core/resilience/resilient-fetch';
 import { pinnedHttpsFetch } from '../../../core/resilience/pinned-https-fetch';
 import {
@@ -15,6 +16,7 @@ import {
 } from '../../../core/resilience/safe-url';
 
 const PROVIDER = 'abramus';
+const MAX_HOST_BREAKERS = 100;
 
 interface AbramusCreds {
   username: string;
@@ -60,7 +62,26 @@ export class AbramusService extends IntegrationBaseService {
    */
   protected fetch(url: string, init: RequestInit = {}, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<Response> {
     const lookup = createPublicOnlyLookup((name) => this.resolveHost(name));
-    return this.cb.execute(() => pinnedHttpsFetch(url, init, { lookup, timeoutMs }));
+    return this.breakerFor(url).execute(() => pinnedHttpsFetch(url, init, { lookup, timeoutMs }));
+  }
+
+  /**
+   * One breaker per endpoint host, never one for the whole service: the endpoint is tenant-supplied, so a single
+   * shared breaker would let one tenant's unreachable URL cut Abramus off for every other tenant.
+   */
+  private readonly hostBreakers = new Map<string, CircuitBreaker>();
+
+  private breakerFor(url: string): CircuitBreaker {
+    const host = new URL(url).host;
+    const existing = this.hostBreakers.get(host);
+    if (existing) return existing;
+    if (this.hostBreakers.size >= MAX_HOST_BREAKERS) {
+      const oldest = this.hostBreakers.keys().next().value as string;
+      this.hostBreakers.delete(oldest);
+    }
+    const created = new CircuitBreaker({ name: `Abramus:${host}` });
+    this.hostBreakers.set(host, created);
+    return created;
   }
 
   private async validatedBaseUrl(raw: string): Promise<string> {

@@ -133,6 +133,13 @@ describe('ReleasesService.update: distribution data is frozen after distribution
       expect(repo.update).toHaveBeenCalled();
     });
 
+    it('rejects more than the single untouched placeholder, which would add tracks to a frozen release', async () => {
+      const { svc, repo } = build(baseRow({ metadata: { tracks: [] } }));
+      await expect(svc.update('t1', 'u1', 'r1', { metadata: { tracks: [placeholder, { ...placeholder, id: 2 }] } } as never))
+        .rejects.toMatchObject({ response: { code: 'RELEASE_DISTRIBUTED_IMMUTABLE' } });
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
     it.each([
       ['a title', { ...placeholder, title: 'New track' }],
       ['an isrc', { ...placeholder, isrc: 'BRABC2600001' }],

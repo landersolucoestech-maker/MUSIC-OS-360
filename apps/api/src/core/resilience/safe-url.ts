@@ -131,43 +131,60 @@ function isPrivateIpv4(octets: number[]): boolean {
   );
 }
 
+/** Expands any textual IPv6 form (compressed, uncompressed, dotted IPv4 tail, zone id) to eight 16-bit groups, or null. */
+function ipv6Groups(text: string): number[] | null {
+  let ip = text.split('%')[0];
+  const dotted = /(\d{1,3}(?:\.\d{1,3}){3})$/.exec(ip);
+  if (dotted) {
+    const octets = ipv4Octets(dotted[1]);
+    if (!octets) return null;
+    ip = ip.slice(0, ip.length - dotted[1].length)
+      + ((octets[0] << 8) | octets[1]).toString(16) + ':' + ((octets[2] << 8) | octets[3]).toString(16);
+  }
+  const halves = ip.split('::');
+  if (halves.length > 2) return null;
+  const parse = (part: string): number[] | null => {
+    if (part === '') return [];
+    const groups = part.split(':').map((g) => (/^[0-9a-f]{1,4}$/.test(g) ? parseInt(g, 16) : NaN));
+    return groups.some(Number.isNaN) ? null : groups;
+  };
+  const head = parse(halves[0]);
+  const tail = halves.length === 2 ? parse(halves[1]) : [];
+  if (!head || !tail) return null;
+  if (halves.length === 1) return head.length === 8 ? head : null;
+  const missing = 8 - head.length - tail.length;
+  return missing < 1 ? null : [...head, ...new Array<number>(missing).fill(0), ...tail];
+}
+
+const embeddedIpv4 = (hi: number, lo: number): number[] => [hi >> 8, hi & 255, lo >> 8, lo & 255];
+
 /** True for any address a tenant-configured URL must not reach (IPv4 or IPv6, literal form). */
 export function isPrivateAddress(address: string): boolean {
   const ip = address.replace(/^\[|\]$/g, '').toLowerCase();
   const v4 = ipv4Octets(ip);
   if (v4) return isPrivateIpv4(v4);
   if (!ip.includes(':')) return false;
-  if (ip === '::' || ip === '::1') return true;
-  const mapped = /^::ffff:(?:(\d{1,3}(?:\.\d{1,3}){3})|([0-9a-f]{1,4}):([0-9a-f]{1,4}))$/.exec(ip);
-  if (mapped) {
-    if (mapped[1]) {
-      const octets = ipv4Octets(mapped[1]);
-      return octets ? isPrivateIpv4(octets) : true;
-    }
-    const hi = parseInt(mapped[2], 16);
-    const lo = parseInt(mapped[3], 16);
-    return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
+  const g = ipv6Groups(ip);
+  if (!g) return true; // not a parseable address: never treat it as public
+  const [g0, g1, g2, g3, g4, g5, g6, g7] = g;
+  const zeros = (...groups: number[]) => groups.every((x) => x === 0);
+  if (zeros(g0, g1, g2, g3, g4, g5, g6) && (g7 === 0 || g7 === 1)) return true;           // :: and ::1
+  if (zeros(g0, g1, g2, g3, g4) && g5 === 0xffff) return isPrivateIpv4(embeddedIpv4(g6, g7)); // ::ffff:a.b.c.d
+  if (zeros(g0, g1, g2, g3) && g4 === 0xffff && g5 === 0) return isPrivateIpv4(embeddedIpv4(g6, g7)); // ::ffff:0:a.b.c.d (SIIT)
+  if (zeros(g0, g1, g2, g3, g4, g5)) return isPrivateIpv4(embeddedIpv4(g6, g7));              // IPv4-compatible
+  if (g0 === 0x64 && g1 === 0xff9b) {
+    if (g2 === 1) return true;                                                              // RFC 8215 local-use /48
+    if (zeros(g2, g3, g4, g5)) return isPrivateIpv4(embeddedIpv4(g6, g7));                  // NAT64 64:ff9b::/96
   }
-  // NAT64 (64:ff9b::/96), 6to4 (2002::/16) and IPv4-compatible forms embed an IPv4 address: judge the embedded one.
-  // 64:ff9b:1::/48 is the local-use translation prefix (RFC 8215): never a public destination.
-  if (ip.startsWith('64:ff9b:1:')) return true;
-  const embedded = /^(?:64:ff9b::|::)([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(ip);
-  if (embedded) {
-    const hi = parseInt(embedded[1], 16);
-    const lo = parseInt(embedded[2], 16);
-    return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
-  }
-  const first = parseInt(ip.split(':')[0] || '0', 16);
-  if (first === 0x2002) {
-    const hi = parseInt(ip.split(':')[1] || '0', 16);
-    const lo = parseInt(ip.split(':')[2] || '0', 16);
-    return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
-  }
+  if (g0 === 0x2002) return isPrivateIpv4(embeddedIpv4(g1, g2));                            // 6to4
+  if (g0 === 0x2001 && g1 === 0) return true;                                               // Teredo 2001::/32
+  if (g0 === 0x2001 && g1 === 0xdb8) return true;                                           // documentation 2001:db8::/32
+  if (g0 === 0x100 && zeros(g1, g2, g3)) return true;                                       // discard-only 100::/64
   return (
-    (first & 0xffc0) === 0xfec0 ||              // fec0::/10 site-local (deprecated)
-    (first & 0xfe00) === 0xfc00 ||              // fc00::/7 unique local
-    (first & 0xffc0) === 0xfe80 ||              // fe80::/10 link-local
-    (first & 0xff00) === 0xff00                 // ff00::/8 multicast
+    (g0 & 0xfe00) === 0xfc00 ||                                                             // fc00::/7 unique local
+    (g0 & 0xffc0) === 0xfe80 ||                                                             // fe80::/10 link-local
+    (g0 & 0xffc0) === 0xfec0 ||                                                             // fec0::/10 site-local (deprecated)
+    (g0 & 0xff00) === 0xff00                                                                // ff00::/8 multicast
   );
 }
 
@@ -188,7 +205,8 @@ export function assertPublicHttpsUrl(value: unknown, fieldName: string): string 
   if (parsed.protocol !== 'https:') throw new UnsafeInputError(`${fieldName} must use https`);
   if (parsed.username || parsed.password) throw new UnsafeInputError(`${fieldName} must not carry credentials`);
   if (parsed.port && parsed.port !== '443') throw new UnsafeInputError(`${fieldName} must use the standard port`);
-  const host = parsed.hostname.toLowerCase();
+  // A trailing dot names the same host (`localhost.`): judge the name without it.
+  const host = parsed.hostname.toLowerCase().replace(/\.$/, '');
   if (!host || host === 'localhost' || !host.includes('.') && !host.includes(':') ) {
     throw new UnsafeInputError(`${fieldName} must name a public host`);
   }

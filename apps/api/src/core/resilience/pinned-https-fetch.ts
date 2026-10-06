@@ -22,6 +22,10 @@ export function pinnedHttpsFetch(url: string, init: RequestInit, options: Pinned
       return;
     }
     const maxBytes = options.maxBytes ?? DEFAULT_MAX_RESPONSE_BYTES;
+    const timers: { deadline?: NodeJS.Timeout } = {};
+    const settle = <T>(done: (value: T) => void) => (value: T): void => { clearTimeout(timers.deadline); done(value); };
+    const succeed = settle(resolve);
+    const fail = settle(reject);
     const request = https.request(target, {
       method: init.method ?? 'GET',
       headers: (init.headers ?? {}) as Record<string, string>,
@@ -38,19 +42,25 @@ export function pinnedHttpsFetch(url: string, init: RequestInit, options: Pinned
         }
         chunks.push(chunk);
       });
-      response.on('error', reject);
+      response.on('error', fail);
       response.on('end', () => {
         const status = response.statusCode ?? 0;
+        if (status < 200 || status > 599) {
+          fail(new Error(`Unsupported response status ${status}`));
+          return;
+        }
         const headers = new Headers();
         for (const [name, value] of Object.entries(response.headers)) {
           if (value !== undefined) headers.set(name, Array.isArray(value) ? value.join(', ') : value);
         }
         const emptyBody = status === 204 || status === 205 || status === 304;
-        resolve(new Response(emptyBody ? null : Buffer.concat(chunks), { status, headers }));
+        succeed(new Response(emptyBody ? null : Buffer.concat(chunks), { status, headers }));
       });
     });
-    request.on('timeout', () => request.destroy(new Error(`Timeout after ${options.timeoutMs}ms calling ${target.origin}`)));
-    request.on('error', reject);
+    const timedOut = () => request.destroy(new Error(`Timeout after ${options.timeoutMs}ms calling ${target.origin}`));
+    request.on('timeout', timedOut); // no socket activity
+    timers.deadline = setTimeout(timedOut, options.timeoutMs); // total deadline: a slow drip cannot hold the request open
+    request.on('error', fail);
     if (init.body != null) request.write(init.body as string);
     request.end();
   });

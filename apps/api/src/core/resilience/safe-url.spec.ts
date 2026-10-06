@@ -91,10 +91,10 @@ describe('safe-url SSRF guards (CWE-918)', () => {
 
   describe('tenant-configured public https endpoints', () => {
     it.each(['10.0.0.1', '127.0.0.1', '169.254.169.254', '172.16.0.1', '172.31.255.255', '192.168.1.1', '100.64.0.1', '0.0.0.0', '224.0.0.1',
-      '::1', '::', 'fe80::1', 'fd00::1', '::ffff:10.0.0.1', '::ffff:7f00:1', '[::1]', '::7f00:1', '64:ff9b::a00:1', '2002:7f00:1::', '2002:a9fe:a9fe::1', 'fec0::1', '64:ff9b:1::a00:1', '64:ff9b:1::808:808'])('%s is private', (ip) => {
+      '::1', '::', 'fe80::1', 'fd00::1', '::ffff:10.0.0.1', '::ffff:7f00:1', '[::1]', '::7f00:1', '64:ff9b::a00:1', '2002:7f00:1::', '2002:a9fe:a9fe::1', 'fec0::1', '64:ff9b:1::a00:1', '64:ff9b:0:0:0:0:7f00:1', '0:0:0:0:0:0:0:1', '0:0:0:0:0:ffff:7f00:1', '::ffff:0:7f00:1', '64:ff9b::127.0.0.1', '::1%lo', '2001:0:4136:e378:8000:63bf:3fff:fdd2', '2001:db8::1', '100::1', 'not:an:address', '64:ff9b:1::808:808'])('%s is private', (ip) => {
       expect(isPrivateAddress(ip)).toBe(true);
     });
-    it.each(['8.8.8.8', '93.184.216.34', '172.32.0.1', '172.15.0.1', '2606:4700::1111', '::ffff:8.8.8.8', '64:ff9b::808:808', '2002:808:808::1'])('%s is public', (ip) => {
+    it.each(['8.8.8.8', '93.184.216.34', '172.32.0.1', '172.15.0.1', '2606:4700::1111', '::ffff:8.8.8.8', '64:ff9b::808:808', '2002:808:808::1', '2001:4860:4860::8888', '64:ff9b:0:0:0:0:808:808'])('%s is public', (ip) => {
       expect(isPrivateAddress(ip)).toBe(false);
     });
     it('normalizes a valid URL and drops the trailing slash', () => {
@@ -103,7 +103,7 @@ describe('safe-url SSRF guards (CWE-918)', () => {
     });
     it.each([
       'http://api.example.com', 'ftp://api.example.com', 'https://user@api.example.com', 'https://api.example.com:8080',
-      'https://localhost', 'https://a.localhost', 'https://printer.local', 'https://svc.internal', 'https://intranet',
+      'https://localhost', 'https://localhost.', 'https://foo.local.', 'https://metadata.google.internal.', 'https://a.localhost', 'https://printer.local', 'https://svc.internal', 'https://intranet',
       'https://127.0.0.1', 'https://[::1]', 'https://169.254.169.254', '', 'garbage',
     ])('rejects %s', (url) => {
       expect(() => assertPublicHttpsUrl(url, 'baseUrl')).toThrow(UnsafeInputError);

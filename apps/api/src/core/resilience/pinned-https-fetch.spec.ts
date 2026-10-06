@@ -70,7 +70,7 @@ describe('pinnedHttpsFetch: request and response handling', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const https = require('node:https') as typeof import('node:https');
 
-  function fakeRequest(status: number, headers: Record<string, string | string[]>, body: Buffer[], timesOut = false) {
+  function fakeRequest(status: number, headers: Record<string, string | string[]>, body: Buffer[], mode: 'respond' | 'timeout' | 'hang' = 'respond') {
     const request = new EventEmitter() as EventEmitter & { write: jest.Mock; end: jest.Mock; destroy: jest.Mock };
     request.write = jest.fn();
     request.destroy = jest.fn((error?: Error) => { if (error) request.emit('error', error); });
@@ -80,7 +80,8 @@ describe('pinnedHttpsFetch: request and response handling', () => {
       response.statusCode = status;
       response.headers = headers;
       request.end.mockImplementation(() => {
-        if (timesOut) { request.emit('timeout'); return; }
+        if (mode === 'timeout') { request.emit('timeout'); return; }
+        if (mode === 'hang') return;
         onResponse(response);
         body.forEach((chunk) => response.emit('data', chunk));
         response.emit('end');
@@ -122,7 +123,26 @@ describe('pinnedHttpsFetch: request and response handling', () => {
   });
 
   it('turns a socket timeout into a timeout error', async () => {
-    fakeRequest(200, {}, [], true);
+    fakeRequest(200, {}, [], 'timeout');
     await expect(pinnedHttpsFetch('https://abramus.example.test/api', {}, options)).rejects.toThrow('Timeout after 1000ms');
+  });
+
+  it.each([[100], [700]])('rejects an unsupported status %i', async (status) => {
+    fakeRequest(status, {}, []);
+    await expect(pinnedHttpsFetch('https://abramus.example.test/api', {}, options)).rejects.toThrow('Unsupported response status');
+  });
+
+  it('enforces a total deadline, so a slow drip cannot hold the request open', async () => {
+    jest.useFakeTimers();
+    try {
+      const { request } = fakeRequest(200, {}, [], 'hang'); // the server never finishes and never goes idle
+      const pending = pinnedHttpsFetch('https://abramus.example.test/api', {}, options);
+      const assertion = expect(pending).rejects.toThrow('Timeout after 1000ms');
+      jest.advanceTimersByTime(1001);
+      await assertion;
+      expect(request.destroy).toHaveBeenCalled();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
