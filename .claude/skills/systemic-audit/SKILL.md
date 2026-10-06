@@ -5,7 +5,7 @@ description: Runs a full end-to-end systemic audit of the installed project — 
 
 # Systemic Audit
 
-This is the master workflow for `mission-orchestrator`. It runs the phases below in order,
+This is the master workflow for `music-os-360-orchestrator`. It runs the phases below in order,
 persisting all state through `.claude/runtime/ops.mjs` so the mission survives context
 compaction and interruption (see the `mission-recovery` skill for resuming one already in
 progress — check for `.claude/ops/state.json` first and resume instead of restarting).
@@ -16,7 +16,7 @@ pack for the complete scope checklist (file categories, prohibited completion pa
 
 ## Phase 1 — Repository discovery
 
-Delegate to `repo-intelligence`. Do not proceed until you have a real system map (Section 6-7 of
+Delegate repository discovery to `repository-orchestrator`, which coordinates `repo-inspector` and the relevant mappers. Do not proceed until you have a real system map (Section 6-7 of
 the mission doc): actual stack, workspaces, persistence layer, API surface, async systems,
 integrations, frontend(s), test tooling.
 
