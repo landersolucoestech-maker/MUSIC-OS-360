@@ -26,6 +26,20 @@ const dayKey = (value: unknown): string => {
   return Number.isNaN(d.getTime()) ? String(value) : d.toISOString().slice(0, 10);
 };
 const textKey = (value: unknown): string => (value == null ? '' : String(value));
+/**
+ * Keys of the merged `assets` and `schedule` objects that carry what the distributor already holds. The other keys
+ * (press release, EPK, music video, recording and mix dates) are production and marketing data and stay editable.
+ */
+const FROZEN_ASSET_KEYS = ['audio_master_url', 'cover_url', 'lyrics', 'credits'] as const;
+const FROZEN_SCHEDULE_KEYS = ['distributor_delivery_date'] as const;
+const changedFrozenKeys = (
+  sent: Record<string, unknown> | null | undefined,
+  stored: Record<string, unknown> | null | undefined,
+  keys: readonly string[],
+  keyOf: (value: unknown) => string,
+): string[] => keys.filter((key) =>
+  sent != null && Object.prototype.hasOwnProperty.call(sent, key) && keyOf(sent[key]) !== keyOf(stored?.[key]));
+
 /** A track the form adds on its own to an empty tracklist: it carries defaults but no content. */
 const TRACK_IDENTITY_KEYS = new Set(['id', 'language']);
 const TRACK_FLAG_KEYS = new Set(['explicit', 'isAlternateVersion', 'instrumental']);
@@ -211,6 +225,10 @@ export class ReleasesService {
       checks.push(['metadata.tracks', null, true]);
     }
     const changed = checks.filter(([, , differs]) => differs).map(([field]) => field);
+    changed.push(
+      ...changedFrozenKeys(dto.assets, current.assets as Record<string, unknown> | null, FROZEN_ASSET_KEYS, textKey).map((key) => `assets.${key}`),
+      ...changedFrozenKeys(dto.schedule, current.schedule as Record<string, unknown> | null, FROZEN_SCHEDULE_KEYS, dayKey).map((key) => `schedule.${key}`),
+    );
     if (changed.length === 0) return;
     throw new ConflictException({
       code: 'RELEASE_DISTRIBUTED_IMMUTABLE',

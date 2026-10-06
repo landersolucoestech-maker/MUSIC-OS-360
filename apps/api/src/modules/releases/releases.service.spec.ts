@@ -114,6 +114,31 @@ describe('ReleasesService.update: distribution data is frozen after distribution
     expect((repo.update as jest.Mock).mock.calls[0][1]).toMatchObject({ notes: 'ok' });
   });
 
+  describe('assets and schedule of a frozen release', () => {
+    const stored = { assets: { cover_url: 'https://cdn.example.test/a.jpg', audio_master_url: 'https://cdn.example.test/a.wav', press_release: 'old' }, schedule: { distributor_delivery_date: '2026-09-01', recording_date: '2026-05-01' } };
+
+    it.each([
+      ['a changed cover', { assets: { cover_url: 'https://cdn.example.test/new.jpg' } }, 'assets.cover_url'],
+      ['a changed master audio', { assets: { audio_master_url: 'https://cdn.example.test/new.wav' } }, 'assets.audio_master_url'],
+      ['a first lyrics text', { assets: { lyrics: 'new lyrics' } }, 'assets.lyrics'],
+      ['a changed distributor delivery date', { schedule: { distributor_delivery_date: '2026-09-15' } }, 'schedule.distributor_delivery_date'],
+    ])('rejects %s', async (_label, payload, field) => {
+      const { svc, repo } = build(baseRow(stored));
+      await expect(svc.update('t1', 'u1', 'r1', payload as never))
+        .rejects.toMatchObject({ response: { code: 'RELEASE_DISTRIBUTED_IMMUTABLE', fields: expect.arrayContaining([field]) } });
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
+    it('accepts the form posting the stored values, blank keys and the keys that are not distribution data', async () => {
+      const { svc, repo } = build(baseRow(stored));
+      await svc.update('t1', 'u1', 'r1', {
+        assets: { cover_url: 'https://cdn.example.test/a.jpg', lyrics: null, credits: '', press_release: 'new press text', epk_url: 'https://epk.example.test' },
+        schedule: { distributor_delivery_date: '2026-09-01T00:00:00.000Z', recording_date: '2026-06-01', mix_master_date: null },
+      } as never);
+      expect(repo.update).toHaveBeenCalled();
+    });
+  });
+
   describe('a distributed release with no stored tracklist (created by import or API)', () => {
     const placeholder = {
       id: 1760000000000, title: '', artist: '', isrc: '', isAlternateVersion: false, versionType: '', versionCustomName: '',

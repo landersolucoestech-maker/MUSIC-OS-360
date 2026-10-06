@@ -126,6 +126,10 @@ function isPrivateIpv4(octets: number[]): boolean {
     (a === 172 && b >= 16 && b <= 31) ||        // 172.16.0.0/12
     (a === 192 && b === 0 && c === 0) ||        // 192.0.0.0/24
     (a === 192 && b === 168) ||                 // 192.168.0.0/16
+    (a === 192 && b === 0 && c === 2) ||        // 192.0.2.0/24 documentation
+    (a === 192 && b === 88 && c === 99) ||      // 192.88.99.0/24 deprecated 6to4 relay
+    (a === 198 && b === 51 && c === 100) ||     // 198.51.100.0/24 documentation
+    (a === 203 && b === 0 && c === 113) ||      // 203.0.113.0/24 documentation
     (a === 198 && (b === 18 || b === 19)) ||    // 198.18.0.0/15 benchmarking
     a >= 224                                    // multicast, reserved, broadcast
   );
@@ -179,6 +183,7 @@ export function isPrivateAddress(address: string): boolean {
   if (g0 === 0x2002) return isPrivateIpv4(embeddedIpv4(g1, g2));                            // 6to4
   if (g0 === 0x2001 && g1 === 0) return true;                                               // Teredo 2001::/32
   if (g0 === 0x2001 && g1 === 0xdb8) return true;                                           // documentation 2001:db8::/32
+  if (g0 === 0x3fff && (g1 & 0xf000) === 0) return true;                                    // documentation 3fff::/20
   if (g0 === 0x100 && zeros(g1, g2, g3)) return true;                                       // discard-only 100::/64
   return (
     (g0 & 0xfe00) === 0xfc00 ||                                                             // fc00::/7 unique local

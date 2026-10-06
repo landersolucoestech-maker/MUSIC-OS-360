@@ -102,6 +102,13 @@ describe('IntegrationBaseService.saveCredentials: a saved credential is not a te
     expect(rows[0].metadata['restore_failed']).toBe(true);
   });
 
+  it('a store that cannot record the failure does not turn the validation failure into a raw error', async () => {
+    const { svc } = build();
+    jest.spyOn(svc as unknown as { recordConnectionState: () => Promise<void> }, 'recordConnectionState').mockRejectedValue(new Error('db down'));
+    await expect(svc.saveCredentials('t1', 'abramus', { token: 'x' }, jest.fn().mockRejectedValue(new Error('401'))))
+      .rejects.toMatchObject({ response: { code: 'INTEGRATION_CONNECTION_TEST_FAILED' } });
+  });
+
   it('a failed first configuration has nothing to restore: it is stored in error', async () => {
     const { svc, rows } = build();
     await expect(svc.saveCredentials('t1', 'abramus', { token: 'x' }, jest.fn().mockRejectedValue(new Error('down')))).rejects.toBeDefined();
@@ -281,5 +288,22 @@ describe('AbramusService.configure: connected only after a real login', () => {
     breakerFor('h100.example.test'); // the map is full: evicts h1
     expect(breakerFor('h0.example.test')).toBe(first);
     expect(breakerFor('h1.example.test')).not.toBe(second); // h1 lost its breaker and got a new one
+  });
+
+  it('the name resolver gives up after its timeout instead of holding a thread', async () => {
+    jest.useFakeTimers();
+    try {
+      const { svc } = buildAbramus(jest.fn());
+      delete (svc as unknown as { resolveHost?: unknown }).resolveHost;
+      const dns = jest.requireActual('node:dns') as typeof import('node:dns');
+      jest.spyOn(dns.promises, 'lookup').mockImplementation(() => new Promise(() => undefined) as never);
+      const pending = (svc as unknown as { resolveHost: (n: string) => Promise<string[]> }).resolveHost('slow.example.test');
+      const assertion = expect(pending).rejects.toThrow('DNS lookup timeout');
+      jest.advanceTimersByTime(5001);
+      await assertion;
+    } finally {
+      jest.useRealTimers();
+      jest.restoreAllMocks();
+    }
   });
 });

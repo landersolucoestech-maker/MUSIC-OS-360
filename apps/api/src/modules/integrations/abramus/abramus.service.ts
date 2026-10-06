@@ -18,6 +18,7 @@ import {
 
 const PROVIDER = 'abramus';
 const MAX_HOST_BREAKERS = 100;
+const RESOLVE_TIMEOUT_MS = 5_000;
 
 interface AbramusCreds {
   username: string;
@@ -54,7 +55,12 @@ export class AbramusService extends IntegrationBaseService {
 
   /** Resolver used to prove the host is public; overridable so tests need no network. */
   protected resolveHost(name: string): Promise<string[]> {
-    return dns.lookup(name, { all: true }).then((r) => r.map((a) => a.address));
+    const lookup = dns.lookup(name, { all: true }).then((r) => r.map((a) => a.address));
+    // A name with a slow authoritative server must not hold a resolver thread for every call.
+    const timeout = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('DNS lookup timeout')), RESOLVE_TIMEOUT_MS).unref();
+    });
+    return Promise.race([lookup, timeout]);
   }
 
   /**

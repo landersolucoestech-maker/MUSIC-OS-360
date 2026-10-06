@@ -86,12 +86,17 @@ export class IntegrationBaseService {
           restoreFailed = true; // the caller still gets the validation failure; the state records that the restore did not happen
         }
       }
-      await this.recordConnectionState(tenantId, provider, previous && !restoreFailed ? previous.status : IntegrationStatus.ERROR, {
-        verified: previous && !restoreFailed ? previous.verified : false,
-        ...(restoreFailed ? { restore_failed: true } : {}),
-        last_failure_at: new Date().toISOString(),
-        last_failure_reason: reason,
-      });
+      try {
+        await this.recordConnectionState(tenantId, provider, previous && !restoreFailed ? previous.status : IntegrationStatus.ERROR, {
+          verified: previous && !restoreFailed ? previous.verified : false,
+          ...(restoreFailed ? { restore_failed: true } : {}),
+          last_failure_at: new Date().toISOString(),
+          last_failure_reason: reason,
+        });
+      } catch (recordError) {
+        // The caller still gets the validation failure; the store failure is logged, never swallowed.
+        this.logger.error(`${provider}: could not record the failed connection test: ${redactForStorage(String(recordError))}`);
+      }
       throw new BadRequestException({
         code: 'INTEGRATION_CONNECTION_TEST_FAILED',
         message: `Não foi possível validar a conexão com ${provider}: ${reason}`,
