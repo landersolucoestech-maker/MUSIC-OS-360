@@ -53,7 +53,7 @@ import { useDebounce } from "@/shared/hooks/useDebounce";
 import { WorkOriginBadge } from "@/modules/catalog/components/WorkOriginBadge";
 import {
   WORK_LANGUAGE_OPTIONS,
-  WORK_PARTICIPANT_ROLE_OPTIONS,
+  workParticipantRoleOptionsFor,
   WORK_STATUS_OPTIONS,
   isWorkAiUsageLevel,
   isWorkOrigin,
@@ -1139,7 +1139,7 @@ export function WorkFormModal({
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent>
-                              {WORK_PARTICIPANT_ROLE_OPTIONS.map((option) => (
+                              {workParticipantRoleOptionsFor(p.role).map((option) => (
                                 <SelectItem key={option.value} value={option.value}>
                                   {option.label}
                                 </SelectItem>

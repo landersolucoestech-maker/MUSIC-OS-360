@@ -72,7 +72,6 @@ describe('WorksService legacy wiring', () => {
         { 'nome': 'Comp', 'classeFuncao': 'Compositor/Autor' },
         { name: 'NoRole' },
         { name: 'Blank', role: '  ' },
-        { name: 'Custom', role: 'my-custom-role' },
       ],
     } as never);
     const persisted = workRepo.create.mock.calls[0][0] as Record<string, unknown>;
@@ -86,7 +85,6 @@ describe('WorksService legacy wiring', () => {
       ['Comp', 'composer_author'],
       ['NoRole', 'unspecified'],
       ['Blank', 'unspecified'],
-      ['Custom', 'my-custom-role'],
     ]);
     expect(rows[0]['percentage']).toBe('50');
   });
@@ -112,9 +110,9 @@ describe('WorksService legacy wiring', () => {
 
   it('update maps legacy participants (role and keys) to canonical rows', async () => {
     const { svc, participantsRepo } = build();
-    await svc.update('t1', 'u1', 'w1', { 'participantes': [{ 'nome': 'Adm', 'classeFuncao': 'administrador' }, { name: 'X' }] } as never);
+    await svc.update('t1', 'u1', 'w1', { 'participantes': [{ 'nome': 'Ed', 'classeFuncao': 'editor' }, { name: 'X' }] } as never);
     expect(participantsRepo.delete).toHaveBeenCalledTimes(1);
     const rows = participantsRepo.create.mock.calls.map((c) => c[0] as Record<string, unknown>);
-    expect(rows.map((r) => [r['name'], r['role']])).toEqual([['Adm', 'administrator'], ['X', 'unspecified']]);
+    expect(rows.map((r) => [r['name'], r['role']])).toEqual([['Ed', 'publisher'], ['X', 'unspecified']]);
   });
 });

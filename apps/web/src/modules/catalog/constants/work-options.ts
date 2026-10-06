@@ -20,17 +20,32 @@ export const WORK_PARTICIPANT_ROLES = [
 export type WorkParticipantRole = (typeof WORK_PARTICIPANT_ROLES)[number];
 
 export const WORK_PARTICIPANT_ROLE_LABELS: Readonly<Record<WorkParticipantRole, string>> = {
-  publisher: "Editor",
+  publisher: "Editora",
   administrator: "Administrador",
   composer_author: "Compositor/Autor",
   translator: "Tradutor",
   unspecified: "Não informado",
 };
 
-/** Roles offered in the participant select of the work form (in display order). */
+/**
+ * Roles offered in the participant select of the work form (in display order). A work has two kinds of participant:
+ * composer/author and publisher. Administrator and translator stay in WORK_PARTICIPANT_ROLES only so a role already
+ * stored on a work still shows its label; they are no longer offered and the API rejects them as new values.
+ */
 export const WORK_PARTICIPANT_ROLE_OPTIONS: ReadonlyArray<{ value: WorkParticipantRole; label: string }> = (
-  ["publisher", "administrator", "composer_author", "translator"] as const
+  ["composer_author", "publisher"] as const
 ).map((value) => ({ value, label: WORK_PARTICIPANT_ROLE_LABELS[value] }));
+
+/**
+ * Options for one participant's role select: the two offered roles, plus the participant's own stored role when it is
+ * a legacy one (administrator, translator), so an edit form still shows it and sends it back unchanged. A legacy role
+ * is never offered to a participant that does not already carry it.
+ */
+export function workParticipantRoleOptionsFor(currentRole: unknown): ReadonlyArray<{ value: WorkParticipantRole; label: string }> {
+  const offered = WORK_PARTICIPANT_ROLE_OPTIONS.some((option) => option.value === currentRole);
+  if (offered || !isWorkParticipantRole(currentRole) || currentRole === "unspecified") return WORK_PARTICIPANT_ROLE_OPTIONS;
+  return [...WORK_PARTICIPANT_ROLE_OPTIONS, { value: currentRole, label: WORK_PARTICIPANT_ROLE_LABELS[currentRole] }];
+}
 
 export function isWorkParticipantRole(value: unknown): value is WorkParticipantRole {
   return typeof value === "string" && (WORK_PARTICIPANT_ROLES as readonly string[]).includes(value);

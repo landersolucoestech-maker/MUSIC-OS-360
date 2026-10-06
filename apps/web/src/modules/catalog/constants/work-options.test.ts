@@ -58,14 +58,19 @@ describe("work language vocabulary (ISO code ↔ PT-BR label)", () => {
 });
 
 describe("work participant roles", () => {
-  it("offers the four canonical roles with PT-BR labels in the form select", () => {
+  it("offers exactly the two canonical roles (composer/author and publisher) with PT-BR labels in the form select", () => {
     expect(WORK_PARTICIPANT_ROLE_OPTIONS).toEqual([
-      { value: "publisher", label: "Editor" },
-      { value: "administrator", label: "Administrador" },
       { value: "composer_author", label: "Compositor/Autor" },
-      { value: "translator", label: "Tradutor" },
+      { value: "publisher", label: "Editora" },
     ]);
     expect(WORK_PARTICIPANT_ROLE_LABELS.unspecified).toBe("Não informado");
+  });
+
+  it("keeps the label of a legacy role already stored on a work, though it is no longer offered", () => {
+    expect(WORK_PARTICIPANT_ROLE_OPTIONS.map((o) => o.value)).not.toContain("administrator");
+    expect(WORK_PARTICIPANT_ROLE_OPTIONS.map((o) => o.value)).not.toContain("translator");
+    expect(workParticipantRoleLabel("administrator")).toBe("Administrador");
+    expect(workParticipantRoleLabel("translator")).toBe("Tradutor");
   });
 
   it("labels every role in PT-BR and never shows a raw role value", () => {
@@ -84,5 +89,24 @@ describe("other work vocabularies", () => {
     expect(WORK_AI_USAGE_LEVEL_LABELS).toEqual({ full: "Totalmente", partial: "Parcialmente" });
     expect(WORK_STATUS_OPTIONS.map((o) => o.value)).toEqual(["under_review", "pending", "registered", "rejected"]);
     expect(WORK_STATUS_OPTIONS.map((o) => o.label)).toEqual(["Em Análise", "Pendente", "Registrado", "Rejeitado"]);
+  });
+});
+
+import { workParticipantRoleOptionsFor } from "./work-options";
+
+describe("workParticipantRoleOptionsFor", () => {
+  it("offers only composer/author and publisher to a participant without a legacy role", () => {
+    for (const role of ["", "unspecified", "composer_author", "publisher", undefined]) {
+      expect(workParticipantRoleOptionsFor(role).map((o) => o.value)).toEqual(["composer_author", "publisher"]);
+    }
+  });
+
+  it("keeps a stored legacy role visible for that participant only", () => {
+    expect(workParticipantRoleOptionsFor("translator").map((o) => o.value)).toEqual(["composer_author", "publisher", "translator"]);
+    expect(workParticipantRoleOptionsFor("administrator").map((o) => o.label)).toContain("Administrador");
+  });
+
+  it("never offers a role outside the contract", () => {
+    expect(workParticipantRoleOptionsFor("my-custom-role").map((o) => o.value)).toEqual(["composer_author", "publisher"]);
   });
 });

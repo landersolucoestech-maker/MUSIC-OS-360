@@ -228,12 +228,12 @@ describe('WorksService', () => {
         title: 'Nova', type: 'original',
         participants: [
           { id: 'p1', name: 'Fulano', role: 'composer_author', link: 'https://x', percentage: '60' },
-          { id: 'p2', name: 'Beltrano', role: 'translator', link: '', percentage: '40' },
+          { id: 'p2', name: 'Beltrano', role: 'publisher', link: '', percentage: '40' },
         ],
       } as any);
       expect(mockDs._participantsRepo.save).toHaveBeenCalledWith([
         expect.objectContaining({ id: 'p1', tenant_id: TENANT, name: 'Fulano', role: 'composer_author', percentage: '60', sort_order: 0 }),
-        expect.objectContaining({ id: 'p2', tenant_id: TENANT, name: 'Beltrano', role: 'translator', percentage: '40', sort_order: 1 }),
+        expect.objectContaining({ id: 'p2', tenant_id: TENANT, name: 'Beltrano', role: 'publisher', percentage: '40', sort_order: 1 }),
       ]);
     });
 

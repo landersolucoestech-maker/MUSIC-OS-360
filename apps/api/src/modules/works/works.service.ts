@@ -11,6 +11,9 @@ import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-
 import { normalizeIsrc, normalizeIswc, isValidIswc, isValidIsrc } from '../registry/validators/registry-validators';
 import { deriveWorkRegistryFields, type WorkRegistrySourceFields } from './work-registry-fields.util';
 import { canonicalWorkParticipantRole, canonicalizeWorkInput, canonicalizeWorkQuery } from './work-legacy-fields';
+/** The canonical participant roles of a Work: composer/author and publisher. */
+const WORK_PARTICIPANT_ROLES_CLOSED = ['composer_author', 'publisher'] as const;
+
 import type { CreateWorkDto }  from './dto/create-work.dto';
 import type { UpdateWorkDto }  from './dto/update-work.dto';
 import type { QueryWorkDto }   from './dto/query-work.dto';
@@ -205,6 +208,27 @@ export class WorksService {
     rest.iswc = canonicalIswc;
   }
 
+  /**
+   * A Work has exactly two kinds of participant: composer/author and publisher. 'unspecified' only means no role was
+   * chosen yet. A role already stored on this work (a legacy administrator or translator) may be re-posted unchanged,
+   * so an edit form that sends back what it loaded keeps working; a new value outside the list is rejected.
+   */
+  private assertParticipantRoles(participants: unknown[] | null | undefined, storedRoles: readonly string[] = []): void {
+    if (!Array.isArray(participants)) return;
+    const accepted = new Set<string>([...WORK_PARTICIPANT_ROLES_CLOSED, 'unspecified', ...storedRoles]);
+    const invalid = [...new Set(participants
+      .map((p) => canonicalWorkParticipantRole((p as Record<string, unknown> | null)?.role))
+      .filter((role) => !accepted.has(role)))];
+    if (invalid.length > 0) {
+      throw new BadRequestException({
+        code: 'WORK_PARTICIPANT_ROLE_INVALID',
+        message: 'Papel de participante inválido. A obra aceita somente: compositor/autor e editora.',
+        allowed: [...WORK_PARTICIPANT_ROLES_CLOSED],
+        invalid,
+      });
+    }
+  }
+
   /** Work percentages are decimal(6,3): at most 3 decimals, each 0..100, never above 100% in total. */
   private assertParticipantPercentages(participants: unknown[] | null | undefined): void {
     if (!Array.isArray(participants)) return;
@@ -230,6 +254,7 @@ export class WorksService {
     this.normalizeIsrcField(rest);
     this.normalizeIswcField(rest);
     this.assertParticipantPercentages(participants);
+    this.assertParticipantRoles(participants);
     // duration_seconds and ai_tools/ai_prompts are derived from the fields the
     // form captures (duration_text, ai_harmony/ai_melody/ai_lyrics) so the
     // ABRAMUS/ECAD payload (society-payload-builder buildWorkPayload) gets them.
@@ -276,6 +301,7 @@ export class WorksService {
     this.normalizeIsrcField(rest);
     this.normalizeIswcField(rest);
     this.assertParticipantPercentages(participants);
+    this.assertParticipantRoles(participants, (current.participants ?? []).map((p) => String(p.role)));
     // Merge the patch over the CURRENT row before deriving: a partial update
     // that only touches e.g. `ai_melody` must still derive ai_tools/ai_prompts
     // from the unchanged sibling fields, not from `undefined`.
