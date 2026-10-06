@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-branch-topology.mjs",
+  "command": "node scripts/verify-branch-topology.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "✓ Branch topology verified: dev is the only branch",
+  "stderrTail": "",
+  "workspaceFingerprint": "24804f94697592ad8a5b900e417e1ba46ac1bc4c0702d8bd5ce3cbb390888b18",
+  "fingerprintStatus": "BOUND",
+  "head": "3b190f066913ad078c2c37e4dcf3e214b4fb35d2",
+  "durationMs": 44,
+  "id": "evid-998a60a2",
+  "createdAt": "2026-10-06T19:38:26.170Z"
+}

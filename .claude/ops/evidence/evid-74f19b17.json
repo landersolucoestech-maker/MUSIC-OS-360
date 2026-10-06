@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/web exec vitest run src/modules/projects",
+  "command": "pnpm --dir apps/web exec vitest run src/modules/projects",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/modules/projects/utils/track-vocabulary.test.ts (3 tests) 7ms\n ✓ src/modules/projects/hooks/useProjects.test.tsx (2 tests) 21ms\n ✓ src/modules/projects/lib/project-status.test.ts (14 tests) 4ms\n ✓ src/modules/projects/components/ProjectFormModal.artist-budget.test.tsx (4 tests) 2001ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > create sends artist_id and numeric budget 976ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > create without artist/budget sends null (not an empty string) 385ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > edit loads and resends the persisted values 349ms\n ✓ src/modules/projects/components/ProjectFormModal.legacy-wiring.test.tsx (7 tests) 2887ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"sim\" is resubmitted as yes 743ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"Sim\" is resubmitted as yes 370ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy language slug \"portugues\" is resubmitted as ISO code pt 327ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > negative: canonical values, free text and absent values are not rewritten into something else 621ms\n ✓ src/modules/projects/pages/Projects.metadata-guard.test.ts (2 tests) 4ms\n ✓ src/modules/projects/components/ProjectViewModal.legacy-wiring.test.tsx (6 tests) 498ms\n ✓ src/modules/projects/components/ProjectFormModal.status-aliases.guard.test.ts (7 tests) 4ms\n ✓ src/modules/projects/components/ProjectFormModal.metadata-guard.test.ts (3 tests) 3ms\n ✓ src/modules/projects/components/ProjectFormModal.audio-upload.guard.test.ts (3 tests) 3ms\n ✓ src/modules/projects/components/ProjectViewModal.status-aliases.guard.test.ts (4 tests) 5ms\n ✓ src/modules/projects/schemas/project-schema.test.ts (3 tests) 5ms\n\n Test Files  12 passed (12)\n      Tests  58 passed (58)\n   Start at  19:44:53\n   Duration  6.62s (transform 799ms, setup 2.26s, collect 2.11s, tests 5.44s, environment 6.00s, prepare 852ms)",
+  "stderrTail": "",
+  "workspaceFingerprint": "24804f94697592ad8a5b900e417e1ba46ac1bc4c0702d8bd5ce3cbb390888b18",
+  "fingerprintStatus": "BOUND",
+  "head": "3b190f066913ad078c2c37e4dcf3e214b4fb35d2",
+  "durationMs": 7594,
+  "id": "evid-74f19b17",
+  "createdAt": "2026-10-06T19:45:00.097Z"
+}

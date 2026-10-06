@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm typecheck",
+  "command": "pnpm typecheck",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "> music-os-360-monorepo@0.0.0 typecheck /home/user/MUSIC-OS-360\n> corepack pnpm --filter @music-os-360/api typecheck && corepack pnpm --filter @music-os-360/web typecheck\n\n\n> @music-os-360/api@0.0.1 typecheck /home/user/MUSIC-OS-360/apps/api\n> tsc -p tsconfig.build.json --noEmit\n\n\n> @music-os-360/web@0.0.1 typecheck /home/user/MUSIC-OS-360/apps/web\n> tsc --noEmit -p tsconfig.app.json",
+  "stderrTail": "",
+  "workspaceFingerprint": "24804f94697592ad8a5b900e417e1ba46ac1bc4c0702d8bd5ce3cbb390888b18",
+  "fingerprintStatus": "BOUND",
+  "head": "3b190f066913ad078c2c37e4dcf3e214b4fb35d2",
+  "durationMs": 45712,
+  "id": "evid-94f2863b",
+  "createdAt": "2026-10-06T19:33:02.399Z"
+}

@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-06T19:26:45.594Z",
+  "updatedAt": "2026-10-06T19:45:30.307Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -72,7 +72,8 @@
             "evid-712870e2",
             "evid-780ce07a",
             "evid-c864d14f",
-            "evid-baccaef9"
+            "evid-baccaef9",
+            "evid-8dc8d38a"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -126,7 +127,8 @@
             "evid-5203d305",
             "evid-83dc7097",
             "evid-92920e0a",
-            "evid-78114f57"
+            "evid-78114f57",
+            "evid-e62aba36"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -185,7 +187,8 @@
             "evid-0ced4cee",
             "evid-f1e9c189",
             "evid-6e27fe48",
-            "evid-0ebd6b1b"
+            "evid-0ebd6b1b",
+            "evid-5361b988"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -245,7 +248,8 @@
             "evid-640bd58d",
             "evid-4ef9fff7",
             "evid-f5c434e3",
-            "evid-24920a84"
+            "evid-24920a84",
+            "evid-0f40db6b"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -302,7 +306,8 @@
             "evid-1f9bd955",
             "evid-0415b445",
             "evid-5a700e9d",
-            "evid-99d95a2b"
+            "evid-99d95a2b",
+            "evid-374ea71c"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -353,7 +358,8 @@
             "evid-41b9c5e6",
             "evid-d012016e",
             "evid-89713eb8",
-            "evid-3e4984a4"
+            "evid-3e4984a4",
+            "evid-b33cf1ff"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -410,7 +416,8 @@
             "evid-c619adf8",
             "evid-ef22dc4e",
             "evid-61cafa80",
-            "evid-76735ed9"
+            "evid-76735ed9",
+            "evid-282ca252"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -457,7 +464,8 @@
             "evid-a47437ad",
             "evid-7943217f",
             "evid-05a225d4",
-            "evid-188efced"
+            "evid-188efced",
+            "evid-030170fe"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -505,7 +513,8 @@
             "evid-485a96c8",
             "evid-03a4ac54",
             "evid-031daf70",
-            "evid-88f00c88"
+            "evid-88f00c88",
+            "evid-998a60a2"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -558,7 +567,8 @@
             "evid-78e159cb",
             "evid-a75a5ea0",
             "evid-1dfb5dd1",
-            "evid-483bcd31"
+            "evid-483bcd31",
+            "evid-0a7ecaaf"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -605,7 +615,8 @@
             "evid-849ebcb3",
             "evid-a3d57b28",
             "evid-8279cf20",
-            "evid-162642f0"
+            "evid-162642f0",
+            "evid-877ebaa7"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -652,7 +663,8 @@
             "evid-6702cae6",
             "evid-26e0b2f1",
             "evid-60b86509",
-            "evid-b8d98dc4"
+            "evid-b8d98dc4",
+            "evid-68f1e184"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -706,7 +718,8 @@
             "evid-93d250bc",
             "evid-3c1cb95a",
             "evid-dfb7ed9e",
-            "evid-2093cafc"
+            "evid-2093cafc",
+            "evid-00c6557b"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -800,7 +813,8 @@
             "evid-a031d70b",
             "evid-977fac5c",
             "evid-d21427d8",
-            "evid-8b63b292"
+            "evid-8b63b292",
+            "evid-624ca9fd"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -881,7 +895,8 @@
           "evidenceIds": [
             "evid-e1a8e569",
             "evid-78a1246f",
-            "evid-9c88352f"
+            "evid-9c88352f",
+            "evid-84c01160"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -902,7 +917,8 @@
           "text": "the provider signature path still marks the contract signed",
           "evidenceIds": [
             "evid-50d63367",
-            "evid-11b315ff"
+            "evid-11b315ff",
+            "evid-76762a19"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -939,7 +955,8 @@
           "text": "edits to distribution fields of a distributed release are rejected",
           "evidenceIds": [
             "evid-a6840cb5",
-            "evid-95ba46fe"
+            "evid-95ba46fe",
+            "evid-3b598a43"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -960,7 +977,8 @@
           "text": "draft releases still update normally",
           "evidenceIds": [
             "evid-b2dc33ac",
-            "evid-5d82a6ac"
+            "evid-5d82a6ac",
+            "evid-606bd49e"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -991,7 +1009,8 @@
           "text": "a file whose bytes do not match its declared type is rejected",
           "evidenceIds": [
             "evid-400556ae",
-            "evid-416a86c3"
+            "evid-416a86c3",
+            "evid-19719c67"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1012,7 +1031,8 @@
           "text": "script-bearing and plain-text types are not accepted by the confirm handler",
           "evidenceIds": [
             "evid-17b6a3cd",
-            "evid-2c9532b7"
+            "evid-2c9532b7",
+            "evid-801d746d"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1033,7 +1053,8 @@
           "text": "a rejected upload deletes the stored object",
           "evidenceIds": [
             "evid-4caf4c56",
-            "evid-f5dff83e"
+            "evid-f5dff83e",
+            "evid-378d04bd"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1064,7 +1085,8 @@
           "text": "saving credentials alone does not mark an integration connected",
           "evidenceIds": [
             "evid-d642fb83",
-            "evid-dfdb8320"
+            "evid-dfdb8320",
+            "evid-fbe0c2a5"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1085,7 +1107,8 @@
           "text": "the status endpoint reports real state instead of hardcoded configured",
           "evidenceIds": [
             "evid-aef515ce",
-            "evid-9bf87d40"
+            "evid-9bf87d40",
+            "evid-8161267f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1106,7 +1129,8 @@
           "text": "upstream error text is redacted before it is thrown",
           "evidenceIds": [
             "evid-fd10fa82",
-            "evid-bb0643d9"
+            "evid-bb0643d9",
+            "evid-3c0a77c6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1137,7 +1161,8 @@
           "text": "a phonogram with no work produces no work-required error",
           "evidenceIds": [
             "evid-695bac57",
-            "evid-2c287740"
+            "evid-2c287740",
+            "evid-c11cd459"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1158,7 +1183,8 @@
           "text": "a phonogram with a work still validates as before",
           "evidenceIds": [
             "evid-daff14ef",
-            "evid-e099060c"
+            "evid-e099060c",
+            "evid-3b57ac03"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1207,7 +1233,8 @@
           "text": "ISWC is normalized and validated on create and update when present",
           "evidenceIds": [
             "evid-9f5855cf",
-            "evid-1c0a4a05"
+            "evid-1c0a4a05",
+            "evid-5bc84edc"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1238,7 +1265,8 @@
           "text": "the web shows Planning, In progress, Completed and Cancelled with correct labels",
           "evidenceIds": [
             "evid-a3afb985",
-            "evid-217e1ed8"
+            "evid-217e1ed8",
+            "evid-74f19b17"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1259,7 +1287,8 @@
           "text": "editing a project in the internal review state keeps that state",
           "evidenceIds": [
             "evid-d7fd89b0",
-            "evid-79c457dd"
+            "evid-79c457dd",
+            "evid-51d5eb10"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1280,7 +1309,8 @@
           "text": "the project view label for planning is correct",
           "evidenceIds": [
             "evid-b0cb222c",
-            "evid-b21d1944"
+            "evid-b21d1944",
+            "evid-4e779166"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1311,7 +1341,8 @@
           "text": "a repeated domain event does not create a second notification",
           "evidenceIds": [
             "evid-84f59891",
-            "evid-d457c72c"
+            "evid-d457c72c",
+            "evid-8d2cf99f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1332,7 +1363,8 @@
           "text": "an artist specialty outside the closed list is rejected",
           "evidenceIds": [
             "evid-44f334b6",
-            "evid-a28bebc2"
+            "evid-a28bebc2",
+            "evid-f3044703"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1391,7 +1423,8 @@
           "text": "a notes-only update does not write exclusive, versions or documents",
           "evidenceIds": [
             "evid-434e62f7",
-            "evid-8af7a649"
+            "evid-8af7a649",
+            "evid-a06424dc"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1412,7 +1445,8 @@
           "text": "a status-only update does not write exclusive, versions or documents",
           "evidenceIds": [
             "evid-b112cbf0",
-            "evid-03f4f99a"
+            "evid-03f4f99a",
+            "evid-5f8414a0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1433,7 +1467,8 @@
           "text": "an explicit false exclusive or empty documents in an update is still written",
           "evidenceIds": [
             "evid-6fdfb787",
-            "evid-6f11ae73"
+            "evid-6f11ae73",
+            "evid-3b496497"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -2457,7 +2492,46 @@
     "evid-a28bebc2",
     "evid-60cd7d29",
     "evid-33e61918",
-    "evid-00eb2e11"
+    "evid-00eb2e11",
+    "evid-94f2863b",
+    "evid-e5c840b7",
+    "evid-a4dae8d3",
+    "evid-7a857a6d",
+    "evid-8dc8d38a",
+    "evid-e62aba36",
+    "evid-5361b988",
+    "evid-374ea71c",
+    "evid-282ca252",
+    "evid-030170fe",
+    "evid-998a60a2",
+    "evid-0a7ecaaf",
+    "evid-877ebaa7",
+    "evid-68f1e184",
+    "evid-00c6557b",
+    "evid-624ca9fd",
+    "evid-0f40db6b",
+    "evid-b33cf1ff",
+    "evid-84c01160",
+    "evid-a06424dc",
+    "evid-5f8414a0",
+    "evid-3b496497",
+    "evid-76762a19",
+    "evid-3b598a43",
+    "evid-606bd49e",
+    "evid-19719c67",
+    "evid-801d746d",
+    "evid-378d04bd",
+    "evid-fbe0c2a5",
+    "evid-3c0a77c6",
+    "evid-8161267f",
+    "evid-c11cd459",
+    "evid-3b57ac03",
+    "evid-5bc84edc",
+    "evid-74f19b17",
+    "evid-51d5eb10",
+    "evid-4e779166",
+    "evid-8d2cf99f",
+    "evid-f3044703"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
