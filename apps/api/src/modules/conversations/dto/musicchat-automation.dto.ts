@@ -28,6 +28,9 @@ export class MusicChatMenuOptionDto {
   @ApiPropertyOptional() @IsOptional() @IsBoolean() active?: boolean;
   @ApiPropertyOptional() @IsOptional() @IsArray() required_fields?: string[];
   @ApiPropertyOptional() @IsOptional() @IsArray() optional_fields?: string[];
+  /** DEPRECATED, ignored: routing keys written by a removed pre-release backfill may still sit in stored settings and come back on save; they are accepted and dropped before persistence (see canonicalMenuOption). */
+  @ApiPropertyOptional({ deprecated: true }) @IsOptional() @IsString() queueKey?: string;
+  @ApiPropertyOptional({ deprecated: true }) @IsOptional() @IsString() sectorKey?: string;
 }
 
 export class MusicChatTemplateDto {

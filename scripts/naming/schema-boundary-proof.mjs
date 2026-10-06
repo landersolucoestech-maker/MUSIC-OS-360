@@ -28,6 +28,7 @@ export const MUTANTS = [
   { id: "payment-method-legacy-value", ledgerItem: "invoices.payment_method",
     sql: `ALTER TABLE invoices DROP CONSTRAINT chk_invoices_payment_method;
           ALTER TABLE invoices ADD CONSTRAINT chk_invoices_payment_method CHECK (payment_method IN ('pix','ted','boleto','credit_card','debit_card','cash','check','bank_transfer'))` },
+  { id: "invoices-fiscal-kind-column", ledgerItem: "invoices.tipo_nota", sql: "ALTER TABLE invoices RENAME COLUMN tipo_nota TO fiscal_kind_renamed" },
   { id: "events-data-sync-trigger", ledgerItem: "events.data", sql: "ALTER TABLE events DISABLE TRIGGER trg_events_sync_start_columns" },
 ];
 const sha = (f) => crypto.createHash("sha256").update(fs.readFileSync(path.join(ROOT, f))).digest("hex");

@@ -1868,7 +1868,7 @@ DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inven
 DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_cliente		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_contrato		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_ia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_nota		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_nota		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_obra		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_pagamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/database-inventory/current-database-inventory.json	tipo_perfil		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2166,7 +2166,7 @@ DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-colum
 DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_cliente		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_contrato		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_ia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_nota		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_nota		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_obra		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_pagamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_perfil		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2415,6 +2415,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	BAIXO		1	1	LEGITIMA
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	BANCO		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	CELULAR		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	CEP		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	CHAVE_SECRETA_API		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	CIDADE		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	CINEGRAFISTA		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	COLABORADOR		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2554,6 +2555,8 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	apoio		1	1	LEGITIMA
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	appleMusicAlbunsUrl		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	apple_music_albuns		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	apple_music_albuns_url		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	apresentacao_comercial		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	aprovacao_conteudo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	aprovado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	aprovado_por		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ar_gestao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2567,6 +2570,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	arquivo_url		1	1	LE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	arrecadacao_autoral		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	arte_divulgacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	arte_promocional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	arte_redes_sociais		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	artista		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	artista_banda		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	artista_externo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2576,6 +2580,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	artistas		1	1	LEGIT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	artistasAdicionais		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	artistasAdicionaisAlbum		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	assessoria		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	assessoria_imprensa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	assina		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	assinado_em		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	assinatura		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2606,7 +2611,9 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	baseCalculo		1	1	LE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	base_calculo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	bastidor		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	bastidores		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	bastidores_empresa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	boleto		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	branding_pessoal		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	brasil		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	brilhar		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	brindes		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2615,6 +2622,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	calmo		1	1	LEGITIMA
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanha		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanha_id		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanha_institucional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanha_lancamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanha_marketing		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanha_promocional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	campanhas_artistas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2626,6 +2634,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	canção		1	1	LEGIT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	capa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	capacidade		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	capacidade_publico		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	captacao_evento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	captacao_leads		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cargo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	carreira		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2665,6 +2674,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cnpj		1	1	LEGITIMAT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cnpj_encrypted		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	co_compositores		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	coautores		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cobertura_evento_corporativo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	codEntidade		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cod_amar		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cod_assim		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2720,7 +2730,12 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	contatosVinculados	
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	contatos_equipe		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	contatos_vinculados		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo_artistico		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo_comercial		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo_corporativo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo_institucional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo_lancamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteudo_redes_sociais		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	conteúdo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	contratacao_artistas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	contratante		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2751,6 +2766,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	criacao_sites		1	1	
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	criadaPorIa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	criada_por_ia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	criado_em		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	criarContrato		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	critica		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cronograma		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	csll		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -2895,8 +2911,10 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	engenheiro_de_som		
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ensaio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ensaios		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	entrevista		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	entrevista_corporativa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	entrevistas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	enviado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	envio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	equipamentos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	erro		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	escritorio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2909,12 +2927,14 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estimado		1	1	LEGIT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estornado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estranho		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estrategia_carreira		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estrategias_crescimento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estudio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	estável		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	europa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	evento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	evento_corporativo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	evento_externo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	evento_interno		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	eventos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	eventos_corporativos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	evidencias		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2980,6 +3000,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	genero_secundario		
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gerado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gestao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gestaoArtistica		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gestao_agenda		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gestao_artistica		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gestao_carreira		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	gestao_catalogo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3029,6 +3050,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ia_letra		1	1	LEGIT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ia_melodia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	icms		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	icone		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	identidade_visual		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	idioma		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	iluminacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	imagem		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3130,6 +3152,8 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	maskCPFCNPJ		1	1	LE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	masterizacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	masterizador		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	materiais		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	material_institucional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	material_promocional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	material_publicitario		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	mecanica		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	mecânica		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3173,6 +3197,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nao		1	1	LEGITIMATE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nao_binario		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nao_exclusiva		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nao_exclusivo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nao_informado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	narrativo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	naturezaOperacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	natureza_operacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -3198,6 +3223,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nome_ep_album		1	1	
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nome_evento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nome_fantasia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nome_musica		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nome_servico		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	nota		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	notas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	notasInternas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3218,6 +3244,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obraMusical		1	1	LE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obra_afetada		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obra_id		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obra_musical		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obra_vinculada		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obras		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obriga		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	obrigatorio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3236,6 +3263,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	origem		1	1	LEGITIM
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	origemLead		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	origem_acordo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	outro		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	outro_rows		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	outros		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	outrosTitulos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	outros_titulos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3288,6 +3316,9 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	pis		1	1	LEGITIMATE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	pj		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	planejado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	planejamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	planejamento_carreira		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	planejamento_estrategico		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	planejamento_lancamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	planos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	plataforma		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	plataforma_digital		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3295,6 +3326,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	plataformas		1	1	LE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	portal_noticias		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	portugues		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	português		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	posicionamento_marca		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	positivo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	pre_lancamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	prefeitura		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3382,7 +3414,9 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	registroAutoral		1	
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	registro_autoral		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	registro_obras		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	rejeitado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	relacionamento_parceiros		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	relacionamentos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	relatorio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	remocao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	remover		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	removido		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3431,6 +3465,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	serie		1	1	LEGITIMA
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	servico		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	servicos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	sessao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	sessao_fotos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	sessoes		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	sessoes_estudio		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	sessoes_fotos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3528,6 +3563,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomadorUf		1	1	LEGI
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomador_cep		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomador_inscricao_estadual		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomador_inscricao_municipal		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomador_nome		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomador_razao_social		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	tomador_uf		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	totalmente		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3561,9 +3597,11 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	uso		1	1	LEGITIMATE
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	usuários		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valor		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valorEstimado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valorTotal		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valor_cache		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valor_desconhecido		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valor_fixo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	valor_total		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	varejo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	variosArtistas		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	vencer		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3573,6 +3611,8 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	venda_id		1	1	LEGIT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	versao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	versoes		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	viagens		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	video_institucional		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	video_redes_sociais		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	videoclipe		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	videomaker		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	vigencia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3751,7 +3791,7 @@ DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.pis_amount	0
 DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.prestador_id	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.serie	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.tipo	1	0	NORMALIZED	
-DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.tomador_cep	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DATABASE	dbColumn	apps/api/src/database/entities.ts	column	invoices.tomador_cidade	1	0	NORMALIZED	
@@ -4274,28 +4314,217 @@ DOCUMENTATION	doc	docs/runbooks/release-baseline-157-80.md	doc	*	156	0	NORMALIZE
 DOCUMENTATION	doc	docs/runbooks/staging-to-production.md	doc	*	53	0	NORMALIZED	
 DOCUMENTATION	doc	reports/CLEANUP_REPORT.md	doc	*	140	140	HISTORICAL_RECORD	
 DOCUMENTATION	doc	reports/phase3-architecture.md	doc	*	30	30	HISTORICAL_RECORD	
-DOCUMENTATION	docCode	.claude/rules/naming-canonical.md			0	2	NOT_NORMALIZED	
-DOCUMENTATION	docCode	.claude/skills/doc-writer/SKILL.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	.claude/skills/pr-writer/SKILL.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	.claude/skills/pr-writer/references/checklist.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	.claude/skills/pr-writer/references/examples.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	.claude/skills/release-checkpoint/SKILL.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md			0	7	NOT_NORMALIZED	
-DOCUMENTATION	docCode	CLAUDE.md			1	0	NORMALIZED	
-DOCUMENTATION	docCode	apps/api/DATABASE.md			4	0	NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/backfill-side-tables-retention.md			0	3	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/database.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/legacy-column-drop-plan.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/naming-state-separation.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md			0	6	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/pack/NORMALIZATION_REPORT.md			0	2	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_NORMALIZATION_HANDOFF.md			0	2	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/product-decision-packages.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/rbac-retirement-plan.md			0	2	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/engineering/security.md			0	1	NOT_NORMALIZED	
-DOCUMENTATION	docCode	docs/runbooks/migration-reconciliation.md			1	0	NORMALIZED	
-DOCUMENTATION	docCode	docs/runbooks/release-baseline-157-80.md			1	0	NORMALIZED	
-DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md			0	142	NOT_NORMALIZED	
+DOCUMENTATION	docCode	.claude/rules/naming-canonical.md	DADO_HISTORICO		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/rules/naming-canonical.md	HISTORICO_MIGRATION		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/doc-writer/SKILL.md	DOCUMENTACAO_HISTORICA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/pr-writer/SKILL.md	DIVIDA_ACEITA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/pr-writer/references/checklist.md	DIVIDA_ACEITA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/pr-writer/references/examples.md	DIVIDA_ACEITA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/release-checkpoint/SKILL.md	DIVIDA_ACEITA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	ARTEFATO_DESCARTAVEL		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	CONTRATO_EXTERNO		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	DADO_HISTORICO		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	DIVIDA_ACEITA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	DOCUMENTACAO_HISTORICA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	FALSO_POSITIVO		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	.claude/skills/residue-search/SKILL.md	HISTORICO_MIGRATION		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	CLAUDE.md	AUDITORIA_COMPLETA_MUSIC_OS_360		1	0	NORMALIZED	
+DOCUMENTATION	docCode	apps/api/DATABASE.md	DescricaoDaMudanca		1	0	NORMALIZED	
+DOCUMENTATION	docCode	apps/api/DATABASE.md	NomeDaMigration		1	0	NORMALIZED	
+DOCUMENTATION	docCode	apps/api/DATABASE.md	_NomeDaMigration		1	0	NORMALIZED	
+DOCUMENTATION	docCode	apps/api/DATABASE.md	ref_tabela		1	0	NORMALIZED	
+DOCUMENTATION	docCode	docs/engineering/backfill-side-tables-retention.md	com-ecad		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/backfill-side-tables-retention.md	obra_vinculada		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/backfill-side-tables-retention.md	sem-ecad		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/database.md	responsavel_cargo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/legacy-column-drop-plan.md	with_rg		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	docCode	docs/engineering/naming-state-separation.md	contratos-v2		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	cliente_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	data_lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	forma_pagamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	lancamento_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	natureza_operacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	tipo_nota		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/NORMALIZATION_REPORT.md	receitas-internas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/NORMALIZATION_REPORT.md	repasse-contrato		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	CHAVE_SECRETA_API		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	PRO_MUSICA		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	arquivo_audio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	artista_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	campanha_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	cliente_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	criarContrato		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	data_inicio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	data_vencimento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	envio-relatorio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	fonograma_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	forma_pagamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	genero_musical		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	lancamento_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	natureza_operacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nomeArtistico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nome_artistico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nome_musica		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nome_servico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	obra_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	projeto_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_cliente		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_nota		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_obra		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_servico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	titular_nome		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tomador_cnpj		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tomador_nome		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	valorTotal		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	valor_total		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/product-decision-packages.md	observacoesInternas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/rbac-retirement-plan.md	ar_gestao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/rbac-retirement-plan.md	financeiro_contabil		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/security.md	rh_manager		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/migration-reconciliation.md	ETAPA_4_CANONICAL_BASELINE_157_80		1	0	NORMALIZED	
+DOCUMENTATION	docCode	docs/runbooks/release-baseline-157-80.md	ETAPA_4_CANONICAL_BASELINE_157_80		1	0	NORMALIZED	
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	PROJETO_MUSICAL		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	RenameVideomakerJobFunctionSlugToVideographer		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	apoio-cultural		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	apresentacao_comercial		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	aprovacao_conteudo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	ar-condicionado		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	arte_divulgacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	arte_redes_sociais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	artistasAdicionais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	artistasAdicionaisAlbum		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	assessoria-imprensa		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	assessoria-juridica		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	assessoria_imprensa		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	bastidores_empresa		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	beats-avulsos		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	bonus-incentivo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	bonus-premiacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	branding_pessoal		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	brindes-promocionais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	campanha_institucional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	campanha_lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	captacao_evento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	cenografia-pirotecnia		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	cessao_direitos		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	chines-mandarim		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	cobertura_evento_corporativo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	contabil-fiscal		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	contact_pf_classification		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	contact_pj_classification		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	conteudo_artistico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	conteudo_comercial		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	conteudo_institucional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	conteudo_lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	conteudo_redes_sociais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	copyrightDataGravacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	copyrightDataLancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	correios-logistica		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	criacao-site		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	curso-gestao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	curso-marketing		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	curso-mixagem		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	curso-producao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	custo_alvo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	design-grafico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	direitos-autorais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	direitos-conexos		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	entre-contas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	entrevista_corporativa		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	estrategias_crescimento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	evento-lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	evento-networking		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	evento_externo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	evento_interno		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	fee-administrativo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	fone-ouvido		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	fotografia-audiovisual		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	generoSecundario		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	gestao-redes-sociais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	gestao_agenda		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	gravacao-estudio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	hora-extra		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	identidade_visual		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	instrumental-sem-letra		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	instrumento-musical		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	isVersionAlternativa		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	lancamento_musical		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	licenca-software		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	licenciamento-fonograma		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	licenciamento-obra		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	licenciamento-obras		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	limite_custo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	locacao-equipamentos		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	locacao-estudio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	marketing-divulgacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	marketing-trafego-pr		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	material-promocional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	material_institucional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	material_promocional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	material_publicitario		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	menor_custo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	mesa-som		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	moduleRh		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	monitor-referencia		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	multa-contratual		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	nao_binario		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	nao_exclusivo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	nao_informado		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	outro_rows		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	pagamento-diaria		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	participacao-show-evento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	pesquisa-mercado		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	planejamento_carreira		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	planejamento_estrategico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	planejamento_lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	portal_noticias		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	posicionamento_marca		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	pre_lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	prestador-autonomo		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	pro-labore		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	producao-audiovisual		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	producao-musical		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	projeto_musical		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	recebimentos-externos-streaming		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	receitas-contratuais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	receitas-internas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	receitas-musicais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	redes-sociais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reembolso-alimentacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reembolso-hospedagem		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reembolso-materiais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reembolso-recebido		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reembolso-transporte		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reforma-escritorio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	reforma-estudio		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	relacionamento_parceiros		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	repasse-contrato		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	servicos-cloud		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	servicos-pf		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	sessao-producao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	sessao_fotos		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	show-evento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	simples-nacional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	suporte-financeiro		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	tarifas-plataformas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	taxas-bancarias		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	ti-desenvolvimento-saas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	tipoVersao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	trafego-pago		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	trafego_pago		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	tratamento-acustico		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	ultimo_pagamento_em		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	ultimo_pagamento_por		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	ultimo_pagamento_valor		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	variosArtistas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	venda-beats		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	venda-merchandising		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	venda-nfts		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	venda-produtos-digitais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	venda-produtos-fisicos		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	venda-show-fechado		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	video_institucional		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/runbooks/staging-to-production.md	video_redes_sociais		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 BACKEND_API	eventQueueJob	apps/api/src/modules/reports/computed-fields/registry.ts	name	participantes	1	0	NORMALIZED	
 BACKEND_API	eventQueueJob	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	name	titulo	1	0	NORMALIZED	
 FRONTEND	eventQueueJob	apps/web/src/modules/events/components/SchedulerFormModal.tsx	name	entrevistas	1	0	NORMALIZED	
@@ -4895,6 +5124,7 @@ BACKEND_API	identifier	apps/api/scripts/verify-fase6-prod-smoke.ts	property-read
 BACKEND_API	identifier	apps/api/scripts/verify-fase7d-upload.ts	property-read	arquivo_url	3	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/scripts/verify-fase7d-upload.ts	property-read	capa_url	3	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/scripts/verify-phase5-dashboard.ts	variable	pj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+BACKEND_API	identifier	apps/api/scripts/verify-schema-compat-boundaries.ts	property-read	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	identifier	apps/api/src/common/compat/auth-permissions.legacy-compat.spec.ts	property-read	RH	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	identifier	apps/api/src/common/persistence/optimistic-update.util.spec.ts	property	nome	1	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/core/automation/artist-profile-analysis.automation.ts	property-read	genero_musical	2	0	NORMALIZED	
@@ -5290,7 +5520,7 @@ BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipoServico	1	
 BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_cliente	2	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_contrato	1	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_ia	1	0	NORMALIZED	
-BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_obra	1	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_pagamento	1	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/database/entities.ts	property	tipo_pessoa	1	0	NORMALIZED	
@@ -5955,7 +6185,7 @@ BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	propert
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	pis_amount	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	quantidade	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	serie	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	tipo_nota	2	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	tipo_nota	2	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	tomador_cep	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	tomador_cidade	1	0	NORMALIZED	
@@ -5983,16 +6213,17 @@ BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	propert
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	vencimento	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	property	venda_id	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/dto/invoices.dto.ts	variable	TIPOS_NOTA	1	0	NORMALIZED	
+TESTS_FIXTURES_MOCKS	identifier	apps/api/src/modules/invoices/fiscal-document-type.contract.spec.ts	property-read	tipo_nota	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/handlers/invoice-events.handler.ts	variable	dataVencimento	1	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/invoices/handlers/invoice-events.handler.ts	variable	numero	4	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/invoices/handlers/invoice-events.handler.ts	variable	valor	3	0	NORMALIZED	
-TESTS_FIXTURES_MOCKS	identifier	apps/api/src/modules/invoices/invoices.service.spec.ts	property-read	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	identifier	apps/api/src/modules/invoices/invoices.service.spec.ts	property-read	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	cliente_id	2	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	data_vencimento	2	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	numero	9	0	NORMALIZED	
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	prestador_id	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	tipo	4	0	NORMALIZED	
-BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	tipo_nota	6	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	tipo_nota	6	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	tomador_cnpj	3	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	tomador_doc_encrypted	3	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	identifier	apps/api/src/modules/invoices/invoices.service.ts	property-read	tomador_legal_name	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -6697,7 +6928,6 @@ FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.
 FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	natureza_operacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	pis_amount	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	tomador_cep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	property-read	tomador_city	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -6789,7 +7019,6 @@ FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hook
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	natureza_operacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	pis_amount	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	serie	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	tomador_cep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	property-read	tomador_city	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -6823,7 +7052,6 @@ FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rule
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	pis_amount	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	prestadorCardLabel	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	tomadorSectionLabel	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	property	tomador_cep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -6842,7 +7070,6 @@ FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sect
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	natureza_operacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	prestadorCardLabel	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	tomadorSectionLabel	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	property-read	tomador_cep	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -7864,7 +8091,7 @@ FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	pr
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	origem	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	serie	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	tipo	1	0	NORMALIZED	
-FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	tomador_cnpj	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	tomador_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	property	tomador_nome	1	0	NORMALIZED	
@@ -7877,6 +8104,8 @@ FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	ty
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	type	NotaFiscalUpdate	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	type	TransacaoInsert	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/accounting/types/accounting.types.ts	type	TransacaoUpdate	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/modules/accounting/types/invoice-type.ts	property-read	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+FRONTEND	identifier	apps/web/src/modules/accounting/types/invoice-type.ts	property	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	identifier	apps/web/src/modules/accounting/types/nota-fiscal-tipo.ts	function	parseTipoOperacao	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/accounting/types/nota-fiscal-tipo.ts	function	serializeTipoOperacao	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/modules/accounting/types/nota-fiscal-tipo.ts	parameter	observacoes	2	0	NORMALIZED	
@@ -13787,6 +14016,7 @@ TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	itens	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	numero	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	quantidade	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	tipo_nota	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	tomador_legal_name	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	tomador_razao_social	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	object-key	vencimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14008,7 +14238,6 @@ BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	objec
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	dj_produtor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	documentos_pessoais_url	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	editora	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	editora_musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	empresario	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	empresario_email	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	empresario_id	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14023,7 +14252,6 @@ BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	objec
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	foto_url	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	galeria_urls	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	genero	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	gestor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	gravadora	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	gravadora_email	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/artists/artist-legacy-fields.ts	object-key	gravadora_id	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14075,14 +14303,17 @@ TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-pii-encryptio
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-pii-encryption.spec.ts	object-key	rg	0	10	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-pii-encryption.spec.ts	object-key	rg_encrypted	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-pii-encryption.spec.ts	object-key	titular_conta	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	assessoria	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	assessoria	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	categoria	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	contador	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	contador	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	contatos_equipe	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	editora_musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	financeiro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	gestor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	juridico	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	editora	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	editora_musical	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	empresario	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	financeiro	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	gestor	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	gravadora	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	juridico	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artist-team-contact-category.spec.ts	object-key	nome	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artists-cross-tenant.integration.spec.ts	object-key	nome_artistico	2	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/artists/artists.service.spec.ts	object-key	agencia_booking	2	0	NORMALIZED	
@@ -14328,9 +14559,11 @@ BACKEND_API	objectKey	apps/api/src/modules/contract-templates/contract-templates
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contract-templates/dto/create-contract-template.dto.legacy-compat.spec.ts	object-key	conteudo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contract-templates/dto/create-contract-template.dto.ts	object-key	conteudo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contract-templates/dto/create-contract-template.dto.ts	object-key	tipo_servico	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	object-key	exclusivo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	cessao_direitos	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	distribuicao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	exclusividade	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	exclusivo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	gestao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	gravacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/contracts/contract-category-slugs.ts	object-key	licenciamento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14425,12 +14658,6 @@ TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/schedulers/contrac
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/contracts/schedulers/contract-expiry.scheduler.spec.ts	object-key	titulo	1	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/contracts/schedulers/contract-expiry.scheduler.ts	object-key	dataFim	1	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/contracts/schedulers/contract-expiry.scheduler.ts	object-key	titulo	1	0	NORMALIZED	
-BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	capitalized-key	Produção Musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	Atendimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	Comercial	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	Financeiro	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	Suporte	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	Triagem	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	aguardando_atendimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	aguardando_cliente	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/conversations/musicchat-vocabulary.ts	object-key	alta	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14648,6 +14875,7 @@ BACKEND_API	objectKey	apps/api/src/modules/inventory/inventory-legacy-fields.ts	
 BACKEND_API	objectKey	apps/api/src/modules/inventory/inventory.service.ts	object-key	categoria	1	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/inventory/inventory.service.ts	object-key	localizacao	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/dto/invoices.dto.legacy-compat.spec.ts	object-key	venda_id	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/fiscal-document-type.contract.spec.ts	object-key	tipo_nota	0	14	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/invoices/handlers/invoice-events.handler.ts	object-key	dataVencimento	1	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/invoices/handlers/invoice-events.handler.ts	object-key	numero	3	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/invoices/handlers/invoice-events.handler.ts	object-key	valor	4	0	NORMALIZED	
@@ -14659,7 +14887,7 @@ TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.sp
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	numero	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	quantidade	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	tomador_cnpj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	tomador_legal_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoice-contract.spec.ts	object-key	tomador_razao_social	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -14674,11 +14902,12 @@ BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	obj
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	itens	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	numero	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	quantidade	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	tomador_razao_social	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	vencimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoice-legacy-fields.ts	object-key	venda_id	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoices.service.spec.ts	object-key	tipo	1	0	NORMALIZED	
-TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoices.service.spec.ts	object-key	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoices.service.spec.ts	object-key	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoices.service.spec.ts	object-key	tomador_legal_name	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/invoices/invoices.service.spec.ts	object-key	tomador_name	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 BACKEND_API	objectKey	apps/api/src/modules/invoices/invoices.service.ts	object-key	clienteId	1	0	NORMALIZED	
@@ -15425,6 +15654,7 @@ BACKEND_API	objectKey	apps/api/src/modules/reports/form-contracts/report-form-co
 BACKEND_API	objectKey	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	object-key	tipoServico	1	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	object-key	tipoVersao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	object-key	tipo_lancamento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+BACKEND_API	objectKey	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	object-key	variosArtistas	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/reports/i18n/field-labels.pt-br.ts	object-key	acordoNotas	1	0	NORMALIZED	
 BACKEND_API	objectKey	apps/api/src/modules/reports/i18n/field-labels.pt-br.ts	object-key	acordoUrl	1	0	NORMALIZED	
@@ -15851,6 +16081,7 @@ BACKEND_API	objectKey	apps/api/src/modules/shares/share-legacy-fields.ts	object-
 BACKEND_API	objectKey	apps/api/src/modules/shares/share-legacy-fields.ts	object-key	valor_anterior	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/shares/share-legacy-fields.ts	object-key	valor_novo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	objectKey	apps/api/src/modules/shares/share-legacy-fields.ts	object-key	versao	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/shares/shares-fk-ownership.security.spec.ts	object-key	artista_project_id	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/shares/shares-split-invariant.spec.ts	object-key	obra_id	2	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/shares/shares-split-invariant.spec.ts	object-key	percentual	3	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/api/src/modules/shares/shares.service.spec.ts	object-key	artista_externo	2	0	NORMALIZED	
@@ -16344,6 +16575,7 @@ FRONTEND	objectKey	apps/web/src/app/routes/legacy-redirects.tsx	object-key	proje
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/FinanceChart.tsx	object-key	despesas	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/FinanceChart.tsx	object-key	lucro	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/FinanceChart.tsx	object-key	receitas	1	0	NORMALIZED	
+TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/accounting/components/InvoiceViewModal.file-url.test.tsx	object-key	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/NotaFiscalViewModal.tsx	object-key	boleto	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/NotaFiscalViewModal.tsx	object-key	cartao_credito	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/NotaFiscalViewModal.tsx	object-key	cartao_debito	1	0	NORMALIZED	
@@ -16375,6 +16607,7 @@ FRONTEND	objectKey	apps/web/src/modules/accounting/components/TransacaoViewModal
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/TransacaoViewModal.tsx	object-key	reembolso	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/TransacaoViewModal.tsx	object-key	transferencia	2	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/TransacaoViewModal.tsx	object-key	transferencia_bancaria	1	0	NORMALIZED	
+TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	object-key	tipo_nota	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	aliquota_iss	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	base_calculo	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	cfop	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -16389,7 +16622,6 @@ FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	natureza_operacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	pis_amount	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	serie	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	tomador_address	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	tomador_cep	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	object-key	tomador_city	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -16414,7 +16646,6 @@ FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	pis_amount	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	prestadorCardLabel	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	tomadorSectionLabel	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	tomador_cep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -16426,7 +16657,6 @@ FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	tomador_legal_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	object-key	tomador_uf	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-reset-rules.ts	object-key	iss_retido	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	objectKey	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-reset-rules.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/nota-fiscal-form/NotaFiscalFormModal.tsx	object-key	defaultTipoOperacao	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/nota-fiscal-form/NotaFiscalFormModal.tsx	object-key	notaFiscal	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/components/nota-fiscal-form/hooks/useNotaFiscalForm.ts	object-key	aliquota_iss	2	0	NORMALIZED	
@@ -16917,7 +17147,6 @@ FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	obj
 FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	natureza_operacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	pis_amount	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	tomador_cep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	objectKey	apps/web/src/modules/accounting/schemas/invoice-schema.ts	object-key	tomador_city	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -17035,6 +17264,7 @@ FRONTEND	objectKey	apps/web/src/modules/accounting/services/form-to-payload.mapp
 FRONTEND	objectKey	apps/web/src/modules/accounting/services/form-to-payload.mapper.ts	object-key	tipo_pagamento	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/services/form-to-payload.mapper.ts	object-key	tipo_transacao	1	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/services/form-to-payload.mapper.ts	object-key	valor	1	0	NORMALIZED	
+TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/accounting/types/invoice-operation-type.test.ts	object-key	tipo_nota	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	objectKey	apps/web/src/modules/accounting/types/nota-fiscal-tipo.ts	object-key	observacoesLimpas	2	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/types/nota-fiscal-tipo.ts	object-key	tipo	2	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/accounting/utils/financialRules.utils.ts	capitalized-key	Conta Destino	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -17238,15 +17468,6 @@ FRONTEND	objectKey	apps/web/src/modules/artist/lib/contract-type-filters.ts	obje
 FRONTEND	objectKey	apps/web/src/modules/artist/lib/contract-type-filters.ts	object-key	servicos	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/modules/artist/lib/distributor-id.test.ts	object-key	outros	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	objectKey	apps/web/src/modules/artist/lib/distributor-id.ts	object-key	outros	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	assessoria	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	contador	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	editora	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	editora_musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	empresario	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	financeiro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	gestor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	gravadora	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	objectKey	apps/web/src/modules/artist/lib/team-contact-category.ts	object-key	juridico	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	objectKey	apps/web/src/modules/artist/pages/Artistas.tsx	object-key	artista	5	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/artist/pages/Artistas.tsx	object-key	artistas	3	0	NORMALIZED	
 FRONTEND	objectKey	apps/web/src/modules/artist/pages/Artistas.tsx	object-key	com_empresario	1	0	NORMALIZED	
@@ -20185,6 +20406,15 @@ TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/test/registroMusicasMappers.test.ts	
 TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/test/registroMusicasMappers.test.ts	object-key	seg	4	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	objectKey	apps/web/src/test/registroMusicasMappers.test.ts	object-key	titulo	1	0	NORMALIZED	
 SHARED_PACKAGES	objectKey	packages/auth/src/permissions.ts	object-key	RH	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	assessoria	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	contador	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	editora	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	editora_musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	empresario	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	financeiro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	gestor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	gravadora	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+SHARED_PACKAGES	objectKey	packages/types/src/artist-team-categories.ts	object-key	juridico	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 SHARED_PACKAGES	objectKey	packages/types/src/value-labels.pt-br.ts	object-key	boleto	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TOOLING_SCRIPTS_CI	objectKey	scripts/legacy-drop-preflight.mjs	object-key	rg	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TOOLING_SCRIPTS_CI	objectKey	scripts/phase2-crud-validation.mjs	object-key	artistaVinculado	1	0	NORMALIZED	
@@ -20249,6 +20479,7 @@ BACKEND_API	sqlString	apps/api/scripts/verify-marketing-content-approval-roundtr
 BACKEND_API	sqlString	apps/api/scripts/verify-marketing-content-approval-roundtrip.ts	sql	aprovado	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	sqlString	apps/api/scripts/verify-marketing-content-approval-roundtrip.ts	sql	pendente	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	sqlString	apps/api/scripts/verify-marketing-content-approval-roundtrip.ts	sql	reprovado	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
+BACKEND_API	sqlString	apps/api/scripts/verify-schema-compat-boundaries.ts	sql	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	sqlString	apps/api/scripts/verify-tenant-isolation.ts	sql	em_negociacao	2	0	NORMALIZED	
 BACKEND_API	sqlString	apps/api/scripts/verify-tenant-isolation.ts	sql	nome_artistico	3	0	NORMALIZED	
 BACKEND_API	sqlString	apps/api/scripts/verify-tenant-isolation.ts	sql	tipo	2	0	NORMALIZED	
@@ -20412,6 +20643,7 @@ TESTS_FIXTURES_MOCKS	sqlString	apps/api/test/e2e/schema/pii-backfill-drafts.e2e-
 TESTS_FIXTURES_MOCKS	sqlString	apps/api/test/e2e/schema/pii-backfill-drafts.e2e-spec.ts	sql	rg_encrypted	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	sqlString	apps/api/test/e2e/schema/pii-backfill-drafts.e2e-spec.ts	sql	telefone	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 TOOLING_SCRIPTS_CI	sqlString	scripts/naming/schema-boundary-proof.mjs	sql	boleto	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TOOLING_SCRIPTS_CI	sqlString	scripts/naming/schema-boundary-proof.mjs	sql	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 TOOLING_SCRIPTS_CI	sqlString	scripts/phase2-crud-validation.mjs	sql	artista_id	3	0	NORMALIZED	
 TOOLING_SCRIPTS_CI	sqlString	scripts/phase2-crud-validation.mjs	sql	categoria	1	0	NORMALIZED	
 TOOLING_SCRIPTS_CI	sqlString	scripts/phase2-crud-validation.mjs	sql	cliente_id	3	0	NORMALIZED	
@@ -22991,7 +23223,6 @@ BACKEND_API	toolMessage	apps/api/scripts/verify-fase8-resilience.ts	message	stre
 BACKEND_API	toolMessage	apps/api/scripts/verify-fase8-resilience.ts	message	tenant header invalido nao retornou 403	1	0	NORMALIZED	
 BACKEND_API	toolMessage	apps/api/scripts/verify-fase8-resilience.ts	message	upload fantasma ficou confirmado no DB	1	0	NORMALIZED	
 BACKEND_API	toolMessage	apps/api/scripts/verify-fase8-resilience.ts	message	uploads simultaneos geraram r2_key duplicado	1	0	NORMALIZED	
-BACKEND_API	toolMessage	apps/api/scripts/verify-musicchat-routing-keys.ts	message	Contratação de Shows	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	toolMessage	apps/api/scripts/verify-production-flags.ts	message	Estas flags só são obrigatórias quando NODE_ENV=production.	1	0	NORMALIZED	
 BACKEND_API	toolMessage	apps/api/scripts/verify-production-flags.ts	message	corretas para produção.	1	0	NORMALIZED	
 BACKEND_API	toolMessage	apps/api/scripts/verify-realtime-external.ts	message	::error::DATABASE_URL aponta para a branch MAIN do Supabase — recusado.	1	0	NORMALIZED	
@@ -23572,11 +23803,6 @@ BACKEND_API	value	apps/api/scripts/verify-marketing-content-approval-roundtrip.t
 BACKEND_API	value	apps/api/scripts/verify-marketing-content-approval-roundtrip.ts	string	aprovado	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/scripts/verify-marketing-content-approval-roundtrip.ts	string	pendente	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/scripts/verify-marketing-content-approval-roundtrip.ts	string	reprovado	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	value	apps/api/scripts/verify-musicchat-routing-keys.ts	capitalized-string	Atendimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	value	apps/api/scripts/verify-musicchat-routing-keys.ts	capitalized-string	Comercial	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	value	apps/api/scripts/verify-musicchat-routing-keys.ts	capitalized-string	Suporte	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	value	apps/api/scripts/verify-musicchat-routing-keys.ts	capitalized-string	Triagem	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-BACKEND_API	value	apps/api/scripts/verify-musicchat-routing-keys.ts	capitalized-string	Vendas	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/scripts/verify-schema-compat-boundaries.ts	string	transferencia	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	value	apps/api/scripts/verify-signup-provisioning.ts	string	gravadora	3	0	NORMALIZED	
 BACKEND_API	value	apps/api/seed.ts	string	gravadora	1	0	NORMALIZED	
@@ -23823,7 +24049,7 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	s
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	publico_esperado	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	serie	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	tipo	1	0	NORMALIZED	
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	titulo	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/form-field-dto-parity.spec.ts	string	tomador_cep	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -23854,6 +24080,7 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-bank-tra
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	string	cartao_debito	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	string	dinheiro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	string	moeda_x	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	string	tipo_nota	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	string	transferencia	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/invoice-payment-method-vocabulary.migration.spec.ts	string	transferencia	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/lead-entity-schema-alignment.spec.ts	string	origemLead	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
@@ -23932,12 +24159,6 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/database/migration-drafts/encrypt-artist
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/migration-drafts/legacy-column-drop.draft.spec.ts	string	rg	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/migration-drafts/scrub-artists-clients-plaintext.draft.spec.ts	caps-string	SECRET-RG	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/migration-drafts/scrub-artists-clients-plaintext.draft.spec.ts	string	evento	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/musicchat-routing-keys.migration.spec.ts	capitalized-string	Atendimento	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/musicchat-routing-keys.migration.spec.ts	capitalized-string	Comercial	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/musicchat-routing-keys.migration.spec.ts	capitalized-string	Suporte	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/musicchat-routing-keys.migration.spec.ts	capitalized-string	Triagem	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/musicchat-routing-keys.migration.spec.ts	capitalized-string	Vendas	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/database/musicchat-routing-keys.migration.spec.ts	string	comercial	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/operational-list-ap3.migration.spec.ts	caps-string	MEU	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/operational-list-ap3.migration.spec.ts	caps-string	VIDEOMAKER	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/database/operational-list-ap3.migration.spec.ts	string	artista	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -24680,16 +24901,22 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slug
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	distribuicao	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	edicao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	empresariamento_360	0	3	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	exclusividade	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	exclusiva	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	exclusividade	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	exclusivo	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	exclusivos	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	gestao	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	gravacao	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	licenciamento	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	nao_exclusivo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	outro	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	outros	0	6	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	parceria	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	parceria	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	producao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	publicitario	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	representacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	semantico	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-category-slugs.spec.ts	string	servicos	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts	string	arquivo_url	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts	string	data_fim	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/contracts/contract-legacy-alias.util.legacy-compat.spec.ts	string	data_inicio	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -24803,14 +25030,10 @@ BACKEND_API	value	apps/api/src/modules/conversations/musicchat-automation.servic
 BACKEND_API	value	apps/api/src/modules/conversations/musicchat-automation.service.ts	string	producao	3	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/conversations/musicchat-automation.service.ts	string	resolvida	1	0	NORMALIZED	
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Atendimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Comercial	0	9	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Comercial	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Conteúdo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Financeiro	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Outro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Produção Musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Suporte	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Triagem	0	4	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Vendas	0	5	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	capitalized-string	Triagem	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	caps-string	NOVA	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	string	aguardando_atendimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/conversations/musicchat-vocabulary.spec.ts	string	aguardando_cliente	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -25013,6 +25236,7 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/inventory/inventory-contract.spe
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/inventory/inventory-contract.spec.ts	string	responsavel	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/inventory/inventory-contract.spec.ts	string	setor	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/dto/invoices.dto.legacy-compat.spec.ts	string	venda_id	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/fiscal-document-type.contract.spec.ts	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	caps-string	TRANSFERENCIA	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	string	boleto	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	string	cartao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
@@ -25029,7 +25253,7 @@ TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.t
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoice-contract.spec.ts	string	vencimento	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/src/modules/invoices/invoice-legacy-fields.ts	string	tomador_legal_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 BACKEND_API	value	apps/api/src/modules/invoices/invoice-legacy-fields.ts	string	transferencia	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoices.service.spec.ts	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/invoices/invoices.service.spec.ts	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	value	apps/api/src/modules/invoices/invoices.service.ts	string	cancelada	1	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/invoices/invoices.service.ts	string	cancelado	1	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/invoices/invoices.service.ts	string	emitida	1	0	NORMALIZED	
@@ -25944,7 +26168,7 @@ BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contra
 BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_ia	1	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_lancamento	1	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_lead	1	0	NORMALIZED	
-BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_nota	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_obra	1	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_pagamento	1	0	NORMALIZED	
 BACKEND_API	value	apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	string	tipo_perfil	1	0	NORMALIZED	
@@ -26849,9 +27073,14 @@ TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/Transactio
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/TransactionViewModal.test.tsx	string	parcial	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/TransactionViewModal.test.tsx	string	pendente	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/TransactionViewModal.test.tsx	string	processando	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.file-url-notes.test.ts	string	tomador_cnpj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.file-url-notes.test.ts	string	tomador_legal_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	cartao_credito	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	cartao_debito	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	dinheiro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	tomador_cnpj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	tomador_legal_name	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	string	transferencia	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	caps-string	ISENTO	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/rules/invoice-reset-rules.ts	string	cfop	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -26867,7 +27096,6 @@ FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	input-payer-cnpj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	natureza_operacao	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	serie	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	tipo_nota	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	tomador_address	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	tomador_cep	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	value	apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	string	tomador_city	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION

@@ -1903,11 +1903,6 @@ apps/web/src/modules/releases/lib/genre-match.ts	eletronico	objectKey	PERSISTED_
 apps/web/src/modules/releases/lib/genre-match.ts	electronico	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/releases/lib/genre-match.ts	eletronica	value	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/releases/lib/genre-match.ts	bossa-nova	value	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	MODULE		
-apps/web/src/modules/artist/lib/team-contact-category.ts	assessoria	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/lib/team-contact-category.ts	contador	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/lib/team-contact-category.ts	empresario	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/lib/team-contact-category.ts	financeiro	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/lib/team-contact-category.ts	juridico	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/shared/lib/masks.ts	maskCPFCNPJ	identifier	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/shared/lib/masks.ts	maskCEP	identifier	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/shared/lib/masks.ts	cleanCEP	identifier	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
@@ -2157,8 +2152,6 @@ apps/api/src/modules/phonograms/phonograms.service.spec.ts	titulo	objectKey	LEGA
 apps/api/src/modules/works/works-field-contract.spec.ts	co_compositores	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
 apps/api/src/modules/works/works-field-contract.spec.ts	detentores	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
 apps/api/src/modules/works/works-field-contract.spec.ts	titulares	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
-apps/web/src/modules/artist/lib/team-contact-category.ts	editora_musical	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/lib/team-contact-category.ts	gestor	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/contracts/pages/CategoryRegistry.tsx	Nome	objectKey	USER_FACING_TEXT	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/modules/contracts/pages/VariableRegistry.tsx	Campo	objectKey	USER_FACING_TEXT	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/modules/contracts/pages/VariableRegistry.tsx	Nome	objectKey	USER_FACING_TEXT	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
@@ -4015,8 +4008,8 @@ apps/web/src/modules/events/lib/event-type.legacy-wiring.test.ts	producao	value	
 apps/web/src/modules/events/lib/event-type.legacy-wiring.test.ts	programas	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
 apps/web/src/modules/events/lib/event-type.legacy-wiring.test.ts	sessoes	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
 apps/web/src/modules/events/lib/event-type.legacy-wiring.test.ts	vistas	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	NO_PRODUCTION_OCCURRENCE	
-database-schema	transferencia	schema	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES	database object: verified against a real migrated PostgreSQL and killed by its own schema mutation (schema-boundary-proof.json)	N/A	LITERAL		
-database-schema	events.data	schema	PERSISTED_LEGACY_STRUCTURE	BEHAVIORALLY_PROVEN	YES	database object: verified against a real migrated PostgreSQL and killed by its own schema mutation (schema-boundary-proof.json)	N/A	LITERAL		
+database-schema	transferencia	schema	PERSISTED_VALUE_READER	UNPROVEN	YES	database-schema boundary without a fresh schema proof (the check script changed after the proof)	N/A	LITERAL		
+database-schema	events.data	schema	PERSISTED_LEGACY_STRUCTURE	UNPROVEN	YES	database-schema boundary without a fresh schema proof (the check script changed after the proof)	N/A	LITERAL		
 apps/web/src/modules/contracts/utils/contract-variables.ts	CONJUGE	objectKey	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/modules/contracts/utils/contract-variables.ts	OUTRA	objectKey	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
 apps/web/src/modules/contracts/utils/contract-variables.ts	OUTRO	objectKey	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
@@ -4036,19 +4029,7 @@ apps/api/src/modules/artists/artist-team-contact-category.spec.ts	financeiro	obj
 apps/api/src/modules/artists/artist-team-contact-category.spec.ts	gestor	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/api/src/modules/artists/artist-team-contact-category.spec.ts	juridico	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/api/src/modules/artists/artist-team-contact-category.spec.ts	nome	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/api/scripts/verify-musicchat-routing-keys.ts	Contratação de Shows	toolMessage	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	ADJUDICATED_HARMLESS	
-apps/api/scripts/verify-musicchat-routing-keys.ts	Atendimento	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	RUNTIME_ROW_EXISTS	
-apps/api/scripts/verify-musicchat-routing-keys.ts	Comercial	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	RUNTIME_ROW_EXISTS	
-apps/api/scripts/verify-musicchat-routing-keys.ts	Suporte	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	RUNTIME_ROW_EXISTS	
-apps/api/scripts/verify-musicchat-routing-keys.ts	Triagem	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	RUNTIME_ROW_EXISTS	
-apps/api/scripts/verify-musicchat-routing-keys.ts	Vendas	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	ADJUDICATED_HARMLESS	
 apps/api/scripts/verify-schema-compat-boundaries.ts	transferencia	value	PERSISTED_LEGACY_STRUCTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	RUNTIME_ROW_EXISTS	
-apps/api/src/database/musicchat-routing-keys.migration.spec.ts	Atendimento	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/api/src/database/musicchat-routing-keys.migration.spec.ts	Comercial	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/api/src/database/musicchat-routing-keys.migration.spec.ts	Suporte	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/api/src/database/musicchat-routing-keys.migration.spec.ts	Triagem	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/api/src/database/musicchat-routing-keys.migration.spec.ts	Vendas	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	ADJUDICATED_HARMLESS	
-apps/api/src/database/musicchat-routing-keys.migration.spec.ts	comercial	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/api/src/modules/artists/artist-team-contact-category.spec.ts	editora_musical	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/api/src/modules/artists/artist-team-contact-category.spec.ts	gestor	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/api/src/modules/clients/client-priority-vocabulary.spec.ts	baixa	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
@@ -4056,20 +4037,14 @@ apps/api/src/modules/marketing/marketing-priority-vocabulary.spec.ts	urgente	val
 apps/api/src/modules/takedowns/takedown-priority-vocabulary.spec.ts	alta	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/api/src/modules/takedowns/takedown-priority-vocabulary.spec.ts	baixa	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/releases/lib/genre-match.test.ts	eletronica	value	NEGATIVE_GUARD_TEST	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/api/src/database/entities.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/api/src/modules/invoices/dto/invoices.dto.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/api/src/modules/invoices/invoices.service.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/api/src/modules/invoices/invoices.service.spec.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	SELF		
-apps/api/src/modules/invoices/invoice-contract.spec.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	SELF		
-apps/api/src/database/form-field-dto-parity.spec.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	SELF		
-apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/types/accounting.types.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/components/invoice-form/sections/DetailsSection.tsx	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/components/invoice-form/rules/invoice-form-rules.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/components/invoice-form/rules/invoice-reset-rules.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/schemas/invoice-schema.ts	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
-apps/web/src/modules/accounting/components/InvoiceViewModal.tsx	tipo_nota		LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+apps/api/src/database/entities.ts	tipo_nota		PERSISTED_LEGACY_STRUCTURE	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/api/src/modules/invoices/dto/invoices.dto.ts	tipo_nota		DEPRECATED_API_ALIAS	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/api/src/modules/invoices/invoices.service.ts	tipo_nota		PERSISTED_LEGACY_STRUCTURE	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/api/src/modules/invoices/invoices.service.spec.ts	tipo_nota		PERSISTED_LEGACY_STRUCTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/modules/invoices/invoice-contract.spec.ts	tipo_nota		LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/database/form-field-dto-parity.spec.ts	tipo_nota		PERSISTED_LEGACY_STRUCTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/modules/reports/form-contracts/report-form-contracts.ts	tipo_nota		PERSISTED_LEGACY_STRUCTURE	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/accounting/types/accounting.types.ts	tipo_nota		DEPRECATED_API_ALIAS	COMPILER_PROVEN	NO	declaration-only name: no runtime behavior to prove, compile-time reader is the proof	PROVEN	LITERAL		
 docs/backend-v2/database-inventory/current-database-inventory.json	tipo_nota		HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
 docs/backend-v2/field-traceability/database-backend-column-mapping.json	tipo_nota		HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
 apps/api/src/modules/integrations/dto/integrations.dto.spec.ts	*	objectKey	NEGATIVE_GUARD_TEST	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF		
@@ -4334,8 +4309,6 @@ apps/web/src/modules/artist/components/TeamContactsCRM.category-labels.test.tsx	
 apps/web/src/modules/crm-relationships/components/ContactsTable.labels.test.tsx	VIDEOMAKER	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/events/hooks/useScheduleParticipants.contact-category.test.tsx	VIDEOMAKER	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/hr/pages/HR.employees-loading.test.tsx	Financeiro	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-apps/web/src/modules/artist/lib/team-contact-category.ts	editora	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
-apps/web/src/modules/artist/lib/team-contact-category.ts	gravadora	objectKey	LEGACY_NAME_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
 apps/web/src/modules/artist/lib/team-contact-category.test.ts	assessoria	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/artist/lib/team-contact-category.test.ts	contador	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/artist/lib/team-contact-category.test.ts	editora	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
@@ -4345,4 +4318,226 @@ apps/web/src/modules/artist/lib/team-contact-category.test.ts	financeiro	value	L
 apps/web/src/modules/artist/lib/team-contact-category.test.ts	gestor	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/artist/lib/team-contact-category.test.ts	gravadora	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
 apps/web/src/modules/artist/lib/team-contact-category.test.ts	juridico	value	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
-database-schema	tipo_nota	schema	LEGAL_DOMAIN_TERM	EXEMPT_WITH_JUSTIFICATION	NO	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION: not a compatibility class that carries runtime behavior	N/A	LITERAL		
+database-schema	tipo_nota	schema	PERSISTED_LEGACY_STRUCTURE	UNPROVEN	YES	database-schema boundary without a fresh schema proof (the check script changed after the proof)	N/A	LITERAL		
+apps/api/src/modules/invoices/invoice-legacy-fields.ts	tipo_nota		DEPRECATED_API_ALIAS	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/web/src/modules/accounting/types/invoice-type.ts	tipo_nota		DEPRECATED_API_ALIAS	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/api/src/modules/invoices/fiscal-document-type.contract.spec.ts	tipo_nota		LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/accounting/components/invoice-form/hooks/useInvoiceForm.legacy-wiring.test.ts	tipo_nota		LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/accounting/types/invoice-operation-type.test.ts	tipo_nota		LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/modules/contracts/contract-category-slugs.ts	exclusivo	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/api/src/modules/contracts/contract-category-slugs.spec.ts	exclusivo	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+packages/types/src/artist-team-categories.ts	assessoria	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	contador	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	editora	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	editora_musical	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	empresario	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	financeiro	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	gestor	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	gravadora	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+packages/types/src/artist-team-categories.ts	juridico	objectKey	PERSISTED_VALUE_READER	BEHAVIORALLY_PROVEN	YES		PROVEN	LITERAL		
+apps/api/src/modules/artists/artist-team-contact-category.spec.ts	editora	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/modules/artists/artist-team-contact-category.spec.ts	empresario	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/modules/artists/artist-team-contact-category.spec.ts	gravadora	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/modules/shares/shares-fk-ownership.security.spec.ts	artista_project_id	objectKey	LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/src/database/invoice-payment-method-bank-transfer.migration.spec.ts	tipo_nota		LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/web/src/modules/accounting/components/InvoiceViewModal.file-url.test.tsx	tipo_nota		LEGACY_ALIAS_TEST_FIXTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF	RUNTIME_ROW_EXISTS	
+apps/api/scripts/verify-schema-compat-boundaries.ts	tipo_nota		PERSISTED_LEGACY_STRUCTURE	BINDING_ONLY	NO	fixture/guard in a test or verification script: proof input of the runtime boundary it exercises, not a boundary itself	N/A	SELF_SCRIPT	RUNTIME_ROW_EXISTS	
+scripts/naming/schema-boundary-proof.mjs	tipo_nota		NAMING_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	NAMING_TOOLING (naming tooling or pack, not product runtime)	N/A	LITERAL		
+.claude/rules/naming-canonical.md	DADO_HISTORICO	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/rules/naming-canonical.md	HISTORICO_MIGRATION	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/doc-writer/SKILL.md	DOCUMENTACAO_HISTORICA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/pr-writer/SKILL.md	DIVIDA_ACEITA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/pr-writer/references/checklist.md	DIVIDA_ACEITA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/pr-writer/references/examples.md	DIVIDA_ACEITA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/release-checkpoint/SKILL.md	DIVIDA_ACEITA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	ARTEFATO_DESCARTAVEL	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	CONTRATO_EXTERNO	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	DADO_HISTORICO	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	DIVIDA_ACEITA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	DOCUMENTACAO_HISTORICA	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	FALSO_POSITIVO	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+.claude/skills/residue-search/SKILL.md	HISTORICO_MIGRATION	docCode	PACK_TOOLING	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/backfill-side-tables-retention.md	com-ecad	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/backfill-side-tables-retention.md	obra_vinculada	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/backfill-side-tables-retention.md	sem-ecad	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/database.md	responsavel_cargo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/naming-state-separation.md	contratos-v2	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	cliente_id	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	data_lancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	forma_pagamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	lancamento_id	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	tipo_nota	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/NORMALIZATION_REPORT.md	receitas-internas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/NORMALIZATION_REPORT.md	repasse-contrato	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	CHAVE_SECRETA_API	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	arquivo_audio	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	artista_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	campanha_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	cliente_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	criarContrato	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	data_inicio	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	data_vencimento	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	envio-relatorio	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	fonograma_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	forma_pagamento	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	genero_musical	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	lancamento_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nomeArtistico	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nome_artistico	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nome_musica	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	nome_servico	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	obra_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	projeto_id	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_cliente	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_nota	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_obra	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tipo_servico	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	titular_nome	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tomador_nome	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	valorTotal	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	valor_total	docCode	LIVING_REGISTRY	EXEMPT_WITH_JUSTIFICATION	NO	UX_TEXT: not a compatibility class that carries runtime behavior	N/A	NO_TEST		
+docs/engineering/product-decision-packages.md	observacoesInternas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/rbac-retirement-plan.md	ar_gestao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/rbac-retirement-plan.md	financeiro_contabil	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/engineering/security.md	rh_manager	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	PROJETO_MUSICAL	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	RenameVideomakerJobFunctionSlugToVideographer	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	apoio-cultural	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	apresentacao_comercial	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	aprovacao_conteudo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	ar-condicionado	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	arte_divulgacao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	arte_redes_sociais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	artistasAdicionais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	artistasAdicionaisAlbum	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	assessoria-imprensa	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	assessoria-juridica	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	assessoria_imprensa	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	bastidores_empresa	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	beats-avulsos	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	bonus-incentivo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	bonus-premiacao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	branding_pessoal	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	brindes-promocionais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	campanha_institucional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	campanha_lancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	captacao_evento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	cenografia-pirotecnia	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	cessao_direitos	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	chines-mandarim	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	cobertura_evento_corporativo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	contabil-fiscal	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	contact_pf_classification	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	conteudo_artistico	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	conteudo_comercial	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	conteudo_institucional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	conteudo_lancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	conteudo_redes_sociais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	copyrightDataGravacao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	copyrightDataLancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	correios-logistica	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	criacao-site	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	curso-gestao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	curso-marketing	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	curso-mixagem	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	curso-producao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	custo_alvo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	design-grafico	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	direitos-autorais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	direitos-conexos	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	entre-contas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	entrevista_corporativa	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	estrategias_crescimento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	evento-lancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	evento-networking	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	evento_externo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	evento_interno	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	fee-administrativo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	fone-ouvido	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	fotografia-audiovisual	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	generoSecundario	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	gestao-redes-sociais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	gestao_agenda	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	gravacao-estudio	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	hora-extra	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	identidade_visual	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	instrumental-sem-letra	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	instrumento-musical	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	isVersionAlternativa	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	lancamento_musical	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	licenca-software	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	licenciamento-fonograma	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	licenciamento-obra	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	licenciamento-obras	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	limite_custo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	locacao-equipamentos	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	locacao-estudio	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	marketing-divulgacao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	marketing-trafego-pr	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	material-promocional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	material_institucional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	material_promocional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	material_publicitario	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	menor_custo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	mesa-som	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	moduleRh	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	monitor-referencia	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	multa-contratual	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	nao_binario	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	nao_exclusivo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	nao_informado	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	outro_rows	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	pagamento-diaria	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	participacao-show-evento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	pesquisa-mercado	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	planejamento_carreira	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	planejamento_estrategico	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	planejamento_lancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	portal_noticias	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	posicionamento_marca	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	pre_lancamento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	prestador-autonomo	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	pro-labore	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	producao-audiovisual	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	producao-musical	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	projeto_musical	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	recebimentos-externos-streaming	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	receitas-contratuais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	receitas-internas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	receitas-musicais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	redes-sociais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reembolso-alimentacao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reembolso-hospedagem	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reembolso-materiais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reembolso-recebido	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reembolso-transporte	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reforma-escritorio	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	reforma-estudio	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	relacionamento_parceiros	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	repasse-contrato	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	servicos-cloud	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	servicos-pf	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	sessao-producao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	sessao_fotos	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	show-evento	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	simples-nacional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	suporte-financeiro	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	tarifas-plataformas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	taxas-bancarias	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	ti-desenvolvimento-saas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	tipoVersao	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	trafego-pago	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	trafego_pago	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	tratamento-acustico	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	ultimo_pagamento_em	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	ultimo_pagamento_por	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	ultimo_pagamento_valor	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	variosArtistas	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	venda-beats	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	venda-merchandising	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	venda-nfts	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	venda-produtos-digitais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	venda-produtos-fisicos	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	venda-show-fechado	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	video_institucional	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		
+docs/runbooks/staging-to-production.md	video_redes_sociais	docCode	HISTORICAL_DOCUMENT_OR_DATA	EXEMPT_WITH_JUSTIFICATION	NO	HISTORICAL_ONLY	N/A	NO_TEST		

@@ -399,3 +399,23 @@ describe('MusicChat manual notifications and escalation recipients', () => {
     expect(updates.menu_options.map((o) => [o.id, o.responseTemplateId])).toEqual([['outros', 'outros']]);
   });
 });
+
+describe('deprecated routing keys on stored menu options (queueKey / sectorKey)', () => {
+  const option = { id: 'shows', order: 1, label: 'Shows', responseTemplateId: 'shows', queue: 'Comercial', sector: 'Shows' };
+
+  it('a settings save that echoes stored routing keys is accepted (not a 400) and the keys are never persisted again', async () => {
+    const { UpdateMusicChatAutomationSettingsDto } = await import('./dto/musicchat-automation.dto');
+    const dto = await validate(UpdateMusicChatAutomationSettingsDto, { menu_options: [{ ...option, queueKey: 'commercial', sectorKey: 'shows' }] });
+    const saved = dto.menu_options!.map((o) => canonicalMenuOption(o));
+    expect(saved).toHaveLength(1);
+    expect(saved[0]).not.toHaveProperty('queueKey');
+    expect(saved[0]).not.toHaveProperty('sectorKey');
+    expect(saved[0]).toMatchObject({ id: 'shows', queue: 'Comercial', sector: 'Shows' });
+  });
+
+  it('negative: any other unknown key is still rejected (the tolerance is for the two deprecated keys only)', async () => {
+    const { UpdateMusicChatAutomationSettingsDto } = await import('./dto/musicchat-automation.dto');
+    await expect(validate(UpdateMusicChatAutomationSettingsDto, { menu_options: [{ ...option, unknownKey: 'x' }] })).rejects.toBeInstanceOf(BadRequestException);
+    await expect(validate(UpdateMusicChatAutomationSettingsDto, { menu_options: [{ ...option, queueKeys: 'x' }] })).rejects.toBeInstanceOf(BadRequestException);
+  });
+});

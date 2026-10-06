@@ -158,3 +158,51 @@ describe('fiscal_document_type response', () => {
     expect(qb.getManyAndCount).toHaveBeenCalled();
   });
 });
+
+describe('fiscal_document_type in domain events (persisted column tipo_nota is the source)', () => {
+  it('INVOICE_CREATED payload type is the persisted fiscal kind of the saved row', async () => {
+    const repo = {
+      create: jest.fn((v: unknown) => v),
+      save: jest.fn(async (v: unknown) => ({ id: 'inv-1', ...(v as object) })),
+      manager: { connection: { query: jest.fn(async () => [{ exists: 1 }]) } },
+    };
+    const emitTyped = jest.fn();
+    const service = new InvoicesService(
+      { getRepository: jest.fn(() => repo) } as never,
+      { encryptNullable: jest.fn(() => null), decryptNullable: jest.fn(() => null) } as never,
+      { emitTyped } as never,
+    );
+    const dto = (await run(CreateInvoiceDto, { fiscal_document_type: 'nfce' })) as CreateInvoiceDto;
+    await service.create('tenant-1', 'user-1', dto);
+    const created = emitTyped.mock.calls.find(([name]) => String(name).includes('created'));
+    expect(created).toBeDefined();
+    expect(created![1].payload.type).toBe('nfce');
+  });
+
+  it('INVOICE_ISSUED payload type is the persisted fiscal kind of the updated row', async () => {
+    const rows = [
+      { id: 'inv-1', tenant_id: 'tenant-1', status: 'draft', type: 'fiscal', tipo_nota: 'nfe' },
+      { id: 'inv-1', tenant_id: 'tenant-1', status: 'issued', type: 'fiscal', tipo_nota: 'nfe' },
+    ];
+    const qb = {
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getOne: jest.fn().mockImplementationOnce(async () => rows[0]).mockImplementation(async () => rows[1]),
+    };
+    const repo = {
+      createQueryBuilder: jest.fn(() => qb),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      manager: { connection: { query: jest.fn(async () => [{ exists: 1 }]) } },
+    };
+    const emitTyped = jest.fn();
+    const service = new InvoicesService(
+      { getRepository: jest.fn(() => repo) } as never,
+      { encryptNullable: jest.fn(() => null), decryptNullable: jest.fn(() => null) } as never,
+      { emitTyped } as never,
+    );
+    await service.update('tenant-1', 'user-1', 'inv-1', { status: 'issued' } as never);
+    const issued = emitTyped.mock.calls.find(([name]) => String(name).includes('issued'));
+    expect(issued).toBeDefined();
+    expect(issued![1].payload.type).toBe('nfe');
+  });
+});

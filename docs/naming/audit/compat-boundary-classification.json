@@ -1,36 +1,41 @@
 {
- "rows": 4347,
+ "rows": 4542,
  "byClass": {
-  "EXEMPT_WITH_JUSTIFICATION": 454,
-  "BEHAVIORALLY_PROVEN": 1371,
-  "BINDING_ONLY": 2520,
-  "COMPILER_PROVEN": 2
+  "EXEMPT_WITH_JUSTIFICATION": 638,
+  "BEHAVIORALLY_PROVEN": 1376,
+  "BINDING_ONLY": 2522,
+  "COMPILER_PROVEN": 3,
+  "UNPROVEN": 3
  },
- "REQUIRED_BEHAVIORAL_ROWS": 1371,
- "COMPATIBILITY_WITHOUT_REQUIRED_PROOF": 0,
- "BEHAVIORALLY_PROVEN": 1371,
- "COMPILER_PROVEN": 2,
- "BINDING_ONLY": 2520,
- "EXEMPT_WITH_JUSTIFICATION": 454,
- "UNPROVEN": 0,
+ "REQUIRED_BEHAVIORAL_ROWS": 1379,
+ "COMPATIBILITY_WITHOUT_REQUIRED_PROOF": 3,
+ "BEHAVIORALLY_PROVEN": 1376,
+ "COMPILER_PROVEN": 3,
+ "BINDING_ONLY": 2522,
+ "EXEMPT_WITH_JUSTIFICATION": 638,
+ "UNPROVEN": 3,
  "BINDING_ONLY_FIXTURE_NAMES_WITHOUT_PRODUCTION_OCCURRENCE": 141,
  "BINDING_ONLY_FIXTURE_NAMES_WITH_UNCOVERED_PRODUCTION_OCCURRENCE": 0,
  "fixtureExercises": {
-  "null": 1923,
-  "RUNTIME_ROW_EXISTS": 1936,
+  "null": 2116,
+  "RUNTIME_ROW_EXISTS": 1941,
   "COVERED_BY_FILE_ROW": 173,
-  "ADJUDICATED_HARMLESS": 174,
+  "ADJUDICATED_HARMLESS": 171,
   "NO_PRODUCTION_OCCURRENCE": 141
  },
  "uncoveredProductionRows": [],
  "exemptByKind": {
-  "LEGAL_DOMAIN_TERM": 200,
+  "LEGAL_DOMAIN_TERM": 185,
   "MIGRATION_HISTORY_GUARD": 21,
   "USER_FACING_TEXT": 187,
-  "PACK_TOOLING": 30,
-  "LIVING_REGISTRY": 3,
-  "NAMING_TOOLING": 7,
-  "HISTORICAL_DOCUMENT_OR_DATA": 6
+  "PACK_TOOLING": 44,
+  "LIVING_REGISTRY": 30,
+  "NAMING_TOOLING": 8,
+  "HISTORICAL_DOCUMENT_OR_DATA": 163
  },
- "withoutProofRows": []
+ "withoutProofRows": [
+  "database-schema :: transferencia (UNPROVEN: database-schema boundary without a fresh schema proof (the check script changed after the proof))",
+  "database-schema :: events.data (UNPROVEN: database-schema boundary without a fresh schema proof (the check script changed after the proof))",
+  "database-schema :: tipo_nota (UNPROVEN: database-schema boundary without a fresh schema proof (the check script changed after the proof))"
+ ]
 }

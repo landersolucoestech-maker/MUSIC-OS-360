@@ -4,6 +4,7 @@ import {
   CANONICAL_INVOICE_PAYMENT_METHODS,
   INVOICE_DEPRECATED_FIELDS,
   INVOICE_ITEM_DEPRECATED_FIELDS,
+  INVOICE_QUERY_DEPRECATED_FIELDS,
   INVOICE_PAYMENT_METHODS,
   canonicalInvoicePaymentMethod,
 } from '../modules/invoices/invoice-legacy-fields';
@@ -115,5 +116,28 @@ describe('invoice legacy request contract (CZ-036 deploy-skew window): legacy in
     }
     expect(canonicalInvoicePaymentMethod('moeda_x')).toBe('moeda_x');
     expect(canonicalInvoicePaymentMethod(42)).toBe(42);
+  });
+});
+
+describe('invoice deprecated field alias tables: fiscal document kind', () => {
+  it('body: the deprecated tipo_nota moves to fiscal_document_type and is removed before persistence', () => {
+    const out = applyDeprecatedFieldAliases({ tipo_nota: 'nfe' }, INVOICE_DEPRECATED_FIELDS) as Record<string, unknown>;
+    expect(out['fiscal_document_type']).toBe('nfe');
+    expect(out).not.toHaveProperty('tipo_nota');
+  });
+
+  it('query: the deprecated tipo_nota moves to fiscal_document_type', () => {
+    const out = applyDeprecatedFieldAliases({ tipo_nota: 'nfce' }, INVOICE_QUERY_DEPRECATED_FIELDS) as Record<string, unknown>;
+    expect(out['fiscal_document_type']).toBe('nfce');
+    expect(out).not.toHaveProperty('tipo_nota');
+  });
+
+  it('negative: the canonical value wins over a different deprecated one, in the body and in the query', () => {
+    const body = applyDeprecatedFieldAliases({ fiscal_document_type: 'nfse', tipo_nota: 'nfe' }, INVOICE_DEPRECATED_FIELDS) as Record<string, unknown>;
+    const query = applyDeprecatedFieldAliases({ fiscal_document_type: 'nfse', tipo_nota: 'nfe' }, INVOICE_QUERY_DEPRECATED_FIELDS) as Record<string, unknown>;
+    expect(body['fiscal_document_type']).toBe('nfse');
+    expect(query['fiscal_document_type']).toBe('nfse');
+    expect(body).not.toHaveProperty('tipo_nota');
+    expect(query).not.toHaveProperty('tipo_nota');
   });
 });

@@ -190,7 +190,7 @@ export class InvoicesService {
       payload: {
         invoiceId: saved.id,
         tenantId,
-        type: String((saved as unknown as Record<string, unknown>)['tipo_nota'] ?? saved.type ?? ''),
+        type: String(mapped['fiscal_document_type'] ?? saved.type ?? ''),
         amount: String((saved as unknown as Record<string, unknown>)['service_amount'] ?? saved.legacy_amount ?? 0),
         invoiceNumber: saved.invoice_number ?? null,
         prestadorId: saved.prestador_id ?? null,
@@ -306,7 +306,7 @@ export class InvoicesService {
         payload: {
           invoiceId,
           tenantId,
-          type: String(after['tipo_nota'] ?? after['type'] ?? ''),
+          type: String(after['fiscal_document_type'] ?? after['type'] ?? ''),
           amount,
           invoiceNumber,
           issuedBy: userId,

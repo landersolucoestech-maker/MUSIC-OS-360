@@ -60,8 +60,10 @@ export function legacyMenuIdMap(usedIds: Iterable<string>, keptLegacyIds: Iterab
 
 /** Maps a pre-CZ-045 settings payload (menu option ids, template ids, priorities). */
 export function canonicalMenuOption<T extends MenuOptionLike>(option: T, idMap: Readonly<Record<string, string>> = LEGACY_MENU_OPTION_IDS): T {
+  // queueKey / sectorKey: deprecated routing keys that stored settings may still carry; accepted on input, never persisted again
+  const { queueKey: _queueKey, sectorKey: _sectorKey, ...rest } = option as T & { queueKey?: unknown; sectorKey?: unknown };
   return {
-    ...option,
+    ...(rest as T),
     id: canonical(idMap, option.id) as string,
     responseTemplateId: canonical(idMap, option.responseTemplateId) as string,
     ...(option.priority !== undefined ? { priority: canonical(LEGACY_PRIORITIES, option.priority) as string } : {}),

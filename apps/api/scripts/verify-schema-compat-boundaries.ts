@@ -2,7 +2,7 @@
 /**
  * scripts/verify-schema-compat-boundaries.ts
  *
- * Behavioral proof, against a REAL migrated PostgreSQL, of the two compatibility boundaries that live in the database schema
+ * Behavioral proof, against a REAL migrated PostgreSQL, of the compatibility boundaries that live in the database schema
  * (ledger rows with path `database-schema`): they cannot be proven by a jest spec with a mocked query runner.
  *
  *   1. invoices.payment_method: chk_invoices_payment_method still accepts the legacy value `transferencia` (deploy-window
@@ -58,6 +58,18 @@ export async function runChecks(client: Client): Promise<Check[]> {
   const canonical = await accepted(client, insertInvoice, [tenantId, 'sale', CANONICAL_PAYMENT_METHOD]);
   checks.push({ name: `invoices.payment_method accepts the canonical value ${CANONICAL_PAYMENT_METHOD}`, ok: canonical.ok, detail: canonical.detail });
   checks.push({ name: 'invoices.payment_method rejects an unknown value (CHECK violation 23514)', ok: await expectCheckViolation(client, insertInvoice, [tenantId, 'sale', 'not_a_method']) });
+
+  // 3. invoices.tipo_nota: the persisted column of the fiscal document kind (API name fiscal_document_type) keeps its legacy
+  //    name; a row written with a kind reads back the same kind from that exact column.
+  const insertKind = 'INSERT INTO invoices (tenant_id, type, legacy_amount, tipo_nota) VALUES ($1, $2, 1, $3) RETURNING tipo_nota';
+  await client.query('SAVEPOINT kind');
+  try {
+    const kind = await client.query(insertKind, [tenantId, 'sale', 'nfe']);
+    checks.push({ name: 'invoices.tipo_nota stores and returns the fiscal document kind', ok: kind.rows[0]?.tipo_nota === 'nfe' });
+  } catch (err) {
+    checks.push({ name: 'invoices.tipo_nota stores and returns the fiscal document kind', ok: false, detail: (err as Error).message });
+  }
+  await client.query('ROLLBACK TO SAVEPOINT kind');
 
   const probe = '2031-02-03 04:05:06';
   const sameInstant = (a: unknown, b: unknown): boolean => a !== null && b !== null && String(a) === String(b);
