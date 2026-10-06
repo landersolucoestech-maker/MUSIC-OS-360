@@ -4,7 +4,7 @@
   "workflow": "brownfield-change",
   "intent": null,
   "status": "ACTIVE",
-  "stopBlocks": 0,
+  "stopBlocks": 1,
   "lastProgressAt": "2026-10-06T13:21:53.126Z",
   "tasks": [
     {
