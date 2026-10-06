@@ -190,8 +190,8 @@ export class WorksService {
   private normalizeIswcField(rest: { iswc?: string }): void {
     if (typeof rest.iswc !== 'string') return;
     if (rest.iswc.trim() === '') {
-      // Blank means "not informed": never persist whitespace as if it were an identifier.
-      rest.iswc = '';
+      // Blank means "not informed": one representation (null, the column's absence), never whitespace stored as an identifier.
+      (rest as { iswc?: string | null }).iswc = null;
       return;
     }
     const canonicalIswc = normalizeIswc(rest.iswc);

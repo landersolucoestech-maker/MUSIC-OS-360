@@ -7,6 +7,7 @@
  */
 export function stableStringify(value: unknown): string {
   if (value === undefined || value === null) return 'null';
+  if (value instanceof Date) return JSON.stringify(Number.isNaN(value.getTime()) ? null : value.toISOString());
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
   if (typeof value === 'object') {
     const record = value as Record<string, unknown>;

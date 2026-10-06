@@ -57,10 +57,11 @@ export class AbramusService extends IntegrationBaseService {
   protected resolveHost(name: string): Promise<string[]> {
     const lookup = dns.lookup(name, { all: true }).then((r) => r.map((a) => a.address));
     // A name with a slow authoritative server must not hold a resolver thread for every call.
+    let timer: NodeJS.Timeout | undefined;
     const timeout = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('DNS lookup timeout')), RESOLVE_TIMEOUT_MS).unref();
+      timer = setTimeout(() => reject(new Error('DNS lookup timeout')), RESOLVE_TIMEOUT_MS);
     });
-    return Promise.race([lookup, timeout]);
+    return Promise.race([lookup, timeout]).finally(() => clearTimeout(timer));
   }
 
   /**

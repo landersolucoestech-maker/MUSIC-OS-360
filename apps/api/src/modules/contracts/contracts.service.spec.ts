@@ -748,6 +748,19 @@ describe('ContractsService.update: fields a signature attests are immutable once
     expect(updatedC1(repo)['notes']).toBe('ok');
   });
 
+  it('treats an empty list as no signers: a form posting [] for a contract stored without signers is no change', async () => {
+    const { svc, repo } = makeServiceC1([signed({ signers: null })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { signers: [], notes: 'ok' } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['notes']).toBe('ok');
+  });
+
+  it('still rejects the first real signer on a signed contract stored without signers', async () => {
+    const { svc, repo } = makeServiceC1([signed({ signers: null })]);
+    await expect(svc.update('tenant-1', 'user-1', 'contract-1', { signers: [{ name: 'Ana', email: 'ana@example.com' }] } as unknown as UpdateContractDto))
+      .rejects.toMatchObject({ response: { code: 'CONTRACT_SIGNED_IMMUTABLE' } });
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+
   it('still rejects a signer whose value really changed, whatever the key order', async () => {
     const { svc, repo } = makeServiceC1([signed({ signers: [{ name: 'Ana', role: 'artist', email: 'ana@example.com' }] })]);
     await expect(svc.update('tenant-1', 'user-1', 'contract-1', {

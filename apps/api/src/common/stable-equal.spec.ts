@@ -32,4 +32,10 @@ describe('jsonDeepEqual', () => {
   it('is deterministic', () => {
     expect(stableStringify({ b: 1, a: 2 })).toBe(stableStringify({ a: 2, b: 1 }));
   });
+
+  it('compares dates by their instant, not as empty objects', () => {
+    expect(jsonDeepEqual(new Date('2026-01-01T00:00:00Z'), new Date('2026-01-01T00:00:00Z'))).toBe(true);
+    expect(jsonDeepEqual(new Date('2026-01-01T00:00:00Z'), new Date('2026-01-02T00:00:00Z'))).toBe(false);
+    expect(jsonDeepEqual({ at: new Date('2026-01-01T00:00:00Z') }, { at: '2026-01-01T00:00:00.000Z' })).toBe(true);
+  });
 });

@@ -32,13 +32,22 @@ const textKey = (value: unknown): string => (value == null ? '' : String(value))
  */
 const FROZEN_ASSET_KEYS = ['audio_master_url', 'cover_url', 'lyrics', 'credits'] as const;
 const FROZEN_SCHEDULE_KEYS = ['distributor_delivery_date'] as const;
+const trimmedTextKey = (value: unknown): string => textKey(value).trim();
+/**
+ * `fallback` holds the column value a key falls back to when the stored object has none: the web form loads the
+ * cover from `assets.cover_url` and, when that is missing, from the `cover_url` column, then posts it back.
+ */
 const changedFrozenKeys = (
   sent: Record<string, unknown> | null | undefined,
   stored: Record<string, unknown> | null | undefined,
   keys: readonly string[],
   keyOf: (value: unknown) => string,
-): string[] => keys.filter((key) =>
-  sent != null && Object.prototype.hasOwnProperty.call(sent, key) && keyOf(sent[key]) !== keyOf(stored?.[key]));
+  fallback: Record<string, unknown> = {},
+): string[] => keys.filter((key) => {
+  if (sent == null || !Object.prototype.hasOwnProperty.call(sent, key)) return false;
+  const storedValue = keyOf(stored?.[key]) !== '' ? stored?.[key] : fallback[key];
+  return keyOf(sent[key]) !== keyOf(storedValue);
+});
 
 /** A track the form adds on its own to an empty tracklist: it carries defaults but no content. */
 const TRACK_IDENTITY_KEYS = new Set(['id', 'language']);
@@ -226,7 +235,7 @@ export class ReleasesService {
     }
     const changed = checks.filter(([, , differs]) => differs).map(([field]) => field);
     changed.push(
-      ...changedFrozenKeys(dto.assets, current.assets as Record<string, unknown> | null, FROZEN_ASSET_KEYS, textKey).map((key) => `assets.${key}`),
+      ...changedFrozenKeys(dto.assets, current.assets as Record<string, unknown> | null, FROZEN_ASSET_KEYS, trimmedTextKey, { cover_url: row['cover_url'] }).map((key) => `assets.${key}`),
       ...changedFrozenKeys(dto.schedule, current.schedule as Record<string, unknown> | null, FROZEN_SCHEDULE_KEYS, dayKey).map((key) => `schedule.${key}`),
     );
     if (changed.length === 0) return;

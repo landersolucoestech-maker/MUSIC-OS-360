@@ -156,7 +156,10 @@ export class ContractsService {
     const changed = SIGNATURE_BOUND_FIELDS.filter((field) => {
       const next = normalized[field];
       if (next === undefined) return false;
-      return !jsonDeepEqual(next, (current as unknown as Record<string, unknown>)[field] ?? null);
+      // An empty list or object is the same absence as null: a form posting `[]` for a contract stored without signers is no change.
+      const blankToNull = (value: unknown): unknown =>
+        (Array.isArray(value) && value.length === 0) || (value !== null && typeof value === 'object' && !Array.isArray(value) && Object.keys(value as object).length === 0) ? null : value;
+      return !jsonDeepEqual(blankToNull(next), blankToNull((current as unknown as Record<string, unknown>)[field] ?? null));
     });
     if (changed.length === 0) return;
     throw new ConflictException({

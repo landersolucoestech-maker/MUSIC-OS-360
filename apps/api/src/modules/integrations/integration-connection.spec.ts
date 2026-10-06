@@ -306,4 +306,19 @@ describe('AbramusService.configure: connected only after a real login', () => {
       jest.restoreAllMocks();
     }
   });
+
+  it('leaves no timer behind after a lookup that answered', async () => {
+    jest.useFakeTimers();
+    try {
+      const { svc } = buildAbramus(jest.fn());
+      delete (svc as unknown as { resolveHost?: unknown }).resolveHost;
+      const dns = jest.requireActual('node:dns') as typeof import('node:dns');
+      jest.spyOn(dns.promises, 'lookup').mockResolvedValue([{ address: '93.184.216.34', family: 4 }] as never);
+      await expect((svc as unknown as { resolveHost: (n: string) => Promise<string[]> }).resolveHost('ok.example.test')).resolves.toEqual(['93.184.216.34']);
+      expect(jest.getTimerCount()).toBe(0);
+    } finally {
+      jest.useRealTimers();
+      jest.restoreAllMocks();
+    }
+  });
 });

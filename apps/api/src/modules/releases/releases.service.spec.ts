@@ -129,6 +129,32 @@ describe('ReleasesService.update: distribution data is frozen after distribution
       expect(repo.update).not.toHaveBeenCalled();
     });
 
+    it('accepts a notes-only edit when the cover lives only in the column and the form posts it back inside assets', async () => {
+      const { svc, repo } = build(baseRow({ cover_url: 'https://cdn.example.test/col.jpg', assets: null }));
+      await svc.update('t1', 'u1', 'r1', { notes: 'ok', coverUrl: 'https://cdn.example.test/col.jpg', assets: { cover_url: 'https://cdn.example.test/col.jpg' } } as never);
+      expect(repo.update).toHaveBeenCalled();
+    });
+
+    it('still rejects a different cover when the stored one lives only in the column', async () => {
+      const { svc, repo } = build(baseRow({ cover_url: 'https://cdn.example.test/col.jpg', assets: {} }));
+      await expect(svc.update('t1', 'u1', 'r1', { assets: { cover_url: 'https://cdn.example.test/other.jpg' } } as never))
+        .rejects.toMatchObject({ response: { fields: expect.arrayContaining(['assets.cover_url']) } });
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
+    it('does not report a change for surrounding whitespace in a stored value', async () => {
+      const { svc, repo } = build(baseRow({ assets: { lyrics: 'La la la\n', credits: ' Ana ' } }));
+      await svc.update('t1', 'u1', 'r1', { assets: { lyrics: 'La la la', credits: 'Ana' } } as never);
+      expect(repo.update).toHaveBeenCalled();
+    });
+
+    it('pins the decision that a frozen key cannot be filled for the first time after distribution', async () => {
+      const { svc, repo } = build(baseRow({ assets: {} }));
+      await expect(svc.update('t1', 'u1', 'r1', { assets: { lyrics: 'late lyrics' } } as never))
+        .rejects.toMatchObject({ response: { fields: expect.arrayContaining(['assets.lyrics']) } });
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
     it('accepts the form posting the stored values, blank keys and the keys that are not distribution data', async () => {
       const { svc, repo } = build(baseRow(stored));
       await svc.update('t1', 'u1', 'r1', {
