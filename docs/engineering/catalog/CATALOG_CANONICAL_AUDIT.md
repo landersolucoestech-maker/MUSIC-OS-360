@@ -106,3 +106,51 @@ values, replacing the Release tracklist JSON, and removing the contact stubs.
 PostgreSQL is not available. Code-level fixes are proven with unit and contract tests. Every migration written for the
 SCHEMA items would be unproven against a real database; the database proof stays deferred and each such item is recorded
 as such, never as done.
+
+## 4. Resolved in this slice
+
+Each row is one atomic commit on `dev`, with tests that fail when the fix is removed.
+
+| Commit | Cluster | What changed |
+|---|---|---|
+| `b97f79ae` | Contracts | A partial update no longer writes create-time defaults over stored values (a notes-only or status-only update used to erase documents, versions and exclusivity: F-38). Once a contract is signed or later, the document, signers, template and versions it attests cannot change through an ordinary update. The signed event states whether the signature was registered manually |
+| `a52b7a74` | Releases | After distributed, released or archived, the distribution data cannot be edited here; a change toward the distributor is requested from the distributor |
+| `7076f82e` | Uploads | The confirm step verifies the stored object: real size and file signature against the declared type, deletes a rejected object, rejects a missing object, uses one allow-list shared with presign |
+| `86bed3a1` | Integrations | A saved credential is not a tested connection: probe support, honest status fields, Abramus verified by a real login, provider error bodies redacted, tenant-aware general status |
+| `e6ae87a3` | Registry | A Phonogram without a Work is valid for registry validation |
+| `f139df9c` | Catalog | ISWC validated and canonicalized on every write; participant percentages validated on every write |
+| `3d2793da` | Projects | The four product statuses are the closed list; the internal review state is no longer leaked, demoted or left out of the dashboard |
+| `3091a13e` | Artists | Specialties are the closed list |
+| `25aac677` | Notifications | A repeated delivery of the same event creates one notification |
+
+## 5. Corrections to the first inventory
+
+These were found while implementing and replace the wording of the table in section 2.
+
+- F-01: the manual signed registration is not a hidden status edit. It is the designed registration action, restricted to administrators and managers, guarded by an attached document and recorded by the transition event. What was missing was immutability after signature and the origin of the signature in the event. Whether the manual action must require an uploaded signed file with a hash is an owner decision and needs the asset layer.
+- F-02: the distributed transition is the designed manual confirmation (from scheduled, administrators and managers). What is missing is a record of what was confirmed; that belongs to the submission model (schema). The editable-after-distribution defect was real and is fixed.
+- F-13: the exact total of 100% is checked at registry validation by design, because a Work created from a Project legitimately has no formal percentages yet. At write time the invariant is: valid numbers, bounded decimals, running total never above 100%.
+- Shares carrying both a work and a phonogram: existing contract tests treat the pair as valid and the split-sum code filters by both. It is a modeling decision for the owner, not a defect proven here.
+- The contract signed handler creates a scheduled revenue transaction when a signed contract has a fixed value. That is the company's own finance, not an external royalty, so it is not changed; whether a scheduled forecast counts as a real financial movement is an owner decision.
+
+## 6. Cross-layer impact of the fixes
+
+| Fix | Producers checked | Consumers checked | Result |
+|---|---|---|---|
+| Contract partial update | the contracts controller is the only caller of the service update; the provider signature path writes through its own guarded statement | the web form always posts the whole contract, so explicit values are still written; no other module depended on the defaults being written | no consumer relied on the old behavior |
+| Contract immutability | web edit after signature posts the stored values, which are accepted | the signed event consumers (activity log, notification, revenue forecast, artist status) ignore the new optional origin field | compatible |
+| Release freeze | workflow transitions are unchanged; metadata written by automations goes through direct statements | the web form resends stored values, accepted; release date compared by day | compatible |
+| Upload verification | presign and confirm controllers unchanged; storage service gained one read method | no web or API flow depended on the types that were removed from the handler list (vector images and plain text were never issued by presign; Word documents were issued by presign and rejected by the handler, now accepted) | compatible, one latent defect removed |
+| Integration status | all providers share the base; the web gates actions on the connected flag, which is unchanged for providers without a probe | the status shape gained fields only; one test that pinned the exact shape was updated to a closed list of non-secret keys | compatible |
+| Registry rule removal | DTO, form and payload builder already treat the Work link as optional | the web shows an informational badge for a missing Work and blocks nothing | compatible |
+| ISWC and percentages | the web form sends decimal strings; the report import writes participants by raw insert and is not covered by this write-time check | web displays the stored ISWC as saved, now in canonical form like the ISRC | import path remains a gap (F-33) |
+| Project status | the API workflow and enum are unchanged | list badges, filters and dashboard now agree on four product labels; the internal state is kept on save | compatible |
+| Specialties | the web offers exactly the five allowed values | other API clients sending free text now get a 400 naming the allowed list | intended |
+| Notification ids | only the domain-event handler changed | other handlers that create notifications are unchanged and still not idempotent | partial, recorded below |
+
+## 7. Not done in this slice, and why
+
+- Integrity diagnostics (F-34): read-only SQL that cannot be proven without PostgreSQL; shipping an unverified query risks false negatives.
+- Per-provider connection probes beyond Abramus (F-04, remainder): each needs a real authenticated call that cannot be exercised here.
+- Notification idempotency for the other handlers that create notifications directly.
+- Everything marked SCHEMA, OWNER or APPROVAL in section 2: Person and Company, artist visibility, ReleaseTrack, submission and snapshot model, asset roles and unique current master and cover, main contracts and contract versioning, central tasks, audit reason and origin, import through the domain layer, statements pipeline and the external identifier model.
