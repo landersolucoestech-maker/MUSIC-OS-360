@@ -302,6 +302,8 @@ jobs:
         run: pnpm --filter @music-os-360/api verify:rls
       - name: verify:tenant-isolation (cross-tenant DB blocks — throwaway rows on this ephemeral DB)
         run: pnpm --filter @music-os-360/api verify:tenant-isolation
+      - name: verify:catalog-integrity (read-only referential integrity diagnostic of the catalog; fails on any error finding)
+        run: pnpm --filter @music-os-360/api verify:catalog-integrity
       - name: Reset schema for segmented-executor integration test
         run: |
           PGPASSWORD=ci_only_ephemeral_password_ba3f0d psql -h localhost -U musicos360 -d musicos360 -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; DROP SCHEMA IF EXISTS realtime CASCADE; DROP SCHEMA IF EXISTS auth CASCADE;"
