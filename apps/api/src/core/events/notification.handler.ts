@@ -192,7 +192,11 @@ export class NotificationHandler {
 
     // Without an emission time the event has no stable identity: it cannot be deduplicated.
     const notificationId = event.occurredAt && event.userId
-      ? deterministicNotificationId([event.tenantId, event.userId, event.type, event.aggregateType, event.aggregateId, event.occurredAt])
+      ? deterministicNotificationId([
+          event.tenantId, event.userId, event.type, event.aggregateType, event.aggregateId, event.occurredAt,
+          // Without an aggregate id, two different events of one type emitted in the same millisecond would collide: the payload tells them apart.
+          ...(event.aggregateId ? [] : [JSON.stringify(event.payload ?? null)]),
+        ])
       : null;
     let duplicate = false;
 

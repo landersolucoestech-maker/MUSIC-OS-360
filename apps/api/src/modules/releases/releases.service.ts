@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException, Optional, ConflictException } from '@nestjs/common';
+import { jsonDeepEqual } from '../../common/stable-equal';
 import { DataSource, Repository, FindOptionsWhere } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -25,7 +26,23 @@ const dayKey = (value: unknown): string => {
   return Number.isNaN(d.getTime()) ? String(value) : d.toISOString().slice(0, 10);
 };
 const textKey = (value: unknown): string => (value == null ? '' : String(value));
-const jsonKey = (value: unknown): string => JSON.stringify(value ?? null);
+/** A track the form adds on its own to an empty tracklist: it carries defaults but no content. */
+const TRACK_DEFAULT_KEYS = new Set(['id', 'language', 'explicit', 'isAlternateVersion', 'instrumental']);
+const isBlankValue = (value: unknown): boolean => {
+  if (value == null || value === '' || value === false) return true;
+  if (Array.isArray(value)) return value.every(isBlankValue);
+  if (typeof value === 'object') return Object.values(value as Record<string, unknown>).every(isBlankValue);
+  return false;
+};
+const isPlaceholderTrack = (track: unknown): boolean =>
+  track != null && typeof track === 'object' && !Array.isArray(track)
+  && Object.entries(track as Record<string, unknown>).every(([key, value]) => TRACK_DEFAULT_KEYS.has(key) || isBlankValue(value));
+/** The posted tracklist is the stored one, or (when none is stored) only the untouched placeholder the form shows. */
+const tracksUnchanged = (sent: unknown, stored: unknown): boolean => {
+  const storedEmpty = stored == null || (Array.isArray(stored) && stored.length === 0);
+  if (storedEmpty) return sent == null || (Array.isArray(sent) && sent.every(isPlaceholderTrack));
+  return jsonDeepEqual(sent, stored);
+};
 
 @Injectable()
 export class ReleasesService {
@@ -183,11 +200,11 @@ export class ReleasesService {
       ['copyright',    dto.copyright,    dto.copyright != null && textKey(dto.copyright) !== textKey(row['copyright'])],
       ['music_genre',  dto.music_genre,  dto.music_genre != null && textKey(dto.music_genre) !== textKey(row['music_genre'])],
       ['language',     dto.language,     dto.language != null && textKey(dto.language) !== textKey(row['language'])],
-      ['platforms',    dto.platforms,    dto.platforms != null && jsonKey(dto.platforms) !== jsonKey(row['platforms'] ?? [])],
+      ['platforms',    dto.platforms,    dto.platforms != null && !jsonDeepEqual(dto.platforms, row['platforms'] ?? [])],
     ];
     const sentTracks = dto.metadata != null && Object.prototype.hasOwnProperty.call(dto.metadata, 'tracks');
     const storedTracks = (current.metadata as Record<string, unknown> | null | undefined)?.['tracks'];
-    if (sentTracks && jsonKey((dto.metadata as Record<string, unknown>)['tracks']) !== jsonKey(storedTracks)) {
+    if (sentTracks && !tracksUnchanged((dto.metadata as Record<string, unknown>)['tracks'], storedTracks)) {
       checks.push(['metadata.tracks', null, true]);
     }
     const changed = checks.filter(([, , differs]) => differs).map(([field]) => field);

@@ -153,12 +153,15 @@ export const canonicalArtistGender = (value: unknown): unknown => mapValue(LEGAC
 
 /**
  * The specialties are a closed list. Called after the legacy values are mapped: any other value is rejected,
- * so a free-text specialty can never be stored. A write that does not carry the field is not a specialty write.
+ * so a free-text specialty can never be introduced. A write that does not carry the field is not a specialty write.
  */
-export function assertArtistSpecialtiesInClosedList(value: unknown): void {
+export function assertArtistSpecialtiesInClosedList(value: unknown, alreadyStored: readonly unknown[] = []): void {
   if (value === undefined || value === null) return;
   const items = Array.isArray(value) ? value : [value];
-  const invalid = items.filter((item) => typeof item !== 'string' || !(ARTIST_SPECIALTIES as readonly string[]).includes(item));
+  // A value the artist already carries is not a new write: an edit form re-posts what was loaded, and a record
+  // saved before the list was closed must stay editable. Only values being introduced are checked.
+  const invalid = items.filter((item) =>
+    (typeof item !== 'string' || !(ARTIST_SPECIALTIES as readonly string[]).includes(item)) && !alreadyStored.includes(item));
   if (!Array.isArray(value) || invalid.length > 0) {
     throw new BadRequestException({
       code: 'ARTIST_SPECIALTY_INVALID',

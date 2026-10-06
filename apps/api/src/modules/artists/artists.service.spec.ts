@@ -406,3 +406,37 @@ describe('ArtistsService: specialties are the closed list', () => {
     expect(ds._repo.update).not.toHaveBeenCalled();
   });
 });
+
+describe('ArtistsService: specialties already stored stay editable, only new values are checked', () => {
+  const build = (stored: unknown[]) => {
+    const ds = makeDataSource({ ...artistA, specialties: stored });
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+    return { ds, service };
+  };
+
+  it('re-posting the stored list, including a value outside the closed list, is accepted', async () => {
+    const { ds, service } = build(['singer', 'dj']);
+    await service.update(TENANT_A, USER_ID, 'artist-001', { specialties: ['singer', 'dj'], stage_name: 'Renamed' } as any);
+    expect(ds._repo.update).toHaveBeenCalled();
+  });
+
+  it('introducing a new value outside the closed list is still rejected, naming only the new value', async () => {
+    const { ds, service } = build(['singer']);
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { specialties: ['singer', 'drummer'] } as any))
+      .rejects.toMatchObject({ response: { code: 'ARTIST_SPECIALTY_INVALID', invalid: ['drummer'] } });
+    expect(ds._repo.update).not.toHaveBeenCalled();
+  });
+
+  it('a record with no stored specialties cannot introduce an outside value', async () => {
+    const { service } = build([]);
+    await expect(service.update(TENANT_A, USER_ID, 'artist-001', { specialties: ['singer'] } as any))
+      .rejects.toMatchObject({ response: { code: 'ARTIST_SPECIALTY_INVALID' } });
+  });
+
+  it('create has nothing stored, so it is always strict', async () => {
+    const ds = makeDataSource();
+    const service = new ArtistsService(ds as any, makeEncryptionMock(), makeEventsMock() as any, makePlanLimitMock() as any);
+    await expect(service.create(TENANT_A, USER_ID, { stage_name: 'Alpha', specialties: ['singer'] } as any))
+      .rejects.toMatchObject({ response: { code: 'ARTIST_SPECIALTY_INVALID' } });
+  });
+});

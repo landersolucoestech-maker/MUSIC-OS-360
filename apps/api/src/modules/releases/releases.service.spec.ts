@@ -108,6 +108,51 @@ describe('ReleasesService.update: distribution data is frozen after distribution
     expect((repo.update as jest.Mock).mock.calls[0][1]).toMatchObject({ notes: 'internal follow-up' });
   });
 
+  it('accepts the stored tracks with their keys in another order', async () => {
+    const { svc, repo } = build(baseRow({ metadata: { tracks: [{ id: 1, title: 'One', artist: 'Ana', isrc: 'BRABC2600001' }] } }));
+    await svc.update('t1', 'u1', 'r1', { metadata: { tracks: [{ isrc: 'BRABC2600001', artist: 'Ana', title: 'One', id: 1 }] }, notes: 'ok' } as never);
+    expect((repo.update as jest.Mock).mock.calls[0][1]).toMatchObject({ notes: 'ok' });
+  });
+
+  describe('a distributed release with no stored tracklist (created by import or API)', () => {
+    const placeholder = {
+      id: 1760000000000, title: '', artist: '', isrc: '', isAlternateVersion: false, versionType: '', versionCustomName: '',
+      additionalArtists: [], producers: [], composers: [''], musicians: [], aiAssistanceLevel: '', instrumental: false,
+      language: 'pt-br', lyrics: '', explicit: 'no', audioFile: null,
+    };
+
+    it('can still be edited from the form, which posts one untouched placeholder track', async () => {
+      const { svc, repo } = build(baseRow({ metadata: { note: 'kept' } }));
+      await svc.update('t1', 'u1', 'r1', { metadata: { tracks: [placeholder] }, notes: 'internal follow-up' } as never);
+      expect((repo.update as jest.Mock).mock.calls[0][1]).toMatchObject({ notes: 'internal follow-up' });
+    });
+
+    it('treats an empty stored list the same way', async () => {
+      const { svc, repo } = build(baseRow({ metadata: { tracks: [] } }));
+      await svc.update('t1', 'u1', 'r1', { metadata: { tracks: [placeholder] }, notes: 'ok' } as never);
+      expect(repo.update).toHaveBeenCalled();
+    });
+
+    it.each([
+      ['a title', { ...placeholder, title: 'New track' }],
+      ['an isrc', { ...placeholder, isrc: 'BRABC2600001' }],
+      ['a credited artist', { ...placeholder, additionalArtists: [{ name: 'X' }] }],
+      ['an audio file', { ...placeholder, audioFile: { name: 'a.wav' } }],
+      ['lyrics', { ...placeholder, lyrics: 'text' }],
+    ])('still rejects a track with %s', async (_label, track) => {
+      const { svc, repo } = build(baseRow({ metadata: { note: 'kept' } }));
+      await expect(svc.update('t1', 'u1', 'r1', { metadata: { tracks: [track] } } as never))
+        .rejects.toMatchObject({ response: { code: 'RELEASE_DISTRIBUTED_IMMUTABLE', fields: expect.arrayContaining(['metadata.tracks']) } });
+      expect(repo.update).not.toHaveBeenCalled();
+    });
+
+    it('still rejects adding a real track next to a placeholder', async () => {
+      const { svc } = build(baseRow({ metadata: { note: 'kept' } }));
+      await expect(svc.update('t1', 'u1', 'r1', { metadata: { tracks: [placeholder, { ...placeholder, title: 'Real' }] } } as never))
+        .rejects.toMatchObject({ response: { code: 'RELEASE_DISTRIBUTED_IMMUTABLE' } });
+    });
+  });
+
   it('still allows notes and unrelated metadata keys on a distributed release', async () => {
     const { svc, repo } = build(baseRow());
     await svc.update('t1', 'u1', 'r1', { notes: 'ticket 4471 opened', metadata: { follow_up: 'waiting' } } as never);

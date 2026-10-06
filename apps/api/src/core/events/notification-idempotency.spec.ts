@@ -83,6 +83,22 @@ describe('NotificationHandler: a repeated delivery of the same event creates one
     expect(ids[0]).not.toBe(ids[1]);
   });
 
+  it('two different events of one type without an aggregate, emitted in the same millisecond, are two notifications', async () => {
+    const { handler, repo } = build(null);
+    await handler.onDomainNotificationEvent(event({ aggregateId: undefined, payload: { title: 'First' } }) as never);
+    await handler.onDomainNotificationEvent(event({ aggregateId: undefined, payload: { title: 'Second' } }) as never);
+    const ids = (repo.save as jest.Mock).mock.calls.map((c) => (c[0] as { id: string }).id);
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it('the same event without an aggregate delivered twice keeps one id', async () => {
+    const { handler, repo } = build(null);
+    await handler.onDomainNotificationEvent(event({ aggregateId: undefined, payload: { title: 'Same' } }) as never);
+    await handler.onDomainNotificationEvent(event({ aggregateId: undefined, payload: { title: 'Same' } }) as never);
+    const ids = (repo.save as jest.Mock).mock.calls.map((c) => (c[0] as { id: string }).id);
+    expect(ids[0]).toBe(ids[1]);
+  });
+
   it('an event without an emission time has no stable identity: it is still delivered, with no lookup', async () => {
     const { handler, repo } = build({ id: 'would-match' });
     await handler.onDomainNotificationEvent(event({ occurredAt: undefined }) as never);

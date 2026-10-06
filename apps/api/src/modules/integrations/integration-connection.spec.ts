@@ -75,6 +75,27 @@ describe('IntegrationBaseService.saveCredentials: a saved credential is not a te
     expect(status.last_error).toBe(reason);
   });
 
+  it('a failed re-configuration keeps the previous working credentials and status, and records only the failure', async () => {
+    const { svc, rows } = build([{
+      id: 'i1', tenant_id: 't1', provider: 'abramus', status: IntegrationStatus.CONNECTED,
+      credentials_encrypted: 'old-credentials', metadata: { verified: true, last_success_at: '2026-10-01T00:00:00.000Z' },
+    }]);
+    await expect(svc.saveCredentials('t1', 'abramus', { token: 'mistyped' }, jest.fn().mockRejectedValue(new Error('401 unauthorized'))))
+      .rejects.toMatchObject({ response: { code: 'INTEGRATION_CONNECTION_TEST_FAILED' } });
+    expect(rows[0].credentials_encrypted).toBe('old-credentials');
+    expect(rows[0].status).toBe(IntegrationStatus.CONNECTED);
+    expect(rows[0].metadata['verified']).toBe(true);
+    expect(rows[0].metadata['last_success_at']).toBe('2026-10-01T00:00:00.000Z');
+    expect(String(rows[0].metadata['last_failure_reason'])).toContain('401');
+  });
+
+  it('a failed first configuration has nothing to restore: it is stored in error', async () => {
+    const { svc, rows } = build();
+    await expect(svc.saveCredentials('t1', 'abramus', { token: 'x' }, jest.fn().mockRejectedValue(new Error('down')))).rejects.toBeDefined();
+    expect(rows[0].status).toBe(IntegrationStatus.ERROR);
+    expect(rows[0].credentials_encrypted).not.toBeNull();
+  });
+
   it('a later successful probe clears the previous failure', async () => {
     const { svc, rows } = build();
     await expect(svc.saveCredentials('t1', 'abramus', { token: 'x' }, jest.fn().mockRejectedValue(new Error('down')))).rejects.toBeDefined();

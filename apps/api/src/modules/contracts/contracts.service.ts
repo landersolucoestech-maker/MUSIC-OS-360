@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException, Logger, BadRequestException, ConflictException } from '@nestjs/common';
+import { jsonDeepEqual } from '../../common/stable-equal';
 import { DataSource, Repository, FindOptionsWhere, IsNull } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -155,7 +156,7 @@ export class ContractsService {
     const changed = SIGNATURE_BOUND_FIELDS.filter((field) => {
       const next = normalized[field];
       if (next === undefined) return false;
-      return JSON.stringify(next) !== JSON.stringify((current as unknown as Record<string, unknown>)[field] ?? null);
+      return !jsonDeepEqual(next, (current as unknown as Record<string, unknown>)[field] ?? null);
     });
     if (changed.length === 0) return;
     throw new ConflictException({

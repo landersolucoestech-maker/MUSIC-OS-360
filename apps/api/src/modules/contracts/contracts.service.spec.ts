@@ -739,6 +739,23 @@ describe('ContractsService.update: fields a signature attests are immutable once
     expect(repo.update).not.toHaveBeenCalled();
   });
 
+  it('accepts the same signers with the keys in another order (jsonb hands keys back in its own order)', async () => {
+    const { svc, repo } = makeServiceC1([signed({ signers: [{ name: 'Ana', role: 'artist', email: 'ana@example.com', order: 1, provider: 'autentique', required: true }] })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', {
+      signers: [{ name: 'Ana', email: 'ana@example.com', role: 'artist', required: true, order: 1, provider: 'autentique' }],
+      notes: 'ok',
+    } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['notes']).toBe('ok');
+  });
+
+  it('still rejects a signer whose value really changed, whatever the key order', async () => {
+    const { svc, repo } = makeServiceC1([signed({ signers: [{ name: 'Ana', role: 'artist', email: 'ana@example.com' }] })]);
+    await expect(svc.update('tenant-1', 'user-1', 'contract-1', {
+      signers: [{ email: 'other@example.com', name: 'Ana', role: 'artist' }],
+    } as unknown as UpdateContractDto)).rejects.toMatchObject({ response: { code: 'CONTRACT_SIGNED_IMMUTABLE' } });
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+
   it('accepts the same values again, so a form that posts the whole contract keeps working', async () => {
     const { svc, repo } = makeServiceC1([signed()]);
     await svc.update('tenant-1', 'user-1', 'contract-1', {

@@ -58,6 +58,10 @@ export class IntegrationBaseService {
       .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider })
       .getOne();
 
+    // Snapshot before anything is written: it is what a failed verification restores.
+    const previous = existing
+      ? { credentials_encrypted: existing.credentials_encrypted, status: existing.status, verified: (existing.metadata ?? {})['verified'] === true }
+      : null;
     const status = verify ? IntegrationStatus.CONNECTING : IntegrationStatus.CONNECTED;
     const metadata = { ...(existing?.metadata ?? {}), last_attempt_at: new Date().toISOString(), verified: false };
     if (existing) {
@@ -72,8 +76,13 @@ export class IntegrationBaseService {
       await verify();
     } catch (error) {
       const reason = redactForStorage(error instanceof Error ? error.message : String(error));
-      await this.recordConnectionState(tenantId, provider, IntegrationStatus.ERROR, {
-        verified: false,
+      // A mistyped re-configuration must not destroy a working connection: the previous credentials and status
+      // come back, and only the failure is recorded.
+      if (previous) {
+        await this.restoreCredentials(tenantId, provider, previous.credentials_encrypted, previous.status);
+      }
+      await this.recordConnectionState(tenantId, provider, previous ? previous.status : IntegrationStatus.ERROR, {
+        verified: previous ? previous.verified : false,
         last_failure_at: new Date().toISOString(),
         last_failure_reason: reason,
       });
@@ -88,6 +97,20 @@ export class IntegrationBaseService {
       last_failure_at: null,
       last_failure_reason: null,
     });
+  }
+
+  private async restoreCredentials(
+    tenantId: string,
+    provider: string,
+    credentials_encrypted: string | null,
+    status: IntegrationStatus,
+  ): Promise<void> {
+    const row = await this.integRepo!
+      .createQueryBuilder('i')
+      .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider })
+      .getOne();
+    if (!row) return;
+    await this.integRepo!.update({ id: row.id } as any, { credentials_encrypted, status, updated_at: new Date() } as any);
   }
 
   private async recordConnectionState(

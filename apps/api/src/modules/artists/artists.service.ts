@@ -367,7 +367,10 @@ export class ArtistsService {
 
   async update(tenantId: string, userId: string, id: string, dto: UpdateArtistDto): Promise<ArtistResponse> {
     const existing = await this.findById(tenantId, id);
-    const input = this.canonicalInput(dto as unknown as Record<string, unknown>, { update: true });
+    const input = this.canonicalInput(dto as unknown as Record<string, unknown>, {
+      update: true,
+      storedSpecialties: Array.isArray(existing.specialties) ? existing.specialties : [],
+    });
     // contract_id had no ownership check — an artist could reference another tenant's contract.
     await this.assertContractInTenant(tenantId, input.contract_id);
 
@@ -496,9 +499,12 @@ export class ArtistsService {
    * caller-supplied `metadata` stripped of every allow-listed response key
    * that fails its DTO rule (SEC-F1: no `javascript:` link through metadata).
    */
-  private canonicalInput(dto: Record<string, unknown>, options: { update?: boolean } = {}): Record<string, unknown> {
+  private canonicalInput(
+    dto: Record<string, unknown>,
+    options: { update?: boolean; storedSpecialties?: readonly unknown[] } = {},
+  ): Record<string, unknown> {
     const input = canonicalizeArtistInput(dto, options);
-    assertArtistSpecialtiesInClosedList(input.specialties);
+    assertArtistSpecialtiesInClosedList(input.specialties, options.storedSpecialties);
     if (input.metadata !== undefined) input.metadata = sanitizeArtistMetadataInput(input.metadata);
     return input;
   }
