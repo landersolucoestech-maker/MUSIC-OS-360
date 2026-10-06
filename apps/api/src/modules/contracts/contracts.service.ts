@@ -301,6 +301,18 @@ export class ContractsService {
 
     this.assertSignedFieldsUnchanged(current, normalized);
 
+    // A signature registered through an ordinary status update is a manual/external signature: the platform never
+    // fakes an electronic envelope. It is allowed only with the signed document attached (the workflow guard) and
+    // by a role allowed to register it; the server records honestly how it entered (origin, who, when).
+    if (statusChanging && dtoMap['status'] === ContractStatus.SIGNED) {
+      const base = (normalized['metadata'] as Record<string, unknown> | undefined)
+        ?? ((current.metadata as Record<string, unknown> | null) ?? {});
+      normalized['metadata'] = {
+        ...base,
+        signature_registration: { origin: 'manual_registration', registered_by: userId, registered_at: new Date().toISOString() },
+      };
+    }
+
     const nonStatusUpdates: Record<string, unknown> = {
       updated_at: new Date(),
       updated_by: userId,

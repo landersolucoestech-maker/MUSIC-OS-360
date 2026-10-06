@@ -27,6 +27,9 @@ export const PROVIDER_SIGNATURE_FROM_STATUS = ContractStatus.AWAITING_SIGNATURE;
 
 export const SERVER_OWNED_CONTRACT_METADATA_KEYS = [
   'provider', 'provider_doc_id', 'provider_event_id', 'provider_status', 'synced_at',
+  // Stamped by ContractsService when a person registers a signature made outside the platform (a manual or
+  // external signature with the signed document attached); never taken from a client.
+  'signature_registration',
 ] as const;
 
 /** Removes server-owned provider keys from a client-supplied metadata object. */
