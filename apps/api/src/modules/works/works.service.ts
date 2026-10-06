@@ -188,7 +188,12 @@ export class WorksService {
    * form on every write path, never invented, optional at creation.
    */
   private normalizeIswcField(rest: { iswc?: string }): void {
-    if (typeof rest.iswc !== 'string' || rest.iswc.trim() === '') return;
+    if (typeof rest.iswc !== 'string') return;
+    if (rest.iswc.trim() === '') {
+      // Blank means "not informed": never persist whitespace as if it were an identifier.
+      rest.iswc = '';
+      return;
+    }
     const canonicalIswc = normalizeIswc(rest.iswc);
     if (!isValidIswc(canonicalIswc)) {
       throw new BadRequestException({

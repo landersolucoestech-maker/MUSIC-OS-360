@@ -372,6 +372,11 @@ describe('WorksService: ISWC and participant percentages are validated on every 
       expect(created()).not.toHaveProperty('iswc');
     });
 
+    it.each(['   ', '\t', ' \n '])('stores a blank ISWC (%j) as empty instead of persisting whitespace', async (blank) => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', iswc: blank } as any);
+      expect(created()['iswc']).toBe('');
+    });
+
     it('validates the ISWC on update too', async () => {
       await expect(service.update(TENANT, 'u1', WORK_ID, { iswc: 'not-an-iswc' } as any))
         .rejects.toMatchObject({ response: { code: 'WORK_ISWC_INVALID' } });

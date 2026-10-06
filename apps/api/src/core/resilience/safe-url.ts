@@ -149,6 +149,8 @@ export function isPrivateAddress(address: string): boolean {
     return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
   }
   // NAT64 (64:ff9b::/96), 6to4 (2002::/16) and IPv4-compatible forms embed an IPv4 address: judge the embedded one.
+  // 64:ff9b:1::/48 is the local-use translation prefix (RFC 8215): never a public destination.
+  if (ip.startsWith('64:ff9b:1:')) return true;
   const embedded = /^(?:64:ff9b::|::)([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(ip);
   if (embedded) {
     const hi = parseInt(embedded[1], 16);

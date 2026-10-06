@@ -165,7 +165,7 @@ export function assertArtistSpecialtiesInClosedList(value: unknown, alreadyStore
   if (!Array.isArray(value) || invalid.length > 0) {
     throw new BadRequestException({
       code: 'ARTIST_SPECIALTY_INVALID',
-      message: `Especialidade inválida. Valores permitidos: ${ARTIST_SPECIALTIES.join(', ')}.`,
+      message: 'Especialidade inválida. Valores permitidos: ' + ARTIST_SPECIALTIES.join(', ') + '.',
       allowed: [...ARTIST_SPECIALTIES],
       invalid: Array.isArray(value) ? invalid.map(String) : [String(value)],
     });

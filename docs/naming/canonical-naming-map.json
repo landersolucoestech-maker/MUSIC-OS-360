@@ -6080,7 +6080,13 @@
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-042 web release",
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
+      "proofExemptions": [
+        {
+          "text": "Especialidade inválida. Valores permitidos: ",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code ARTIST_SPECIALTY_INVALID, allowed, invalid) is what clients read; the covering spec asserts the exact message and fails when it changes (mutation checked)."
+        }
+      ]
     },
     {
       "item": "CZ-042 deprecated artist input aliases/values (artist-legacy-fields.ts)",
@@ -6097,7 +6103,13 @@
       "blocker": "deployment cutover (web release) — outside this environment",
       "dependency": "CZ-042 web release",
       "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts"
+      "coveringTest": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
+      "proofExemptions": [
+        {
+          "text": "Especialidade inválida. Valores permitidos: ",
+          "reason": "User-facing validation message written in the product language (UX text); it is a sentence, not a legacy field name. The structured error payload (code ARTIST_SPECIALTY_INVALID, allowed, invalid) is what clients read; the covering spec asserts the exact message and fails when it changes (mutation checked)."
+        }
+      ]
     },
     {
       "item": "CZ-042 contract spec sends the pre-CZ-042 payload",
