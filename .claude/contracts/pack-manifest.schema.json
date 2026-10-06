@@ -6,7 +6,8 @@
   "type": "object",
   "required": [
     "name",
-    "items"
+    "items",
+    "supplementalDefinitions"
   ],
   "properties": {
     "name": {
