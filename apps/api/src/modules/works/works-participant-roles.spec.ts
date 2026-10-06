@@ -47,13 +47,10 @@ describe('Work participant roles: create', () => {
     ['administrator', 'administrator'],
     ['translator', 'translator'],
     ['a free-text role', 'my-custom-role'],
-    ['the deprecated Portuguese administrator', 'administrador'],
-    ['the deprecated Portuguese translator', 'tradutor'],
   ])('rejects %s and writes nothing', async (_label, role) => {
     const { svc, workRepo, participantsRepo } = build();
-    const expected = role === 'administrador' ? 'administrator' : role === 'tradutor' ? 'translator' : role;
     await expect(svc.create('t1', 'u1', { title: 'Obra', type: 'composition', participants: [{ name: 'A', role }] } as never))
-      .rejects.toMatchObject(invalid([expected]));
+      .rejects.toMatchObject(invalid([role]));
     expect(workRepo.save).not.toHaveBeenCalled();
     expect(participantsRepo.save).not.toHaveBeenCalled();
   });

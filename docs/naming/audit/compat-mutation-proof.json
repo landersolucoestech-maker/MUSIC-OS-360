@@ -4811,7 +4811,7 @@
   {
    "file": "apps/api/src/modules/contracts/contracts.service.ts",
    "test": "apps/api/src/modules/contracts/contracts.service.spec.ts",
-   "fileSha256": "152f3feef5f2c587d03863253beed5053acb4a9481527ca48dc17daa1039f32f",
+   "fileSha256": "caf256340feb27fdfb4a61a655fddfc3f76094074d39df406ef20d8ddbdcb5d1",
    "testSha256": "a171055a0210831ed145e64b66beccd1c863218b7d386890cd6ecad1ff66a108",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -11334,7 +11334,7 @@
   {
    "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
    "test": "apps/api/src/modules/registry/validation/entity-validators.legacy-compat.spec.ts",
-   "fileSha256": "cb902aef893266ce6ce713a09b09a2ab9c5112ff524cc18016391664a3471977",
+   "fileSha256": "f98b73699955b62b68b18cf29c923ee0df8186e0393f40e621144799a0eb6caa",
    "testSha256": "b3962da2becb22d34534f1388d2d6a11a5ab1b92f73a74f00e9863e3c805894e",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -13425,9 +13425,10 @@
   {
    "file": "apps/api/src/modules/reports/import/import-value-canonicalizers.ts",
    "test": "apps/api/src/modules/reports/import/import-value-canonicalizers.spec.ts",
-   "fileSha256": "5f45607d4ee012f052c9630b28bb41a65c622cbb1eff1310b20b50eb60e7ba1a",
+   "fileSha256": "cdd4848285ac44691f7c6d55faf689c53dd5dd1c47c8b537cb976db33bec0fd0",
    "testSha256": "d6a8dc54eaa8826d21899e232afed3cc616a61dbc5fe5b9bd9bd4452dbbd07b8",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",

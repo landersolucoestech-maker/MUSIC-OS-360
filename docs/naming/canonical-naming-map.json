@@ -65858,23 +65858,6 @@
       "coveringTest": "apps/api/src/modules/users/users.legacy-wiring.spec.ts"
     },
     {
-      "item": "legacy Portuguese literal in a compatibility test `administrador`",
-      "path": "apps/api/src/modules/works/works.legacy-wiring.spec.ts",
-      "currentName": "administrador",
-      "surface": "value",
-      "layer": "api test",
-      "exceptionClass": "TEMPORARY_MIGRATION_COMPATIBILITY",
-      "reason": "Test fixture for the works module asserting the legacy Portuguese value `administrador` is still accepted/mapped (read-compat, backfilled data); the literal is the input under test, not a technical name introduced by the product.",
-      "consumer": "legacy payloads and persisted rows still carrying the Portuguese name",
-      "owner": "api owner (Phase 0 naming)",
-      "removalCondition": "removed together with the legacy alias it exercises",
-      "targetState": "test deleted with the alias",
-      "blocker": null,
-      "dependency": null,
-      "status": "ACTIVE",
-      "coveringTest": "apps/api/src/modules/works/works.legacy-wiring.spec.ts"
-    },
-    {
       "item": "legacy Portuguese literal in a compatibility test `autoral`",
       "path": "apps/api/src/modules/works/works.legacy-wiring.spec.ts",
       "currentName": "autoral",
