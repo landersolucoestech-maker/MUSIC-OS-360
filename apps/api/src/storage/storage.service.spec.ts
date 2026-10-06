@@ -97,4 +97,38 @@ describe('StorageService', () => {
       expect(send).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('inspectObject: the real size and the first bytes, without downloading the file', () => {
+    const body = (bytes: number[]) => ({ Body: (async function* () { yield Uint8Array.from(bytes); })() });
+
+    it('reads the size from HEAD and only the leading range from GET', async () => {
+      const send = jest.fn()
+        .mockResolvedValueOnce({ ContentLength: 5000 })
+        .mockResolvedValueOnce(body([0x25, 0x50, 0x44, 0x46]));
+      const result = await configured(send).inspectObject('tenants/A/documents/x.pdf', 1024);
+      expect(result.size).toBe(5000);
+      expect(result.head.equals(Buffer.from([0x25, 0x50, 0x44, 0x46]))).toBe(true);
+      const get = send.mock.calls[1][0] as { input: { Key: string; Range: string } };
+      expect(get.input.Key).toBe('tenants/A/documents/x.pdf');
+      expect(get.input.Range).toBe('bytes=0-1023');
+    });
+
+    it('never asks for more bytes than the object has', async () => {
+      const send = jest.fn().mockResolvedValueOnce({ ContentLength: 10 }).mockResolvedValueOnce(body([1, 2]));
+      await configured(send).inspectObject('k', 1024);
+      expect((send.mock.calls[1][0] as { input: { Range: string } }).input.Range).toBe('bytes=0-9');
+    });
+
+    it('an empty object has size 0, no head and no GET', async () => {
+      const send = jest.fn().mockResolvedValueOnce({ ContentLength: 0 });
+      const result = await configured(send).inspectObject('k');
+      expect(result).toEqual({ size: 0, head: Buffer.alloc(0) });
+      expect(send).toHaveBeenCalledTimes(1);
+    });
+
+    it('a missing object rejects instead of looking empty', async () => {
+      const send = jest.fn().mockRejectedValueOnce(Object.assign(new Error('NotFound'), { name: 'NotFound' }));
+      await expect(configured(send).inspectObject('k')).rejects.toThrow('NotFound');
+    });
+  });
 });
