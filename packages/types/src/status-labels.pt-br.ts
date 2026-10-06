@@ -205,9 +205,10 @@ export const CONTENT_DETECTION_STATUS_LABELS_PT_BR: Readonly<Record<ContentDetec
 };
 
 export const PROJECT_STATUS_LABELS_PT_BR: Readonly<Record<ProjectStatus, string>> = {
-  [ProjectStatus.PLANNING]: "Em planejamento",
+  [ProjectStatus.PLANNING]: "Planejamento",
   [ProjectStatus.IN_PROGRESS]: "Em andamento",
-  [ProjectStatus.REVIEW]: "Em revisão",
+  // Internal workflow state, not a fifth product status: presented as in progress.
+  [ProjectStatus.REVIEW]: "Em andamento",
   [ProjectStatus.COMPLETED]: "Concluído",
   [ProjectStatus.CANCELLED]: "Cancelado",
 };

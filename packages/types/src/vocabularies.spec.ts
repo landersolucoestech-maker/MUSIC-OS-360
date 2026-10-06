@@ -6,6 +6,7 @@ import {
   TRANSACTION_TYPE_VALUES, COUNTERPARTY_TYPE_VALUES, RULE_LINK_VALUES, COUNTERPARTY_TYPE_LABELS_PT_BR, RULE_LINK_LABELS_PT_BR,
   TRANSACTION_TYPE_LABELS_PT_BR, TransactionType,
   ARTIST_TEAM_CONTACT_CATEGORIES, ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR,
+  ProjectStatus, PROJECT_STATUS_LABELS_PT_BR,
 } from "./index";
 
 const sorted = (xs: readonly string[]) => [...xs].sort();
@@ -65,4 +66,11 @@ test("artist team contact categories are pinned and labelled", () => {
     "booker", "press_office", "legal", "finance", "accountant", "publisher", "agent", "record_label", "roadie",
   ]);
   assert.deepEqual(sorted(Object.keys(ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR)), sorted(ARTIST_TEAM_CONTACT_CATEGORIES));
+});
+
+test("project product statuses are the closed list of four labels; the internal review state is presented as in progress", () => {
+  const labels = PROJECT_STATUS_LABELS_PT_BR;
+  assert.equal(labels[ProjectStatus.REVIEW], labels[ProjectStatus.IN_PROGRESS]);
+  assert.equal(new Set(Object.values(labels)).size, 4);
+  assert.deepEqual(sorted(Object.keys(labels)), sorted(Object.values(ProjectStatus)));
 });

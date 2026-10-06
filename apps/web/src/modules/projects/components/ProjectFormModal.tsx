@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { normalizeFormStatus, INTERNAL_REVIEW_STATUS } from "../lib/project-status";
 import { type Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useEntityLookup } from "@/shared/hooks/useEntityLookup";
@@ -90,13 +91,6 @@ function normType(v: string | null | undefined): string {
   if (s === "album") return "album";
   if (s === "ep") return "ep";
   return "single";
-}
-function normStatus(v: string | null | undefined): string {
-  const s = (v || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  if (s === "in_progress") return "in_progress";
-  if (s === "completed") return "completed";
-  if (s === "cancelled") return "cancelled";
-  return "planning";
 }
 function normEnum(v: string | undefined, fallback: string): string {
   const s = (v || fallback).toLowerCase().trim() || fallback;
@@ -217,7 +211,7 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
   const [artistId, setArtistId] = useState<string | null>(() => (project?.artist_id as string | null | undefined) ?? null);
   const [budget, setBudget] = useState<string>(() =>
     project?.budget != null && project?.budget !== "" ? String(project.budget) : "");
-  const [status, setStatus] = useState(() => normStatus(project?.status));
+  const [status, setStatus] = useState(() => normalizeFormStatus(project?.status));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const audioInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
@@ -807,6 +801,7 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
               <SelectContent>
                 <SelectItem value="planning">Planejamento</SelectItem>
                 <SelectItem value="in_progress">Em Andamento</SelectItem>
+                {status === INTERNAL_REVIEW_STATUS && <SelectItem value={INTERNAL_REVIEW_STATUS}>Em Andamento</SelectItem>}
                 <SelectItem value="completed">Concluído</SelectItem>
                 <SelectItem value="cancelled">Cancelado</SelectItem>
               </SelectContent>

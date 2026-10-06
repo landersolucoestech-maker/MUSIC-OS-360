@@ -52,12 +52,12 @@ export const ProjectViewModal = forwardRef<HTMLDivElement, ProjectViewModalProps
 
     const getStatusBadge = (status: string) => {
       if (status === "planning") {
-        return <Badge variant="warning">Registro Pendente</Badge>;
+        return <Badge variant="warning">Planejamento</Badge>;
       }
       if (status === "completed") {
         return <Badge variant="success">Concluído</Badge>;
       }
-      if (status === "in_progress") {
+      if (status === "in_progress" || status === "review") {
         return <Badge variant="info">Em Andamento</Badge>;
       }
       if (status === "cancelled") {

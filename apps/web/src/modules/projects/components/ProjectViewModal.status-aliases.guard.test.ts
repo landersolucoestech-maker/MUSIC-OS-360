@@ -19,4 +19,8 @@ describe("ProjectViewModal getStatusBadge", () => {
   it("keeps the canonical English statuses", () => {
     for (const v of ["planning", "completed", "in_progress", "cancelled"]) expect(FN).toContain(`"${v}"`);
   });
+
+  it("presents the internal review state through a known badge instead of printing the raw value", () => {
+    expect(FN).toContain('"review"');
+  });
 });

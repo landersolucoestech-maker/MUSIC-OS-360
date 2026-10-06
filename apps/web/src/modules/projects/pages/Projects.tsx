@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { tallyProjectStatuses } from "../lib/project-status";
 import { captureError } from "@/shared/lib/error-logger";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { runBulkAction, reportBulkResult } from "@/shared/hooks/useBulkAction";
@@ -213,14 +214,11 @@ export default function Projects() {
 
   // Partition by status (bucket = raw status, no grouping) — each
   // project falls into exactly one bucket coming from GET /projects/stats.
-  const tally = { in_progress: 0, completed: 0, planning: 0 };
-  for (const [status, count] of Object.entries(projectsStats.byGroup)) {
-    if (status in tally) tally[status as keyof typeof tally] += count;
-  }
+  const tally = tallyProjectStatuses(projectsStats.byGroup);
   const metrics = {
-    active: tally.in_progress,
+    active: tally.active,
     completed: tally.completed,
-    drafts: tally.planning,
+    drafts: tally.drafts,
     total: projectsStats.total,
   };
 
