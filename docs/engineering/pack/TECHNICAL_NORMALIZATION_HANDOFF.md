@@ -7,7 +7,7 @@ domain distinctions are in `docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY
 
 ## 1. Where the work stands
 
-Verdict of the latest checkpoint: `TECHNICAL NORMALIZATION: INCOMPLETE — DATABASE SCHEMA PROOF DEFERRED`. Three `database-schema`
+Verdict of the latest checkpoint: `TECHNICAL NORMALIZATION: CONDITIONALLY COMPLETE — DATABASE PROOF DEFERRED` (reconstruction readiness `WAITING FOR DATABASE PROOF`; the post-commit validation of round 4, its measurements and the findings are in `docs/engineering/pack/TECHNICAL_NORMALIZATION_FINAL_VALIDATION.md`). Three `database-schema`
 boundaries wait for a PostgreSQL-backed proof that cannot run now (external dependency). The resume command, the gates that depend
 only on that proof and the gates already green without it are in
 `docs/engineering/pack/TECHNICAL_NORMALIZATION_DEFERRED_DATABASE_PROOF.md`. Do not start new audits or new proof chains before that proof is regenerated.
@@ -21,6 +21,7 @@ only on that proof and the gates already green without it are in
 
 ## 2. How the proofs are kept fresh (resume rules)
 
+- After any edit of a tracked document or source file, run `pnpm naming:audit` and commit the regenerated `docs/naming/audit/normalization-audit-*`: `pnpm naming:check` now fails (`naming:audit:check`) when they differ from the tree. A fresh container also needs `pnpm --filter @music-os-360/ai-skills build` before the API jest run, and a stale ignored `apps/api/tsconfig.build.tsbuildinfo` must be removed before a build whose `dist/` matters.
 - `pnpm naming:check` is the aggregate gate: the technical census (with its per-file wildcard ratchet, the legal-term
   ratchet and the documentation code-span ratchet), the ledger validation, the generated documents, the gate tests, the
   compatibility boundary audit, the wiring audit, the historical records audit and the destructive dossier.

@@ -1,6 +1,6 @@
 # Technical normalization: deferred database-schema proof (persistent handoff)
 
-Verdict kept by this checkpoint: `TECHNICAL NORMALIZATION: INCOMPLETE — DATABASE SCHEMA PROOF DEFERRED`
+Verdict kept by this checkpoint: `TECHNICAL NORMALIZATION: CONDITIONALLY COMPLETE — DATABASE PROOF DEFERRED` (reconstruction readiness: `WAITING FOR DATABASE PROOF`; the measurements behind it are in `docs/engineering/pack/TECHNICAL_NORMALIZATION_FINAL_VALIDATION.md`, which supersedes the numbers of sections 2, 5 and 7 below where they differ)
 
 Status of the dependency: `BLOCKED_EXTERNAL` / `DEFERRED`. PostgreSQL (and Supabase) access is not available in the working
 environment at the time of this checkpoint. Nothing was done to work around that: no credential was changed, no authentication
@@ -26,12 +26,13 @@ the closure record and the resume rules are `docs/engineering/pack/TECHNICAL_NOR
 | Evidence | Command | Result |
 |---|---|---|
 | Naming aggregate gate | `pnpm naming:check` | exit 0 (census, ledger validation, rendered documents, 11 gate test files: 210 tests, 209 pass, 1 skipped; boundary audit; wiring audit; historical records; destructive dossier) |
-| Boundary audit | `node scripts/naming/compat-boundary-audit.mjs --check` | 4,542 rows; the four counters are 0 (`LEGACY_FIRST_READS` included) |
+| Boundary audit | `node scripts/naming/compat-boundary-audit.mjs --check` | 4,547 rows; the four counters are 0 (`LEGACY_FIRST_READS` included) |
 | Wiring proof | `node scripts/naming/compat-wiring-proof.mjs --check` | `WIRING_SITES_UNPROVEN=0` of 516 call sites |
 | Mutation proof | `pnpm naming:compat:prove -- --shards 4` | 275 pairs, resumable, every credited row killed |
 | Typecheck, lint, build | `pnpm --filter @music-os-360/api typecheck`, `pnpm --filter @music-os-360/web typecheck`, `pnpm lint`, `pnpm build` | all exit 0 (lint: 0 errors) |
 | API and web suites | `npx jest` in `apps/api`; `npx vitest run` in `apps/web` | final rerun on the committed code: API 557 suites passed (1 skipped), 9,174 tests passed, 17 skipped; web 388 files, 3,190 tests passed; shared vocabularies 7 pass |
 | Independent reviews (round 3) | read-only agents | security review PASS (0 CRITICAL, HIGH, MEDIUM); adversarial review FAIL with one MEDIUM finding, fixed in the checkpoint product commit and not re-reviewed |
+| Independent reviews of round 4 (`ac15d319`) | read-only agents | adversarial review PASS (no CRITICAL, HIGH, MEDIUM); regression review FAIL with one MEDIUM (a stored JSON key renamed without a read fallback), fixed in `99f25048` and re-reviewed: PASS. Details: `TECHNICAL_NORMALIZATION_FINAL_VALIDATION.md` section 4 |
 
 ## 3. The three database-schema boundaries still unproven (preserved, not hidden)
 
@@ -98,5 +99,5 @@ typecheck; lint (0 errors); API and web full suites; `pnpm build`; the shared vo
 
 - Fresh command evidence was recorded with `ops.mjs evidence run` for 14 of the 16 criteria on the final workspace (typecheck, API and web suites, census, ledger validation, provider residue, migration source of truth, branch topology, critical workflows, git-guard policy, XLSX-only contract, build typecheck, database-layer unit specs).
 - `node .claude/runtime/gate-engine.mjs security` = `BLOCKED`, and the only two reasons are the criteria that need PostgreSQL: `ac-5305eb7b` (schema census) and `ac-577b07af` (`db:check`). Mission status: `openCriteria` 0, `openFindings` 0, `openBlockers` 0, `readyForCompletionGate` true; the completion gate was not run because the security gate is not PASS.
-- The round-3 reviews ran on the tree before the last small edits of this checkpoint and are not bound as review evidence to the final workspace fingerprint; when the database is available, run one fresh independent re-review of the final tree (it is cheap and read-only) before raising the verdict.
+- The round-3 reviews were superseded by fresh independent reviews of round 4 and of its follow-up fix (section 2); their verdicts are bound to the commits they reviewed, not to a later documentation-only fingerprint.
 

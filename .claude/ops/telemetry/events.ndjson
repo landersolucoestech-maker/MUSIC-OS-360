@@ -245,3 +245,4 @@
 {"name":"gate-run","at":"2026-10-06T06:09:16.699Z","gate":"security","status":"BLOCKED","durationMs":24365,"reasonCount":2}
 {"name":"gate-run","at":"2026-10-06T06:16:42.776Z","gate":"security","status":"BLOCKED","durationMs":26599,"reasonCount":2}
 {"name":"gate-run","at":"2026-10-06T11:54:55.867Z","gate":"--help","status":"BLOCKED","durationMs":0,"reasonCount":1}
+{"name":"gate-run","at":"2026-10-06T12:14:57.008Z","gate":"security","status":"BLOCKED","durationMs":27618,"reasonCount":16}

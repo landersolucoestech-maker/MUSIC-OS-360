@@ -66,6 +66,8 @@ Freshness rule: the measurements were taken at the final product commit `685aa1c
 
 ## 3. Verdict and the ten closing counters
 
+> Update after the post-commit validation of round 4: where a counter below was measured at `685aa1c1` and `docs/engineering/pack/TECHNICAL_NORMALIZATION_FINAL_VALIDATION.md` states a different value (items 69,314; 4,547 boundary rows; adjudication entries 875; open blockers 28 of 42; verdict `CONDITIONALLY COMPLETE — DATABASE PROOF DEFERRED`), the final validation record is authoritative.
+
 Verdict: **`TECHNICAL NORMALIZATION: INCOMPLETE — DATABASE SCHEMA PROOF DEFERRED`**. Reason: the three `database-schema` boundaries (`transferencia` on `invoices.payment_method`, `events.data`, `tipo_nota` on invoices) need a PostgreSQL-backed proof (`node scripts/naming/schema-boundary-proof.mjs --prove`) and no PostgreSQL is available now: BLOCKED_EXTERNAL / DEFERRED. The recorded schema proof is stale by design (the check script `apps/api/scripts/verify-schema-compat-boundaries.ts` gained a `tipo_nota` check and `schema-boundary-proof.mjs` gained the mutant `invoices-fiscal-kind-column` after the proof was generated). Everything else is independently proven. Resume command for the deferred proof: `DATABASE_URL=postgresql://musicos360@127.0.0.1:5432/music_os_check DB_SSL=false node scripts/naming/schema-boundary-proof.mjs --prove` (the password is supplied by the operator through `PGPASSWORD`; a migrated database is required), then `node scripts/naming/compat-boundary-classify.mjs --report && node scripts/naming/compat-boundary-classify.mjs --check`. Details: `docs/engineering/pack/TECHNICAL_NORMALIZATION_DEFERRED_DATABASE_PROOF.md`.
 
 | # | Counter | Value | Command that produced it | Status |
