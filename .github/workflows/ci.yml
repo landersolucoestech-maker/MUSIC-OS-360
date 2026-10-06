@@ -36,6 +36,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate Engineering OS pack registry
+        run: node .claude/runtime/build-pack-registry.mjs --check
+
+      - name: Validate Engineering OS pack structure
+        run: node .claude/runtime/validate-pack.mjs
+
+      - name: Validate Engineering OS pack contracts
+        run: node .claude/runtime/validate-pack-contracts.mjs --through-batch 24 --json
+
+      - name: Engineering OS self-test
+        run: node .claude/runtime/self-test.mjs
+
       - name: Verify critical workflows present
         run: node scripts/verify-critical-workflows.mjs
 
