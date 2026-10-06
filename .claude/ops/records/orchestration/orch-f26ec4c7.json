@@ -1,0 +1,315 @@
+{
+  "order": "Audit, correct, complete and consolidate the Music Catalog architecture (Project, ProjectTrack, Work, Phonogram, Release, ReleaseTrack, Registry, contracts, assets, shares, artist visibility, external data) against the canonical specification, preserving what works",
+  "title": "music-catalog-canonical-consolidation",
+  "workflow": "brownfield-change",
+  "intent": null,
+  "status": "ACTIVE",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-06T13:21:53.126Z",
+  "tasks": [
+    {
+      "id": "discovery",
+      "title": "discovery",
+      "objective": "Phase \"discovery\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "repo-intelligence",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-91754e84",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "discovery"
+    },
+    {
+      "id": "requirements",
+      "title": "requirements",
+      "objective": "Phase \"requirements\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "requirements-analyst",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [
+        "discovery"
+      ],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "requirements"
+    },
+    {
+      "id": "impact-classification",
+      "title": "impact-classification",
+      "objective": "Phase \"impact-classification\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "task-orchestrator",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [
+        "requirements"
+      ],
+      "acceptance": [
+        "evidence recorded: impact-assessment"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "impact-classification"
+    },
+    {
+      "id": "findings-inventory",
+      "title": "findings-inventory",
+      "objective": "Phase \"findings-inventory\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels). Work together with: backend-reviewer, frontend-reviewer, security-reviewer.",
+      "agent": "architecture-reviewer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [
+        "impact-classification"
+      ],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "findings-inventory"
+    },
+    {
+      "id": "canonical-decisions",
+      "title": "canonical-decisions",
+      "objective": "Phase \"canonical-decisions\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "task-orchestrator",
+      "skills": [
+        "canonical-naming"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "findings-inventory"
+      ],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "canonical-decisions"
+    },
+    {
+      "id": "cross-layer-impact",
+      "title": "cross-layer-impact",
+      "objective": "Phase \"cross-layer-impact\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "task-orchestrator",
+      "skills": [
+        "cross-layer-impact"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "canonical-decisions"
+      ],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "cross-layer-impact"
+    },
+    {
+      "id": "implementation",
+      "title": "implementation",
+      "objective": "Phase \"implementation\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "implementation-engineer",
+      "skills": [
+        "evidence-collection"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "cross-layer-impact"
+      ],
+      "acceptance": [
+        "evidence recorded: lint",
+        "evidence recorded: test"
+      ],
+      "gates": [
+        "incremental"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "implementation"
+    },
+    {
+      "id": "adversarial-review",
+      "title": "adversarial-review",
+      "objective": "Phase \"adversarial-review\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "adversarial-reviewer",
+      "skills": [],
+      "filesInScope": [],
+      "dependsOn": [
+        "implementation"
+      ],
+      "acceptance": [],
+      "gates": [],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "adversarial-review"
+    },
+    {
+      "id": "regression",
+      "title": "regression",
+      "objective": "Phase \"regression\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "task-orchestrator",
+      "skills": [
+        "regression-gates",
+        "residue-search"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "adversarial-review"
+      ],
+      "acceptance": [],
+      "gates": [
+        "global"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "regression"
+    },
+    {
+      "id": "closure",
+      "title": "closure",
+      "objective": "Phase \"closure\" of workflow brownfield-change: A bounded change (feature/fix) to an existing project. This is the default workflow the systemic-audit skill's Phases 1-15 implement in full; a plain L1-L2 change uses only its early phases (see .claude/rules/00-execution-protocol.md impact levels).",
+      "agent": "git-auditor",
+      "skills": [
+        "release-checkpoint"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "regression"
+      ],
+      "acceptance": [],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null,
+      "phase": "closure"
+    },
+    {
+      "id": "completion-gate",
+      "title": "completion gate",
+      "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+      "agent": "completion-controller",
+      "skills": [
+        "definition-of-done"
+      ],
+      "filesInScope": [],
+      "dependsOn": [
+        "discovery",
+        "requirements",
+        "impact-classification",
+        "findings-inventory",
+        "canonical-decisions",
+        "cross-layer-impact",
+        "implementation",
+        "adversarial-review",
+        "regression",
+        "closure"
+      ],
+      "acceptance": [
+        "node .claude/runtime/completion-gate.mjs reports PASS",
+        "no open criterion, finding or blocker"
+      ],
+      "gates": [
+        "completion"
+      ],
+      "approvalClass": null,
+      "status": "PENDING",
+      "attempts": 0,
+      "delegationId": null,
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": null,
+      "blockedExternal": null
+    }
+  ],
+  "missionId": "mission-c83f8d58",
+  "requireWorkflow": true,
+  "id": "orch-f26ec4c7",
+  "createdAt": "2026-10-06T13:19:00.833Z",
+  "workflowInstanceId": "work-2caaf80b"
+}

@@ -1,0 +1,81 @@
+{
+  "workflow": "brownfield-change",
+  "planId": "orch-f26ec4c7",
+  "matchId": "work-47a3fb89",
+  "status": "ACTIVE",
+  "adoptedFrom": [],
+  "steps": [
+    {
+      "phase": "discovery",
+      "taskIds": [
+        "discovery"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "requirements",
+      "taskIds": [
+        "requirements"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "impact-classification",
+      "taskIds": [
+        "impact-classification"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "findings-inventory",
+      "taskIds": [
+        "findings-inventory"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "canonical-decisions",
+      "taskIds": [
+        "canonical-decisions"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "cross-layer-impact",
+      "taskIds": [
+        "cross-layer-impact"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "implementation",
+      "taskIds": [
+        "implementation"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "adversarial-review",
+      "taskIds": [
+        "adversarial-review"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "regression",
+      "taskIds": [
+        "regression"
+      ],
+      "adopted": []
+    },
+    {
+      "phase": "closure",
+      "taskIds": [
+        "closure"
+      ],
+      "adopted": []
+    }
+  ],
+  "id": "work-2caaf80b",
+  "createdAt": "2026-10-06T13:19:00.836Z"
+}

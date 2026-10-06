@@ -1,0 +1,244 @@
+{
+  "order": "Audit, correct, complete and consolidate the Music Catalog architecture (Project, ProjectTrack, Work, Phonogram, Release, ReleaseTrack, Registry, contracts, assets, shares, artist visibility, external data) against the canonical specification, preserving what works",
+  "intent": null,
+  "threshold": 4,
+  "candidates": [
+    {
+      "workflow": "phonogram-registration-flow",
+      "score": 2,
+      "matchedKeywords": [
+        "phonogram"
+      ],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.034,
+      "excluded": [],
+      "reasons": [
+        "keywords: phonogram"
+      ]
+    },
+    {
+      "workflow": "release",
+      "score": 2,
+      "matchedKeywords": [
+        "release"
+      ],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.033,
+      "excluded": [],
+      "reasons": [
+        "keywords: release"
+      ]
+    },
+    {
+      "workflow": "brownfield-change",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "bug-fix",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "contract-generation-and-signature-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "data-integrity-recovery-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.031,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "database-change",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "distribution-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.033,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "distribution-rejection-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "engineering-change",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "greenfield",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "human-approval-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "import-validation-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "incident",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "migration",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.032,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "naming-normalization",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.03,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "operational-recovery-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "project-operational-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.031,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "provider-sync-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.032,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "recovery",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "release-readiness-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.067,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "release-validation",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.033,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "safe-refactor",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "security-review",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0,
+      "excluded": [],
+      "reasons": []
+    },
+    {
+      "workflow": "work-registration-flow",
+      "score": 0,
+      "matchedKeywords": [],
+      "matchedIntent": false,
+      "exampleSimilarity": 0.033,
+      "excluded": [],
+      "reasons": []
+    }
+  ],
+  "selected": null,
+  "status": "NO_MATCH",
+  "id": "work-89a68e38",
+  "createdAt": "2026-10-06T13:18:50.150Z"
+}
