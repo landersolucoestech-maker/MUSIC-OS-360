@@ -690,8 +690,7 @@ export function census({ exceptions = exceptionIndex(loadAuthority()) } = {}) {
       const n = scanMarkdown(fs.readFileSync(path.join(ROOT, f), "utf8"));
       if (n) record("doc", `doc::${f}`, f, "*", n);
       if (isCurrentDocForCode(f)) {
-        const toks = scanMarkdownCode(fs.readFileSync(path.join(ROOT, f), "utf8"));
-        if (toks.length) record("docCode", `docCode::${f}`, f, null, toks.length);
+        for (const tok of scanMarkdownCode(fs.readFileSync(path.join(ROOT, f), "utf8"))) record("docCode", `docCode::${f}::${tok}`, f, tok);
       }
     }
   }
