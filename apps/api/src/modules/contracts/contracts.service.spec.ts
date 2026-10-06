@@ -645,3 +645,130 @@ describe('ContractsService.create — legacy title alias "titulo" through the re
     expect(repo.create).not.toHaveBeenCalled();
   });
 });
+
+// ─── Partial updates and signed-contract immutability ──────────────────────────
+
+function makeServiceWithTransaction(findRows: Record<string, unknown>[]) {
+  const repo = makeRepoC1(findRows);
+  const em = { getRepository: jest.fn(() => repo) };
+  const ds = {
+    getRepository: jest.fn(() => repo),
+    query: jest.fn(async () => [{ exists: 1 }]),
+    transaction: jest.fn(async (fn: (m: unknown) => Promise<unknown>) => fn(em)),
+  } as never;
+  const workflowService = {
+    getAllowedTransitions: jest.fn(() => []),
+    transitionInTx: jest.fn(async () => undefined),
+  } as never;
+  const events = { emitTyped: jest.fn() };
+  const planLimit = { enforce: jest.fn(async () => undefined) } as never;
+  const svc = new ContractsService(ds, workflowService, events as never, planLimit);
+  return { svc, repo, events };
+}
+
+describe('ContractsService.update: a partial update never writes a default over a stored field', () => {
+  it('a notes-only update does not write exclusive, versions or documents', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow({ exclusive: true, documents: [{ name: 'a.pdf' }], versions: [{ version: 'v1' }] })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'nova nota' } as unknown as UpdateContractDto);
+
+    const row = updatedC1(repo);
+    expect(row['notes']).toBe('nova nota');
+    expect(row).not.toHaveProperty('exclusive');
+    expect(row).not.toHaveProperty('versions');
+    expect(row).not.toHaveProperty('documents');
+  });
+
+  it('a status-only update does not write exclusive, versions or documents', async () => {
+    const { svc, repo } = makeServiceWithTransaction([baseContractRow({ status: 'draft', exclusive: true })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { status: 'under_review' } as unknown as UpdateContractDto, 'admin');
+
+    const row = updatedC1(repo as unknown as ReturnType<typeof makeRepoC1>);
+    expect(row['status']).toBe('under_review');
+    expect(row).not.toHaveProperty('exclusive');
+    expect(row).not.toHaveProperty('versions');
+    expect(row).not.toHaveProperty('documents');
+  });
+
+  it('an explicit exclusive=false, empty documents and the deprecated exclusive/versions names are still written', async () => {
+    const { svc, repo } = makeServiceC1([baseContractRow({ exclusive: true, documents: [{ name: 'a.pdf' }] })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { exclusive: false, documents: [] } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['exclusive']).toBe(false);
+    expect(updatedC1(repo)['documents']).toEqual([]);
+
+    const legacy = makeServiceC1([baseContractRow()]);
+    await legacy.svc.update('tenant-1', 'user-1', 'contract-1', { exclusivo: true } as unknown as UpdateContractDto);
+    expect(updatedC1(legacy.repo)['exclusive']).toBe(true);
+  });
+
+  it('create keeps its defaults', async () => {
+    const { svc, repo } = makeServiceC1();
+    await svc.create('tenant-1', 'user-1', { title: 'X' } as unknown as CreateContractDto);
+    const row = createdC1(repo);
+    expect(row['exclusive']).toBe(false);
+    expect(row['versions']).toEqual([]);
+    expect(row['documents']).toEqual([]);
+  });
+});
+
+describe('ContractsService.update: fields a signature attests are immutable once signed', () => {
+  const signed = (overrides: Record<string, unknown> = {}) => baseContractRow({
+    status: 'signed',
+    file_url: 'https://r2/contract.pdf',
+    signers: [{ name: 'Ana', email: 'ana@example.com' }],
+    template_id: '11111111-1111-4111-8111-111111111111',
+    versions: [{ version: 'v1' }],
+    ...overrides,
+  });
+
+  it.each([
+    ['signers', { signers: [{ name: 'Outro', email: 'outro@example.com' }] }],
+    ['file_url', { file_url: 'https://r2/other.pdf' }],
+    ['template_id', { template_id: '22222222-2222-4222-8222-222222222222' }],
+    ['versions', { versions: [{ version: 'v2' }] }],
+  ])('rejects a change of %s on a signed contract and writes nothing', async (field, patch) => {
+    const { svc, repo } = makeServiceC1([signed()]);
+    await expect(svc.update('tenant-1', 'user-1', 'contract-1', patch as unknown as UpdateContractDto))
+      .rejects.toMatchObject({ response: { code: 'CONTRACT_SIGNED_IMMUTABLE', fields: expect.arrayContaining([field]) } });
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+
+  it.each(['signed', 'active', 'in_force', 'expiring', 'expired', 'terminated'])('is enforced in status %s', async (status) => {
+    const { svc, repo } = makeServiceC1([signed({ status })]);
+    await expect(svc.update('tenant-1', 'user-1', 'contract-1', { file_url: 'https://r2/other.pdf' } as unknown as UpdateContractDto))
+      .rejects.toMatchObject({ response: { code: 'CONTRACT_SIGNED_IMMUTABLE' } });
+    expect(repo.update).not.toHaveBeenCalled();
+  });
+
+  it('accepts the same values again, so a form that posts the whole contract keeps working', async () => {
+    const { svc, repo } = makeServiceC1([signed()]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', {
+      file_url: 'https://r2/contract.pdf',
+      signers: [{ name: 'Ana', email: 'ana@example.com' }],
+      notes: 'ok',
+    } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['notes']).toBe('ok');
+  });
+
+  it('still allows unrelated fields on a signed contract', async () => {
+    const { svc, repo } = makeServiceC1([signed()]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { notes: 'updated note' } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['notes']).toBe('updated note');
+  });
+
+  it.each(['draft', 'under_review', 'awaiting_signature'])('does not lock a contract in %s', async (status) => {
+    const { svc, repo } = makeServiceC1([signed({ status })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { file_url: 'https://r2/other.pdf' } as unknown as UpdateContractDto);
+    expect(updatedC1(repo)['file_url']).toBe('https://r2/other.pdf');
+  });
+});
+
+describe('ContractsService.update: the signed event states how the signature was registered', () => {
+  it('a manual registration emits contract.signed with origin manual_registration', async () => {
+    const { svc, events } = makeServiceWithTransaction([baseContractRow({ status: 'awaiting_signature' })]);
+    await svc.update('tenant-1', 'user-1', 'contract-1', { status: 'signed' } as unknown as UpdateContractDto, 'admin');
+
+    const signedCall = (events.emitTyped as jest.Mock).mock.calls.find((c) => c[0] === 'contract.signed');
+    expect(signedCall).toBeDefined();
+    expect((signedCall as unknown[])[1]).toMatchObject({ payload: { contractId: 'contract-1', origin: 'manual_registration' } });
+  });
+});

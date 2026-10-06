@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, Logger, BadRequestException, ConflictException } from '@nestjs/common';
 import { DataSource, Repository, FindOptionsWhere, IsNull } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -23,6 +23,19 @@ import {
 import { preserveServerOwnedMetadata, stripServerOwnedMetadata } from './contract-provider-signature';
 import { joinContractPartyRefs, toContractResponse, type ContractResponse } from './contract-party-refs';
 
+
+/** Lifecycle states in which the contract has been signed (or is past signing). */
+const SIGNATURE_LOCKED_STATUSES: ReadonlySet<string> = new Set([
+  ContractStatus.SIGNED,
+  ContractStatus.ACTIVE,
+  ContractStatus.IN_FORCE,
+  ContractStatus.EXPIRING,
+  ContractStatus.EXPIRED,
+  ContractStatus.TERMINATED,
+]);
+
+/** Columns a signature attests: the document, the signers, the template and its versions. */
+const SIGNATURE_BOUND_FIELDS = ['file_url', 'signers', 'template_id', 'versions'] as const;
 
 @Injectable()
 export class ContractsService {
@@ -132,24 +145,56 @@ export class ContractsService {
   }
 
   /**
+   * A signature attests a specific document, signer list and template. Once the contract is signed
+   * (or later in its lifecycle) those fields cannot change through an ordinary update: a legal change
+   * after signature is an amendment, which is a separate flow. Fields sent with the value already
+   * stored are accepted so a form that always posts the whole contract keeps working.
+   */
+  private assertSignedFieldsUnchanged(current: ContractResponse, normalized: Record<string, unknown>): void {
+    if (!SIGNATURE_LOCKED_STATUSES.has(current.status)) return;
+    const changed = SIGNATURE_BOUND_FIELDS.filter((field) => {
+      const next = normalized[field];
+      if (next === undefined) return false;
+      return JSON.stringify(next) !== JSON.stringify((current as unknown as Record<string, unknown>)[field] ?? null);
+    });
+    if (changed.length === 0) return;
+    throw new ConflictException({
+      code: 'CONTRACT_SIGNED_IMMUTABLE',
+      message: 'Contrato assinado não pode ter documento, signatários, template ou versões alterados. Use um aditivo.',
+      fields: changed,
+    });
+  }
+
+  /**
    * Builds the final payload for persistence from the already resolved canonical
    * fields (title/type/artist_id/start_date/end_date/file_url/fixed_value
    * — see resolveContractAliases()) and the other fields unrelated to
    * aliases, which keep passing straight through to the entity.
    */
-  private buildEntityPayload(dto: Record<string, unknown>, resolved: ResolvedContractWriteFields): Record<string, unknown> {
+  private buildEntityPayload(
+    dto: Record<string, unknown>,
+    resolved: ResolvedContractWriteFields,
+    mode: 'create' | 'update' = 'create',
+  ): Record<string, unknown> {
     const out: Record<string, unknown> = { ...resolved };
+    // A partial update must never write a default over a stored value the caller did not send:
+    // the create-time defaults (exclusive=false, versions=[], documents=[]) apply to create only.
+    const isCreate = mode === 'create';
 
     out.client_id    = dto['client_id']    ?? null;
     out.release_id = dto['release_id'] ?? null;
     // exclusivo / versoes: deprecated names a pre-canonical web build still sends (CZ-026).
-    out.exclusive     = dto['exclusive']     ?? dto['exclusivo'] ?? false;
+    out.exclusive     = dto['exclusive']     ?? dto['exclusivo'] ?? (isCreate ? false : undefined);
     out.notes         = dto['notes']         ?? null;
     // autentique_doc_id / metadata provider* are server-owned (written only by
     // the signing integrations' sendForSignature) — never taken from a client.
     out.signing_platform  = dto['signing_platform']  ?? null;
-    out.versions      = canonicalContractVersions((dto['versions'] ?? dto['versoes'] ?? []) as unknown[]);
-    out.documents    = (dto['documents'] as unknown[] | undefined) ?? [];
+    if (isCreate || dto['versions'] !== undefined || dto['versoes'] !== undefined) {
+      out.versions    = canonicalContractVersions((dto['versions'] ?? dto['versoes'] ?? []) as unknown[]);
+    }
+    if (isCreate || dto['documents'] !== undefined) {
+      out.documents   = (dto['documents'] as unknown[] | undefined) ?? [];
+    }
     // Wizard fields (2026-07-12 rule: 1 column per field, exact name) — they are not aliases.
     out.template_id   = dto['template_id'] ?? null;
     if (Array.isArray(dto['signers'])) out.signers = dto['signers'];
@@ -237,7 +282,7 @@ export class ContractsService {
     // resolveContractAliases() itself already guaranteed valid content/conflict.
     this.logLegacyAliasUsage(legacyAliasesUsed, 'update', tenantId, id);
 
-    const normalized = this.buildEntityPayload(restFields, resolved);
+    const normalized = this.buildEntityPayload(restFields, resolved, 'update');
     // No type='other' default here — an absent PATCH must not force a value.
     if (typeof normalized['type'] === 'string') normalized['type'] = canonicalContractCategorySlug(normalized['type']);
     // A client metadata update replaces the column: carry the server-owned
@@ -249,6 +294,8 @@ export class ContractsService {
         normalized['metadata'] as Record<string, unknown>,
       );
     }
+
+    this.assertSignedFieldsUnchanged(current, normalized);
 
     const nonStatusUpdates: Record<string, unknown> = {
       updated_at: new Date(),
@@ -318,6 +365,7 @@ export class ContractsService {
             artistId:   current.artist_id,
             signedBy:   userId,
             signedAt:   nowIso,
+            origin:     'manual_registration',
           },
         });
       }

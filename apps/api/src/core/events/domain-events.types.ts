@@ -95,6 +95,8 @@ export interface ContractSignedPayload {
   artistId:   string | null;
   signedBy:   string;
   signedAt:   string;
+  /** `manual_registration` when an authorized user registered the signature; absent for provider-confirmed signatures. */
+  origin?:    'manual_registration';
 }
 
 export interface ContractExpiredPayload {
