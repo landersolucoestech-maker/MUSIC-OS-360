@@ -5,6 +5,7 @@
  * Event-log persistence is handled by UniversalEventLogHandler.
  */
 
+import { deterministicNotificationId } from './notification-idempotency';
 import { Injectable, Inject, Logger, Optional } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { randomUUID } from 'crypto';
@@ -189,14 +190,27 @@ export class NotificationHandler {
     }
     const title = labelFn ? labelFn(payload) : 'Nova atividade registrada';
 
+    // Without an emission time the event has no stable identity: it cannot be deduplicated.
+    const notificationId = event.occurredAt && event.userId
+      ? deterministicNotificationId([event.tenantId, event.userId, event.type, event.aggregateType, event.aggregateId, event.occurredAt])
+      : null;
+    let duplicate = false;
+
     if (this.notifRepo && event.userId) {
       try {
         await this.runInTenantContext(event.tenantId, async (manager) => {
           const notifRepo = manager ? manager.getRepository(NotificationEntity) : this.notifRepo;
           if (!notifRepo) return;
 
+          // A repeated delivery of the same event maps to the same id: the notification is created once.
+          if (notificationId && (await notifRepo.findOne({ where: { id: notificationId, tenant_id: event.tenantId } }))) {
+            duplicate = true;
+            this.logger.debug(`NotificationHandler: duplicate delivery of "${event.type}" ignored (notification=${notificationId})`);
+            return;
+          }
+
           const notification = notifRepo.create({
-            id: randomUUID(),
+            id: notificationId ?? randomUUID(),
             tenant_id: event.tenantId,
             user_id: event.userId,
             title,
@@ -213,16 +227,23 @@ export class NotificationHandler {
           await notifRepo.save(notification);
         });
       } catch (err) {
-        this.logger.error(
-          `NotificationHandler: failed to persist notification for "${event.type}" user=${event.userId} - ${String(err)}`,
-        );
+        // A concurrent delivery of the same event inserted the same id first: that is a duplicate, not a failure.
+        if ((err as { code?: string } | null)?.code === '23505' && notificationId) {
+          duplicate = true;
+          this.logger.debug(`NotificationHandler: concurrent duplicate of "${event.type}" ignored (notification=${notificationId})`);
+        } else {
+          this.logger.error(
+            `NotificationHandler: failed to persist notification for "${event.type}" user=${event.userId} - ${String(err)}`,
+          );
+        }
       }
     }
 
+    if (duplicate) return;
     if (!this.wsGateway) return;
     try {
       this.wsGateway.sendToTenant(event.tenantId, 'notification', {
-        id: randomUUID(),
+        id: notificationId ?? randomUUID(),
         type: event.type,
         title,
         tenantId: event.tenantId,
