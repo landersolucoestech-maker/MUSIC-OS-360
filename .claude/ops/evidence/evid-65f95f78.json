@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "env DB_SSL=false PG_INTEGRATION_URL=postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:54330/musicos360 pnpm --filter @music-os-360/api exec jest src/modules/catalog-integrity",
+  "command": "env DB_SSL=false PG_INTEGRATION_URL=postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:54330/musicos360 pnpm --filter @music-os-360/api exec jest src/modules/catalog-integrity",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "8c94215e321509c611537268766876732c3f57d73bc0ad3ae2526fff491a8e54",
+  "fingerprintStatus": "BOUND",
+  "head": "773d757a6c8f62d162dfda5f1793fa951eb9c3a8",
+  "durationMs": 11791,
+  "id": "evid-65f95f78",
+  "createdAt": "2026-10-06T23:12:14.728Z"
+}

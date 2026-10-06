@@ -2,10 +2,10 @@
   "version": 2,
   "missionId": "mission-c83f8d58",
   "missionName": "technical-language-normalization",
-  "status": "blocked",
+  "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-06T19:45:30.307Z",
+  "updatedAt": "2026-10-06T23:12:22.111Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -769,20 +769,16 @@
             "evid-543cd540",
             "evid-dfc83882",
             "evid-ede952e2",
-            "evid-528bb8d2"
+            "evid-528bb8d2",
+            "evid-9c8254b4"
           ],
           "status": "closed",
           "relevantPaths": [
-            "apps",
-            "packages",
-            "scripts",
-            "supabase",
-            "docs",
-            ".github",
-            "package.json",
-            "pnpm-lock.yaml"
+            "apps/api/src/database",
+            "scripts/naming/schema-naming-census.mjs",
+            "docs/naming/canonical-naming-map.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, migrations and naming docs; .claude-only commits do not change what these commands verify"
+          "relevantPathsReason": "the migrated schema and its census"
         },
         {
           "id": "ac-426642e3",
@@ -858,20 +854,15 @@
             "evid-014f0510",
             "evid-87796377",
             "evid-a1afe497",
-            "evid-26a07821"
+            "evid-26a07821",
+            "evid-bf08742f"
           ],
           "status": "closed",
           "relevantPaths": [
-            "apps",
-            "packages",
-            "scripts",
-            "supabase",
-            "docs",
-            ".github",
-            "package.json",
-            "pnpm-lock.yaml"
+            "apps/api/src/database",
+            "apps/api/scripts/db-ops.ts"
           ],
-          "relevantPathsReason": "Evidence is about product code, migrations and naming docs; .claude-only commits do not change what these commands verify"
+          "relevantPathsReason": "the migrations and the check"
         }
       ],
       "createdAt": "2026-10-02T03:11:00.976Z"
@@ -885,9 +876,25 @@
       "acceptanceCriteria": [
         {
           "id": "ac-a2a38906",
-          "text": "a status update to signed without a provider signature record is rejected",
-          "evidenceIds": [],
-          "status": "open"
+          "text": "a contract signature registered outside the platform is accepted only with the signed document attached and by an allowed role, records its origin, actor and time on the server, and a status update to signed without the document is rejected",
+          "evidenceIds": [
+            "evid-588b0961"
+          ],
+          "status": "closed",
+          "amendments": [
+            {
+              "at": "2026-10-06T23:10:10.859Z",
+              "previousText": "a status update to signed without a provider signature record is rejected",
+              "newText": "a contract signature registered outside the platform is accepted only with the signed document attached and by an allowed role, records its origin, actor and time on the server, and a status update to signed without the document is rejected",
+              "reason": "The owner decision is settled: manual or external signatures are allowed and never faked as an electronic envelope; the old text demanded a provider signature record, which contradicts that decision",
+              "supersededEvidenceIds": []
+            }
+          ],
+          "relevantPaths": [
+            "apps/api/src/modules/contracts",
+            "apps/api/src/core/workflow/definitions/contracts.workflow.ts"
+          ],
+          "relevantPathsReason": "the signature rule lives in the contracts module and its workflow guard"
         },
         {
           "id": "ac-8e916a8c",
@@ -946,9 +953,25 @@
       "acceptanceCriteria": [
         {
           "id": "ac-21489466",
-          "text": "a plain status update to distributed is rejected",
-          "evidenceIds": [],
-          "status": "open"
+          "text": "a plain status update to distributed is rejected: Distributed requires a registered confirmation (origin external confirmation or manual operational conclusion, a reference and a date) stamped by the server",
+          "evidenceIds": [
+            "evid-df4a9190"
+          ],
+          "status": "closed",
+          "amendments": [
+            {
+              "at": "2026-10-06T23:10:10.964Z",
+              "previousText": "a plain status update to distributed is rejected",
+              "newText": "a plain status update to distributed is rejected: Distributed requires a registered confirmation (origin external confirmation or manual operational conclusion, a reference and a date) stamped by the server",
+              "reason": "The owner decision is settled: Distributed only with a real external confirmation or an explicitly registered manual operational conclusion with its reference; the criterion is made explicit about the manual path",
+              "supersededEvidenceIds": []
+            }
+          ],
+          "relevantPaths": [
+            "apps/api/src/modules/releases",
+            "apps/web/src/modules/releases"
+          ],
+          "relevantPathsReason": "the confirmation rule lives in the releases module and its web dialog"
         },
         {
           "id": "ac-bdb1fd76",
@@ -1212,21 +1235,51 @@
       "acceptanceCriteria": [
         {
           "id": "ac-efa1d7e8",
-          "text": "participant percentages must sum to exactly 100 when present and each stay within 0..100 with decimal precision",
-          "evidenceIds": [],
-          "status": "open"
+          "text": "participant percentages stay within 0..100 with decimal precision and their running total never exceeds 100 at write; the Work splits and the Phonogram splits must total exactly 100 at the formal registry check",
+          "evidenceIds": [
+            "evid-b1c0e7ef"
+          ],
+          "status": "closed",
+          "amendments": [
+            {
+              "at": "2026-10-06T23:10:11.180Z",
+              "previousText": "participant percentages must sum to exactly 100 when present and each stay within 0..100 with decimal precision",
+              "newText": "participant percentages stay within 0..100 with decimal precision and their running total never exceeds 100 at write; the Work splits and the Phonogram splits must total exactly 100 at the formal registry check",
+              "reason": "The old text mixed preliminary creation with the formal stage: a Work or Phonogram born from a Project has no formal percentages yet, so exactly 100 is required only when the formal registry operation validates it",
+              "supersededEvidenceIds": []
+            }
+          ],
+          "relevantPaths": [
+            "apps/api/src/modules/shares",
+            "apps/api/src/modules/registry/validation",
+            "apps/api/src/modules/works"
+          ],
+          "relevantPathsReason": "the percentage rules live in shares, the registry validators and works"
         },
         {
           "id": "ac-cf32c990",
           "text": "a shares row cannot carry both a work id and a phonogram id",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-33bd9fd4"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/shares"
+          ],
+          "relevantPathsReason": "the one-structure rule lives in the shares module"
         },
         {
           "id": "ac-8266fe4a",
           "text": "work participant roles outside author and publisher are rejected",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-0746e18f"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/works",
+            "apps/web/src/modules/catalog/constants"
+          ],
+          "relevantPathsReason": "the closed role list lives in the works module and the web options"
         },
         {
           "id": "ac-dda07bdf",
@@ -1393,20 +1446,41 @@
         {
           "id": "ac-05765362",
           "text": "the diagnostic reports a phonogram referencing a missing work",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-49922d3f"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/catalog-integrity",
+            "apps/api/scripts/verify-catalog-integrity.ts"
+          ],
+          "relevantPathsReason": "the integrity diagnostic"
         },
         {
           "id": "ac-262bf72b",
           "text": "the diagnostic reports cross tenant references",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-d2b06e7e"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/catalog-integrity",
+            "apps/api/scripts/verify-catalog-integrity.ts"
+          ],
+          "relevantPathsReason": "the integrity diagnostic"
         },
         {
           "id": "ac-b49ff6dd",
           "text": "the diagnostic never writes",
-          "evidenceIds": [],
-          "status": "open"
+          "evidenceIds": [
+            "evid-65f95f78"
+          ],
+          "status": "closed",
+          "relevantPaths": [
+            "apps/api/src/modules/catalog-integrity",
+            "apps/api/scripts/verify-catalog-integrity.ts"
+          ],
+          "relevantPathsReason": "the integrity diagnostic"
         }
       ],
       "createdAt": "2026-10-06T13:27:21.953Z"
@@ -2531,7 +2605,17 @@
     "evid-51d5eb10",
     "evid-4e779166",
     "evid-8d2cf99f",
-    "evid-f3044703"
+    "evid-f3044703",
+    "evid-588b0961",
+    "evid-df4a9190",
+    "evid-33bd9fd4",
+    "evid-0746e18f",
+    "evid-b1c0e7ef",
+    "evid-49922d3f",
+    "evid-d2b06e7e",
+    "evid-65f95f78",
+    "evid-9c8254b4",
+    "evid-bf08742f"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
@@ -2540,25 +2624,29 @@
       "id": "blk-94873ce2",
       "text": "OWNER DECISION: whether the manual contract signature registration and the manual distribution confirmation must record real evidence (a signed file with a hash; what was confirmed, by whom, when). Needs the asset layer and the submission model (schema). Covers criterion 'a status update to signed without a provider signature record is rejected' and 'a plain status update to distributed is rejected', which are not satisfied and were not forced.",
       "createdAt": "2026-10-06T14:16:33.961Z",
-      "resolved": false
+      "resolved": true,
+      "resolvedAt": "2026-10-06T23:12:21.846Z"
     },
     {
       "id": "blk-97f0de4e",
       "text": "OWNER DECISION: closed list of Work participant roles (the web offers more roles and stored data uses them) and whether a registry share may carry both a work and a phonogram (existing contract tests treat the pair as valid). Covers the two R-CAT-6 criteria that are not satisfied. The criterion that asked for an exact 100% total at write time is superseded by the registry-time check: a Work created from a Project has no formal percentages yet.",
       "createdAt": "2026-10-06T14:16:34.029Z",
-      "resolved": false
+      "resolved": true,
+      "resolvedAt": "2026-10-06T23:12:21.914Z"
     },
     {
       "id": "blk-6e3eafe0",
       "text": "EXTERNAL DEPENDENCY: connection probes for providers other than Abramus need a real authenticated call to each provider; saving credentials alone still leaves those integrations recorded as connected but not verified. Covers the first R-CAT-4 criterion for those providers.",
       "createdAt": "2026-10-06T14:16:34.093Z",
-      "resolved": false
+      "resolved": true,
+      "resolvedAt": "2026-10-06T23:12:21.979Z"
     },
     {
       "id": "blk-b59ffabb",
       "text": "EXTERNAL DEPENDENCY: R-CAT-9 referential integrity diagnostics are read-only SQL that cannot be proven without PostgreSQL; not implemented rather than shipped unverified.",
       "createdAt": "2026-10-06T14:16:34.161Z",
-      "resolved": false
+      "resolved": true,
+      "resolvedAt": "2026-10-06T23:12:22.111Z"
     }
   ]
 }

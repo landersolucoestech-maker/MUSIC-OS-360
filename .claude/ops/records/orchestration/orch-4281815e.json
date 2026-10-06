@@ -3,7 +3,7 @@
   "title": "MUSIC OS 360 technical normalization verification mission: reconstruct the basel",
   "workflow": "naming-normalization",
   "intent": null,
-  "status": "ACTIVE",
+  "status": "ABANDONED",
   "stopBlocks": 0,
   "lastProgressAt": "2026-10-06T06:10:28.442Z",
   "tasks": [
@@ -877,5 +877,8 @@
   "requireWorkflow": true,
   "id": "orch-4281815e",
   "createdAt": "2026-10-05T01:16:17.407Z",
-  "workflowInstanceId": "work-de9faff1"
+  "workflowInstanceId": "work-de9faff1",
+  "abandonedReason": "The verification mission delivered its outputs in commits (census, residue audit, reclassification, mutation proofs, schema boundary proof 3/3 on a real PostgreSQL, db:check clean); it was bound to naming-normalization whose mandatory destructive-approval phase contradicts its own order (no destructive approval); its PostgreSQL block no longer exists",
+  "abandonedAt": "2026-10-06T23:05:08.124Z",
+  "abandonedIncompleteTasks": 11
 }

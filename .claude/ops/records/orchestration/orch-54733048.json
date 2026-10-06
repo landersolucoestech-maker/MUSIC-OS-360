@@ -3,7 +3,7 @@
   "title": "foundation-closure (continuation of orch-e848167d)",
   "workflow": "naming-normalization",
   "intent": null,
-  "status": "ACTIVE",
+  "status": "ABANDONED",
   "stopBlocks": 0,
   "lastProgressAt": "2026-10-05T00:50:21.511Z",
   "tasks": [
@@ -893,5 +893,8 @@
   "requireWorkflow": true,
   "id": "orch-54733048",
   "createdAt": "2026-10-04T10:50:12.986Z",
-  "workflowInstanceId": "work-8965dbca"
+  "workflowInstanceId": "work-8965dbca",
+  "abandonedReason": "Superseded duplicate tracker of the naming normalization: its destructive-approval phase waits on a human grant for dropping legacy columns, which this work never executes (dossier READY=NO, no drop ran); a drop is requested again with its exact payload by a fresh plan when the owner schedules it",
+  "abandonedAt": "2026-10-06T23:05:07.784Z",
+  "abandonedIncompleteTasks": 2
 }

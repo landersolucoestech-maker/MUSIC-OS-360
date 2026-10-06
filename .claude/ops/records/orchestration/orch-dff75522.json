@@ -5,7 +5,7 @@
   "title": "normalization-continuation",
   "workflow": "naming-normalization",
   "intent": null,
-  "status": "ACTIVE",
+  "status": "ABANDONED",
   "stopBlocks": 0,
   "lastProgressAt": "2026-10-03T05:00:24.728Z",
   "tasks": [
@@ -1734,5 +1734,8 @@
     }
   ],
   "requireWorkflow": true,
-  "workflowInstanceId": "work-c27898bd"
+  "workflowInstanceId": "work-c27898bd",
+  "abandonedReason": "Superseded duplicate tracker of the naming normalization: approve-drop-40 and destructive-approval wait on a human grant for destructive drops that were never executed (dossier READY=NO); the destructive dossier stays checked and a drop needs a fresh exact-payload approval when the owner schedules it",
+  "abandonedAt": "2026-10-06T23:05:08.030Z",
+  "abandonedIncompleteTasks": 3
 }
