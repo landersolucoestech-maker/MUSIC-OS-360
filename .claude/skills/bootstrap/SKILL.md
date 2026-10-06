@@ -8,7 +8,7 @@ description: First-run setup after installing this pack into a target project �
 1. `node .claude/runtime/doctor.mjs` — confirm Node/git are available and every required pack path
    actually landed (a broken/partial install fails here with a specific missing-path list, not a
    confusing downstream error).
-2. Delegate to `repo-intelligence` for first-run discovery; it writes `.claude/project-manifest.json`
+2. Delegate first-run discovery to `repository-orchestrator`, which coordinates `repo-inspector` and the relevant repository mappers; discovery populates `.claude/project-manifest.json`
    and any per-project stack rule files (`backend.md`, `database.md`, etc. under `.claude/rules/`).
 3. `node .claude/runtime/ops.mjs init --mission "<first mission name>"` only once discovery is
    done — an empty/default mission started before discovery has no grounding.
