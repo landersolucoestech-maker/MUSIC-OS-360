@@ -493,11 +493,11 @@ const SHARES_CONTRACT: ReportFormContract = {
     ro('version'), ro('history'),
   ],
   excludedFormFields: {
-    holderName: 'legacy English alias (ABRAMUS/ECAD registration) mapped to holder_name — not the real Shares screen',
-    role: 'legacy English alias mapped to party_role — same as above',
-    workId: 'legacy English alias mapped to work_id — same as above',
-    trackId: 'legacy English alias mapped to phonogram_id — same as above',
-    holderDoc: 'legacy English alias mapped to holder_document — same as above',
+    holder_name: 'registry (ABRAMUS/ECAD registration) input, not a field of the real Shares screen; the screen uses holder',
+    party_role: 'registry input (participant role of the share), not a field of the real Shares screen',
+    work_id: 'registry link to the Work (UUID), not a field of the real Shares screen',
+    phonogram_id: 'registry link to the Phonogram (UUID), not a field of the real Shares screen',
+    holder_document: 'registry input (holder document), not a field of the real Shares screen',
     metadata: 'raw internal jsonb object',
   },
 };
