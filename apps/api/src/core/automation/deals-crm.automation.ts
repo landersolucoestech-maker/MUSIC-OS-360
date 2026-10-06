@@ -15,7 +15,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { ClientsService } from '../../modules/clients/clients.service';
 import {
   DEALS_CRM_SYSTEM_PROMPT,
@@ -57,7 +57,7 @@ function mapContractStatusToDealStage(status: string): DealStage {
 export class DealsCrmAutomation {
   constructor(
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly clients: ClientsService,
   ) {}
 

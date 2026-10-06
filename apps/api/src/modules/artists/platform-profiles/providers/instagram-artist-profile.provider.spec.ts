@@ -167,7 +167,7 @@ describe('InstagramArtistProfileProvider.resolve (Phase 1.3 — the registered h
       ['URL com query params', 'https://www.instagram.com/djstayofc/?hl=pt-br', 'djstayofc'],
     ];
 
-    it.each(cases)('%s normaliza para o identifier exato "%s" → "%s"', async (_label, input, expected) => {
+    it.each(cases)('%s normalizes to the exact identifier "%s" → "%s"', async (_label, input, expected) => {
       const soundcharts = {
         isConfigured: jest.fn().mockReturnValue(true),
         resolveArtistByPlatform: jest.fn().mockResolvedValue('own-uuid'),

@@ -18,7 +18,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { CareerStageService } from '../../modules/artists/platform-profiles/analytics/career-stage.service';
 import { MarketBenchmarkService } from '../../modules/artists/platform-profiles/analytics/market-benchmark.service';
 import {
@@ -38,7 +38,7 @@ const AUDIENCE_HEALTH_FRESHNESS_MINUTES = 7 * 24 * 60; // 7 dias
 export class AudienceHealthAutomation {
   constructor(
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly careerStage: CareerStageService,
     private readonly marketBenchmark: MarketBenchmarkService,
   ) {}

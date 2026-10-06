@@ -829,7 +829,7 @@ export default function Dashboard() {
 
       {/* Outside the isLoading gate on purpose — same bug as /artists
           (see Task C): ArtistaVisao360Modal calls useContratos/useTransacoes/
-          useEventos/useLancamentos/useProjetos unconditionally, all of them
+          useEvents/useLancamentos/useProjects unconditionally, all of them
           used in the Dashboard's composite isLoading (useMetrics). Mounting it only
           after isLoading turns false creates new observers on those same
           queries; with them in error (backend down), refetchOnMount

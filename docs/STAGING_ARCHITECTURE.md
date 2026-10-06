@@ -69,7 +69,7 @@ invoices, leads, projects, conversations, and additional users per role
 (manager/viewer beyond the owner) — the full list from Block 6 of Part 63.
 Expanding `03_operational_seed.ts` without a real staging database to test
 against would risk introducing silent bugs (wrong column names, broken
-FKs) — see the real `leads.tipoServico` bug fixed in Part 61,
+FKs) — see the real `leads.service_type` (formerly `tipo_servico`) bug fixed in Part 61,
 which was only discovered by running against a real database.
 
 Anti-MAIN guard added to the runner (`index.ts`): it refuses to run if

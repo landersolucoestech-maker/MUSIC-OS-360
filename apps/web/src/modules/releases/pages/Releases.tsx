@@ -285,7 +285,7 @@ export default function Releases() {
 
   // Task J: per-card artist name/genre, resolved by direct ID lookup (GET
   // /artists/:id) only for the current page's releases — it used to scan
-  // unfiltered useArtistas(), truncated at the tenant's first 50.
+  // unfiltered useArtists(), truncated at the tenant's first 50.
   const [resolvedArtists, setResolvedArtists] = useState<Record<string, Artist>>({});
   const pageArtistIds = useMemo(
     () => Array.from(new Set(pageItems.map((r) => r.artist_id).filter((id): id is string => !!id))),
@@ -419,7 +419,7 @@ export default function Releases() {
             </SelectContent>
           </Select>
           {/* Task J: server-side search (AsyncEntityCombobox) — it used to fill the
-              Select from unfiltered useArtistas(), truncated at the tenant's
+              Select from unfiltered useArtists(), truncated at the tenant's
               first 50 artists. "Todos Artistas" comes back via the Clear button. */}
           <div className="h-8 w-[180px] shrink-0">
             <AsyncEntityCombobox<ArtistWireRecord>

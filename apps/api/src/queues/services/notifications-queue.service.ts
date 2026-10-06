@@ -53,7 +53,7 @@ export class NotificationsQueueService {
     await this.enqueueUrgent({ tenantId, userId, title: 'Falha no pagamento da assinatura', body: `Plano: ${planDisplayName}. Atualize o método de pagamento.`, type: 'billing:payment_failed', entity: 'billing', metadata: { plan: planDisplayName } });
   }
 
-  async enqueueAIJobCompleted(tenantId: string, userId: string, skill: string): Promise<void> {
+  async enqueueAiJobCompleted(tenantId: string, userId: string, skill: string): Promise<void> {
     await this.enqueue({ tenantId, userId, title: 'Tarefa de IA concluída', body: 'O resultado já está disponível.', type: 'ai:job_completed', entity: 'ai_job', metadata: { skill } });
   }
 

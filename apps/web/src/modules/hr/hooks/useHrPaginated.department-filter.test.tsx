@@ -6,7 +6,7 @@ vi.mock("@/shared/hooks/usePaginatedDataQuery", () => ({ usePaginatedDataQuery: 
 vi.mock("@/shared/lib/api-client", () => ({ api: { get: vi.fn() } }));
 vi.mock("@tanstack/react-query", () => ({ useQuery: vi.fn(() => ({ data: undefined })) }));
 
-import { useEmployeesPaginated } from "./useHRPaginated";
+import { useEmployeesPaginated } from "./useHrPaginated";
 
 // The employees endpoint filters by `department`; `setor` is only a deprecated alias kept for old clients.
 describe("useEmployeesPaginated: department filter", () => {

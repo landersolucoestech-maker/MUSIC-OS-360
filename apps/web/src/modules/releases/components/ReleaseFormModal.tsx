@@ -338,7 +338,7 @@ function InfoBox({ children }: { children: React.ReactNode }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // ArtistAutocompleteInput — text input with a dropdown that opens on focus.
 // Task J: it used to receive a `suggestions: string[]` list precomputed from
-// unfiltered useArtistas() (the tenant's first 50 artists); it now searches
+// unfiltered useArtists() (the tenant's first 50 artists); it now searches
 // server-side (internally debounced) on every keystroke, reaching any artist
 // of the tenant. Free text is still allowed — not every collaborator has to
 // be registered.
@@ -437,13 +437,13 @@ export function ReleaseFormModal({
 
   // ── Derived labels ────────────────────────────────────────────────────────
   // Task J: fetches directly by ID (GET /projects/:id) — does not depend on the
-  // project being among the first loaded by unfiltered useProjetos().
+  // project being among the first loaded by unfiltered useProjects().
   const { entity: selectedProject } = useEntityById<ProjectWithRelations>("projects", formData.projectSeed || undefined);
   const projectLabel: string = selectedProject
     ? projectLabelOf(selectedProject as unknown as Record<string, unknown>)
     : "";
   // Task I: fetches directly by ID (does not depend on the artist being among
-  // the first loaded by unfiltered useArtistas()).
+  // the first loaded by unfiltered useArtists()).
   const { entity: selectedArtistWire } = useEntityById<ArtistWireRecord>("artists", formData.artist_id || undefined);
   const selectedArtist: Artist | undefined = selectedArtistWire ? wireToArtist(selectedArtistWire) : undefined;
   const artistLabel = selectedArtist?.stageName ?? "";
@@ -451,7 +451,7 @@ export function ReleaseFormModal({
   // ── Filtered lists ────────────────────────────────────────────────────────
   const MUSIC_RELEASE_TYPES = ["album", "ep", "single"];
   // Task J: server-side search (internally debounced) — it used to filter only
-  // the tenant's first 50 projects loaded by unfiltered useProjetos(). The type
+  // the tenant's first 50 projects loaded by unfiltered useProjects(). The type
   // filter (album/ep/single) stays client-side over the fetched results — the
   // backend supports a single `type=` at a time, not a list (see
   // QueryProjectDto), so filtering the 3 music types here is the same concession
@@ -466,7 +466,7 @@ export function ReleaseFormModal({
     (p) => !p.type || MUSIC_RELEASE_TYPES.includes(String(p.type).toLowerCase()),
   );
   // Task I: server-side search (internally debounced) — it used to filter only
-  // the tenant's first 50 artists loaded by unfiltered useArtistas().
+  // the tenant's first 50 artists loaded by unfiltered useArtists().
   const { items: filteredArtistsWire } = useEntityLookup<ArtistWireRecord>({
     table: "artists",
     search: artistSearch,
@@ -515,12 +515,12 @@ export function ReleaseFormModal({
   // AUTO-FILL HANDLERS
   // ─────────────────────────────────────────────────────────────────────────
   // Task J: receives the already-resolved project (the clicked item came
-  // straight from the server-side search results in `projetosBusca`) instead of
-  // rescanning a capped `projetos` array by ID — removes the "not found" risk
+  // straight from the server-side search results) instead of
+  // rescanning a capped projects array by ID — removes the "not found" risk
   // for projects beyond the tenant's first 50. The linked artist's name/genre
   // and the phonogram whose title matches the project/track are also resolved
   // by direct lookup (storage.findById / title search), never by scanning
-  // unfiltered useArtistas()/usePhonograms().
+  // unfiltered useArtists()/usePhonograms().
   const handleSelectProject = async (project: ProjectWithRelations) => {
     const projectId = project.id;
     const seed = projectToReleaseSeed(project);
@@ -807,7 +807,7 @@ export function ReleaseFormModal({
     }
     try {
       const payload = formToReleasePayload(formData, mode === "edit" ? "edit" : "create");
-      // Persist faixas and extraFields in metadata for edit round-trips
+      // Persist tracks and extraFields in metadata for edit round-trips
       const savableTracks = tracks.map(({ audioFile: _a, _uploading: _u, ...f }) => f);
       const enrichedMeta: Record<string, unknown> = {
         ...(typeof payload["metadata"] === "object" && payload["metadata"] !== null

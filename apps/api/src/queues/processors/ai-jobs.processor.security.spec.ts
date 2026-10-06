@@ -1,18 +1,18 @@
 import { Test } from '@nestjs/testing';
-import { AIJobsProcessor } from './ai-jobs.processor';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiJobsProcessor } from './ai-jobs.processor';
+import { AiService } from '../../modules/ai/ai.service';
 import { RealtimeService } from '../../core/realtime/realtime.service';
 import { DatabaseContextService } from '../../database/database-context.service';
 
 /**
- * find-657093f0: AIJobsProcessor used to call AIService.complete() (which
+ * find-657093f0: AiJobsProcessor used to call AiService.complete() (which
  * persists to the tenant-scoped ai_jobs table) with no tenant DB context
  * bound, unlike NotificationsProcessor/MarketingPublishingProcessor/etc.
  * This proves the job's tenantId is now threaded through
- * DatabaseContextService.runInTenantContext before AIService runs.
+ * DatabaseContextService.runInTenantContext before AiService runs.
  */
-describe('AIJobsProcessor — tenant DB context', () => {
-  it('wraps AIService.complete in runInTenantContext with the job tenantId', async () => {
+describe('AiJobsProcessor — tenant DB context', () => {
+  it('wraps AiService.complete in runInTenantContext with the job tenantId', async () => {
     const ai = { complete: jest.fn().mockResolvedValue({
       content: 'ok', provider: 'openai', model: 'gpt', inputTokens: 1, outputTokens: 1,
     }) };
@@ -22,13 +22,13 @@ describe('AIJobsProcessor — tenant DB context', () => {
 
     const module = await Test.createTestingModule({
       providers: [
-        AIJobsProcessor,
-        { provide: AIService, useValue: ai },
+        AiJobsProcessor,
+        { provide: AiService, useValue: ai },
         { provide: RealtimeService, useValue: ws },
         { provide: DatabaseContextService, useValue: dbContext },
       ],
     }).compile();
-    const processor = module.get(AIJobsProcessor);
+    const processor = module.get(AiJobsProcessor);
 
     await processor.process({
       name: 'complete',
@@ -52,13 +52,13 @@ describe('AIJobsProcessor — tenant DB context', () => {
 
     const module = await Test.createTestingModule({
       providers: [
-        AIJobsProcessor,
-        { provide: AIService, useValue: ai },
+        AiJobsProcessor,
+        { provide: AiService, useValue: ai },
         { provide: RealtimeService, useValue: ws },
         { provide: DatabaseContextService, useValue: dbContext },
       ],
     }).compile();
-    const processor = module.get(AIJobsProcessor);
+    const processor = module.get(AiJobsProcessor);
 
     await processor.process({
       name: 'complete',

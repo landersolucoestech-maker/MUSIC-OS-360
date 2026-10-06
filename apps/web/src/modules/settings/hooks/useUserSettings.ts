@@ -82,7 +82,7 @@ const LEGACY_USER_SETTINGS_KEYS: Readonly<Record<string, string>> = {
   auto_relatorio_semanal: "auto_weekly_report",
 };
 
-function readJSON<T extends object>(key: string, fallback: T): T {
+function readJson<T extends object>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;
@@ -103,7 +103,7 @@ function readJSON<T extends object>(key: string, fallback: T): T {
   }
 }
 
-function writeJSON<T>(key: string, value: T) {
+function writeJson<T>(key: string, value: T) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -125,7 +125,7 @@ export function useUserSettings() {
     }
     setLoading(true);
     try {
-      setUserSettings(readJSON<UserSettings>(userKey(user.id), defaultUserSettings));
+      setUserSettings(readJson<UserSettings>(userKey(user.id), defaultUserSettings));
       try {
         setOrgSlug(localStorage.getItem(orgSlugKey(user.id)) ?? "");
       } catch {
@@ -146,7 +146,7 @@ export function useUserSettings() {
     setSaving(true);
     try {
       const updated = { ...userSettings, ...settings, user_id: user.id };
-      writeJSON(userKey(user.id), updated);
+      writeJson(userKey(user.id), updated);
       setUserSettings(updated);
 
       // Syncs full_name and avatar_url with Supabase user_metadata

@@ -315,7 +315,7 @@ export function generateContract(input: { title: string; content?: string; descr
   };
 }
 
-export function generateContractPDF(contractId: string) {
+export function generateContractPdf(contractId: string) {
   return { contract_id: contractId, pdf_url: null, status: "pending_renderer" };
 }
 

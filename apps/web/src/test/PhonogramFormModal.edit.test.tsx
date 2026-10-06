@@ -42,7 +42,7 @@ vi.mock("@/modules/catalog/hooks/useWorks", () => {
   return { useWorks: () => stableReturn };
 });
 
-// Task J: the useArtistas() hook (capped at the tenant's first 50) is
+// Task J: the useArtists() hook (capped at the tenant's first 50) is
 // deliberately EMPTY here — if the performer resolution in selectObra
 // (PhonogramFormModal.tsx) still depended on scanning that array, the test
 // below would fail. The real resolution must come from storage.findById (GET
@@ -82,7 +82,7 @@ vi.mock("@/shared/lib/storage", async () => {
           return { id: "obra-1", title: "Canção Vinculada", music_genre: "pop", composer_names: ["Alice"], status: "registered" };
         }
         // Task J: an artist "outside the cap" — it would never be among the first 50
-        // returned by an unfiltered useArtistas(); it is only reachable by a direct GET
+        // returned by an unfiltered useArtists(); it is only reachable by a direct GET
         // /artists/:id (see selectObra in PhonogramFormModal.tsx).
         if (table === "artists" && id === "art-99") {
           return { id: "art-99", stage_name: "Artista Fora Do Cap" };
@@ -271,7 +271,7 @@ describe("PhonogramFormModal edit mode", () => {
   // Task J — Lookup Gap Zero: proves that the performer resolution chain
   // inside selectObra (when linking a work in the Phonogram form)
   // uses a real search/lookup by ID instead of scanning the capped array of
-  // useArtistas(). The useArtistas() mock above returns an empty list —
+  // useArtists(). The useArtists() mock above returns an empty list —
   // if the code regressed to `artistas.find(...)`, the performer would never
   // be filled.
   it("resolves the interprete's artist name via storage.findById, not from the capped artistas list", async () => {

@@ -18,7 +18,7 @@ import { Label } from "@/shared/ui/label";
 import { Textarea } from "@/shared/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
-import { addressFromPostalLookup, fetchAddressByCEP, maskCEP, maskCNPJ, maskCPF, maskPhone } from "@/shared/lib/masks";
+import { addressFromPostalLookup, fetchAddressByCep, maskCep, maskCnpj, maskCpf, maskPhone } from "@/shared/lib/masks";
 import { contactPriorityOptions, contactStatusOptions } from "../constants";
 import {
   PERSON_TYPE_OPTIONS,
@@ -202,7 +202,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
     if (digits.length !== 8) return;
     try {
       setZipCodeLoading(true);
-      const data = await fetchAddressByCEP(digits);
+      const data = await fetchAddressByCep(digits);
       if (!data) return;
       setState((prev) => ({ ...prev, ...addressFromPostalLookup(data, prev) }));
     } finally {
@@ -506,7 +506,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 <Field label="CPF">
                   <Input
                     value={state.cpf}
-                    onChange={(e) => set("cpf", maskCPF(e.target.value))}
+                    onChange={(e) => set("cpf", maskCpf(e.target.value))}
                     placeholder="000.000.000-00"
                     data-testid="input-individual-cpf"
                   />
@@ -576,7 +576,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
                 <Field label="CNPJ">
                   <Input
                     value={state.cnpj}
-                    onChange={(e) => set("cnpj", maskCNPJ(e.target.value))}
+                    onChange={(e) => set("cnpj", maskCnpj(e.target.value))}
                     placeholder="00.000.000/0000-00"
                     data-testid="input-pj-cnpj"
                   />
@@ -644,7 +644,7 @@ export function ContactFormModal({ open, onOpenChange, mode, initialValue, onSub
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="CEP">
-              <Input value={state.zipCode} onChange={(e) => set("zipCode", maskCEP(e.target.value))} onBlur={handleZipCodeBlur} placeholder="00000-000" data-testid="input-postal-code" />
+              <Input value={state.zipCode} onChange={(e) => set("zipCode", maskCep(e.target.value))} onBlur={handleZipCodeBlur} placeholder="00000-000" data-testid="input-postal-code" />
               {zipCodeLoading && <p className="text-xs text-muted-foreground">Buscando endereço...</p>}
             </Field>
           </div>

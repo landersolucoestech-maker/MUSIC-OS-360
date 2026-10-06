@@ -19,7 +19,7 @@ export interface UseEntityLookupParams {
 /**
  * Task I — reusable server-side lookup for selects/comboboxes/pickers.
  *
- * Replaces the "useArtistas() without a filter → tenant's first 50" pattern with a
+ * Replaces the "useArtists() without a filter → tenant's first 50" pattern with a
  * real search: each keystroke (debounced 300ms) becomes a new query, scoped to the
  * typed term — never the whole table, never a larger fixed limit. Without a
  * search, it shows the most recent (same default as always), but THAT is

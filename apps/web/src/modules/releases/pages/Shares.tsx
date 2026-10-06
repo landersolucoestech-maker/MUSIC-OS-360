@@ -87,7 +87,7 @@ export default function Shares() {
 
   // Task J: work title/artist name per row, resolved directly by ID
   // (GET /works/:id, /artists/:id) only for the records of the current
-  // page — it used to scan useWorks()/useArtistas() without a filter, truncated
+  // page — it used to scan useWorks()/useArtists() without a filter, truncated
   // to the first 50 of the tenant.
   type WorkLabel = { title?: string | null; composer_name?: string | null };
   type ArtistLabel = { stage_name?: string | null };

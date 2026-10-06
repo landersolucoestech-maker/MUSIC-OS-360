@@ -18,7 +18,7 @@
  *    `supplier` is a different, never-written metadata key), `linkedEventId`
  *    (column event_id), `competence` (column reference_month).
  */
-export interface TransactionDetailsDTO {
+export interface TransactionDetailsDto {
   id: string;
   type: string;
   status: string;

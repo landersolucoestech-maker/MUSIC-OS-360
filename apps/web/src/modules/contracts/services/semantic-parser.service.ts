@@ -160,7 +160,7 @@ FORMATO DE SAÍDA (JSON puro, sem markdown)
   "clauseTypes": ["financeira", "autoral", "recebimentos externos de direitos"]
 }`;
 
-interface RawAIVariable {
+interface RawAiVariable {
   id?: string;
   originalText?: string;
   context?: string;
@@ -169,8 +169,8 @@ interface RawAIVariable {
   accepted?: boolean;
 }
 
-interface RawAIResponse {
-  variables?: RawAIVariable[];
+interface RawAiResponse {
+  variables?: RawAiVariable[];
   clauseTypes?: string[];
 }
 
@@ -182,7 +182,7 @@ function validatePlaceholder(placeholder: string): boolean {
   return /^\{\{[A-Z][A-Z0-9_]*\.[A-Z][A-Z0-9_]+\}\}$/.test(placeholder);
 }
 
-function tryNormalizeVariable(raw: RawAIVariable): SemanticVariable | null {
+function tryNormalizeVariable(raw: RawAiVariable): SemanticVariable | null {
   if (typeof raw.placeholder !== "string" || !validatePlaceholder(raw.placeholder)) {
     return null;
   }
@@ -243,9 +243,9 @@ export async function parseContractText(text: string): Promise<SemanticParseResu
   const fenceMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fenceMatch) jsonStr = fenceMatch[1].trim();
 
-  let parsed: RawAIResponse;
+  let parsed: RawAiResponse;
   try {
-    parsed = JSON.parse(jsonStr) as RawAIResponse;
+    parsed = JSON.parse(jsonStr) as RawAiResponse;
   } catch {
     throw new UserFacingError("AI provider returned an unparseable format", "A IA retornou um formato inválido. Verifique se o documento é um contrato válido e tente novamente.");
   }

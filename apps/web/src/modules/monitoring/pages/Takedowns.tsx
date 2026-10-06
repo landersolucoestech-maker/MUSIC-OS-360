@@ -78,7 +78,7 @@ export default function Takedowns() {
 
   // KPIs: count per status OVER THE WHOLE TENANT (not the current page) —
   // GET /takedowns/stats, aggregated in the database. The bucket mapping
-  // (pendente/em_andamento/concluído) is the same as always, except it now
+  // (PENDING/IN_PROGRESS/COMPLETED) is the same as always, except it now
   // iterates over {status: count} (few entries) instead of the full list.
   const { stats: takedownsStats } = useTakedownsStats();
   const metrics = useMemo(() => {

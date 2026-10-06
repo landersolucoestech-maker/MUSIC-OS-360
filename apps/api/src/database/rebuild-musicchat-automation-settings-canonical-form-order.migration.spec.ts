@@ -15,7 +15,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildMusicchatAutomationSettingsInCanonicalFormOrder20260719000021', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('segue a ordem do DTO: enabled -> welcome_message -> ... -> manager_user_id', () => {
+  it('follows the DTO order: enabled -> welcome_message -> ... -> manager_user_id', () => {
     const b = block();
     const enabledIdx = b.indexOf('enabled');
     const welcomeIdx = b.indexOf('welcome_message');

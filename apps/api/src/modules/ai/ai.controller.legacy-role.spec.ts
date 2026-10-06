@@ -1,16 +1,16 @@
 import { ForbiddenException } from '@nestjs/common';
-import { AIController } from './ai.controller';
+import { AiController } from './ai.controller';
 
 /**
  * assertSystemPromptAllowed resolves the caller's level through roleLevel() (own-key lookup that
  * also knows the persisted Portuguese slugs). Without it the comparison is NaN and fails OPEN.
  */
-describe('AIController systemPrompt authorization (roleLevel wiring)', () => {
+describe('AiController systemPrompt authorization (roleLevel wiring)', () => {
   function build() {
     const ai = {
       complete: jest.fn(async () => ({ content: 'ok' })),
     };
-    return { ai, controller: new AIController(ai as never) };
+    return { ai, controller: new AiController(ai as never) };
   }
   const reqFor = (role: string | undefined) => ({ currentMember: role === undefined ? undefined : { role }, tenantId: 't1', userId: 'u1' });
 

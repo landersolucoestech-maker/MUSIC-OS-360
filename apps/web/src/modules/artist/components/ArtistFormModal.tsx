@@ -42,7 +42,7 @@ import { FileUpload, type UploadedFile } from "@/shared/components/FileUpload";
 import { useArtists, type Artist } from "@/modules/artist/hooks/useArtists";
 import { api } from "@/shared/lib/api-client";
 import { useClients } from "@/modules/crm-relationships/hooks/useContacts";
-import { TeamContactsCRM } from "@/modules/artist/components/TeamContactsCRM";
+import { TeamContactsCrm } from "@/modules/artist/components/TeamContactsCrm";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
 import { isOtherDistributorId } from "@/modules/artist/lib/distributor-id";
@@ -302,7 +302,7 @@ function renderArtistField(field: ArtistFormField, ctx: FieldRendererCtx) {
             control={control}
             name={rhfId}
             render={({ field: rhf }) => (
-              <TeamContactsCRM
+              <TeamContactsCrm
                 value={Array.isArray(rhf.value) ? (rhf.value as ArtistFormValues["linkedContacts"]) : []}
                 onChange={rhf.onChange}
               />

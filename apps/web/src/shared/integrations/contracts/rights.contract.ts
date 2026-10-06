@@ -11,7 +11,7 @@
  * CURRENT STATE:
  *   - Abramus: complete working mock (useAbramus.ts)
  *   - UBC:     complete working mock (useUbc.ts)
- *   - ECAD:    MOCK_DATA, visual reconciliation in ECADViewModal
+ *   - ECAD:    MOCK_DATA, visual reconciliation in EcadViewModal
  *
  * FUTURE MIGRATION: each entity implements IRightsProvider with its own API.
  */
@@ -158,7 +158,7 @@ export interface GenerateISWCResult {
   generated_at: string;
 }
 
-export interface GenerateISRCInput {
+export interface GenerateIsrcInput {
   /** Local phonogram ID in the catalog */
   local_phonogram_id: string;
   title: string;
@@ -172,7 +172,7 @@ export interface GenerateISRCInput {
   existing_isrc?: string | null;
 }
 
-export interface GenerateISRCResult {
+export interface GenerateIsrcResult {
   isrc: string;
   local_phonogram_id: string;
   source: "existing" | "generated" | "assigned_by_entity";
@@ -281,7 +281,7 @@ export interface IRightsProvider {
   generateISWC(input: GenerateISWCInput): Promise<GenerateISWCResult>;
 
   /** Generates or retrieves a phonogram's ISRC */
-  generateISRC(input: GenerateISRCInput): Promise<GenerateISRCResult>;
+  generateIsrc(input: GenerateIsrcInput): Promise<GenerateIsrcResult>;
 
   // ── Synchronization ─────────────────────────────────────────────────────────
 
@@ -325,7 +325,7 @@ export function generateMockISWC(seed: string): string {
 }
 
 /** Generates a canonical ISRC (format CC-XXX-YY-NNNNN) — MOCK only */
-export function generateMockISRC(
+export function generateMockIsrc(
   country: string = "BR",
   registrant: string = "MSC",
   year: number = new Date().getFullYear(),

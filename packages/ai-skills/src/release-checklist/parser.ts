@@ -163,8 +163,8 @@ function mapMetadataReview(value: unknown, fallback: MetadataReview): MetadataRe
 function computeBaselineScore(input: ReleaseChecklistInput): number {
   const flags = [
     input.hasCover,
-    input.hasISRC,
-    input.hasUPC,
+    input.hasIsrc,
+    input.hasUpc,
     input.hasContracts,
     input.hasSplits,
     input.hasMarketingPlan,
@@ -180,8 +180,8 @@ function buildFallback(raw: string, input: ReleaseChecklistInput): ReleaseCheckl
 
   const checks: Array<{ item: string; completed: boolean; area: string }> = [
     { item: "Capa (artwork)",     completed: input.hasCover,        area: "Audiovisual" },
-    { item: "ISRC",               completed: input.hasISRC,         area: "Gravadora" },
-    { item: "UPC",                completed: input.hasUPC,          area: "Gravadora" },
+    { item: "ISRC",               completed: input.hasIsrc,         area: "Gravadora" },
+    { item: "UPC",                completed: input.hasUpc,          area: "Gravadora" },
     { item: "Contratos",          completed: input.hasContracts,    area: "Jurídico" },
     { item: "Splits",             completed: input.hasSplits,       area: "Editora" },
     { item: "Plano de marketing", completed: input.hasMarketingPlan, area: "Marketing" },
@@ -216,10 +216,10 @@ function buildFallback(raw: string, input: ReleaseChecklistInput): ReleaseCheckl
       ownerArea: m.area,
     })),
     metadataReview: {
-      hasMinimumMetadata: input.hasISRC && input.hasUPC,
+      hasMinimumMetadata: input.hasIsrc && input.hasUpc,
       missingMetadata: [
-        ...(input.hasISRC ? [] : ["ISRC"]),
-        ...(input.hasUPC ? [] : ["UPC"]),
+        ...(input.hasIsrc ? [] : ["ISRC"]),
+        ...(input.hasUpc ? [] : ["UPC"]),
       ],
       notes: [],
     },

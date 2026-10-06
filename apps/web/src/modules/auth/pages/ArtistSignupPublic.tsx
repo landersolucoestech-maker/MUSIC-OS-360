@@ -39,6 +39,7 @@ import {
   type DistributorEntry,
   type TeamContact,
 } from "./artist-registration-payload";
+import { ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR } from "@music-os-360/types";
 
 // ─── Same constants as ArtistaFormModal ───────────────────────────────────────
 
@@ -54,15 +55,9 @@ const PROFILE_TYPE_OPTIONS = [
   { value: "managed", label: "Com empresário" },
 ];
 
-const TEAM_CATEGORIES = [
-  { value: "booker",          label: "Booker" },
-  { value: "press_office",      label: "Assessoria de Imprensa" },
-  { value: "legal",        label: "Jurídico" },
-  { value: "finance",      label: "Financeiro" },
-  { value: "accountant",        label: "Contador" },
-  { value: "publisher", label: "Editora Musical" },
-  { value: "roadie",          label: "Roadie" },
-];
+// Signup offers a subset of the shared vocabulary (packages/types artist-team-categories); the labels come from the shared map.
+const SIGNUP_TEAM_CATEGORIES = ["booker", "press_office", "legal", "finance", "accountant", "publisher", "roadie"] as const;
+const TEAM_CATEGORIES = SIGNUP_TEAM_CATEGORIES.map((value) => ({ value, label: ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR[value] }));
 
 const DISTRIBUTORS_OPTIONS = [
   { id: "onerpm",    label: "ONErpm" },

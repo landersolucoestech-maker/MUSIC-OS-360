@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Button } from "@/shared/ui/button";
 import { Sparkles, Copy, Check, Loader2 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { useAI, type AIGenerateType } from "@/shared/hooks/useAI";
+import { useAi, type AiGenerateType } from "@/shared/hooks/useAi";
 import { toast } from "sonner";
 
-interface AIGenerateButtonProps {
+interface AiGenerateButtonProps {
   prompt: string;
-  type: AIGenerateType;
+  type: AiGenerateType;
   onResult: (content: string) => void;
   label?: string;
   className?: string;
@@ -16,7 +16,7 @@ interface AIGenerateButtonProps {
   variant?: "ghost" | "outline" | "default";
 }
 
-export function AIGenerateButton({
+export function AiGenerateButton({
   prompt,
   type,
   onResult,
@@ -25,8 +25,8 @@ export function AIGenerateButton({
   disabled = false,
   size = "sm",
   variant = "outline",
-}: AIGenerateButtonProps) {
-  const { generate } = useAI();
+}: AiGenerateButtonProps) {
+  const { generate } = useAi();
 
   const handleClick = async () => {
     if (!prompt.trim()) {
@@ -62,12 +62,12 @@ export function AIGenerateButton({
   );
 }
 
-interface AICopyButtonProps {
+interface AiCopyButtonProps {
   text: string;
   className?: string;
 }
 
-export function AICopyButton({ text, className }: AICopyButtonProps) {
+export function AiCopyButton({ text, className }: AiCopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {

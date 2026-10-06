@@ -10,8 +10,8 @@ vi.mock("@/shared/lib/storage", async () => {
   return { ...actual, storage: { ...actual.storage, listPaged: vi.fn(), findById: vi.fn() } };
 });
 
-// Task J: useScheduleParticipants must no longer depend on useArtistas()/
-// useFuncionarios() (capped at 50/tenant) — usuarios/contacts are outside the
+// Task J: useScheduleParticipants must no longer depend on useArtists()/
+// useEmployees() (capped at 50/tenant) — usuarios/contacts are outside the
 // scope of this migration, mocked empty to isolate the test.
 vi.mock("@/modules/settings/hooks/useUsers", () => ({ useUsers: () => ({ users: [] }) }));
 vi.mock("@/modules/crm-relationships/hooks/useContacts", () => ({ useContacts: () => ({ contacts: [] }) }));

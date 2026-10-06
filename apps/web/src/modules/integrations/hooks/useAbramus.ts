@@ -9,8 +9,8 @@ import type {
   RegistrationHistoryEntry,
   GenerateISWCInput,
   GenerateISWCResult,
-  GenerateISRCInput,
-  GenerateISRCResult,
+  GenerateIsrcInput,
+  GenerateIsrcResult,
   ArtistSearchResult,
 } from "@/modules/integrations/dto";
 
@@ -320,8 +320,8 @@ export function useAbramusGenerateISWC() {
   });
 }
 
-export function useAbramusGenerateISRC() {
-  return useMutation<GenerateISRCResult, Error, GenerateISRCInput>({
+export function useAbramusGenerateIsrc() {
+  return useMutation<GenerateIsrcResult, Error, GenerateIsrcInput>({
     mutationFn: async (_input) => backendUnavailable("Geração de ISRC via ABRAMUS"),
     onError: (err) => toast.error(`Erro ao gerar ISRC: ${toUserMessage(err)}`),
   });

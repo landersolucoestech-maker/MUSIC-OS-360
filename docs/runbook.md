@@ -93,31 +93,21 @@
 
 ## Git Flow
 
-Only two permanent branches exist in this repository:
+`dev` is the only branch of this repository. Commit only on `dev` and push only
+`dev` to `origin/dev`; no other branch is created, switched to, synced or
+published. There is no `main` branch and no promotion between branches.
 
 ```
-DESENVOLVIMENTO
-      ↓
-     dev              development / integration / staging
-      ↓
- validação/staging     CI on every push (Tests, Migrations Check, Docker
-      ↓                Build, Security Regression, gitleaks, CodeQL)
- PR dev → main
-      ↓
-    main               production
-      ↓
-  produção
+dev    development, integration and the ref every workflow runs on
+        (CI on every push: Tests, Migrations Check, Docker Build,
+        Security Regression, gitleaks, CodeQL)
 ```
 
-No `develop`, no long-lived `release/*` or `staging` branch, no CI/CD
-dependency on any third-party AI-IDE hosting environment. Short-lived feature branches
-(`feat/**`, `fix/**`, etc.) may exist locally or as temporary GitHub
-branches while work is in progress, but they are never part of the
-permanent topology — merge to `dev` and delete once done. Both `main` and
-`dev` are currently unprotected on GitHub (confirmed via the branch
-protection API, 2026-07-31); adding required-status-check + no-force-push
-protection to both, and required review on `main`, is a recommended
-follow-up, not yet enabled.
+Staging is an environment (GitHub Environment `staging`), not a branch;
+`staging.yml` is a manual dispatch from `dev`. Production is released by an
+owner-authorized manual action, never by a branch merge. Steps and gates:
+[`docs/runbooks/staging-to-production.md`](runbooks/staging-to-production.md).
+Policy, guards and enforcement: [`docs/engineering/git-safety.md`](engineering/git-safety.md).
 
 ---
 

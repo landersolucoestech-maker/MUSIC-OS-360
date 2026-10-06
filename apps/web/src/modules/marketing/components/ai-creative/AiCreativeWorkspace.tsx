@@ -8,7 +8,7 @@ import { useMarketingCampaigns } from "../../hooks/useMarketingCampaigns";
 import { useMarketingContents } from "../../hooks/useMarketingContents";
 import { useMarketingProjects } from "../../hooks/useMarketingProjects";
 import { useMarketingTasks } from "../../hooks/useMarketingTasks";
-import { useAiSuggestions, useGenerateAi } from "../../hooks/useMarketingAI";
+import { useAiSuggestions, useGenerateAi } from "../../hooks/useMarketingAi";
 import type { AiGenerationPayload } from "../../types/marketing.types";
 import type { AiTab, TargetOption } from "./aiCreative.types";
 import { IdeasTab } from "./IdeasTab";

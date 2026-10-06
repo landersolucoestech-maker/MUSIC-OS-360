@@ -19,8 +19,8 @@ export function validateReleaseChecklistInput(input: ReleaseChecklistInput): Ski
 
   const booleanFields: Array<keyof ReleaseChecklistInput> = [
     "hasCover",
-    "hasISRC",
-    "hasUPC",
+    "hasIsrc",
+    "hasUpc",
     "hasContracts",
     "hasSplits",
     "hasMarketingPlan",

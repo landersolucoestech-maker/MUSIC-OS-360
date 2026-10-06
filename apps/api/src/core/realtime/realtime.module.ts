@@ -10,7 +10,7 @@ import { RealtimeService } from './realtime.service';
  *   - NotificationsProcessor (emits notification:new)
  *   - BillingService, DunningService (emit billing:*)
  *   - ConversationsService (emits conversation:*)
- *   - AIJobsProcessor (emits ai:job:completed)
+ *   - AiJobsProcessor (emits ai:job:completed)
  */
 @Global()
 @Module({

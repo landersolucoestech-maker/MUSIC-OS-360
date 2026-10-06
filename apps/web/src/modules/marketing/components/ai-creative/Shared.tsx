@@ -97,8 +97,8 @@ function bestLabel(item: EntityRow): string {
 
 /**
  * Task J — server-side version of EntitySelect: real search (useEntityLookup)
- * instead of a static `options` array built from an unfiltered useArtistas()/
- * useProjetos() (capped at the tenant's first 50). Same
+ * instead of a static `options` array built from an unfiltered useArtists()/
+ * useProjects() (capped at the tenant's first 50). Same
  * onChange(TargetOption) contract as the screens already using EntitySelect,
  * so no layout/flow change is required — only the data source changes.
  */

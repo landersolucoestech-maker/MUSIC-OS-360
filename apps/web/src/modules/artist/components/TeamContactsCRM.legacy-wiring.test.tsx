@@ -1,5 +1,5 @@
 /**
- * Compat wiring: TeamContactsCRM routes every distributor id through isOtherDistributorId
+ * Compat wiring: TeamContactsCrm routes every distributor id through isOtherDistributorId
  * (canonical 'other', legacy 'outros'), so only the "Outros" option carries a custom name and
  * every regular distributor carries the e-mail share input.
  */
@@ -18,7 +18,7 @@ vi.mock("@/modules/crm-relationships/hooks/useContacts", () => ({
 }));
 vi.mock("@/modules/crm-relationships/modals/ContactFormModal", () => ({ ContactFormModal: () => null }));
 
-import { TeamContactsCRM, type LinkedContactForm } from "./TeamContactsCRM";
+import { TeamContactsCrm, type LinkedContactForm } from "./TeamContactsCrm";
 
 let lastValue: LinkedContactForm[] = [];
 const onChangeSpy = vi.fn();
@@ -27,7 +27,7 @@ function Harness({ initial }: { initial: LinkedContactForm[] }) {
   const [value, setValue] = useState(initial);
   lastValue = value;
   return (
-    <TeamContactsCRM
+    <TeamContactsCrm
       value={value}
       onChange={(next) => {
         onChangeSpy(next);
@@ -40,7 +40,7 @@ function Harness({ initial }: { initial: LinkedContactForm[] }) {
 const customName = (id = "c1") => screen.queryByTestId(`input-dist-name-custom-${id}`);
 const shareEmail = (dist: string, id = "c1") => screen.queryByTestId(`input-dist-email-share-${id}-${dist}`);
 
-describe("TeamContactsCRM distributor 'other' handling", () => {
+describe("TeamContactsCrm distributor 'other' handling", () => {
   it("a linked 'other' distributor shows the custom-name input and no e-mail until a name is typed", () => {
     render(<Harness initial={[{ contactId: "c1", distributors: [{ id: "other", email: "", customName: "" }] }]} />);
     expect(customName()).not.toBeNull();

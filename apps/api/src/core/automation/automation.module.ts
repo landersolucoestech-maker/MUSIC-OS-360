@@ -21,13 +21,13 @@
  *   release.approved       → launch-strategy (3rd non-overlapping skill on this event)
  *   client.created          → contact-operations
  * SkillRunService (auditing/idempotency) comes from SkillsModule (@Global);
- * EventsService/DATA_SOURCE come from @Global modules. AIService comes from AIModule.
+ * EventsService/DATA_SOURCE come from @Global modules. AiService comes from AiModule.
  *
  * Exposes no controller, route, configuration or anything else to the end user.
  */
 
 import { Module } from '@nestjs/common';
-import { AIModule } from '../../modules/ai/ai.module';
+import { AiModule } from '../../modules/ai/ai.module';
 import { ProjectPlanningAutomation } from './project-planning.automation';
 import { ReleaseChecklistAutomation } from './release-checklist.automation';
 import { SupportTriageAutomation } from './support-triage.automation';
@@ -45,7 +45,7 @@ import { LaunchStrategyAutomation } from './launch-strategy.automation';
 import { ContactOperationsAutomation } from './contact-operations.automation';
 
 @Module({
-  imports: [AIModule],
+  imports: [AiModule],
   providers: [
     ProjectPlanningAutomation,
     ReleaseChecklistAutomation,

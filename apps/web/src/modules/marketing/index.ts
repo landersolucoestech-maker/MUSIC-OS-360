@@ -20,7 +20,7 @@ export * from "./hooks/useMarketingAssets";
 export * from "./hooks/useMarketingDashboard";
 export * from "./hooks/useMarketingAnalytics";
 export * from "./hooks/useMarketingAutomations";
-export * from "./hooks/useMarketingAI";
+export * from "./hooks/useMarketingAi";
 export * from "./hooks/useGoals";
 
 // Services & contracts

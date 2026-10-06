@@ -4,7 +4,7 @@ import { PROJECT_PLANNING_COLUMNS, ProjectPlanningAutomation } from './project-p
 import { ProjectEntity } from '../../database/entities';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Boundary mocks (DB / SkillRunService / AIService) ────────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AiService) ────────────────────────
 
 function makeSkillRun() {
   return {

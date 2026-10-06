@@ -1,5 +1,5 @@
 /**
- * TeamContactsCRM shows the PT-BR category label (labelFor over contactTypeOptions) in the CRM search
+ * TeamContactsCrm shows the PT-BR category label (labelFor over contactTypeOptions) in the CRM search
  * (result row, and as a search key) and on the linked-contact chip.
  */
 import { describe, it, expect, vi } from "vitest";
@@ -17,15 +17,15 @@ vi.mock("@/modules/crm-relationships/hooks/useContacts", () => ({
 }));
 vi.mock("@/modules/crm-relationships/modals/ContactFormModal", () => ({ ContactFormModal: () => null }));
 
-import { TeamContactsCRM } from "./TeamContactsCRM";
+import { TeamContactsCrm } from "./TeamContactsCrm";
 
 function openSearch(value: { contactId: string; distributors: [] }[] = []) {
-  render(<TeamContactsCRM value={value} onChange={vi.fn()} />);
+  render(<TeamContactsCrm value={value} onChange={vi.fn()} />);
   fireEvent.click(screen.getByTestId("button-link-crm-contact"));
 }
 const type = (text: string) => fireEvent.change(screen.getByTestId("input-crm-contact-search"), { target: { value: text } });
 
-describe("TeamContactsCRM category label", () => {
+describe("TeamContactsCrm category label", () => {
   it("search results show the PT-BR label of each contact's category (and a fallback for unknown)", () => {
     openSearch();
     expect(screen.getByTestId("crm-contact-result-c1")).toHaveTextContent("Videomaker · 111");
@@ -47,7 +47,7 @@ describe("TeamContactsCRM category label", () => {
   });
 
   it("a linked contact's chip shows the PT-BR category label", () => {
-    render(<TeamContactsCRM value={[{ contactId: "c1", distributors: [] }, { contactId: "c2", distributors: [] }]} onChange={vi.fn()} />);
+    render(<TeamContactsCrm value={[{ contactId: "c1", distributors: [] }, { contactId: "c2", distributors: [] }]} onChange={vi.fn()} />);
     expect(within(screen.getByTestId("linked-contact-c1")).getByText("Videomaker")).toBeInTheDocument();
     expect(within(screen.getByTestId("linked-contact-c2")).getByText("Advogado")).toBeInTheDocument();
     expect(screen.queryByText("VIDEOMAKER")).toBeNull();

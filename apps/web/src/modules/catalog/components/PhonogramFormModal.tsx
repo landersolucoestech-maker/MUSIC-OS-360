@@ -91,7 +91,7 @@ const formatFileSize = (bytes: number) => {
 
 // ── Autocomplete: server-side search by stage_name/full_name (Task I —
 // it used to filter only the tenant's first 50 artists loaded via
-// an unfiltered useArtistas(); now each typed (debounced) key re-runs the
+// an unfiltered useArtists(); now each typed (debounced) key re-runs the
 // search in the backend). Free text is still allowed.
 interface ArtistNameInputProps {
   value: string;
@@ -703,7 +703,7 @@ export function PhonogramFormModal({ open, onOpenChange, phonogram, mode, onSave
                                   (typeof fullWork.composer_name === "string" ? fullWork.composer_name : "");
                                 // Resolve the musician/arranger from the project producers — DIRECT
                                 // lookup by ID (Task J: it used to scan the `projects` array
-                                // of an unfiltered useProjetos(), truncated at 50 per tenant).
+                                // of an unfiltered useProjects(), truncated at 50 per tenant).
                                 let sessionMusicians: PhonogramParticipant[] = [];
                                 if ((fullWork.project_id as string | null | undefined)) {
                                   const project = await storage.findById<ProjectWithRelations>("projects", fullWork.project_id as string);

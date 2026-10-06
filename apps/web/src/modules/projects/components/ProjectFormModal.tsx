@@ -106,7 +106,7 @@ function normEnum(v: string | undefined, fallback: string): string {
 
 // ── Autocomplete: server-side search by stage_name/full_name (Task I —
 // it used to filter only the tenant's first 50 artists loaded by unfiltered
-// useArtistas(); now every (debounced) keystroke searches the backend again).
+// useArtists(); now every (debounced) keystroke searches the backend again).
 // Free text is still allowed.
 interface ArtistNameInputProps {
   value: string;

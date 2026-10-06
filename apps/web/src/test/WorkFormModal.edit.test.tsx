@@ -28,7 +28,7 @@ vi.mock("@/modules/artist/hooks/useSignedArtists", () => {
   return { useSignedArtists: () => stableReturn };
 });
 
-// Task J: the useArtistas() hook (capped at the tenant's first 50) is
+// Task J: the useArtists() hook (capped at the tenant's first 50) is
 // deliberately EMPTY — if the artist resolution inside selectProjeto
 // (WorkFormModal.tsx) still depended on scanning that array, the test
 // "resolves the linked project's artist..." below would fail.
@@ -49,7 +49,7 @@ vi.mock("@/modules/artist/hooks/useArtists", async () => {
   };
 });
 
-// WorkFormModal.tsx no longer uses useProjetos() (Task J) — the
+// WorkFormModal.tsx no longer uses useProjects() (Task J) — the
 // "Vincular a Projeto Concluído" picker and the resolution of the project's linked artist now
 // go through storage.listPaged/findById directly.
 vi.mock("@/shared/lib/storage", async () => {
@@ -60,7 +60,7 @@ vi.mock("@/shared/lib/storage", async () => {
       ...actual.storage,
       findById: vi.fn(async (table: string, id: string) => {
         // Task J: an artist "outside the cap" — only reachable by a direct GET /artists/:id
-        // (it would never be among the first 50 of useArtistas()).
+        // (it would never be among the first 50 of useArtists()).
         if (table === "artists" && id === "art-99") {
           return { id: "art-99", stage_name: "Artista Fora Do Cap" };
         }
@@ -272,7 +272,7 @@ describe("WorkFormModal edit mode", () => {
   // Task J — Lookup Gap Zero: proves that the
   // "Vincular a Projeto Concluído" picker searches via storage.listPaged (server-side) and that the autofill of the
   // linked project's artist resolves via storage.findById by direct ID,
-  // never scanning the capped array of useArtistas() (mocked empty above).
+  // never scanning the capped array of useArtists() (mocked empty above).
   it("resolves the linked project's artist via storage.findById when linking a project", async () => {
     renderWithProviders(
       <WorkFormModal

@@ -21,7 +21,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { PostHogService } from '../analytics/posthog.service';
 import { DOMAIN_EVENTS } from '../events/events.service';
 import {
@@ -47,7 +47,7 @@ const KNOWN_TRACKING_MAP: Record<string, string> = {
 export class AnalyticsTrackingAutomation {
   constructor(
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly postHog: PostHogService,
   ) {}
 

@@ -61,7 +61,7 @@ interface WizardMeta {
    * template's "currency" manifest variable (if any) was serialized into
    * the wizardBlob/notes JSON only, so the value stayed unset for every
    * contract created via this flow. That silently fed contracts.service.ts's
-   * CONTRACT_SIGNED handler a `contractValor = 0` for the provisional
+   * CONTRACT_SIGNED handler a `contractAmount = 0` for the provisional
    * revenue transaction (not just a missing KPI -- a wrong financial
    * record). String here (matches every other money-typed input in this
    * file, e.g. the "currency" manifest-variable case below); parsed to a

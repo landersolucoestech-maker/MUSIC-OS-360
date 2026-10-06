@@ -27,7 +27,7 @@ interface Props {
   totalEcadReports: number;
 }
 
-export function RightsKPICards({ total, completed, pending, divergences, matchRate, receivedEcadAmount, totalEcadReports }: Props) {
+export function RightsKpiCards({ total, completed, pending, divergences, matchRate, receivedEcadAmount, totalEcadReports }: Props) {
   const kpis: KPI[] = [
     { label: "Detecções",     value: fmtNum(total),         subvalue: "conteúdo monitorado",        icon: Radio,         accent: "primary" },
     { label: "Concluídas",    value: fmtNum(completed),    subvalue: `${total > 0 ? Math.round((completed / total) * 100) : 0}% do total`, icon: CheckCircle, accent: "success" },

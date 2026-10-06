@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { FinancialClassificationAutomation } from './financial-classification.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Boundary mocks (DB / SkillRunService / AIService) ──────────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AiService) ──────────────────────────
 
 function makeSkillRun() {
   return {

@@ -108,7 +108,7 @@ export default function Tasks() {
   // Real registries powering the music project / artist / company picker.
   // The `targetName` field stores the NAME (not the id) and is filtered client-side
   // (searchable: true in the FieldDef) — which is why it uses fetchAllLabels (real
-  // pagination, no cap) instead of useArtistas()/useClientes() (capped at 50 per tenant).
+  // pagination, no cap) instead of useArtists()/useClients() (capped at 50 per tenant).
   const { data: artistNameOptions = [] } = useQuery({
     queryKey: ["marketing-task-target-names", "artists"],
     queryFn: () => fetchAllLabels("artists", (a) => a.stage_name as string | undefined),

@@ -15,7 +15,7 @@ import { MarketingTasksService } from './marketing-tasks.service';
 import { MarketingCampaignBuilderService } from './marketing-campaign-builder.service';
 import { MarketingAiSuggestionsController } from './marketing-ai-suggestions.controller';
 import { MarketingAiSuggestionsService } from './marketing-ai-suggestions.service';
-import { AIModule } from '../ai/ai.module';
+import { AiModule } from '../ai/ai.module';
 import { IntegrationsModule } from '../integrations/integrations.module';
 import { CampaignBuilderInsightsAutomation } from '../../core/automation/campaign-builder-insights.automation';
 import { SeoAuditAutomation } from '../../core/automation/seo-audit.automation';
@@ -23,7 +23,7 @@ import { PostizAutomation } from '../../core/automation/postiz.automation';
 import { CopywritingAutomation } from '../../core/automation/copywriting.automation';
 
 @Module({
-  imports: [AIModule, IntegrationsModule],
+  imports: [AiModule, IntegrationsModule],
   controllers: [
     MarketingProjectsController,
     MarketingStrategyController,

@@ -111,7 +111,7 @@ export class PostHogService implements OnModuleDestroy {
 
   // ─── Domain events ───────────────────────────────────────────────────────────
 
-  trackAIUsage(userId: string, tenantId: string, skill: string, provider: string, costUsd: number): void {
+  trackAiUsage(userId: string, tenantId: string, skill: string, provider: string, costUsd: number): void {
     this.capture({ userId, tenantId, event: 'ai_usage', properties: { skill, provider, cost_usd: costUsd } });
   }
 

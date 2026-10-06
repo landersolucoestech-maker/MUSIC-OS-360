@@ -111,11 +111,11 @@ activity_logs (
 
 ### Implementation
 ```
-// Both work simultaneously
-/artistas                         # Old module (keeps working)
+// Legacy paths are only redirects (apps/web/src/app/routes/legacy-redirects.tsx)
+/artistas                         # Legacy redirect -> /artists
 /workspace/artist/:id            # New workspace
 
-/lancamentos                      # Old module
+/lancamentos                      # Legacy redirect -> /releases
 /workspace/release/:id           # New workspace
 ```
 
@@ -395,7 +395,6 @@ Create a `/shared-workspace-components` folder with reusable components:
 - `WorkspaceMetrics`
 - `ActivityTimeline`
 - `WorkspaceTeamCard`
-- `WorkspaceContextualSidebar`
 - Etc...
 
 ### Rationale

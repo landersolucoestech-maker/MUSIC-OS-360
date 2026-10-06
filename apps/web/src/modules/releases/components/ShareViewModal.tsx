@@ -66,7 +66,7 @@ export function ShareViewModal({ open, onOpenChange, share }: ShareViewModalProp
 
   // DIRECT resolution by ID (GET /works/:id, GET /artists/:id) — does not depend
   // on the work/artist being among the first 50 loaded by
-  // useWorks()/useArtistas() without a filter (Task J).
+  // useWorks()/useArtists() without a filter (Task J).
   const { entity: linkedWork } = useEntityById<WorkWithRelations>("works", open ? str("work_id") || undefined : undefined);
   const { entity: artistResolvedWire } = useEntityById<ArtistWireRecord>("artists", open ? share?.artist_id ?? undefined : undefined);
   const artistResolved: Artist | undefined = artistResolvedWire ? wireToArtist(artistResolvedWire) : undefined;

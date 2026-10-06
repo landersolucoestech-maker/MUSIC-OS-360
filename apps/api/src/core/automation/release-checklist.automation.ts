@@ -23,7 +23,7 @@ import { DOMAIN_EVENTS } from '../events/events.service';
 import type { DomainEvent } from '../events/events.service';
 import type { ReleaseCreatedPayload } from '../events/domain-events.types';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import {
   RELEASE_CHECKLIST_SYSTEM_PROMPT,
   buildReleaseChecklistPrompt,
@@ -67,7 +67,7 @@ export class ReleaseChecklistAutomation {
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
     this.ds = ds ?? null;
@@ -147,8 +147,8 @@ export class ReleaseChecklistAutomation {
       artistName: release.artist_name?.trim() || 'Artista não identificado',
       releaseType: mapReleaseType(release.type),
       hasCover: release.cover_url != null,
-      hasISRC: flag('hasISRC'),
-      hasUPC: release.upc != null,
+      hasIsrc: flag('hasIsrc'),
+      hasUpc: release.upc != null,
       hasContracts: flag('hasContracts'),
       hasSplits: flag('hasSplits'),
       hasMarketingPlan: flag('hasMarketingPlan'),

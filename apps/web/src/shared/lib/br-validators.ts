@@ -5,7 +5,7 @@ export function onlyDigits(v: string | null | undefined): string {
   return String(v || "").replace(/\D/g, "");
 }
 
-export function isValidCPF(input: string | null | undefined): boolean {
+export function isValidCpf(input: string | null | undefined): boolean {
   const cpf = onlyDigits(input);
   if (cpf.length !== 11) return false;
   if (/^(\d)\1+$/.test(cpf)) return false;
@@ -21,7 +21,7 @@ export function isValidCPF(input: string | null | undefined): boolean {
   return dig2 === parseInt(cpf.charAt(10), 10);
 }
 
-export function isValidCNPJ(input: string | null | undefined): boolean {
+export function isValidCnpj(input: string | null | undefined): boolean {
   const cnpj = onlyDigits(input);
   if (cnpj.length !== 14) return false;
   if (/^(\d)\1+$/.test(cnpj)) return false;
@@ -40,12 +40,12 @@ export function isValidCNPJ(input: string | null | undefined): boolean {
 
 export function isValidCpfCnpj(input: string | null | undefined): boolean {
   const d = onlyDigits(input);
-  if (d.length === 11) return isValidCPF(d);
-  if (d.length === 14) return isValidCNPJ(d);
+  if (d.length === 11) return isValidCpf(d);
+  if (d.length === 14) return isValidCnpj(d);
   return false;
 }
 
-export function isValidCEP(input: string | null | undefined): boolean {
+export function isValidCep(input: string | null | undefined): boolean {
   return onlyDigits(input).length === 8;
 }
 
@@ -61,7 +61,7 @@ export function formatCpfCnpj(input: string | null | undefined): string {
   return String(input || "");
 }
 
-export function formatCEP(input: string | null | undefined): string {
+export function formatCep(input: string | null | undefined): string {
   const d = onlyDigits(input);
   if (d.length === 8) return d.replace(/(\d{5})(\d{3})/, "$1-$2");
   return String(input || "");

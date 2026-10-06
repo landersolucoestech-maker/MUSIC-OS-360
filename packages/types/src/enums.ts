@@ -96,7 +96,7 @@ export enum ArtistRegistrationStatus {
 /**
  * ArtistRelationshipType — classification of the artist's contractual link
  * (never persisted; computed at runtime from `contracts.exclusive`
- * + the active contract status — see `ArtistsService.vinculoStats`). Single
+ * + the active contract status — see `ArtistsService.relationshipStats`). Single
  * source: previously duplicated as a loose PT union type in 6 places (backend
  * service x3, DTO, and frontend types/labels x2).
  */
@@ -556,7 +556,7 @@ export enum SupportTicketPriority {
 
 // ─── AI Jobs ─────────────────────────────────────────────────────────────────
 
-export enum AIJobStatus {
+export enum AiJobStatus {
   PENDING    = "pending",
   PROCESSING = "processing",
   COMPLETED  = "completed",

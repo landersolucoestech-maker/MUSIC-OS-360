@@ -4,7 +4,7 @@ import { useMetrics } from "@/modules/dashboard/hooks/useMetrics";
 
 /**
  * Task J — `artistsMetrics.withContract`/`.active` were computed via
- * `artistas.filter(...).length` over useArtistas() (capped at 50/tenant).
+ * `artistas.filter(...).length` over useArtists() (capped at 50/tenant).
  * This test proves that, with the dashboard aggregate available, the KPI uses
  * `artists_by_status` (real COUNT in the database) — not `artistas.length` — and therefore
  * reflects the true total even when `artistas` only loaded the

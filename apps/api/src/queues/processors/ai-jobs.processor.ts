@@ -2,7 +2,7 @@
  * queues/processors/ai-jobs.processor.ts
  *
  * BullMQ processor for the "ai-jobs" queue.
- * Runs AI completions (OpenAI / Claude / Gemini via AIService),
+ * Runs AI completions (OpenAI / Claude / Gemini via AiService),
  * persists the result in the ai_jobs table and emits it via WebSocket.
  */
 
@@ -10,13 +10,13 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Injectable, Logger }    from '@nestjs/common';
 import { Job }                   from 'bullmq';
 import { QUEUE_NAMES }           from '../queue.constants';
-import { AIService, AICompletionOptions } from '../../modules/ai/ai.service';
+import { AiService, AiCompletionOptions } from '../../modules/ai/ai.service';
 import { RealtimeService }       from '../../core/realtime/realtime.service';
 import { DatabaseContextService } from '../../database/database-context.service';
 
 // ─── Payload ──────────────────────────────────────────────────────────────────
 
-export interface AIJobPayload extends AICompletionOptions {
+export interface AiJobPayload extends AiCompletionOptions {
   /** unique jobId for deduplication — optional */
   jobRef?: string;
 }
@@ -25,16 +25,16 @@ export interface AIJobPayload extends AICompletionOptions {
 
 @Processor(QUEUE_NAMES.AI_JOBS)
 @Injectable()
-export class AIJobsProcessor extends WorkerHost {
-  private readonly logger = new Logger(AIJobsProcessor.name);
+export class AiJobsProcessor extends WorkerHost {
+  private readonly logger = new Logger(AiJobsProcessor.name);
 
   constructor(
-    private readonly ai:        AIService,
+    private readonly ai:        AiService,
     private readonly wsGateway: RealtimeService,
     private readonly dbContext: DatabaseContextService,
   ) { super(); }
 
-  async process(job: Job<AIJobPayload>): Promise<void> {
+  async process(job: Job<AiJobPayload>): Promise<void> {
     const d = job.data;
     this.logger.log(
       `[ai-jobs] job="${job.name}" id=${job.id} skill=${d.skill} userId=${d.userId}`,
@@ -49,11 +49,11 @@ export class AIJobsProcessor extends WorkerHost {
       return;
     }
 
-    let result: Awaited<ReturnType<AIService['complete']>>;
+    let result: Awaited<ReturnType<AiService['complete']>>;
     const startMs = Date.now();
 
     try {
-      // find-657093f0: AIService persists to ai_jobs (a tenant-scoped table)
+      // find-657093f0: AiService persists to ai_jobs (a tenant-scoped table)
       // via a repo captured at construction; runInTenantContext binds the ALS
       // store so that repo re-resolves through the tenant-scoped connection
       // for the duration of this call, same as notifications.processor.ts.

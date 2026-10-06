@@ -6,7 +6,7 @@
  * event registry (apps/api/src/core/events/events.service.ts DOMAIN_EVENTS,
  * already 100% captured in `domain_event_log` via UniversalEventLogHandler, a
  * real, always-on '**' wildcard listener) against the REAL tracking methods
- * already implemented in PostHogService (trackAIUsage/trackIntegrationConnected/
+ * already implemented in PostHogService (trackAiUsage/trackIntegrationConnected/
  * trackContractSigned/trackReleaseCreated) — which exist but are NEVER called
  * by any other service (confirmed by a repo-wide grep).
  *

@@ -51,7 +51,7 @@ export type LeadInteraction = {
   actor?: string;
 };
 
-export type LeadInternalCRMData = {
+export type LeadInternalCrmData = {
   responsiblePerson?: string;
   priority?: string;
   temperature?: string;
@@ -81,7 +81,7 @@ export type Lead = {
   clientType: LeadClientType;
   serviceType: LeadServiceType;
   servicePayload: Record<string, unknown>;
-  crmInternalData: LeadInternalCRMData;
+  crmInternalData: LeadInternalCrmData;
   uploads: LeadUpload[];
   createdAt: string;
   updatedAt: string;

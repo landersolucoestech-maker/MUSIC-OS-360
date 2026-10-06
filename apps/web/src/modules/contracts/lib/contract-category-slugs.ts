@@ -2,11 +2,13 @@
  * Platform-owned contract category slugs — web mirror of
  * apps/api/src/modules/contracts/contract-category-slugs.ts.
  *
- * The API now WRITES the canonical English slug for these six platform-seeded
+ * The API now WRITES the canonical English slug for these platform-seeded
  * categories and keeps READING the legacy Portuguese spelling. The category
  * registry still lives in the browser (localStorage) and seeds the legacy
  * values, so every web reader must treat both spellings as the same category.
  * Tenant-created slugs are never rewritten.
+ * This map mirrors LEGACY_CONTRACT_CATEGORY_SLUGS of the API (it must equal the backfill). The API-only READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS
+ * (`exclusivo`, a spelling the platform never wrote) is deliberately not mirrored: it only widens API list filters.
  *
  * Removal condition for LEGACY_CONTRACT_CATEGORY_SLUGS: see
  * docs/runbooks/staging-to-production.md#residue-census-of-the-contract-vocabulary-backfills-read-only (no row / registry still holds a legacy slug).

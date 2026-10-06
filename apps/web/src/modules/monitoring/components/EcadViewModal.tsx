@@ -18,7 +18,7 @@ export interface EcadReportRow extends EcadReport {
   work?: CatalogWorkRef;
 }
 
-interface ECADViewModalProps {
+interface EcadViewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   report?: EcadReportRow | null;
@@ -28,7 +28,7 @@ const fmtBRL = (n: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n);
 
 
-export function ECADViewModal({ open, onOpenChange, report }: ECADViewModalProps) {
+export function EcadViewModal({ open, onOpenChange, report }: EcadViewModalProps) {
   if (!report) return null;
 
   const getStatusBadge = (status: string) => {

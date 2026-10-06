@@ -24,14 +24,14 @@
  */
 
 import { Logger } from '@nestjs/common';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { SkillRunService } from '../skills/skill-run.service';
 
 const logger = new Logger('OnDemandSkill');
 
 export interface OnDemandSkillDeps {
   skillRun: SkillRunService;
-  ai: AIService;
+  ai: AiService;
 }
 
 export interface OnDemandSkillValidation {

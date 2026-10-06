@@ -184,7 +184,7 @@ export const ARTIST_FORM_SECTIONS: ArtistFormSection[] = [
     fields: [
       {
         id: "photoUrl", label: "Imagem do Artista", type: "file", fullWidth: true,
-        file: { folder: "artists/fotos", accept: "image/*", maxSize: 5, circular: true },
+        file: { folder: "artists/photos", accept: "image/*", maxSize: 5, circular: true },
       },
       {
         id: "stageName", label: "Nome Artístico", type: "text", required: true,

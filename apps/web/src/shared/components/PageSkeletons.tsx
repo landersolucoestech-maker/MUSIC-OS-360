@@ -156,7 +156,7 @@ export function DashboardSkeleton() {
   );
 }
 
-export function CRMSkeleton() {
+export function CrmSkeleton() {
   return (
     <MainLayout>
       <div className="p-1 space-y-4 py-0">

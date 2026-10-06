@@ -5,11 +5,11 @@ import { ConversationsService }     from './conversations.service';
 import { MusicChatAutomationService } from './musicchat-automation.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { WhatsAppModule } from '../integrations/whatsapp/whatsapp.module';
-import { AIModule } from '../ai/ai.module';
+import { AiModule } from '../ai/ai.module';
 import { MusicChatAutomationInsightsAutomation } from '../../core/automation/musicchat-automation-insights.automation';
 
 @Module({
-  imports:     [NotificationsModule, WhatsAppModule, AIModule],
+  imports:     [NotificationsModule, WhatsAppModule, AiModule],
   controllers: [ConversationsController, MusicChatAutomationController],
   providers:   [ConversationsService, MusicChatAutomationService, MusicChatAutomationInsightsAutomation],
   exports:     [ConversationsService, MusicChatAutomationService],

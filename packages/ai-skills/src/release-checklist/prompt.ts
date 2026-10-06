@@ -70,8 +70,8 @@ export function buildReleaseChecklistPrompt(input: ReleaseChecklistInput): strin
 
   lines.push("Situação atual declarada (booleanos do sistema):");
   lines.push(`- Capa (artwork) pronta: ${yn(input.hasCover)}.`);
-  lines.push(`- ISRC emitido: ${yn(input.hasISRC)}.`);
-  lines.push(`- UPC emitido: ${yn(input.hasUPC)}.`);
+  lines.push(`- ISRC emitido: ${yn(input.hasIsrc)}.`);
+  lines.push(`- UPC emitido: ${yn(input.hasUpc)}.`);
   lines.push(`- Contratos assinados: ${yn(input.hasContracts)}.`);
   lines.push(`- Splits acordados/documentados: ${yn(input.hasSplits)}.`);
   lines.push(`- Plano de marketing definido: ${yn(input.hasMarketingPlan)}.`);

@@ -24,7 +24,7 @@ describe('RebuildLeaveRequestsInCanonicalFormOrder20260719000025', () => {
     expect(employeeIdx).toBeGreaterThan(legacyEmployeeIdx);
   });
 
-  it('segue a ordem visual do form: tipo -> data_inicio -> data_fim -> dias_totais -> status -> aprovado_por -> observacoes', () => {
+  it('follows the visual form order: tipo -> data_inicio -> data_fim -> dias_totais -> status -> aprovado_por -> observacoes', () => {
     const b = block();
     const typeIdx = b.search(/\btipo\s+varchar/);
     const startIdx = b.indexOf('data_inicio');

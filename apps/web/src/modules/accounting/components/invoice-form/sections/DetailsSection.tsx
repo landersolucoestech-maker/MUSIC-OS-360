@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { DatePickerField } from "@/shared/ui/date-picker-field";
 import { AsyncEntityCombobox } from "@/shared/components/AsyncEntityCombobox";
-import { isValidCpfCnpj, formatCpfCnpj, formatCEP } from "@/shared/lib/br-validators";
+import { isValidCpfCnpj, formatCpfCnpj, formatCep } from "@/shared/lib/br-validators";
 import { format, parseISO } from "date-fns";
 import type { InvoiceFormData, InvoiceFormRules } from "@/modules/accounting/components/invoice-form/rules/invoice-form-rules";
 import type { InvoiceValidationErrors } from "@/modules/accounting/components/invoice-form/validation/invoice-form-validation";
@@ -45,7 +45,7 @@ export interface CompanyProfileSummary {
 
 /** "street, number, city, state, zip code": the company address line of the provider card. */
 export function formatCompanyAddress(settings: CompanyProfileSummary): string {
-  return [settings.street, settings.number, settings.city, settings.state, settings.zipCode && formatCEP(settings.zipCode)]
+  return [settings.street, settings.number, settings.city, settings.state, settings.zipCode && formatCep(settings.zipCode)]
     .filter(Boolean)
     .join(", ") || "—";
 }
@@ -379,7 +379,7 @@ export function DetailsSection({
             <Input
               value={formData.tomador_cep}
               onChange={(e) => updateField("tomador_cep", e.target.value)}
-              onBlur={(e) => updateField("tomador_cep", formatCEP(e.target.value))}
+              onBlur={(e) => updateField("tomador_cep", formatCep(e.target.value))}
               placeholder="00000-000"
               disabled={disabled}
               aria-invalid={!!validationErrors.tomador_cep}

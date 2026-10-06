@@ -14,7 +14,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildCampaignTasksInCanonicalFormOrder20260719000022', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('segue a ordem do DTO: title -> description -> status -> priority -> assigned_to -> due_date -> completed_at', () => {
+  it('follows the DTO order: title -> description -> status -> priority -> assigned_to -> due_date -> completed_at', () => {
     const b = block();
     const titleIdx = b.indexOf('title');
     const descIdx = b.indexOf('description');

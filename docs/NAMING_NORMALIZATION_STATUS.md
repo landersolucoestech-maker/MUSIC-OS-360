@@ -31,7 +31,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-023 | Share party role / percentage / holder identity | done | DONE | no |
 | NC-024 | Invoice due date (internal nota fiscal) | done | DONE | no |
 | NC-025 | Invoice due date (Stripe SaaS billing) | done | DONE | no |
-| NC-026 | Invoice payer tax ID (CPF or CNPJ) | done | DONE | no |
+| NC-026 | Invoice payer tax ID (CPF or CNPJ) | proposed | MIGRATION_REQUIRED | no |
 | NC-027 | Works registry-field pairs (`idioma`→`language`, `outros_titulos`→`alternative_titles`, `criada_por_ia`+`ia_harmonia`/`ia_melodia`/`ia_letra`→`ai_used`/`ai_tools`/`ai_prompts`, `instrumental`→`is_instrumental`(derived only, column stays varchar 'sim'/'nao' form field — see below), `duration_text`→`duration_seconds`, `letra_completa`→`lyrics`) | done | DONE | no |
 | NC-028 | Phonograms registry-field pairs (`gravacao_original`→`recording_date`, `data_lancamento`→`release_date`, `duracao_min`+`duracao_seg`→`duration_seconds`, `pais_origem`→`country_of_recording`) | done | DONE | no |
 | NC-029 | Phonograms `arquivo_audio` (jsonb, display metadata: name/size/url) vs `audio_file_id` (uuid, FK-shaped, indexed) | done | DONE | no |
@@ -104,5 +104,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-048 | Transaction category/subcategory slug vocabulary (platform-owned options) | done | DONE | no |
 | NC-049 | Lead interaction timestamp | done | DONE | no |
 
-Concepts: 97. Renames: 0. Exceptions: 4546. Blockers: 37.
-By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, done/DONE 85, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.
+Concepts: 97. Renames: 0. Exceptions: 4547. Blockers: 42.
+By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, done/DONE 84, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

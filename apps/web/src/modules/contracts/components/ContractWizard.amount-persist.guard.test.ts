@@ -6,7 +6,7 @@
  * contract-creation flow had no field to set the contract's canonical value
  * at all -- money typed into a template's "currency" manifest variable (if
  * any) was serialized only into the wizardBlob/notes JSON. That silently fed
- * contracts.service.ts's CONTRACT_SIGNED handler `contractValor = 0` for the
+ * contract-events.handler.ts CONTRACT_SIGNED handler `contractAmount = 0` for the
  * provisional revenue transaction (a wrong financial record, not just a
  * missing "Valor Total" KPI), and every contract from the primary flow was
  * excluded from that KPI. This test fails if the regression returns.

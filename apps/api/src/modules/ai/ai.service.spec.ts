@@ -1,4 +1,4 @@
-import { AIService } from './ai.service';
+import { AiService } from './ai.service';
 import { ForbiddenException } from '@nestjs/common';
 
 // find-62e6b1b1: generateMarketingSuggestion must give the model a fixed,
@@ -6,11 +6,11 @@ import { ForbiddenException } from '@nestjs/common';
 // user-controlled field -- none of prompt/lyricText/audience/channels/
 // targetName may ever end up inside the systemPrompt sent to the LLM
 // provider, however adversarial their content is.
-describe('AIService.generateMarketingSuggestion — prompt-injection boundary', () => {
+describe('AiService.generateMarketingSuggestion — prompt-injection boundary', () => {
   const config = { get: jest.fn().mockReturnValue(undefined) };
 
   function buildService() {
-    return new AIService(config as never, null);
+    return new AiService(config as never, null);
   }
 
   it('sends a fixed systemPrompt containing the JSON-only task framing, never derived from user input', async () => {
@@ -102,7 +102,7 @@ describe('AIService.generateMarketingSuggestion — prompt-injection boundary', 
 // cost. Fixed by serializing check+record per tenant inside a
 // transaction-scoped Postgres advisory lock (same pattern as
 // leads/handlers/lead-events.handler.ts).
-describe('AIService.complete — monthly-budget race (find-ff83efc6)', () => {
+describe('AiService.complete — monthly-budget race (find-ff83efc6)', () => {
   const config = { get: jest.fn().mockReturnValue(undefined) };
 
   function buildQueryBuilder(total: string) {
@@ -128,7 +128,7 @@ describe('AIService.complete — monthly-budget race (find-ff83efc6)', () => {
         manager: { transaction: jest.fn((fn: (m: unknown) => unknown) => fn(manager)) },
       })),
     };
-    const service = new AIService(config as never, ds as never);
+    const service = new AiService(config as never, ds as never);
 
     await expect(service.complete({ tenantId: 't1', userId: 'u1', skill: 'x', prompt: 'hi' }))
       .rejects.toThrow('No AI provider configured'); // no API keys configured in this test -- proves we got PAST the lock/limit check
@@ -144,7 +144,7 @@ describe('AIService.complete — monthly-budget race (find-ff83efc6)', () => {
         manager: { transaction: jest.fn((fn: (m: unknown) => unknown) => fn(manager)) },
       })),
     };
-    const service = new AIService(config as never, ds as never);
+    const service = new AiService(config as never, ds as never);
 
     await expect(service.complete({ tenantId: 't1', userId: 'u1', skill: 'x', prompt: 'hi' }))
       .rejects.toThrow(ForbiddenException);

@@ -337,7 +337,7 @@ export function ShareFormModal({ open, onOpenChange, share, initialReleaseId, on
               <div className="space-y-2">
                 <Label>Artista / Projeto vinculado à empresa</Label>
                 {/* Task J: server-side search (AsyncEntityCombobox) — it used to fill
-                    the Select with useArtistas() without a filter, truncated to the first
+                    the Select with useArtists() without a filter, truncated to the first
                     50 artists of the tenant. */}
                 <AsyncEntityCombobox<ArtistWireRecord>
                   table="artists"

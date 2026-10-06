@@ -46,7 +46,7 @@ describe("distributor id dual-read (legacy `outros` -> canonical `other`)", () =
   });
 
   it("no web component hardcodes the legacy id", () => {
-    for (const file of ["components/ArtistFormModal.tsx", "components/TeamContactsCRM.tsx", "forms/artist-form.definition.ts"]) {
+    for (const file of ["components/ArtistFormModal.tsx", "components/TeamContactsCrm.tsx", "forms/artist-form.definition.ts"]) {
       expect(readFileSync(join(__dirname, "..", file), "utf8")).not.toMatch(/["']outros["']/);
     }
   });

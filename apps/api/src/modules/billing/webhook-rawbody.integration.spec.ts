@@ -63,7 +63,7 @@ function makeAppWithWebhookRoute(bodyParser: express.RequestHandler) {
   return app;
 }
 
-describe('Stripe webhook rawBody wiring (regressao do fix b728b133)', () => {
+describe('Stripe webhook rawBody wiring (regression for fix b728b133)', () => {
   it('with the real main.ts parser, a valid Stripe signature is accepted (200)', async () => {
     const app = makeAppWithWebhookRoute(jsonWithRawBody());
     const { payload, header } = makeSignedPayload();

@@ -174,7 +174,7 @@ describe('LeadsService.update — optimistic concurrency (Task K)', () => {
  * `tenant_billing_state.status = 'suspended'` that is still `active = true`
  * can still successfully submit public artist applications and create leads.
  */
-describe('LeadsService.submitPublicArtistApplication — tenant suspenso por billing (HIGH finding)', () => {
+describe('LeadsService.submitPublicArtistApplication — billing-suspended tenant (HIGH finding)', () => {
   const SUSPENDED_BUT_ACTIVE_TENANT = {
     id: 'tenant-suspended-1',
     org_id: 'org-1',

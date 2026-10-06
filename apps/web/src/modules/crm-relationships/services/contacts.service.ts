@@ -16,7 +16,7 @@
  *      ONLY in `cpf_cnpj` (the API stores it encrypted).
  *   2. Form values (ContactFormModal) ↔ `Contact` — `contactFormToContactInput`,
  *      `contactToFormValues` — used by the CRM > Contacts panel, the Leads
- *      page, MusicChat and the artist team section (TeamContactsCRM).
+ *      page, MusicChat and the artist team section (TeamContactsCrm).
  *
  * `attachments` are the server-side `clients.attachments` list (read only
  * here); files are managed through /clients/:id/attachments.

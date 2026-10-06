@@ -1,4 +1,4 @@
-import { isValidCpfCnpj, isValidCEP, isValidEmail } from "@/shared/lib/br-validators";
+import { isValidCpfCnpj, isValidCep, isValidEmail } from "@/shared/lib/br-validators";
 import type { InvoiceFormData } from "@/modules/accounting/components/invoice-form/rules/invoice-form-rules";
 
 export type InvoiceValidationErrors = Partial<Record<keyof InvoiceFormData, string>>;
@@ -20,7 +20,7 @@ export function validateInvoiceForm(f: InvoiceFormData): InvoiceValidationErrors
     errors.tomador_cnpj = "CNPJ/CPF inválido (dígito verificador não confere)";
   }
 
-  if (f.tomador_cep && !isValidCEP(f.tomador_cep)) {
+  if (f.tomador_cep && !isValidCep(f.tomador_cep)) {
     errors.tomador_cep = "CEP inválido";
   }
 

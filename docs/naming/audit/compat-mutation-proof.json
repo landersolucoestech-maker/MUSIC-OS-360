@@ -285,9 +285,10 @@
   {
    "file": "apps/api/src/core/automation/copywriting.automation.ts",
    "test": "apps/api/src/core/automation/copywriting.automation.legacy-compat.spec.ts",
-   "fileSha256": "878d0d2ec609153878b59795fc1023837045be1918743e96da5d8b6f57ded2dc",
+   "fileSha256": "63f7ee3f1b79f86f0afb3849fb570785b07040c15dc927d6811675ee21c29d1d",
    "testSha256": "f4e6660651207030ee0929362ddcb8e872ad46a886d31bed83ff767aa66b4e7e",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -297,11 +298,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": true,
    "census": {
     "version": 1,
     "names": [
@@ -312,12 +308,18 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45"
+   "configSha256": "7101713c476c37e150107c1fa6e3b6cd33b965030ef5152c910565085250ba45",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": true
   },
   {
    "file": "apps/api/src/core/automation/project-planning.automation.ts",
    "test": "apps/api/src/core/automation/project-planning.default-departments.spec.ts",
-   "fileSha256": "b2b15296425ed1e5b48a514b7a6f6275e180bdecaef4452d932a8add150ac550",
+   "fileSha256": "39a80e9c814c8191473d06d826d23e7c20d298bbff171744fe189375e6098a57",
    "testSha256": "a9bc185087c11dbc9ef1439a8a5dfab2aea7dc013ca46bd830364e8f5a256ffc",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -936,7 +938,7 @@
   {
    "file": "apps/api/src/database/entities.ts",
    "test": "apps/api/src/modules/invoices/invoice-entity-fiscal-document-type.spec.ts",
-   "fileSha256": "5e81ab9fc8b784465c5fd37b0e13b19db23fb345e73bfaae5687c8f0790837dd",
+   "fileSha256": "96a04e7060b4fb0aff8311553d291ce244b830bd65659a70a1415cac92a9a429",
    "testSha256": "d5c40297c844212e49cb67c147cc34c7d76e9c81e94613523ce2fb48bed47b98",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -2467,7 +2469,7 @@
   {
    "file": "apps/api/src/modules/artists/artists.service.ts",
    "test": "apps/api/src/modules/artists/artist-deprecated-fields.contract.spec.ts",
-   "fileSha256": "cf300250063e9b3d1c2bcdd9fc372207fa361e353eb14117a61493b751854d64",
+   "fileSha256": "4e34356ff66caad65e077e7fa8df82609cb83e86bc4871e5ee73b11fb6ea906a",
    "testSha256": "9bca75e6de54dae24c0a0a5dc1a3690177423908e1c17bb75f771687371d7e80",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -11614,7 +11616,7 @@
   {
    "file": "apps/api/src/modules/reports/computed-fields/release-tracks.field.ts",
    "test": "apps/api/src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts",
-   "fileSha256": "ccdfcb726c74ca64518ae1a00bf5f863bbb11bf58be40be71be7e4e7db9ea74e",
+   "fileSha256": "347baa6e82d691fefbdfe70def21e770da778c5ad97994769049db13ebbae953",
    "testSha256": "c5a7a9b2c22d452fb76a0087b0b149a32d5a492c7cf969bab393dac6a717753b",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -17744,9 +17746,10 @@
   {
    "file": "apps/web/src/modules/accounting/utils/financialRules.utils.ts",
    "test": "apps/web/src/modules/accounting/utils/financialRules.utils.labels.test.ts",
-   "fileSha256": "48c8b597e22e5766e4f585525c62738d6a1d9ffda563a99d27e78b80872bc378",
+   "fileSha256": "901dc439f4366997d8e2e9ec6ca72761d371a96a818b6472540c50acbc6a8196",
    "testSha256": "7f93ae5637e76632460f13ff863f757628b40580be942d00bc83be628c5bf593",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -17822,11 +17825,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -17854,7 +17852,13 @@
      }
     ]
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/artist/components/ArtistVision360Modal.tsx",
@@ -17951,9 +17955,10 @@
   {
    "file": "apps/web/src/modules/artist/forms/artist-form.definition.ts",
    "test": "apps/web/src/modules/artist/forms/artist-form.definition.legacy-compat.test.ts",
-   "fileSha256": "f4be98872475046223428ec9e6098eceb53d078913e160b46848a96ff5d006f5",
+   "fileSha256": "bdd6545df97b6e8beaece7849b2596b95a73c45acedbea9d5d90efe81bb8697b",
    "testSha256": "acb90c5bf39a92f38214156830a83139753623276ccbe566f2c0a3bf754a5013",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -18005,11 +18010,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -18027,7 +18027,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/artist/lib/contract-type-filters.ts",
@@ -18118,8 +18124,9 @@
    "file": "apps/web/src/modules/artist/lib/distributor-id.ts",
    "test": "apps/web/src/modules/artist/lib/distributor-id.test.ts",
    "fileSha256": "f04121cc45d77262e8628c988467becaab541af790c052c293cca6e1b903dd60",
-   "testSha256": "e1aa8fdade6d305b98fe8195737555c8ad27821ec2f4f830f0724dbb2e494994",
+   "testSha256": "794d293c2bc50d14d3d2235ea3d5ad26d58633fc43b436fec7f61f750cefe9c5",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -18129,11 +18136,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -18144,7 +18146,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/artist/lib/revenue-nature.ts",
@@ -18514,9 +18522,10 @@
   {
    "file": "apps/web/src/modules/catalog/components/PhonogramFormModal.tsx",
    "test": "apps/web/src/modules/catalog/components/PhonogramFormModal.legacy-compat.test.tsx",
-   "fileSha256": "a10f8c54263b8d8d34cf838647676cb4b8537b91f174e82a75d927bb573c70b4",
+   "fileSha256": "7c4ff703d4e5f136685eb6a98e0209c922d37c2ed16b170d0cbc4b06a9d08e27",
    "testSha256": "3240a802897e504d1c69c8fafdd69e7de62f32c99fd7c79ac571ce942a649084",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -18874,83 +18883,79 @@
   {
    "file": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
    "test": "apps/web/src/modules/contracts/lib/contract-category-slugs.test.ts",
-   "fileSha256": "8bbc5bb70c75c87f30c42b7b97ffd4ce74540af1740c929bc495c3641e82dc39",
+   "fileSha256": "e701ccd33af3dc72d91d6c1e6c1fbd4576b5107e9b09806865dcbd98872b0fdf",
    "testSha256": "85f1dceef9b7be75737b67cef3ae274e40ea5609c39bb71385d6beb8600342c1",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 16,
+     "line": 18,
      "label": "cessao_direitos",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 23,
+     "line": 25,
      "label": "distribuicao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 18,
+     "line": 20,
      "label": "exclusividade",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 25,
+     "line": 27,
      "label": "gestao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 15,
+     "line": 17,
      "label": "gravacao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 24,
+     "line": 26,
      "label": "licenciamento",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 28,
+     "line": 30,
      "label": "outro",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 26,
+     "line": 28,
      "label": "outros",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 17,
+     "line": 19,
      "label": "producao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 19,
+     "line": 21,
      "label": "publicitario",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 20,
+     "line": 22,
      "label": "semantico",
      "outcome": "KILLED"
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -18971,7 +18976,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/contracts/lib/contract-category-slugs.ts",
@@ -23271,7 +23282,7 @@
   {
    "file": "apps/web/src/modules/settings/hooks/useOperationalSettings.ts",
    "test": "apps/web/src/modules/settings/hooks/useOperationalSettings.legacy-compat.test.ts",
-   "fileSha256": "2e26286645cb889e19224c97843b0ecc4e73d16f5435091a35fd2848393508a3",
+   "fileSha256": "30b143639771e8c3a537fd259dd92705ee5f3241c9a9fb0d375e168baf521040",
    "testSha256": "beceb52bc2af2701f83f1a95bd88258308d6c2653594e5b89e71bd705bb254c0",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -23312,9 +23323,10 @@
   {
    "file": "apps/web/src/modules/settings/hooks/useUserSettings.ts",
    "test": "apps/web/src/modules/settings/hooks/useUserSettings.legacy-keys.test.tsx",
-   "fileSha256": "552906c51a25a7bae04882b52d773a21b091dc097a3eed7b9de296e3854bb82f",
+   "fileSha256": "e59c98013b2e88c535277d1fa09f0df5a4c027749a596e0852baa285bd27d95a",
    "testSha256": "2f793058d89ad6709923402e49f613e5765f48c69af07b754da24c5aba3e59df",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
@@ -23372,11 +23384,6 @@
     }
    ],
    "legacyFirst": [],
-   "declarations": [],
-   "namesWithoutSite": [],
-   "exhaustive": true,
-   "inconclusive": 0,
-   "diagnosticsRelaxed": false,
    "census": {
     "version": 1,
     "names": [
@@ -23395,7 +23402,13 @@
     "unmutatedPtSites": [],
     "unmutatedNameSites": []
    },
-   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633"
+   "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
+   "declarations": [],
+   "namesWithoutSite": [],
+   "exhaustive": true,
+   "fallbackOperators": 1,
+   "inconclusive": 0,
+   "diagnosticsRelaxed": false
   },
   {
    "file": "apps/web/src/modules/settings/lib/operational-vocabulary.ts",
@@ -24462,8 +24475,8 @@
   {
    "file": "apps/web/src/shared/lib/masks.ts",
    "test": "apps/web/src/shared/lib/masks.postal-lookup.test.ts",
-   "fileSha256": "b45d7074866ef3286a00dbb43da8c55710fc4980f98a16a78bee9b89510109a0",
-   "testSha256": "6b7a32d695875c4612c4173923fedc305622b163d6fc84fac8c87970ce3c4145",
+   "fileSha256": "e5152b3d9e4ea798c90a0a9098f2d23f87d8f7eccb1d1f918b90de74167c4749",
+   "testSha256": "5fc6c8eda39e9f4c3d4af105bf3dfc5a7bcfde4d273d80b2d84d9c48d7dadb58",
    "verdict": "COMPILER_CHECKED",
    "operatorsVersion": 2,
    "mutations": [],
@@ -24471,8 +24484,8 @@
    "census": {
     "version": 1,
     "names": [
-     "ViaCEPResponse",
-     "fetchAddressByCEP"
+     "ViaCepResponse",
+     "fetchAddressByCep"
     ],
     "wildcard": false,
     "siteCount": 0,
@@ -24481,12 +24494,12 @@
    },
    "configSha256": "fc87bd6cfe7d11eb6508301af4a92a8f3c4d1aa85c30348acae8eeebb9681633",
    "declarations": [
-    "ViaCEPResponse",
-    "fetchAddressByCEP"
+    "ViaCepResponse",
+    "fetchAddressByCep"
    ],
    "namesWithoutSite": [
-    "ViaCEPResponse",
-    "fetchAddressByCEP"
+    "ViaCepResponse",
+    "fetchAddressByCep"
    ],
    "exhaustive": true,
    "fallbackOperators": 1,
@@ -24674,7 +24687,7 @@
   {
    "file": "packages/types/src/enums.ts",
    "test": "apps/api/src/common/compat/types-enums.legacy-compat.spec.ts",
-   "fileSha256": "b6a8c2702c25214243cfcad161cefe70221e3ba7aef87efa3c49471b5075fdbe",
+   "fileSha256": "08d719e070245133d02e8ff55becfa6f6e6fff2bc08d13da171a2c7c77b9198a",
    "testSha256": "52f1f68e10d1e134ccd2857ef0f9e1389985c29b5ee1e93d7b405bb603156413",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
@@ -24778,7 +24791,7 @@
   {
    "file": "packages/types/src/enums.ts",
    "test": "apps/api/src/core/rbac/english-role-alias.parity.spec.ts",
-   "fileSha256": "b6a8c2702c25214243cfcad161cefe70221e3ba7aef87efa3c49471b5075fdbe",
+   "fileSha256": "08d719e070245133d02e8ff55becfa6f6e6fff2bc08d13da171a2c7c77b9198a",
    "testSha256": "ec6ce371d52b008b7b61d066a8961320c173c1d6636466c609c6fb6a56bba484",
    "verdict": "PROVEN",
    "operatorsVersion": 2,

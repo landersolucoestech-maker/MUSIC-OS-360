@@ -12,7 +12,7 @@ const apiProvider: AiProvider = {
   id: "api",
   async generate(payload) {
     // POSTs to a dedicated endpoint whose JSON-only task framing is a FIXED
-    // systemPrompt set server-side (AIService.generateMarketingSuggestion) --
+    // systemPrompt set server-side (AiService.generateMarketingSuggestion) --
     // never the generic /ai/generate, which would require concatenating that
     // instruction into the same untrusted string as targetName/prompt/
     // lyricText/audience/channels, with no structural separation from

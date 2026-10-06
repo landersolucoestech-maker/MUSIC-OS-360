@@ -121,7 +121,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   );
 
   // Artist names per linked share — resolved directly by ID via storage.findById,
-  // never scanning useArtistas() without a filter (Task J).
+  // never scanning useArtists() without a filter (Task J).
   const shareArtistIds = useMemo(
     () => Array.from(new Set(shares.filter((s) => (s as Record<string, unknown>)["release_id"] === release?.id && s.artist_id).map((s) => s.artist_id as string))),
     [shares, release?.id],

@@ -9,8 +9,8 @@
  *
  * CURRENT STATE: transformations from/to MOCK_DATA.
  * FUTURE MIGRATION:
- *   - ECAD → useEcadArrecadacao / useEcadConciliacao (hooks)
- *   - UBC  → useUbcDistribuicao (hook)
+ *   - ECAD → useEcadCollections / useEcadReconciliation (hooks)
+ *   - UBC  → useUbcDistribution (hook)
  *   - Abramus → useAbramus (existing working hook)
  *   The shapes of this adapter stay stable during the migration.
  *
@@ -87,7 +87,7 @@ const STATUS_LABELS: Record<RightsRecord["status"], string> = {
 
 /**
  * Converts a RightsRecord (external API) into a MonitoringRightsEntry (UI).
- * FUTURE MIGRATION: receive real data from useEcadArrecadacao / useUbcDistribuicao.
+ * FUTURE MIGRATION: receive real data from useEcadCollections / useUbcDistribution.
  */
 export function fromRightsRecord(record: RightsRecord): MonitoringRightsEntry {
   const grossAmountBrl = (record.gross_amount_cents / 100).toLocaleString("pt-BR", {

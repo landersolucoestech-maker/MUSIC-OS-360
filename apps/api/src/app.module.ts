@@ -66,7 +66,7 @@ import { SupportRequestsModule }   from './modules/support-requests/support-requ
 import { KnowledgeBaseModule }     from './modules/knowledge-base/knowledge-base.module';
 import { AdminUsersModule }        from './modules/admin-users/admin-users.module';
 import { IntegrationsModule }      from './modules/integrations/integrations.module';
-import { AIModule }                from './modules/ai/ai.module';
+import { AiModule }                from './modules/ai/ai.module';
 import { BillingModule }           from './modules/billing/billing.module';
 import { ArtistGoalsModule }       from './modules/artist-goals/artist-goals.module';
 import { ContentDetectionsModule } from './modules/content-detections/content-detections.module';
@@ -184,7 +184,7 @@ import { RateLimitGuard }  from './core/guards/rate-limit.guard';
     IntegrationsModule,
 
     // ── PHASE 8 modules — AI Gateway ────────────────────────────────────────────
-    AIModule,
+    AiModule,
 
     // ── PHASE 6 modules — Stripe Billing ────────────────────────────────────────
     BillingModule,

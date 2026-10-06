@@ -20,7 +20,7 @@ import { DOMAIN_EVENTS } from '../events/events.service';
 import type { DomainEvent } from '../events/events.service';
 import type { LeadCreatedPayload } from '../events/domain-events.types';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import {
   CRM_FOLLOWUP_SYSTEM_PROMPT,
   buildCrmFollowupPrompt,
@@ -74,7 +74,7 @@ export class CrmFollowupAutomation {
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
     this.ds = ds ?? null;

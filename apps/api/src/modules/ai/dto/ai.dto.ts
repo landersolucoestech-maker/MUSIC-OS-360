@@ -3,7 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { canonicalMarketingAiKind, canonicalMarketingTarget } from '../../marketing/marketing-vocabulary';
 
-export class AICompletionDto {
+export class AiCompletionDto {
   @ApiProperty({ description: 'Skill / feature context (biography, campaign_copy, ...)' })
   @IsString() @IsNotEmpty()
   skill!: string;
@@ -62,7 +62,7 @@ export class AnalyzeContractDto {
 /**
  * Marketing suggestion generation. Every field here is untrusted
  * tenant/user-controlled content -- the JSON-only task framing lives
- * exclusively in AIService.generateMarketingSuggestion's fixed, server-side
+ * exclusively in AiService.generateMarketingSuggestion's fixed, server-side
  * systemPrompt (never client-suppliable through this endpoint, unlike
  * /ai/generate's systemPrompt), so it can never be overridden by anything
  * submitted here (find-62e6b1b1).

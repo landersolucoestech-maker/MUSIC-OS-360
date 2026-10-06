@@ -18,7 +18,7 @@ import {
 import type { QueryTransactionDto } from './dto/query-transaction.dto';
 import { canonicalTransactionType, TRANSACTION_QUERY_DEPRECATED_FIELDS } from './transaction-legacy-fields';
 import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
-import type { TransactionDetailsDTO } from './dto/transaction-details.dto';
+import type { TransactionDetailsDto } from './dto/transaction-details.dto';
 import type {
   CreateTransactionDto,
   UpdateTransactionDto,
@@ -121,7 +121,7 @@ function buildPersistencePayload(
   return payload;
 }
 
-export function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDTO {
+export function toTransactionDetails(entity: TransactionEntity): TransactionDetailsDto {
   const metadata = (entity.metadata ?? {}) as AnyRecord;
   const amount = toNumber(entity.amount);
   const attachments = Array.isArray(metadata.attachments)
@@ -274,7 +274,7 @@ export class TransactionsService {
     return result;
   }
 
-  async findById(tenantId: string, id: string): Promise<TransactionDetailsDTO> {
+  async findById(tenantId: string, id: string): Promise<TransactionDetailsDto> {
     return toTransactionDetails(await this.findEntityById(tenantId, id));
   }
 

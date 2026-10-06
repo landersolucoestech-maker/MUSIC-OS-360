@@ -76,7 +76,7 @@ import type { LeaveRequest } from "@/modules/hr/hooks/useLeaveRequests";
 import {
   useEmployeesPaginated, useEmployeesStats,
   usePayrollPaginated, useLeaveRequestsPaginated,
-} from "@/modules/hr/hooks/useHRPaginated";
+} from "@/modules/hr/hooks/useHrPaginated";
 import { useUsers } from "@/modules/settings/hooks/useUsers";
 import { EmployeeDocumentsUnavailable } from "@/modules/hr/components/EmployeeDocumentsUnavailable";
 import { FeatureGate } from '@/shared/components/FeatureGate';

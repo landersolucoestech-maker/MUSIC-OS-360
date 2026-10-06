@@ -18,7 +18,7 @@ import {
  */
 export function LogoUploader() {
   const { tenant, setTenant } = useTenant();
-  const workspaceId = tenant.id;
+  const logoTenantId = tenant.id;
 
   const [logoUrl, setLogoUrl] = useState<string | null>(tenant.config.logoUrl ?? null);
   const [isBusy, setIsBusy] = useState(false);
@@ -28,7 +28,7 @@ export function LogoUploader() {
   // Loads the persisted logo (MOCK: localStorage) on mount.
   useEffect(() => {
     let cancelled = false;
-    companyLogoService.getLogo(workspaceId).then((url) => {
+    companyLogoService.getLogo(logoTenantId).then((url) => {
       if (!cancelled && url) {
         setLogoUrl(url);
         reflectInTenant(url);
@@ -36,7 +36,7 @@ export function LogoUploader() {
     });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId]);
+  }, [logoTenantId]);
 
   function reflectInTenant(url: string | null) {
     setTenant((prev) => ({
@@ -53,7 +53,7 @@ export function LogoUploader() {
     }
     setIsBusy(true);
     try {
-      const url = await companyLogoService.saveLogo(workspaceId, file);
+      const url = await companyLogoService.saveLogo(logoTenantId, file);
       setLogoUrl(url);
       reflectInTenant(url);
       toast.success("Logo atualizada com sucesso.");
@@ -67,7 +67,7 @@ export function LogoUploader() {
   async function handleRemove() {
     setIsBusy(true);
     try {
-      await companyLogoService.removeLogo(workspaceId);
+      await companyLogoService.removeLogo(logoTenantId);
       setLogoUrl(null);
       reflectInTenant(null);
       toast.success("Logo removida.");

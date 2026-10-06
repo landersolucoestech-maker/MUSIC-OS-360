@@ -4,7 +4,7 @@ import { DataSource, EntityManager, Repository } from 'typeorm';
 import { withLastPayment } from '../../../common/compat/contract-last-payment';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
-import { ContractEntity, CrmTaskEntity } from '../../../database/entities';
+import { ContractEntity, OperationalTaskEntity } from '../../../database/entities';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { FinancialRulesService } from '../../financial-rules/financial-rules.service';
 import { DOMAIN_EVENTS } from '../../../core/events/events.service';
@@ -20,7 +20,7 @@ import {
 export class TransactionEventsHandler {
   private readonly logger = new Logger(TransactionEventsHandler.name);
   private readonly contractRepo: Repository<ContractEntity> | null = null;
-  private readonly taskRepo:     Repository<CrmTaskEntity>  | null = null;
+  private readonly taskRepo:     Repository<OperationalTaskEntity>  | null = null;
 
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
@@ -30,7 +30,7 @@ export class TransactionEventsHandler {
   ) {
     if (ds) {
       this.contractRepo = ds.getRepository(ContractEntity);
-      this.taskRepo     = ds.getRepository(CrmTaskEntity);
+      this.taskRepo     = ds.getRepository(OperationalTaskEntity);
     }
   }
 
@@ -77,7 +77,7 @@ export class TransactionEventsHandler {
 
     await runInContext(async (manager) => {
       const contractRepo = manager ? manager.getRepository(ContractEntity) : this.contractRepo;
-      const taskRepo     = manager ? manager.getRepository(CrmTaskEntity)  : this.taskRepo;
+      const taskRepo     = manager ? manager.getRepository(OperationalTaskEntity)  : this.taskRepo;
       const { transactionId, type, contractId, amount: amountText, paidBy, paidAt } = event.payload;
 
       if (this.financialRules) {

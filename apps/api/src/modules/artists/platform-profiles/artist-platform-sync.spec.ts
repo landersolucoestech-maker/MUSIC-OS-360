@@ -107,7 +107,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(result.enqueued).toEqual([{ platform: 'spotify', job_id: expect.stringContaining('direct-') }]);
   });
 
-  it('enfileira sync manual de YouTube', async () => {
+  it('enqueues a manual YouTube sync', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null }),
     };
@@ -229,7 +229,7 @@ describe('ArtistExternalProfileSyncService', () => {
     expect(profiles.upsertPending).not.toHaveBeenCalled();
   });
 
-  it('enfileira sync manual de Deezer', async () => {
+  it('enqueues a manual Deezer sync', async () => {
     const artists = {
       findById: jest.fn().mockResolvedValue({ id: 'artist-1', spotify_url: null, youtube_url: null, deezer_url: null }),
     };

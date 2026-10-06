@@ -19,7 +19,7 @@ import { WorkerErrorThrottlerService } from './worker-error-throttler.service';
 
 import { EmailProcessor }           from './processors/email.processor';
 import { NotificationsProcessor }   from './processors/notifications.processor';
-import { AIJobsProcessor }          from './processors/ai-jobs.processor';
+import { AiJobsProcessor }          from './processors/ai-jobs.processor';
 import { ExternalDataProcessor }    from './processors/external-data.processor';
 import { MarketingPublishingProcessor } from './processors/marketing-publishing.processor';
 import { ArtistPlatformSyncProcessor } from './processors/artist-platform-sync.processor';
@@ -27,7 +27,7 @@ import { MarketBenchmarkRefreshProcessor } from './processors/market-benchmark-r
 
 import { EmailQueueService }         from './services/email-queue.service';
 import { NotificationsQueueService } from './services/notifications-queue.service';
-import { AIJobsQueueService }        from './services/ai-jobs-queue.service';
+import { AiJobsQueueService }        from './services/ai-jobs-queue.service';
 import { WorkflowQueueService }      from './services/workflow-queue.service';
 import { MarketingPublishingQueueService } from './services/marketing-publishing-queue.service';
 import { MarketBenchmarkRefreshQueueService } from './services/market-benchmark-refresh-queue.service';
@@ -45,7 +45,7 @@ import { AppleMusicArtistProfileProvider } from '../modules/artists/platform-pro
 import { SoundchartsService } from '../modules/integrations/soundcharts/soundcharts.service';
 
 import { CoreModule }  from '../core/core.module';
-import { AIModule }    from '../modules/ai/ai.module';
+import { AiModule }    from '../modules/ai/ai.module';
 
 const moduleLogger = new Logger('QueueModule');
 const REDIS_ERROR_LOG_INTERVAL_MS = 30_000;
@@ -178,7 +178,7 @@ const ALL_QUEUES = [
 @Module({})
 export class QueueModule {
   private static noOpModule(): DynamicModule {
-    const services = [EmailQueueService, NotificationsQueueService, AIJobsQueueService, WorkflowQueueService, MarketingPublishingQueueService, MarketBenchmarkRefreshQueueService];
+    const services = [EmailQueueService, NotificationsQueueService, AiJobsQueueService, WorkflowQueueService, MarketingPublishingQueueService, MarketBenchmarkRefreshQueueService];
     return {
       global:    true,
       module:    QueueModule,
@@ -245,19 +245,19 @@ export class QueueModule {
         }),
         BullModule.registerQueue(...ALL_QUEUES.map((name) => ({ name }))),
         CoreModule,
-        AIModule,
+        AiModule,
         DiscoveryModule,
       ],
       providers: [
         EmailQueueService,
         NotificationsQueueService,
-        AIJobsQueueService,
+        AiJobsQueueService,
         WorkflowQueueService,
         MarketingPublishingQueueService,
         MarketBenchmarkRefreshQueueService,
         EmailProcessor,
         NotificationsProcessor,
-        AIJobsProcessor,
+        AiJobsProcessor,
         ExternalDataProcessor,
         MarketingPublishingProcessor,
         ArtistPlatformSyncProcessor,
@@ -285,7 +285,7 @@ export class QueueModule {
         BullModule,
         EmailQueueService,
         NotificationsQueueService,
-        AIJobsQueueService,
+        AiJobsQueueService,
         WorkflowQueueService,
         MarketingPublishingQueueService,
         MarketBenchmarkRefreshQueueService,

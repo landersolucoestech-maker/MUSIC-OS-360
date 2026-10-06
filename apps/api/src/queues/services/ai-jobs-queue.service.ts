@@ -9,14 +9,14 @@ import { Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectQueue }        from '@nestjs/bullmq';
 import { Queue, JobsOptions } from 'bullmq';
 import { QUEUE_NAMES }        from '../queue.constants';
-import type { AIJobPayload }  from '../processors/ai-jobs.processor';
+import type { AiJobPayload }  from '../processors/ai-jobs.processor';
 
 const NORMAL_PRIORITY: Partial<JobsOptions> = { priority: 5 };
 const LOW_PRIORITY:    Partial<JobsOptions> = { priority: 10 };
 
 @Injectable()
-export class AIJobsQueueService {
-  private readonly logger = new Logger(AIJobsQueueService.name);
+export class AiJobsQueueService {
+  private readonly logger = new Logger(AiJobsQueueService.name);
 
   constructor(
     @Optional()
@@ -28,7 +28,7 @@ export class AIJobsQueueService {
     return this.queue != null;
   }
 
-  async enqueue(payload: AIJobPayload, opts?: Partial<JobsOptions>): Promise<string | undefined> {
+  async enqueue(payload: AiJobPayload, opts?: Partial<JobsOptions>): Promise<string | undefined> {
     if (!this.available) return undefined;
     const job = await this.queue!.add('ai:complete', payload, {
       ...NORMAL_PRIORITY,

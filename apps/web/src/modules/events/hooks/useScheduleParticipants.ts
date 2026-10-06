@@ -61,8 +61,8 @@ export function summarizeScheduleParticipants(participants: ScheduleParticipant[
 }
 
 /**
- * Task J — it used to fetch the whole artist/employee table (useArtistas/
- * useFuncionarios, capped at 50 records/tenant) to build the event's
+ * Task J — it used to fetch the whole artist/employee table (useArtists/
+ * useEmployees, capped at 50 records/tenant) to build the event's
  * participant list. It now uses real server-side search (useEntityLookup)
  * for the artist and employee slices — `search` is passed by the
  * component (search input in the dropdown), and `pendingArtistId` ensures the

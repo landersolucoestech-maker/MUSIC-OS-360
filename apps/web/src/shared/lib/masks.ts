@@ -1,6 +1,6 @@
 // Mask functions for formatting fields
 
-export const maskCPF = (value: string): string => {
+export const maskCpf = (value: string): string => {
   const digits = value.replace(/\D/g, '').slice(0, 11);
   return digits
     .replace(/(\d{3})(\d)/, '$1.$2')
@@ -8,7 +8,7 @@ export const maskCPF = (value: string): string => {
     .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 };
 
-export const maskCNPJ = (value: string): string => {
+export const maskCnpj = (value: string): string => {
   const digits = value.replace(/\D/g, '').slice(0, 14);
   return digits
     .replace(/(\d{2})(\d)/, '$1.$2')
@@ -20,9 +20,9 @@ export const maskCNPJ = (value: string): string => {
 export const maskCPFCNPJ = (value: string): string => {
   const digits = value.replace(/\D/g, '');
   if (digits.length <= 11) {
-    return maskCPF(value);
+    return maskCpf(value);
   }
-  return maskCNPJ(value);
+  return maskCnpj(value);
 };
 
 export const maskPhone = (value: string): string => {
@@ -37,7 +37,7 @@ export const maskPhone = (value: string): string => {
     .replace(/(\d{5})(\d)/, '$1-$2');
 };
 
-export const maskCEP = (value: string): string => {
+export const maskCep = (value: string): string => {
   const digits = value.replace(/\D/g, '').slice(0, 8);
   return digits.replace(/(\d{5})(\d)/, '$1-$2');
 };
@@ -47,7 +47,7 @@ export const unmask = (value: string): string => {
 };
 
 // ViaCEP API
-export interface ViaCEPResponse {
+export interface ViaCepResponse {
   cep: string;
   logradouro: string;
   complemento: string;
@@ -71,7 +71,7 @@ export interface AddressFields {
  * an external provider contract the app does not control). Provider values fill a field only when it has content,
  * and a complement the user already typed is never overwritten.
  */
-export const addressFromPostalLookup = (data: ViaCEPResponse, prev: AddressFields): AddressFields => ({
+export const addressFromPostalLookup = (data: ViaCepResponse, prev: AddressFields): AddressFields => ({
   street: data.logradouro || prev.street,
   neighborhood: data.bairro || prev.neighborhood,
   city: data.localidade || prev.city,
@@ -79,18 +79,18 @@ export const addressFromPostalLookup = (data: ViaCEPResponse, prev: AddressField
   addressComplement: prev.addressComplement || data.complemento || "",
 });
 
-export const fetchAddressByCEP = async (cep: string): Promise<ViaCEPResponse | null> => {
-  const cleanCEP = cep.replace(/\D/g, '');
-  if (cleanCEP.length !== 8) return null;
+export const fetchAddressByCep = async (cep: string): Promise<ViaCepResponse | null> => {
+  const cleanCep = cep.replace(/\D/g, '');
+  if (cleanCep.length !== 8) return null;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 5000);
 
   try {
-    const response = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`, {
+    const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`, {
       signal: controller.signal,
     });
-    const data: ViaCEPResponse = await response.json();
+    const data: ViaCepResponse = await response.json();
     if (data.erro) return null;
     return data;
   } catch {

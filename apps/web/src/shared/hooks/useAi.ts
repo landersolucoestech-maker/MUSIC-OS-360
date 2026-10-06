@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { toUserMessage } from "@/shared/lib/errors";
-export type AIGenerateType =
+export type AiGenerateType =
   | "bio"
   | "description"
   | "copy"
@@ -17,16 +17,16 @@ export type AIGenerateType =
   | "email"
   | "ad";
 
-export interface AIGenerateParams {
+export interface AiGenerateParams {
   prompt: string;
-  type: AIGenerateType;
+  type: AiGenerateType;
 }
 
-export interface AIGenerateResult {
+export interface AiGenerateResult {
   content: string;
 }
 
-async function callAI(params: AIGenerateParams): Promise<AIGenerateResult> {
+async function callAi(params: AiGenerateParams): Promise<AiGenerateResult> {
   const res = await fetch("/api/v1/ai/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -39,9 +39,9 @@ async function callAI(params: AIGenerateParams): Promise<AIGenerateResult> {
   return res.json();
 }
 
-export function useAI() {
+export function useAi() {
   const generate = useMutation({
-    mutationFn: callAI,
+    mutationFn: callAi,
     onError: (error: Error) => {
       toast.error(`IA: ${toUserMessage(error)}`);
     },
@@ -50,6 +50,6 @@ export function useAI() {
   return {
     generate,
     isGenerating: generate.isPending,
-    callAI,
+    callAi,
   };
 }

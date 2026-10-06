@@ -116,7 +116,7 @@ describe('WhatsAppCloudProvider', () => {
     expect(body).toEqual({ messaging_product: 'whatsapp', to: '5511999999999', type: 'text', text: { body: 'Olá!' } });
   });
 
-  it('401 da Meta: WHATSAPP_AUTH_ERROR', async () => {
+  it('Meta 401: WHATSAPP_AUTH_ERROR', async () => {
     await configureOk(TENANT_A, '1234567890', 'bad-token', 'waba-456');
     fetchMock.mockResolvedValueOnce({ ok: false, status: 401, json: async () => ({ error: { code: 190, message: 'Invalid OAuth access token' } }) });
 
@@ -125,7 +125,7 @@ describe('WhatsAppCloudProvider', () => {
     });
   });
 
-  it('429 da Meta: WHATSAPP_RATE_LIMITED', async () => {
+  it('Meta 429: WHATSAPP_RATE_LIMITED', async () => {
     await configureOk(TENANT_A, '1234567890', 'token', 'waba-456');
     fetchMock.mockResolvedValueOnce({ ok: false, status: 429, json: async () => ({ error: { code: 4, message: 'Too many requests' } }) });
 
@@ -134,7 +134,7 @@ describe('WhatsAppCloudProvider', () => {
     });
   });
 
-  it('5xx da Meta: WHATSAPP_UPSTREAM_ERROR', async () => {
+  it('Meta 5xx: WHATSAPP_UPSTREAM_ERROR', async () => {
     await configureOk(TENANT_A, '1234567890', 'token', 'waba-456');
     fetchMock.mockResolvedValueOnce({ ok: false, status: 503, json: async () => ({ error: { message: 'Service unavailable' } }) });
 

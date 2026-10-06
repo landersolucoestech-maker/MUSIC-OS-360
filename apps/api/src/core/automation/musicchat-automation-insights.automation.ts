@@ -20,7 +20,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { MusicChatAutomationService } from '../../modules/conversations/musicchat-automation.service';
 import {
   AUTOMATION_AUDIT_SYSTEM_PROMPT,
@@ -58,7 +58,7 @@ interface MusicChatSettingsRow {
 export class MusicChatAutomationInsightsAutomation {
   constructor(
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly automation: MusicChatAutomationService,
   ) {}
 

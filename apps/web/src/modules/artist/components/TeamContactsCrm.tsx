@@ -1,5 +1,5 @@
 // ============================================================================
-// TeamContactsCRM — the "Equipe / Contatos" section of artist create/edit.
+// TeamContactsCrm — the "Equipe / Contatos" section of artist create/edit.
 // ----------------------------------------------------------------------------
 // Replaces the old manual fields (name/category/phone/email) with LINKS to
 // contacts already registered in the CRM (CRM > Contatos), which is the single
@@ -35,7 +35,7 @@ export interface LinkedContactForm {
   distributors: DistributorEntry[];
 }
 
-interface TeamContactsCRMProps {
+interface TeamContactsCrmProps {
   value: LinkedContactForm[];
   onChange: (next: LinkedContactForm[]) => void;
 }
@@ -62,7 +62,7 @@ const DISTRIBUTOR_CONTACT_TYPES = new Set<Contact["category"]>([
 
 // ─── Component ───────────────────────────────────────────────────
 
-export function TeamContactsCRM({ value, onChange }: TeamContactsCRMProps) {
+export function TeamContactsCrm({ value, onChange }: TeamContactsCrmProps) {
   const { contacts, createContact } = useContacts();
 
   const [searchOpen, setSearchOpen] = useState(false);

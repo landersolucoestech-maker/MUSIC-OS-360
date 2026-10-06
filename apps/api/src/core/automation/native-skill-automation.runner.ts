@@ -8,7 +8,7 @@
  *   — building the idempotencyKey ({event}:{tenant}:{entity});
  *   — DOUBLE idempotency guard: metadata + skill_runs (status success);
  *   — SkillRunService.start/succeed/fail audit cycle;
- *   — AIService.complete call in jsonMode;
+ *   — AiService.complete call in jsonMode;
  *   — parsing via the @music-os-360/ai-skills package parser (injected by the consumer);
  *   — building the standard ENVELOPE;
  *   — persisting the metadata preserving what exists + defensive history;
@@ -24,7 +24,7 @@
 
 import { Logger } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { DatabaseContextService } from '../../database/database-context.service';
 import { SkillRunService } from '../skills/skill-run.service';
 
@@ -44,7 +44,7 @@ export interface NativeAutomationDeps {
   ds: DataSource | null;
   dbContext?: DatabaseContextService;
   skillRun: SkillRunService;
-  ai: AIService;
+  ai: AiService;
 }
 
 export interface NativeSkillValidation {
@@ -59,7 +59,7 @@ export interface NativeSkillAutomationParams<TRow, TInput> {
   skillName: string;
   /** Tenant do evento. */
   tenantId: string | null | undefined;
-  /** Responsible user (for skill_run and AIService). */
+  /** Responsible user (for skill_run and AiService). */
   userId: string | null | undefined;
   /** Aggregate type (e.g. 'project', 'release'). */
   entityType: string;

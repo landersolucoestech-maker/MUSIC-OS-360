@@ -3,7 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
-import { ContractEntity, CrmTaskEntity } from '../../../database/entities';
+import { ContractEntity, OperationalTaskEntity } from '../../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { WorkflowQueueService } from '../../../queues/services/workflow-queue.service';
 import type { DomainEvent } from '../../../core/events/events.service';
@@ -29,7 +29,7 @@ const SIGNED_TASKS: ReadonlyArray<{
 export class ContractWorkflowHandler {
   private readonly logger = new Logger(ContractWorkflowHandler.name);
   private readonly contractRepo: Repository<ContractEntity> | null = null;
-  private readonly taskRepo: Repository<CrmTaskEntity> | null = null;
+  private readonly taskRepo: Repository<OperationalTaskEntity> | null = null;
 
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
@@ -39,7 +39,7 @@ export class ContractWorkflowHandler {
   ) {
     if (ds) {
       this.contractRepo = ds.getRepository(ContractEntity);
-      this.taskRepo = ds.getRepository(CrmTaskEntity);
+      this.taskRepo = ds.getRepository(OperationalTaskEntity);
     }
   }
 
@@ -55,7 +55,7 @@ export class ContractWorkflowHandler {
 
     if (this.taskRepo || this.contractRepo) {
       await this.runInTenantContext(tenantId, async (manager) => {
-        const taskRepo = manager ? manager.getRepository(CrmTaskEntity) : this.taskRepo;
+        const taskRepo = manager ? manager.getRepository(OperationalTaskEntity) : this.taskRepo;
         const contractRepo = manager ? manager.getRepository(ContractEntity) : this.contractRepo;
 
         if (taskRepo) {
@@ -157,7 +157,7 @@ export class ContractWorkflowHandler {
 
     if (this.taskRepo) {
       await this.runInTenantContext(tenantId, async (manager) => {
-        const taskRepo = manager ? manager.getRepository(CrmTaskEntity) : this.taskRepo;
+        const taskRepo = manager ? manager.getRepository(OperationalTaskEntity) : this.taskRepo;
         if (!taskRepo) return;
 
         try {

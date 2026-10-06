@@ -22,7 +22,7 @@ import { Inject, Optional } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { InstagramService } from '../../modules/integrations/instagram/instagram.service';
 import { TikTokService } from '../../modules/integrations/tiktok/tiktok.service';
 import { YouTubeService } from '../../modules/integrations/youtube/youtube.service';
@@ -50,7 +50,7 @@ export class PostizAutomation {
   constructor(
     @Inject(DATA_SOURCE) @Optional() private readonly ds: DataSource | null,
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly instagram: InstagramService,
     private readonly tiktok: TikTokService,
     private readonly youtube: YouTubeService,

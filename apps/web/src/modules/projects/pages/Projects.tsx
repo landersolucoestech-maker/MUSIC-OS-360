@@ -50,7 +50,7 @@ function withArtist<T extends { artist_id?: string | null; artist?: unknown }>(
 
 export default function Projects() {
   const navigate = useNavigate();
-  // Task J: full list (rawProjetos/useProjects() without a filter) used
+  // Task J: full list (useProjects() without a filter) used
   // ONLY to populate the genre dropdown — a "distinct values
   // for a filter" case still pending a dedicated endpoint
   // (equivalent to /works/stats/genres), so it is still subject to the
@@ -134,7 +134,7 @@ export default function Projects() {
 
   // Task J: per-row artist name, resolved by direct ID (GET
   // /artists/:id) only for the projects of the current page — previously it injected
-  // from useArtistas() without a filter, truncated to the first 50 artists
+  // from useArtists() without a filter, truncated to the first 50 artists
   // of the tenant (silently hiding the name of any artist beyond
   // desse cap).
   const [resolvedArtistsMap, setResolvedArtistsMap] = useState<Record<string, Artist>>({});
@@ -265,7 +265,7 @@ export default function Projects() {
             </SelectContent>
           </Select>
           {/* Task J: server-side search (AsyncEntityCombobox) — previously it populated
-              the Select with useArtistas() without a filter, truncated to the first
+              the Select with useArtists() without a filter, truncated to the first
               50 artists of the tenant. */}
           <div className="flex items-center gap-1 shrink-0">
             <div className="h-8 w-[160px]">

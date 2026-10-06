@@ -1,14 +1,14 @@
 /**
  * company-logo.service.ts — management of the company/workspace logo.
  *
- * MULTI-TENANT: the logo is always isolated per workspaceId. Never share it
+ * MULTI-TENANT: the logo is always isolated per logoTenantId. Never share it
  * across organizations.
  *
- *   `company-logo:{workspaceId}`. Mirrors the last logo into a public preview
+ *   `company-logo:{logoTenantId}`. Mirrors the last logo into a public preview
  *   key (`company-logo:__public__`) only to demonstrate, in dev, the
  *   rendering on the public /apply/:slug page.
  * - Production: sends/reads via the backend, using the project's already existing storage
- *   (Cloudflare R2) under `company-logos/{workspaceId}/logo`. The endpoints below
+ *   (Cloudflare R2) under `company-logos/{logoTenantId}/logo`. The endpoints below
  *   will be implemented in the backend later.
  *
  * BACKEND CONTRACT (future):
@@ -92,8 +92,8 @@ function readAsDataUrl(file: File): Promise<string> {
 
 export const companyLogoService = {
   /** Returns the workspace logo (URL/dataURL) or null when there is none. */
-  async getLogo(workspaceId: string): Promise<string | null> {
-    if (!workspaceId) return null;
+  async getLogo(logoTenantId: string): Promise<string | null> {
+    if (!logoTenantId) return null;
     // Production: logoUrl comes aggregated in the workspace data (backend).
     // Kept here only for symmetry — it normally already exists in TenantConfig.
     return null;
@@ -103,8 +103,8 @@ export const companyLogoService = {
    * Validates and saves the logo. Returns the final URL/dataURL.
    * Throws an Error with a friendly message on an invalid validation.
    */
-  async saveLogo(workspaceId: string, file: File): Promise<string> {
-    if (!workspaceId) throw new UserFacingError("No tenant id available for logo upload", "Workspace não identificado.");
+  async saveLogo(logoTenantId: string, file: File): Promise<string> {
+    if (!logoTenantId) throw new UserFacingError("No tenant id available for logo upload", "Workspace não identificado.");
     const validation = await validateLogoFile(file);
     if (!validation.ok) throw new UserFacingError("Invalid logo file", validation.error ?? "Arquivo inválido.");
 
@@ -114,7 +114,7 @@ export const companyLogoService = {
     const token = getAccessToken();
     const tenantId = getTenantId();
     const res = await fetch(
-      `${API_BASE_URL}/api/v1/workspaces/${encodeURIComponent(workspaceId)}/logo`,
+      `${API_BASE_URL}/api/v1/workspaces/${encodeURIComponent(logoTenantId)}/logo`,
       {
         method: "POST",
         body: form, // no manual Content-Type: the browser sets the multipart boundary
@@ -130,9 +130,9 @@ export const companyLogoService = {
   },
 
   /** Remove a logo do workspace. */
-  async removeLogo(workspaceId: string): Promise<void> {
-    if (!workspaceId) return;
+  async removeLogo(logoTenantId: string): Promise<void> {
+    if (!logoTenantId) return;
     const { api } = await import("@/shared/lib/api-client");
-    await api.delete(`/workspaces/${encodeURIComponent(workspaceId)}/logo`);
+    await api.delete(`/workspaces/${encodeURIComponent(logoTenantId)}/logo`);
   },
 };

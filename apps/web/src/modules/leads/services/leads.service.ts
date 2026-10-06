@@ -13,7 +13,7 @@
  * Wire contract: canonical English fields (CZ-033).
  */
 import { api } from "@/shared/lib/api-client";
-import type { Lead, LeadClientType, LeadServiceType, LeadInternalCRMData } from "../types";
+import type { Lead, LeadClientType, LeadServiceType, LeadInternalCrmData } from "../types";
 
 interface ApiLeadResponse {
   id: string;
@@ -56,7 +56,7 @@ function fromApi(row: ApiLeadResponse): Lead {
     clientType: (row.clientType ?? "other") as LeadClientType,
     serviceType: (row.serviceType ?? "consulting") as LeadServiceType,
     servicePayload: row.servicePayload ?? {},
-    crmInternalData: (row.crmInternalData ?? {}) as LeadInternalCRMData,
+    crmInternalData: (row.crmInternalData ?? {}) as LeadInternalCrmData,
     uploads: (row.uploads ?? []) as Lead["uploads"],
     createdAt: row.created_at,
     updatedAt: row.updated_at,

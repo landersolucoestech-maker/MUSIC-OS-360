@@ -22,14 +22,14 @@ import { EcadIcon } from "@/shared/ui/brand-icons";
 import {
   Shield, Search, RefreshCw, Upload, AlertTriangle, X, Trash2,
 } from "lucide-react";
-import { RightsKPICards } from "../components/RightsKPICards";
+import { RightsKpiCards } from "../components/RightsKpiCards";
 import { DetectionsTable, type DetectionRow } from "../components/DetectionsTable";
 import { DivergencesPanel } from "../components/DivergencesPanel";
 import { ResolveDivergenceModal } from "../components/ResolveDivergenceModal";
 import type { Divergence } from "../components/DivergencesPanel";
 import { EcadImportModal } from "../components/EcadImportModal";
 import { DetectionDetailModal } from "../components/DetectionDetailModal";
-import { ECADViewModal, type EcadReportRow } from "@/modules/monitoring/components/ECADViewModal";
+import { EcadViewModal, type EcadReportRow } from "@/modules/monitoring/components/EcadViewModal";
 import { formatRightsDate } from "../utils/date-format";
 import { useDetections } from "@/modules/monitoring/hooks/useDetections";
 import { useEcadReports } from "@/modules/monitoring/hooks/useEcadReports";
@@ -267,7 +267,7 @@ export default function RightsMonitoring() {
     >
       <div className="space-y-5">
 
-        <RightsKPICards
+        <RightsKpiCards
           total={filtered.length}
           completed={completed}
           pending={pending}
@@ -433,7 +433,7 @@ export default function RightsMonitoring() {
         {/* Modals */}
         <EcadImportModal open={importModalOpen} onOpenChange={setImportModalOpen} />
         <DetectionDetailModal detection={selectedExec} open={detailOpen} onOpenChange={setDetailOpen} />
-        <ECADViewModal report={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
+        <EcadViewModal report={selectedEcad} open={ecadDetailOpen} onOpenChange={setEcadDetailOpen} />
         <ResolveDivergenceModal
           divergence={selectedDivergence}
           open={resolverOpen}

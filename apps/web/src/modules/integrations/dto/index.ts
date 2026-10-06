@@ -23,7 +23,8 @@ export type {
 } from "@/shared/integrations/contracts/auth.contract";
 
 export {
-  SUPABASE_AUTH_CAPABILITIES,} from "@/shared/integrations/contracts/auth.contract";
+  SUPABASE_AUTH_CAPABILITIES,
+} from "@/shared/integrations/contracts/auth.contract";
 
 // ── Email (Resend) ────────────────────────────────────────────────────────────
 export type {
@@ -124,8 +125,8 @@ export type {
   RegistrationHistoryEntry,
   GenerateISWCInput,
   GenerateISWCResult,
-  GenerateISRCInput,
-  GenerateISRCResult,
+  GenerateIsrcInput,
+  GenerateIsrcResult,
   CollectionType,
   CollectionEntry,
   CollectionSummary,
@@ -136,7 +137,7 @@ export type {
 export {
   collectionStorageKey,
   generateMockISWC,
-  generateMockISRC,
+  generateMockIsrc,
 } from "@/shared/integrations/contracts/rights.contract";
 
 // ── Music Monitoring (ACRCloud) ───────────────────────────────────────────────

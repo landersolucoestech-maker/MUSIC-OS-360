@@ -71,7 +71,7 @@ import { workSchema } from "@/modules/catalog/lib/work-schema";
 
 // ── Autocomplete: server-side search by stage_name/full_name (Task I —
 // it used to filter only the tenant's first 50 artists, loaded via
-// an unfiltered useArtistas(); now each typed (debounced) key re-runs the
+// an unfiltered useArtists(); now each typed (debounced) key re-runs the
 // search in the backend, reaching any artist of the tenant). Free text
 // is still allowed — not every participant needs to be registered.
 interface ArtistNameInputProps {
@@ -256,7 +256,7 @@ export function WorkFormModal({
 
   // Hydrates the linked project from work.project_id — fetches DIRECTLY by
   // ID (GET /projects/:id), does not depend on the project being among the first
-  // records loaded (Task J: it used to use an unfiltered useProjetos(), which
+  // records loaded (Task J: it used to use an unfiltered useProjects(), which
   // truncated at 50 projects per tenant).
   const linkedProjectId: string | undefined = work?.project_id ?? undefined;
   const { entity: linkedProject } = useEntityById<ProjectWithRelations>(
@@ -283,7 +283,7 @@ export function WorkFormModal({
 
   // Server-side search of completed projects (Task J) — it used to filter
   // locally only the tenant's first 50 projects loaded via an
-  // unfiltered useProjetos(); now each typed (internally debounced)
+  // unfiltered useProjects(); now each typed (internally debounced)
   // key re-runs the search in the backend, reaching any completed
   // project of the tenant.
   const { items: filteredCompletedProjects } = useEntityLookup<ProjectWithRelations>({

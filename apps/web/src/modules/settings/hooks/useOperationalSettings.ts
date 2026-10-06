@@ -71,7 +71,7 @@ export const DEFAULT_LEAD_CATEGORIES: OperationalListItem[] = [
 ];
 
 // Slugs are the LeadStatus enum (@music-os-360/types, apps/api leads.workflow.ts): the
-// physical value written to leads.status by LeadFormModal/InternalCRMFields and the
+// physical value written to leads.status by LeadFormModal/InternalCrmFields and the
 // only set the API accepts (IsIn + CHECK). The API seed of operational_list_items
 // uses the same set since OL1 (the pre-OL1 novo_lead/proposta_enviada/... never
 // matched a value the backend accepts; legacy rows are mapped by

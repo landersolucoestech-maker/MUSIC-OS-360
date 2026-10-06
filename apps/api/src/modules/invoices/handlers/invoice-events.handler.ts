@@ -3,7 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
-import { CrmTaskEntity } from '../../../database/entities';
+import { OperationalTaskEntity } from '../../../database/entities';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { FinancialRulesService } from '../../financial-rules/financial-rules.service';
 import { DOMAIN_EVENTS } from '../../../core/events/events.service';
@@ -26,7 +26,7 @@ import type {
 @Injectable()
 export class InvoiceEventsHandler {
   private readonly logger = new Logger(InvoiceEventsHandler.name);
-  private readonly taskRepo: Repository<CrmTaskEntity> | null = null;
+  private readonly taskRepo: Repository<OperationalTaskEntity> | null = null;
 
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
@@ -34,7 +34,7 @@ export class InvoiceEventsHandler {
     @Optional() private readonly financialRules: FinancialRulesService,
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
-    if (ds) this.taskRepo = ds.getRepository(CrmTaskEntity);
+    if (ds) this.taskRepo = ds.getRepository(OperationalTaskEntity);
   }
 
   @OnEvent(DOMAIN_EVENTS.INVOICE_CREATED)
@@ -148,7 +148,7 @@ export class InvoiceEventsHandler {
     if (!this.taskRepo) return;
     try {
       await this.runInTenantContext(tenantId, async (manager) => {
-        const taskRepo = manager ? manager.getRepository(CrmTaskEntity) : this.taskRepo;
+        const taskRepo = manager ? manager.getRepository(OperationalTaskEntity) : this.taskRepo;
         if (!taskRepo) return;
 
         const existing = await taskRepo.findOne({

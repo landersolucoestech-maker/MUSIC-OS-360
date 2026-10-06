@@ -91,6 +91,9 @@ const MUTATIONS = [
   ["Portuguese technical name in a backtick span of a current doc", { "docs/engineering/guide.md": "# Guide\n\nThe field is `valor_total` in the payload.\n" }, /docCode::docs\/engineering\/guide\.md/],
   ["Portuguese technical name in a fenced block of a current doc", { "docs/engineering/guide.md": "# Guide\n\n```ts\nconst payload = { data_inicio: 1 };\n```\n" }, /docCode::docs\/engineering\/guide\.md/],
   ["Portuguese technical name next to a common English word (not a legacy marker) in a current doc", { "docs/engineering/guide.md": "# Guide\n\nUse `valor_total` from the payload.\n" }, /docCode::docs\/engineering\/guide\.md/],
+  ["storage key (localStorage)", { "apps/web/src/m.ts": "export const read = () => localStorage.getItem('filtro_salvo_artistas');\n" }, /value::apps\/web\/src\/m\.ts/],
+  ["query key", { "apps/web/src/m.ts": "export const keys = { list: ['contratos', 'lista'] };\n" }, /value::apps\/web\/src\/m\.ts/],
+  ["feature flag key", { "apps/web/src/m.ts": "export const isOn = (flags: Record<string, boolean>) => flags['nova_tela_financeiro'];\n" }, /(value|identifier|objectKey)::apps\/web\/src\/m\.ts/],
   ["Portuguese prose in a document", { "docs/guia.md": "# Guia\n\nEste documento descreve como configurar o ambiente de desenvolvimento local para a equipe.\n" }, /doc::docs\/guia\.md/],
 ];
 

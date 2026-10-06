@@ -15,7 +15,7 @@ export interface UseEventsScopedParams {
 
 /**
  * Events of the currently visible calendar period — never the whole
- * table. `useEventos()` without filters was stuck at the backend default
+ * table. `useEvents()` without filters was stuck at the backend default
  * (limit=50, see PaginationDto), so tenants with more than 50 events in
  * total silently lost events in any navigated month/week.
  * Scoping by dateFrom/dateTo (real `data` column) fixes it: each

@@ -50,7 +50,7 @@ interface SchedulerFormModalProps {
 /** Raw shape of GET /clients (ClientsService.mapClient) — used for the
  * CRM venue (company contacts), without depending on the `Cliente` view-model. */
 /** `/clients` row (CZ-043 canonical keys) used as a venue lookup. */
-interface LocalCRMLookup {
+interface LocalCrmLookup {
   id: string;
   name: string;
   phone?: string | null;
@@ -243,7 +243,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   const isShow = formData.eventType === "shows";
   
   // Check whether the event type should pull the venue from the CRM
-  const shouldUseCRMLocal = venueTypesCrm.includes(formData.eventType);
+  const shouldUseCrmLocal = venueTypesCrm.includes(formData.eventType);
   const selectedParticipantKeys = formData.participants.map(scheduleParticipantKey);
   const selectedParticipantsSummary = summarizeScheduleParticipants(formData.participants);
 
@@ -267,7 +267,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
   };
 
   // Update contact data when a CRM venue is selected
-  const handleLocalCRMChange = (localId: string, local?: LocalCRMLookup) => {
+  const handleLocalCrmChange = (localId: string, local?: LocalCrmLookup) => {
     if (local) {
       setFormData({
         ...formData,
@@ -661,12 +661,12 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Nome do Local</Label>
-                {shouldUseCRMLocal ? (
-                  <AsyncEntityCombobox<LocalCRMLookup>
+                {shouldUseCrmLocal ? (
+                  <AsyncEntityCombobox<LocalCrmLookup>
                     table="clients"
                     getLabel={(local) => local.name}
                     value={formData.venue}
-                    onChange={handleLocalCRMChange}
+                    onChange={handleLocalCrmChange}
                     filters={{ person_type: "company" }}
                     placeholder="Selecione o local (CRM)"
                     searchPlaceholder="Buscar local…"
@@ -689,7 +689,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                   value={formData.venueContact}
                   onChange={(e) => setFormData({ ...formData, venueContact: e.target.value })}
                   placeholder="Telefone / WhatsApp do local"
-                  disabled={shouldUseCRMLocal || isViewMode}
+                  disabled={shouldUseCrmLocal || isViewMode}
                 />
               </div>
 
@@ -699,7 +699,7 @@ export function SchedulerFormModal({ open, onOpenChange, event, mode }: Schedule
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Endereço completo do local"
-                  disabled={shouldUseCRMLocal || isViewMode}
+                  disabled={shouldUseCrmLocal || isViewMode}
                 />
               </div>
             </div>

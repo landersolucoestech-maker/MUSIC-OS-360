@@ -13,7 +13,7 @@ import { Inject, Optional } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { MarketingTasksService } from '../../modules/marketing/marketing-tasks.service';
 import {
   COPYWRITING_SYSTEM_PROMPT,
@@ -57,7 +57,7 @@ export class CopywritingAutomation {
   constructor(
     @Inject(DATA_SOURCE) @Optional() private readonly ds: DataSource | null,
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly tasks: MarketingTasksService,
   ) {}
 

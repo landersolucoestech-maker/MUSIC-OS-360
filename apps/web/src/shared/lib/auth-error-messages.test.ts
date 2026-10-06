@@ -10,7 +10,7 @@ describe("describeAuthError", () => {
     expect(describeAuthError({ message: "Email not confirmed" })).toContain("não confirmado");
   });
 
-  it("rate limit por status 429", () => {
+  it("rate limit by status 429", () => {
     expect(describeAuthError({ message: "x", status: 429 })).toContain("Muitas tentativas");
   });
 

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { ReleaseChecklistAutomation } from './release-checklist.automation';
 import { passThroughTenantContext } from '../../../test/helpers/tenant-context.mock';
 
-// ─── Boundary mocks (DB / SkillRunService / AIService) ──────────────────────────
+// ─── Boundary mocks (DB / SkillRunService / AiService) ──────────────────────────
 
 function makeSkillRun() {
   return {
@@ -137,7 +137,7 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     );
     expect(skillRun.fail).not.toHaveBeenCalled();
 
-    // input montado a partir do release: artistName via join, hasUPC=false (upc null)
+    // input montado a partir do release: artistName via join, hasUpc=false (upc null)
     const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string; jsonMode: boolean }]>;
     const aiArg = aiCalls[0][0];
     expect(aiArg.jsonMode).toBe(true);

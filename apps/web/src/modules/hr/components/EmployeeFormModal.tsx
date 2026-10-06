@@ -29,7 +29,7 @@ import {
 } from "@/modules/hr/hooks/useEmployees";
 import type { Employee } from "@/modules/hr/hooks/useEmployees";
 import { useUsers } from "@/modules/settings/hooks/useUsers";
-import { maskCPF, maskPhone } from "@/shared/lib/masks";
+import { maskCpf, maskPhone } from "@/shared/lib/masks";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { toast } from "sonner";
 import { employeeSchema } from "@/modules/hr/schemas/employee-schema";
@@ -263,7 +263,7 @@ export function EmployeeFormModal({
                   id="cpf"
                   placeholder="000.000.000-00"
                   value={cpf}
-                  onChange={(e) => setCpf(maskCPF(e.target.value))}
+                  onChange={(e) => setCpf(maskCpf(e.target.value))}
                   disabled={isViewMode}
                   data-testid="input-cpf"
                 />

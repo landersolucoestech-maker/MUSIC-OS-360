@@ -346,7 +346,7 @@ function ContentScheduleModal({
   const [errors, setErrors] = useState<Partial<Record<keyof ContentFormValues, string>>>({});
   // The `targetName` field stores the NAME (not the id) filtered client-side in the
   // <Select> below — fetchAllLabels (real pagination, no cap) replaces
-  // useArtistas() (capped at 50 per tenant) so an artist is never lost.
+  // useArtists() (capped at 50 per tenant) so an artist is never lost.
   const { data: artistOptions = [] } = useQuery({
     queryKey: ["marketing-calendar-artist-names"],
     queryFn: () => fetchAllLabels("artists", (a) => a.stage_name as string | undefined),

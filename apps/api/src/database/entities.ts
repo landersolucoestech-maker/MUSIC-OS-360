@@ -39,7 +39,7 @@ import {
   UploadStatus,
   IntegrationStatus,
   WebhookEventStatus,
-  AIJobStatus,
+  AiJobStatus,
   EcadReportStatus,
   EmployeeStatus,
   PayrollStatus,
@@ -1935,14 +1935,14 @@ export class AuditLogEntity {
 @Entity('ai_jobs')
 @Index(['tenant_id'])
 @Index(['created_at'])
-export class AIJobEntity {
+export class AiJobEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 255 }) user_id: string;
   @Column({ type: 'varchar', length: 50 }) provider: string;
   @Column({ type: 'varchar', length: 100 }) model: string;
   @Column({ type: 'varchar', length: 100 }) skill: string;
-  @Column({ type: 'varchar', length: 50, default: AIJobStatus.PENDING }) status: AIJobStatus;
+  @Column({ type: 'varchar', length: 50, default: AiJobStatus.PENDING }) status: AiJobStatus;
   @Column({ type: 'integer', default: 0 }) input_tokens: number;
   @Column({ type: 'integer', default: 0 }) output_tokens: number;
   @Column({ type: 'decimal', precision: 12, scale: 8, default: '0' }) cost_usd: string;
@@ -2402,13 +2402,12 @@ export class MusicChatAutomationNotificationEntity {
 // crm_companies/crm_contacts/crm_tags/crm_contact_tags/crm_timeline_events were
 // removed by RemoveDeadCrmClusterD1D8 (0 rows, replaced by contacts/leads).
 
-// Compatibility class name retained while the persisted model is now the
-// domain-neutral operational task queue. CRM itself is contacts/leads based.
+// Domain-neutral operational task queue (CRM itself is contacts/leads based).
 @Entity('operational_tasks')
 @Index(['tenant_id', 'contact_id'])
 @Index(['tenant_id', 'due_date'])
 @Index(['assigned_to'])
-export class CrmTaskEntity {
+export class OperationalTaskEntity {
   @PrimaryGeneratedColumn('uuid') id: string;
   @Column({ type: 'uuid' }) tenant_id: string;
   @Column({ type: 'varchar', length: 500 }) title: string;
@@ -3590,7 +3589,7 @@ export const ALL_ENTITIES = [
   AuditLogEntity,
   SkillRunEntity,
   SkillRunLogEntity,
-  AIJobEntity,
+  AiJobEntity,
   ArtistGoalEntity,
   ContentDetectionEntity,
   EcadReportEntity,
@@ -3610,7 +3609,7 @@ export const ALL_ENTITIES = [
   MusicChatAutomationEventEntity,
   MusicChatAutomationNotificationEntity,
   // Operational task queue used by workflow handlers
-  CrmTaskEntity,
+  OperationalTaskEntity,
   // Phase 8: Music Pipelines
   PipelineEntity,
   PipelineStageEntity,

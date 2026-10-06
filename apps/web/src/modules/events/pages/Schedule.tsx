@@ -187,7 +187,7 @@ export default function Schedule() {
 
   const handleExcelExport = async () => {
     // Task I: full sweep via iterative server-side pagination —
-    // it used to export only `events` (useEventos() without a filter, stuck at the
+    // it used to export only `events` (useEvents() without a filter, stuck at the
     // backend's default limit=50). Keeps the type/status filters
     // active on screen; it does not scope to the calendar period (export is "all
     // the events matching the filter", not "only what is visible now").
@@ -291,7 +291,7 @@ export default function Schedule() {
     }
   };
 
-  // Type/status already applied server-side in useEventosScoped(); the text
+  // Type/status already applied server-side in useEventsScoped(); the text
   // search stays client-side over the already-scoped period (title, venue AND
   // participant name — the backend does not index participant names).
   const filteredEvents = useMemo(() => {
@@ -500,7 +500,7 @@ export default function Schedule() {
     )}
 
       {/* Outside the isLoading gate on purpose — same bug as /artists
-          (Task C): SchedulerFormModal calls useEventos() again only for
+          (Task C): SchedulerFormModal calls useEvents() again only for
           the mutations, the same query as the isLoading above. */}
       <SchedulerViewModal
         open={viewModal.open}

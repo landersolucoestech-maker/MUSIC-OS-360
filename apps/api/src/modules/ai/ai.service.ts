@@ -9,8 +9,8 @@ import { Injectable, Logger, Inject, ForbiddenException } from '@nestjs/common';
 import { ConfigService }              from '@nestjs/config';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE }                from '../../database/database.module';
-import { AIJobEntity }                from '../../database/entities';
-import { AIJobStatus }                from '@music-os-360/types';
+import { AiJobEntity }                from '../../database/entities';
+import { AiJobStatus }                from '@music-os-360/types';
 import { PLAN_LIMITS }                from '../billing/billing.service';
 
 const MODEL_COSTS: Record<string, { input: number; output: number }> = {
@@ -22,7 +22,7 @@ const MODEL_COSTS: Record<string, { input: number; output: number }> = {
   'gemini-1.5-pro':           { input: 3.50,  output: 10.50  },
 };
 
-export interface AICompletionOptions {
+export interface AiCompletionOptions {
   tenantId:      string;
   userId:        string;
   skill:         string;
@@ -33,7 +33,7 @@ export interface AICompletionOptions {
   jsonMode?:     boolean;
 }
 
-export interface AICompletionResult {
+export interface AiCompletionResult {
   content:      string;
   provider:     string;
   model:        string;
@@ -44,18 +44,18 @@ export interface AICompletionResult {
 }
 
 @Injectable()
-export class AIService {
-  private readonly logger = new Logger(AIService.name);
-  private readonly repo: Repository<AIJobEntity> | null = null;
+export class AiService {
+  private readonly logger = new Logger(AiService.name);
+  private readonly repo: Repository<AiJobEntity> | null = null;
 
   constructor(
     private readonly config: ConfigService,
     @Inject(DATA_SOURCE) ds: DataSource | null,
   ) {
-    if (ds) this.repo = ds.getRepository(AIJobEntity);
+    if (ds) this.repo = ds.getRepository(AiJobEntity);
   }
 
-  async complete(opts: AICompletionOptions): Promise<AICompletionResult> {
+  async complete(opts: AiCompletionOptions): Promise<AiCompletionResult> {
     // find-ff83efc6: enforceMonthlyLimit's read-then-write was racy -- it read
     // the current spend, decided, and returned; the actual cost was only
     // recorded (recordJob) after this whole method later succeeded. Two
@@ -83,8 +83,8 @@ export class AIService {
     });
   }
 
-  private async attemptProviders(opts: AICompletionOptions, manager?: EntityManager): Promise<AICompletionResult> {
-    const providers: Array<() => Promise<AICompletionResult>> = [];
+  private async attemptProviders(opts: AiCompletionOptions, manager?: EntityManager): Promise<AiCompletionResult> {
+    const providers: Array<() => Promise<AiCompletionResult>> = [];
 
     if (this.config.get('OPENAI_API_KEY'))     providers.push(() => this.openai(opts));
     if (this.config.get('ANTHROPIC_API_KEY'))  providers.push(() => this.anthropic(opts));
@@ -98,7 +98,7 @@ export class AIService {
     for (const attempt of providers) {
       try {
         const result = await attempt();
-        await this.recordJob({ ...opts, ...result, status: AIJobStatus.COMPLETED }, manager);
+        await this.recordJob({ ...opts, ...result, status: AiJobStatus.COMPLETED }, manager);
         return result;
       } catch (err) {
         lastError = err;
@@ -126,7 +126,7 @@ export class AIService {
   private async getMonthlySpend(tenantId: string, manager?: EntityManager): Promise<{ monthlySpend: number; plan: string }> {
     const now   = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    const repo  = manager ? manager.getRepository(AIJobEntity) : this.repo!;
+    const repo  = manager ? manager.getRepository(AiJobEntity) : this.repo!;
 
     const rows = await repo
       .createQueryBuilder('j')
@@ -136,7 +136,7 @@ export class AIService {
         'plan',
       )
       .where('j.tenant_id = :tenantId AND j.created_at >= :start AND j.status = :status', {
-        tenantId, start, status: AIJobStatus.COMPLETED,
+        tenantId, start, status: AiJobStatus.COMPLETED,
       })
       .setParameter('tenantId', tenantId)
       .getRawOne<{ total: string; plan: string }>();
@@ -147,7 +147,7 @@ export class AIService {
     };
   }
 
-  private async openai(opts: AICompletionOptions): Promise<AICompletionResult> {
+  private async openai(opts: AiCompletionOptions): Promise<AiCompletionResult> {
     const { OpenAI } = await import('openai');
     const client     = new OpenAI({ apiKey: this.config.get<string>('OPENAI_API_KEY') });
     const model      = 'gpt-4o-mini';
@@ -166,7 +166,7 @@ export class AIService {
     return { content: res.choices[0]?.message?.content ?? '', provider: 'openai', model, inputTokens, outputTokens, costUsd: this.calcCost(model, inputTokens, outputTokens), latencyMs };
   }
 
-  private async anthropic(opts: AICompletionOptions): Promise<AICompletionResult> {
+  private async anthropic(opts: AiCompletionOptions): Promise<AiCompletionResult> {
     const Anthropic = (await import('@anthropic-ai/sdk')).default;
     const client    = new Anthropic({ apiKey: this.config.get<string>('ANTHROPIC_API_KEY') });
     const model     = 'claude-3-5-haiku-latest';
@@ -182,7 +182,7 @@ export class AIService {
     return { content, provider: 'anthropic', model, inputTokens, outputTokens, costUsd: this.calcCost(model, inputTokens, outputTokens), latencyMs };
   }
 
-  private async gemini(opts: AICompletionOptions): Promise<AICompletionResult> {
+  private async gemini(opts: AiCompletionOptions): Promise<AiCompletionResult> {
     const { GoogleGenerativeAI } = await import('@google/generative-ai');
     const client   = new GoogleGenerativeAI(this.config.get<string>('GOOGLE_AI_API_KEY') ?? '');
     const model    = 'gemini-1.5-flash';
@@ -204,8 +204,8 @@ export class AIService {
     return (inputTokens * costs.input + outputTokens * costs.output) / 1_000_000;
   }
 
-  private async recordJob(data: AICompletionOptions & AICompletionResult & { status: AIJobStatus }, manager?: EntityManager): Promise<void> {
-    const repo = manager ? manager.getRepository(AIJobEntity) : this.repo;
+  private async recordJob(data: AiCompletionOptions & AiCompletionResult & { status: AiJobStatus }, manager?: EntityManager): Promise<void> {
+    const repo = manager ? manager.getRepository(AiJobEntity) : this.repo;
     if (!repo) return;
     try {
       const entity = repo.create({

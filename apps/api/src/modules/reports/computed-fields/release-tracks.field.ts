@@ -9,8 +9,8 @@
  * sheet so it does not collide with the release's (parent row) `title` column.
  *
  * Documented simplification (Part 89): each track's additional
- * producers/musicians/artists are arrays of objects ({nome,role}/{nome,
- * instrumento}) — out of reach of this child sheet in this Part (not included
+ * producers/musicians/artists are arrays of objects ({name,role}/{name,
+ * instrument}) — out of reach of this child sheet in this Part (not included
  * as columns). Only composers (already a simple list of names) are
  * exported/imported.
  */

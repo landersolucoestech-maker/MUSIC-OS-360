@@ -23,7 +23,7 @@
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { MarketingCampaignBuilderService } from '../../modules/marketing/marketing-campaign-builder.service';
 import { campaignBuilderConfig } from '../../modules/marketing/campaign-builder.config';
 import {
@@ -60,7 +60,7 @@ function audienceSummary(audience: Record<string, unknown> | undefined): string 
 export class CampaignBuilderInsightsAutomation {
   constructor(
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly campaignBuilder: MarketingCampaignBuilderService,
   ) {}
 

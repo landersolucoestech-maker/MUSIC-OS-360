@@ -20,8 +20,8 @@ import type {
   RegistrationHistoryEntry,
   GenerateISWCInput,
   GenerateISWCResult,
-  GenerateISRCInput,
-  GenerateISRCResult,
+  GenerateIsrcInput,
+  GenerateIsrcResult,
   ArtistSearchResult,
 } from "@/modules/integrations/dto";
 import type { IntegrationRuntimeStatus } from "@/shared/integrations/types";
@@ -213,8 +213,8 @@ export function useUbcGenerateISWC() {
   });
 }
 
-export function useUbcGenerateISRC() {
-  return useMutation<GenerateISRCResult, Error, GenerateISRCInput>({
+export function useUbcGenerateIsrc() {
+  return useMutation<GenerateIsrcResult, Error, GenerateIsrcInput>({
     mutationFn: async (_input) => ubcUnavailable(),
     onError: (err) => toast.error(`Erro ao gerar ISRC: ${toUserMessage(err)}`),
   });

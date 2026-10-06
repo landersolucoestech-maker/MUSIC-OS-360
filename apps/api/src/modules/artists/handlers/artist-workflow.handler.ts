@@ -4,7 +4,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
-import { ArtistEntity, CrmTaskEntity } from '../../../database/entities';
+import { ArtistEntity, OperationalTaskEntity } from '../../../database/entities';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { WorkflowQueueService } from '../../../queues/services/workflow-queue.service';
 import { NotificationsQueueService } from '../../../queues/services/notifications-queue.service';
@@ -29,7 +29,7 @@ const ONBOARDING_TASKS: ReadonlyArray<{
 export class ArtistWorkflowHandler {
   private readonly logger = new Logger(ArtistWorkflowHandler.name);
   private readonly artistRepo: Repository<ArtistEntity> | null = null;
-  private readonly taskRepo: Repository<CrmTaskEntity> | null = null;
+  private readonly taskRepo: Repository<OperationalTaskEntity> | null = null;
 
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
@@ -40,7 +40,7 @@ export class ArtistWorkflowHandler {
   ) {
     if (ds) {
       this.artistRepo = ds.getRepository(ArtistEntity);
-      this.taskRepo = ds.getRepository(CrmTaskEntity);
+      this.taskRepo = ds.getRepository(OperationalTaskEntity);
     }
   }
 
@@ -58,7 +58,7 @@ export class ArtistWorkflowHandler {
 
     if (this.taskRepo || this.artistRepo) {
       await this.runInTenantContext(tenantId, async (manager) => {
-        const taskRepo = manager ? manager.getRepository(CrmTaskEntity) : this.taskRepo;
+        const taskRepo = manager ? manager.getRepository(OperationalTaskEntity) : this.taskRepo;
         const artistRepo = manager ? manager.getRepository(ArtistEntity) : this.artistRepo;
 
         if (taskRepo) {

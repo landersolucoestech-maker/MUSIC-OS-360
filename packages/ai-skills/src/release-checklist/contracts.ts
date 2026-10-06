@@ -35,8 +35,8 @@ export interface ReleaseChecklistInput {
   releaseType: ReleaseType;
   releaseDate?: string;
   hasCover: boolean;
-  hasISRC: boolean;
-  hasUPC: boolean;
+  hasIsrc: boolean;
+  hasUpc: boolean;
   hasContracts: boolean;
   hasSplits: boolean;
   hasMarketingPlan: boolean;

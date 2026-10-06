@@ -15,7 +15,7 @@ const migrationSrc = fs.readFileSync(
 describe('RebuildCampaignAssetsInCanonicalFormOrder20260719000023', () => {
   const block = () => migrationSrc.split('newColumns = `')[1].split('`;')[0];
 
-  it('segue a ordem do DTO: name -> asset_type -> file_url -> description', () => {
+  it('follows the DTO order: name -> asset_type -> file_url -> description', () => {
     const b = block();
     const nameIdx = b.indexOf('name');
     const assetTypeIdx = b.indexOf('asset_type');

@@ -19,7 +19,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import { AnalyticsService } from '../../modules/analytics/analytics.service';
 import {
   REPORTING_ANALYSIS_SYSTEM_PROMPT,
@@ -63,7 +63,7 @@ interface DashboardSnapshot {
 export class AnalyticsInsightsAutomation {
   constructor(
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     private readonly analytics: AnalyticsService,
   ) {}
 

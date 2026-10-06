@@ -16,11 +16,11 @@ export const getContractPartyOrigin = (
     return "ARTIST";
   }
 
-  const allCRMTypes: string[] = Object.values(CONTRACT_TYPES)
+  const allCrmTypes: string[] = Object.values(CONTRACT_TYPES)
     .flat()
     .filter((type) => !ARTIST_TYPES.includes(type));
 
-  if (allCRMTypes.includes(contractType)) {
+  if (allCrmTypes.includes(contractType)) {
     return "CRM";
   }
 

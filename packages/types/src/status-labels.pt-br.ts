@@ -8,7 +8,7 @@
  * compile. Consumers: API notification titles and the web StatusBadge.
  */
 import {
-  AIJobStatus,
+  AiJobStatus,
   ArtistGoalStatus,
   ArtistStatus,
   BillingStatus,
@@ -261,12 +261,12 @@ export const SUPPORT_TICKET_STATUS_LABELS_PT_BR: Readonly<Record<SupportTicketSt
   [SupportTicketStatus.CANCELLED]: "Cancelado",
 };
 
-export const AI_JOB_STATUS_LABELS_PT_BR: Readonly<Record<AIJobStatus, string>> = {
-  [AIJobStatus.PENDING]: "Pendente",
-  [AIJobStatus.PROCESSING]: "Processando",
-  [AIJobStatus.COMPLETED]: "Concluído",
-  [AIJobStatus.FAILED]: "Falhou",
-  [AIJobStatus.CANCELLED]: "Cancelado",
+export const AI_JOB_STATUS_LABELS_PT_BR: Readonly<Record<AiJobStatus, string>> = {
+  [AiJobStatus.PENDING]: "Pendente",
+  [AiJobStatus.PROCESSING]: "Processando",
+  [AiJobStatus.COMPLETED]: "Concluído",
+  [AiJobStatus.FAILED]: "Falhou",
+  [AiJobStatus.CANCELLED]: "Cancelado",
 };
 
 export const ECAD_REPORT_STATUS_LABELS_PT_BR: Readonly<Record<EcadReportStatus, string>> = {

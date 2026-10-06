@@ -16,7 +16,7 @@
 > `app/layouts`, `app/boot`, `app/config`, `app/state`, `app/initialization`,
 > `app/router`; `shared/design-system`, `shared/analytics`,
 > `shared/observability`, `shared/auth`, `shared/permissions`, `shared/tenant`,
-> `shared/feature-flags`, `shared/realtime`, `shared/storage`,
+> `shared/lib/feature-flags`, `shared/realtime`, `shared/storage`,
 > `shared/schemas`, `shared/testing`, `shared/utils`; `modules/ai/` (the whole
 > module, including its `governance/` sub-directory); the per-module
 > `application/`, `domain/`, `contracts/` scaffolding (checked on
@@ -74,7 +74,7 @@
 | `shared/auth/` | Shared auth hooks and guards |
 | `shared/permissions/` | Shared RBAC |
 | `shared/tenant/` | Multi-tenant layer |
-| `shared/feature-flags/` | Feature flags per tenant/plan |
+| `shared/lib/feature-flags.ts` | Feature flags per tenant/plan |
 | `shared/realtime/` | WebSocket, SSE, polling |
 | `shared/storage/` | File upload, media storage |
 | `shared/schemas/` | Cross-domain Zod schemas |
@@ -137,7 +137,7 @@ Modules processed:
 |------|----------------|
 | `shared/pages/Dashboard` → `modules/dashboard/` | ✅ Already correct |
 | `shared/hooks/useMetrics` → `modules/dashboard/hooks/` | ✅ Already correct |
-| `shared/components/ContratoStatusBadge` → `modules/contracts/components/` | ✅ Already correct |
+| `modules/contracts/components/ContractStatusBadge` (contract-specific; generic `shared/components/StatusBadge`) | ✅ Already correct |
 | `modules/rights-monitoring/` → merge into `modules/monitoring/` | ✅ Already merged (it did not exist separately) |
 
 ### `shared/design-system/` standardized with:
@@ -216,7 +216,7 @@ Modules processed:
 
 6. **BullMQ + Redis**: enable `workers/` and `infrastructure/redis/` with a real Redis
 
-7. **Feature flags**: connect `shared/feature-flags/` to PostHog Feature Flags
+7. **Feature flags**: connect `shared/lib/feature-flags.ts` to PostHog Feature Flags
 
 8. **Tenant isolation enforcement**: connect `shared/tenant/` to `TenantContext` with row-level security
 

@@ -25,7 +25,7 @@ import { DOMAIN_EVENTS } from '../events/events.service';
 import type { DomainEvent } from '../events/events.service';
 import type { ArtistCreatedPayload } from '../events/domain-events.types';
 import { SkillRunService } from '../skills/skill-run.service';
-import { AIService } from '../../modules/ai/ai.service';
+import { AiService } from '../../modules/ai/ai.service';
 import {
   ARTIST_PROFILE_ANALYSIS_SYSTEM_PROMPT,
   buildArtistProfileAnalysisPrompt,
@@ -71,7 +71,7 @@ export class ArtistProfileAnalysisAutomation {
   constructor(
     @Inject(DATA_SOURCE) @Optional() ds: DataSource | null,
     private readonly skillRun: SkillRunService,
-    private readonly ai: AIService,
+    private readonly ai: AiService,
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {
     this.ds = ds ?? null;

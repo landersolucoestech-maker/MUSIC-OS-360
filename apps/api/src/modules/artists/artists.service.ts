@@ -245,7 +245,7 @@ export class ArtistsService {
    * Exact KPIs over the WHOLE TENANT (not the current page) — Task H.
    *
    * `relationship` reproduces exactly the classification the frontend used to do on
-   * the client (Artistas.tsx `classifyVinculo`, since removed): an artist is "exclusive" if it
+   * the client (the removed Artists page relationship classifier; now `relationshipStats()`): an artist is "exclusive" if it
    * has any active/signed/in-force/expiring contract with exclusive=true;
    * "partner" if it has any such contract that is not exclusive; otherwise
    * "independent". Before: it downloaded whole artists AND contracts and

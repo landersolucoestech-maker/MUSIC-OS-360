@@ -6,9 +6,9 @@ import {
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { RequireRole } from '../../core/decorators/roles.decorator';
 import { ROLE_HIERARCHY, roleLevel } from '../../core/rbac/role-hierarchy';
-import { AIService } from './ai.service';
+import { AiService } from './ai.service';
 import {
-  AICompletionDto,
+  AiCompletionDto,
   GenerateBiographyDto,
   GenerateCampaignCopyDto,
   AnalyzeContractDto,
@@ -29,13 +29,13 @@ function assertSystemPromptAllowed(req: any, systemPrompt?: string): void {
 @ApiBearerAuth()
 @RequireRole('editor')
 @Controller('ai')
-export class AIController {
-  constructor(private readonly ai: AIService) {}
+export class AiController {
+  constructor(private readonly ai: AiService) {}
 
   @Post('complete')
   @ApiOperation({ summary: 'Generic completion with multi-provider fallback' })
   @HttpCode(HttpStatus.OK)
-  complete(@Request() req: any, @Body() dto: AICompletionDto) {
+  complete(@Request() req: any, @Body() dto: AiCompletionDto) {
     assertSystemPromptAllowed(req, dto.systemPrompt);
     return this.ai.complete({
       tenantId: req.tenant?.id ?? req.tenantId,
@@ -50,7 +50,7 @@ export class AIController {
   }
 
   @Post('generate')
-  @ApiOperation({ summary: 'Alias of /complete for the frontend (useAI hook)' })
+  @ApiOperation({ summary: 'Alias of /complete for the frontend (useAi hook)' })
   @HttpCode(HttpStatus.OK)
   async generate(
     @Request() req: any,

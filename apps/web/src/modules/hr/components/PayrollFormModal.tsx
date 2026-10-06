@@ -170,7 +170,7 @@ export function PayrollFormModal({
         : "Visualizar Registro de Pagamento";
 
   // Task I: resolves by direct ID (does not depend on the employee being among
-  // the first ones loaded by useFuncionarios() without a filter).
+  // the first ones loaded by useEmployees() without a filter).
   const { entity: selectedEmployee } = useEntityById<Employee>("employees", employeeId || undefined);
 
   return (
