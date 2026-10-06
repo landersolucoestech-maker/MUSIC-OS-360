@@ -22,6 +22,19 @@ export function toProductStatus(stored: string | null | undefined): ProjectProdu
   return s === INTERNAL_REVIEW_STATUS ? "in_progress" : (s as ProjectProductStatus);
 }
 
+/** What the status select shows: the product status (the internal review state reads as In progress). */
+export function statusSelectValue(formStatus: string): string {
+  return toProductStatus(formStatus);
+}
+
+/**
+ * The form status after the person picks a product status. Picking In progress while the project is in the internal
+ * review state keeps the review state (the form never moves a project out of it by itself).
+ */
+export function statusAfterSelect(currentFormStatus: string, picked: string): string {
+  return currentFormStatus === INTERNAL_REVIEW_STATUS && picked === "in_progress" ? INTERNAL_REVIEW_STATUS : picked;
+}
+
 /**
  * Dashboard buckets from the per-status counts of GET /projects/stats. A project in the internal review state counts
  * as active. Cancelled projects and statuses outside the product list belong to no bucket (the dashboard has none for

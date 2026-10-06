@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { normalizeFormStatus, INTERNAL_REVIEW_STATUS } from "../lib/project-status";
+import { normalizeFormStatus, statusAfterSelect, statusSelectValue } from "../lib/project-status";
 import { type Artist } from "@/modules/artist/hooks/useArtists";
 import { wireToArtist, type ArtistWireRecord } from "@/modules/artist/services/artist.mapper";
 import { useEntityLookup } from "@/shared/hooks/useEntityLookup";
@@ -796,12 +796,11 @@ export function ProjectFormModal({ open, onOpenChange, project, mode, onComplete
           {/* Status */}
           <div className="space-y-2">
             <Label>Status</Label>
-            <Select value={status} onValueChange={setStatus} disabled={isViewMode}>
+            <Select value={statusSelectValue(status)} onValueChange={(picked) => setStatus((current) => statusAfterSelect(current, picked))} disabled={isViewMode}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="planning">Planejamento</SelectItem>
                 <SelectItem value="in_progress">Em Andamento</SelectItem>
-                {status === INTERNAL_REVIEW_STATUS && <SelectItem value={INTERNAL_REVIEW_STATUS}>Em Andamento</SelectItem>}
                 <SelectItem value="completed">Concluído</SelectItem>
                 <SelectItem value="cancelled">Cancelado</SelectItem>
               </SelectContent>

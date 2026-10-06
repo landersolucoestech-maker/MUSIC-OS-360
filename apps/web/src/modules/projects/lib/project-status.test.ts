@@ -39,3 +39,18 @@ describe("tallyProjectStatuses", () => {
     expect(tallyProjectStatuses({})).toEqual({ active: 0, completed: 0, drafts: 0 });
   });
 });
+
+import { statusAfterSelect, statusSelectValue } from "./project-status";
+
+describe("status select", () => {
+  it("shows the internal review state as In progress, so the list has one In progress option", () => {
+    expect(statusSelectValue("review")).toBe("in_progress");
+    expect(statusSelectValue("planning")).toBe("planning");
+  });
+
+  it("keeps the internal review state when In progress is picked again, and changes it for any other pick", () => {
+    expect(statusAfterSelect("review", "in_progress")).toBe("review");
+    expect(statusAfterSelect("review", "completed")).toBe("completed");
+    expect(statusAfterSelect("planning", "in_progress")).toBe("in_progress");
+  });
+});
