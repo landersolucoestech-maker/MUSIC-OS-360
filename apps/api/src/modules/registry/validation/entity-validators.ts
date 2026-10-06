@@ -113,9 +113,8 @@ export class RecordingRegistryValidationService {
     // Registry eligibility via isRegistryEligibleShare (see Phase 5 / C6).
     const eligible = active.filter(isRegistryEligibleShare);
 
-    if (!recording.work_id) {
-      issues.push(issue(E, 'recording_work_required', 'work_id', 'Fonograma deve estar vinculado a uma obra (work_id).'));
-    }
+    // The Work link is optional: a recording may exist, and be registered, with no Work and its registration
+    // does not depend on the Work's status. No issue is raised for an absent work_id.
     if (!recording.title || !recording.title.trim()) {
       issues.push(issue(E, 'recording_title_required', 'title', 'Título do fonograma é obrigatório.'));
     }

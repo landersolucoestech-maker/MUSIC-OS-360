@@ -106,8 +106,16 @@ describe('RecordingRegistryValidationService', () => {
     expect(errors(recording.validate(asRec(valid()), []))).toHaveLength(0);
   });
 
-  it('requires a linked work', () => {
-    expect(codes(recording.validate(asRec({ ...valid(), work_id: null }), []))).toContain('recording_work_required');
+  it('does not require a linked work: a recording without a work has no work issue and is otherwise valid', () => {
+    const issues = recording.validate(asRec({ ...valid(), work_id: null }), []);
+    expect(codes(issues)).not.toContain('recording_work_required');
+    expect(errors(issues)).toHaveLength(0);
+  });
+
+  it('a linked work does not add or remove any other issue', () => {
+    const without = recording.validate(asRec({ ...valid(), work_id: null, phonographic_producer_id: null }), []);
+    const withWork = recording.validate(asRec({ ...valid(), phonographic_producer_id: null }), []);
+    expect(codes(without)).toEqual(codes(withWork));
   });
 
   it('requires a phonographic producer', () => {
