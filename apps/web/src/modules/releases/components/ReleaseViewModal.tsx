@@ -38,6 +38,8 @@ import { formatReleaseDate, musicGenreLabel, releaseLanguageLabel, releaseTypeLa
 import { findDistributionPlatform } from "@/modules/releases/services/distribution-platforms";
 import type { Release, PlatformError } from "@/modules/releases/types";
 import { StoredFileLink } from "@/shared/components/StoredFileLink";
+import { DistributionConfirmationDialog } from "@/modules/releases/components/DistributionConfirmationDialog";
+import { isDistributionTarget } from "@/modules/releases/lib/distribution-confirmation";
 
 interface ReleaseViewModalProps {
   open: boolean;
@@ -113,6 +115,16 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
     // ["lancamentos"] matched no cache, so a transition left the list stale.
     queryKey: [...QUERY_KEYS.RELEASES],
   });
+
+  // Distributed is never a plain status click: it needs the registered confirmation (origin, reference, date).
+  const [confirmingDistribution, setConfirmingDistribution] = useState(false);
+  const requestTransition = (toStatus: string) => {
+    if (isDistributionTarget(toStatus)) {
+      setConfirmingDistribution(true);
+      return;
+    }
+    return workflowTransition(toStatus);
+  };
 
   const { data: detail } = useEntityDetail<typeof release & { allowed_transitions?: WorkflowTransition[] }>(
     "releases",
@@ -196,6 +208,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
   );
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <VisuallyHidden>
@@ -228,7 +241,7 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
                 currentStatus={release.status ?? ""}
                 statusLabel={releaseStatusLabel(resolveReleaseStatus(release))}
                 allowedTransitions={allowedTransitions}
-                onTransition={workflowTransition}
+                onTransition={requestTransition}
                 isLoading={isTransitionPending}
               />
             </div>
@@ -433,5 +446,15 @@ export function ReleaseViewModal({ open, onOpenChange, release }: ReleaseViewMod
         )}
       </DialogContent>
     </Dialog>
+    <DistributionConfirmationDialog
+      open={confirmingDistribution}
+      isSubmitting={isTransitionPending}
+      onCancel={() => setConfirmingDistribution(false)}
+      onConfirm={async (metadata) => {
+        await workflowTransition({ toStatus: "distributed", metadata });
+        setConfirmingDistribution(false);
+      }}
+    />
+    </>
   );
 }

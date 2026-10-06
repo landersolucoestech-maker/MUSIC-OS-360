@@ -26,6 +26,16 @@ interface UseWorkflowTransitionOptions {
   onSuccess?: (toStatus: string) => void;
 }
 
+/** A transition may carry metadata the server records with it (e.g. the confirmation that a release was distributed). */
+export interface TransitionRequest {
+  toStatus: string;
+  metadata?: Record<string, unknown>;
+}
+
+function normalizeRequest(request: string | TransitionRequest): TransitionRequest {
+  return typeof request === 'string' ? { toStatus: request } : request;
+}
+
 export function useWorkflowTransition({
   table,
   id,
@@ -35,13 +45,14 @@ export function useWorkflowTransition({
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (toStatus: string) => {
-      await storage.update<StorageRow>(table, id, { status: toStatus });
+    mutationFn: async (request: string | TransitionRequest) => {
+      const { toStatus, metadata } = normalizeRequest(request);
+      await storage.update<StorageRow>(table, id, { status: toStatus, ...(metadata ? { metadata } : {}) });
     },
-    onSuccess: (_data, toStatus) => {
+    onSuccess: (_data, request) => {
       queryClient.invalidateQueries({ queryKey });
       toast.success('Status atualizado com sucesso.');
-      onSuccess?.(toStatus);
+      onSuccess?.(normalizeRequest(request).toStatus);
     },
     onError: (err: Error) => {
       toast.error(`Erro na transição: ${toUserMessage(err, 'Não foi possível alterar o status.')}`);

@@ -11,6 +11,7 @@ import { WorkflowService } from '../../core/workflow/workflow.service';
 import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { canonicalReleaseType, canonicalizeReleaseInput } from './release-legacy-fields';
+import { DISTRIBUTION_CONFIRMATION_KEY, buildDistributionConfirmation } from './release-distribution-confirmation';
 import { joinReleaseArtistRef, toReleaseResponse, type ReleaseResponse } from './release-artist-ref';
 
 /** Statuses after distribution: the distribution data is a historical record and is requested from the distributor, not edited here. */
@@ -257,6 +258,15 @@ export class ReleasesService {
     const current = await this.findById(tenantId, id, actorRole);
     this.assertDistributionDataUnchanged(current, dto);
     const statusChanging = dto.status != null && dto.status !== current.status;
+    // Distributed is a real confirmation (from the distributor or a registered manual conclusion with its evidence),
+    // never a plain status edit. The record is built from what the person supplied and stamped by the server; a
+    // confirmation sent outside this transition is ignored, so it cannot be forged by an ordinary edit.
+    const sentMetadata = { ...((dto.metadata ?? {}) as Record<string, unknown>) };
+    const sentConfirmation = sentMetadata[DISTRIBUTION_CONFIRMATION_KEY];
+    delete sentMetadata[DISTRIBUTION_CONFIRMATION_KEY];
+    const distributionConfirmation = statusChanging && dto.status === ReleaseStatus.DISTRIBUTED
+      ? buildDistributionConfirmation(sentConfirmation, userId)
+      : null;
     const expectedUpdatedAt = dto.expectedUpdatedAt;
     const conflictMessage = 'Este lançamento foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.';
 
@@ -272,7 +282,13 @@ export class ReleasesService {
     // metadata is merged over the stored object: automations (checklist, launch
     // strategy, ...) write their own keys there and the form only sends its own —
     // a wholesale replace erased the automation outputs on every save.
-    if (dto.metadata    != null) nonStatusUpdates.metadata        = { ...(current.metadata ?? {}), ...dto.metadata };
+    if (dto.metadata != null || distributionConfirmation) {
+      nonStatusUpdates.metadata = {
+        ...(current.metadata ?? {}),
+        ...sentMetadata,
+        ...(distributionConfirmation ? { [DISTRIBUTION_CONFIRMATION_KEY]: distributionConfirmation } : {}),
+      };
+    }
     if (dto.isrc_global    != null) nonStatusUpdates.isrc_global    = dto.isrc_global;
     if (dto.internal_notes != null) nonStatusUpdates.internal_notes = dto.internal_notes;
     if (dto.notes          != null) nonStatusUpdates.notes          = dto.notes;
