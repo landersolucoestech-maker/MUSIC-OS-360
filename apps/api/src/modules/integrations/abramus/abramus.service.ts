@@ -64,13 +64,20 @@ export class AbramusService extends IntegrationBaseService {
     }
   }
 
+  /** The URL was validated, a redirect target was not: following it would reach an address that was never checked. */
+  private assertNoRedirect(res: Response): void {
+    if (res.status >= 300 && res.status < 400) throw new Error(`Abramus answered with a redirect (${res.status}), which is not followed`);
+  }
+
   private async getAuthToken(creds: AbramusCreds): Promise<string> {
     const base = await this.validatedBaseUrl(creds.base_url);
     const res = await this.fetch(`${base}/api/v1/auth/login`, {
       method:  'POST',
+      redirect: 'manual',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ username: creds.username, password: creds.password }),
     });
+    this.assertNoRedirect(res);
     if (!res.ok) throw new Error(`Abramus auth error: ${res.status}`);
     const d = await res.json() as any;
     return d.token ?? d.access_token ?? '';
@@ -83,12 +90,14 @@ export class AbramusService extends IntegrationBaseService {
     const base = await this.validatedBaseUrl(creds.base_url);
     const res = await this.fetch(`${base}${path}`, {
       ...init,
+      redirect: 'manual',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type':  'application/json',
         ...(init.headers as object ?? {}),
       },
     });
+    this.assertNoRedirect(res);
     if (!res.ok) throw new Error(`Abramus API error ${res.status}: ${redactDiagnosticText(await res.text())}`);
     return res.json() as Promise<T>;
   }

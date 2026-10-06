@@ -139,6 +139,9 @@ describe('ReleasesService.update: distribution data is frozen after distribution
       ['a credited artist', { ...placeholder, additionalArtists: [{ name: 'X' }] }],
       ['an audio file', { ...placeholder, audioFile: { name: 'a.wav' } }],
       ['lyrics', { ...placeholder, lyrics: 'text' }],
+      ['the instrumental flag set', { ...placeholder, instrumental: true }],
+      ['the explicit flag set', { ...placeholder, explicit: 'yes' }],
+      ['the alternate-version flag set', { ...placeholder, isAlternateVersion: true }],
     ])('still rejects a track with %s', async (_label, track) => {
       const { svc, repo } = build(baseRow({ metadata: { note: 'kept' } }));
       await expect(svc.update('t1', 'u1', 'r1', { metadata: { tracks: [track] } } as never))

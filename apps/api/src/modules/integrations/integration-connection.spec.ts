@@ -202,4 +202,20 @@ describe('AbramusService.configure: connected only after a real login', () => {
     await expect(svc.searchWork('t1', 'x')).rejects.toMatchObject({ response: { code: 'INTEGRATION_URL_NOT_ALLOWED' } });
     expect(fetchImpl).not.toHaveBeenCalled();
   });
+
+  it('never follows a redirect, so a validated host cannot bounce the call to an unchecked address', async () => {
+    const { svc, fetchImpl } = buildAbramus(jest.fn().mockResolvedValue({ ok: false, status: 307, headers: { get: () => 'http://169.254.169.254/' } }));
+    await expect(svc.configure('t1', 'user', 'secret', 'https://abramus.example.test')).rejects.toBeDefined();
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    expect((fetchImpl.mock.calls[0] as [string, RequestInit])[1].redirect).toBe('manual');
+  });
+
+  it('a data call is also sent without following redirects and fails on a redirect answer', async () => {
+    const { svc, fetchImpl } = buildAbramus(jest.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'tok' }) })
+      .mockResolvedValueOnce({ ok: false, status: 302, text: async () => '' }));
+    jest.spyOn(svc, 'loadCredentials').mockResolvedValue({ username: 'u', password: 'p', base_url: 'https://abramus.example.test' } as never);
+    await expect(svc.searchWork('t1', 'x')).rejects.toThrow(/redirect/);
+    expect((fetchImpl.mock.calls[1] as [string, RequestInit])[1].redirect).toBe('manual');
+  });
 });

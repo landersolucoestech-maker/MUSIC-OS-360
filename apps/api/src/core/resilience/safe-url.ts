@@ -148,8 +148,21 @@ export function isPrivateAddress(address: string): boolean {
     const lo = parseInt(mapped[3], 16);
     return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
   }
+  // NAT64 (64:ff9b::/96), 6to4 (2002::/16) and IPv4-compatible forms embed an IPv4 address: judge the embedded one.
+  const embedded = /^(?:64:ff9b::|::)([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(ip);
+  if (embedded) {
+    const hi = parseInt(embedded[1], 16);
+    const lo = parseInt(embedded[2], 16);
+    return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
+  }
   const first = parseInt(ip.split(':')[0] || '0', 16);
+  if (first === 0x2002) {
+    const hi = parseInt(ip.split(':')[1] || '0', 16);
+    const lo = parseInt(ip.split(':')[2] || '0', 16);
+    return isPrivateIpv4([hi >> 8, hi & 255, lo >> 8, lo & 255]);
+  }
   return (
+    (first & 0xffc0) === 0xfec0 ||              // fec0::/10 site-local (deprecated)
     (first & 0xfe00) === 0xfc00 ||              // fc00::/7 unique local
     (first & 0xffc0) === 0xfe80 ||              // fe80::/10 link-local
     (first & 0xff00) === 0xff00                 // ff00::/8 multicast

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { ArtistsService } from './artists.service';
-import { ARTIST_DEPRECATED_FIELDS, ARTIST_DEPRECATED_ORDER_BY, ARTIST_NESTED_DEPRECATED_KEYS, LEGACY_ARTIST_VALUES, LEGACY_DISTRIBUTOR_IDS, canonicalArtistNestedColumn, canonicalizeArtistInput, canonicalizeArtistQuery } from './artist-legacy-fields';
+import { ARTIST_DEPRECATED_FIELDS, ARTIST_DEPRECATED_ORDER_BY, ARTIST_NESTED_DEPRECATED_KEYS, LEGACY_ARTIST_VALUES, LEGACY_DISTRIBUTOR_IDS, canonicalArtistNestedColumn, canonicalizeArtistInput, canonicalizeArtistQuery, assertArtistSpecialtiesInClosedList } from './artist-legacy-fields';
 
 /**
  * Contract of the deprecated (pre-CZ-042 Portuguese) artist input: every alias, legacy value,
@@ -213,5 +213,15 @@ describe('deprecated team-contact category-only spellings (CZ-042)', () => {
     ['gestor', 'agent'],
   ])('maps %s to %s through the shared legacy table', (legacyValue, canonicalValue) => {
     expect(LEGACY_TEAM_CONTACT_CATEGORIES[legacyValue]).toBe(canonicalValue);
+  });
+});
+
+describe('closed artist specialties list (user-facing rejection)', () => {
+  it('tells the user which values are allowed', () => {
+    const error = (() => {
+      try { assertArtistSpecialtiesInClosedList(['drummer']); } catch (e) { return e as { response: { message: string } }; }
+      return null;
+    })();
+    expect(error?.response.message).toBe('Especialidade inválida. Valores permitidos: dj, dj_producer, songwriter, performer, producer.');
   });
 });

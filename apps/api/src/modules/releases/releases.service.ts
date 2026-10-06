@@ -27,7 +27,8 @@ const dayKey = (value: unknown): string => {
 };
 const textKey = (value: unknown): string => (value == null ? '' : String(value));
 /** A track the form adds on its own to an empty tracklist: it carries defaults but no content. */
-const TRACK_DEFAULT_KEYS = new Set(['id', 'language', 'explicit', 'isAlternateVersion', 'instrumental']);
+const TRACK_IDENTITY_KEYS = new Set(['id', 'language']);
+const TRACK_FLAG_KEYS = new Set(['explicit', 'isAlternateVersion', 'instrumental']);
 const isBlankValue = (value: unknown): boolean => {
   if (value == null || value === '' || value === false) return true;
   if (Array.isArray(value)) return value.every(isBlankValue);
@@ -36,7 +37,8 @@ const isBlankValue = (value: unknown): boolean => {
 };
 const isPlaceholderTrack = (track: unknown): boolean =>
   track != null && typeof track === 'object' && !Array.isArray(track)
-  && Object.entries(track as Record<string, unknown>).every(([key, value]) => TRACK_DEFAULT_KEYS.has(key) || isBlankValue(value));
+  && Object.entries(track as Record<string, unknown>).every(([key, value]) =>
+    TRACK_IDENTITY_KEYS.has(key) || isBlankValue(value) || (TRACK_FLAG_KEYS.has(key) && (value === false || value === 'no')));
 /** The posted tracklist is the stored one, or (when none is stored) only the untouched placeholder the form shows. */
 const tracksUnchanged = (sent: unknown, stored: unknown): boolean => {
   const storedEmpty = stored == null || (Array.isArray(stored) && stored.length === 0);
