@@ -75389,6 +75389,23 @@
       "dependency": null,
       "status": "ACTIVE",
       "coveringTest": "apps/web/src/modules/artist/lib/team-contact-category.test.ts"
+    },
+    {
+      "item": "invoices.tipo_nota column (fiscal document kind: nfse | nfe | nfce)",
+      "path": "database-schema",
+      "currentName": "tipo_nota",
+      "layer": "database",
+      "exceptionClass": "PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION",
+      "reason": "Persisted fiscal document kind of an issued invoice (NFS-e / NF-e / NFC-e values are the legal part). It is a different discriminator from invoices.type (row kind: stripe_subscription | fiscal). Renaming the column (for example to fiscal_document_type) is part of owner decision R1 (BLK-INVOICES-FISCAL-DISCRIMINATORS) and needs an approved migration with backfill; until then every code layer uses the name through per-file ledger rows.",
+      "consumer": "invoices module (entity, DTO, service, reports contract) and the web invoice form",
+      "owner": "database owner (Phase 0 naming)",
+      "removalCondition": "owner decision R1 recorded and an approved rename migration with backfill and dual-read applied in every environment",
+      "targetState": "fiscal_document_type or the R1 outcome",
+      "blocker": "owner decision R1 (BLK-INVOICES-FISCAL-DISCRIMINATORS)",
+      "dependency": "migration 20260930000021 executed in every environment",
+      "status": "ACTIVE",
+      "surface": "schema",
+      "coveringTest": "apps/api/src/modules/invoices/invoices.service.spec.ts"
     }
   ],
   "blockers": [
