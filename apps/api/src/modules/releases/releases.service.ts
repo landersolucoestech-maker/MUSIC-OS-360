@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException, Optional } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, Optional, ConflictException } from '@nestjs/common';
 import { DataSource, Repository, FindOptionsWhere } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -11,6 +11,21 @@ import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { ActivityLogsService } from '../activity-logs/activity-logs.service';
 import { canonicalReleaseType, canonicalizeReleaseInput } from './release-legacy-fields';
 import { joinReleaseArtistRef, toReleaseResponse, type ReleaseResponse } from './release-artist-ref';
+
+/** Statuses after distribution: the distribution data is a historical record and is requested from the distributor, not edited here. */
+const DISTRIBUTION_FROZEN_STATUSES: ReadonlySet<string> = new Set([
+  ReleaseStatus.DISTRIBUTED,
+  ReleaseStatus.RELEASED,
+  ReleaseStatus.ARCHIVED,
+]);
+
+const dayKey = (value: unknown): string => {
+  if (value == null || value === '') return '';
+  const d = value instanceof Date ? value : new Date(String(value));
+  return Number.isNaN(d.getTime()) ? String(value) : d.toISOString().slice(0, 10);
+};
+const textKey = (value: unknown): string => (value == null ? '' : String(value));
+const jsonKey = (value: unknown): string => JSON.stringify(value ?? null);
 
 @Injectable()
 export class ReleasesService {
@@ -143,6 +158,47 @@ export class ReleasesService {
     return saved;
   }
 
+  /**
+   * After distribution the release carries the data that was sent to the distributor. Changing it here
+   * would diverge from what the distributor holds, and the product rule is that such a change is requested
+   * from the distributor (its platform or a ticket). Fields sent with the value already stored are accepted
+   * so a form that posts the whole release keeps working; notes and unrelated metadata stay editable.
+   */
+  private assertDistributionDataUnchanged(
+    current: ReleaseResponse,
+    dto: UpdateReleaseDto,
+  ): void {
+    if (!DISTRIBUTION_FROZEN_STATUSES.has(current.status)) return;
+    const row = current as unknown as Record<string, unknown>;
+    const checks: Array<[string, unknown, boolean]> = [
+      ['title',        dto.title,        dto.title != null && textKey(dto.title) !== textKey(row['title'])],
+      ['type',         dto.type,         dto.type != null && textKey(dto.type) !== textKey(row['type'])],
+      ['artist_id',    dto.artistId,     dto.artistId != null && textKey(dto.artistId) !== textKey(row['artist_id'])],
+      ['upc',          dto.upc,          dto.upc != null && textKey(dto.upc) !== textKey(row['upc'])],
+      ['distributor',  dto.distributor,  dto.distributor != null && textKey(dto.distributor) !== textKey(row['distributor'])],
+      ['release_date', dto.releasedAt,   dto.releasedAt != null && dayKey(dto.releasedAt) !== dayKey(row['release_date'])],
+      ['cover_url',    dto.coverUrl,     dto.coverUrl != null && textKey(dto.coverUrl) !== textKey(row['cover_url'])],
+      ['isrc_global',  dto.isrc_global,  dto.isrc_global != null && textKey(dto.isrc_global) !== textKey(row['isrc_global'])],
+      ['record_label', dto.record_label, dto.record_label != null && textKey(dto.record_label) !== textKey(row['record_label'])],
+      ['copyright',    dto.copyright,    dto.copyright != null && textKey(dto.copyright) !== textKey(row['copyright'])],
+      ['music_genre',  dto.music_genre,  dto.music_genre != null && textKey(dto.music_genre) !== textKey(row['music_genre'])],
+      ['language',     dto.language,     dto.language != null && textKey(dto.language) !== textKey(row['language'])],
+      ['platforms',    dto.platforms,    dto.platforms != null && jsonKey(dto.platforms) !== jsonKey(row['platforms'] ?? [])],
+    ];
+    const sentTracks = dto.metadata != null && Object.prototype.hasOwnProperty.call(dto.metadata, 'tracks');
+    const storedTracks = (current.metadata as Record<string, unknown> | null | undefined)?.['tracks'];
+    if (sentTracks && jsonKey((dto.metadata as Record<string, unknown>)['tracks']) !== jsonKey(storedTracks)) {
+      checks.push(['metadata.tracks', null, true]);
+    }
+    const changed = checks.filter(([, , differs]) => differs).map(([field]) => field);
+    if (changed.length === 0) return;
+    throw new ConflictException({
+      code: 'RELEASE_DISTRIBUTED_IMMUTABLE',
+      message: 'Lançamento já distribuído: os dados de distribuição não podem ser alterados aqui. Solicite a alteração à distribuidora (na plataforma ou por ticket).',
+      fields: changed,
+    });
+  }
+
   async update(
     tenantId: string,
     userId: string,
@@ -152,6 +208,7 @@ export class ReleasesService {
   ): Promise<ReleaseResponse & { allowed_transitions: { to: string; label?: string }[] }> {
     const dto = canonicalizeReleaseInput(input);
     const current = await this.findById(tenantId, id, actorRole);
+    this.assertDistributionDataUnchanged(current, dto);
     const statusChanging = dto.status != null && dto.status !== current.status;
     const expectedUpdatedAt = dto.expectedUpdatedAt;
     const conflictMessage = 'Este lançamento foi alterado por outro usuário desde que você o carregou. Recarregue e tente novamente.';
