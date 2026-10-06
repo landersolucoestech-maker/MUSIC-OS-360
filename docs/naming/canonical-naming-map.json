@@ -1071,15 +1071,17 @@
     },
     {
       "id": "NC-037",
-      "concept": "Leads dual-storage: `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/`probabilidade_fechamento`/`proximo_follow_up` (physical columns) vs `dados_internos_crm.{origemLead,responsavel,prioridade,temperatura,valorEstimado,probabilidadeFechamento,proximoFollowUp}` (jsonb)",
+      "concept": "Leads dual-storage: `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/`probabilidade_fechamento`/`proximo_follow_up` (physical columns) vs `crm_internal_data.{origemLead,responsavel,prioridade,temperatura,valorEstimado,probabilidadeFechamento,proximoFollowUp}` (jsonb)",
       "section": "Open findings requiring further technical work (specs below are execution-ready, from this session's audit agents — not executed due to session scope)",
       "disposition": "DONE",
       "status": "done",
       "database": null,
-      "application": "`dados_internos_crm` (jsonb) — no case for migrating data/UI onto the physical columns instead: nothing currently filters/sorts/aggregates on them, and the jsonb side was already the report layer's sole read path",
+      "application": "`crm_internal_data` (jsonb; the Portuguese name `dados_internos_crm` is a legacy alias that the API refuses) — no case for migrating data/UI onto the physical columns instead: nothing currently filters/sorts/aggregates on them, and the jsonb side was already the report layer's sole read path",
       "api": null,
       "displayPtBr": "—",
-      "legacyAliases": [],
+      "legacyAliases": [
+        "dados_internos_crm"
+      ],
       "notes": "Current state: Live DEV data determined technical authority with no legitimate second semantic in active use: all 7 physical columns were 100% null (0/62 rows); `dados_internos_crm.{responsavel,prioridade,temperatura,origemLead}` had real data (1-3 rows each) written exclusively by the real CRM form (`LeadFormModal.tsx` via `payloadToLead()`); none of the 7 were even reachable through `CreateLeadDto`/`UpdateLeadDto` (`forbidNonWhitelisted` would reject them); the sole writer of any physical column anywhere in the codebase was `origemLead`, one internal non-DTO `repo.create()` in `submitPublicArtistApplication()`, itself never exercised in DEV and inconsistent with the rest of the app · Blocker/resolution: **DONE (2026-09-22) as a technical determination, not a product decision** — matches this mission's explicit instruction not to declare `NEEDS_PRODUCT_DECISION` when code/usage determine authority; migration `20260921000005_DropDeadLeadsCrmDualStorageColumns` dropped all 7 dead columns (zero data loss, verified null beforehand) and the one live writer was redirected into `dados_internos_crm.origemLead`"
     },
     {
@@ -75817,6 +75819,17 @@
       "disposition": "EXTERNAL",
       "status": "OPEN",
       "independentWorkCompleted": "investigated: no user-reachable rejection today; web-only slugs are stored verbatim."
+    },
+    {
+      "id": "BLK-UNWIRED-UI-SCAFFOLD",
+      "item": "Frontend code that calls the legacy-compatibility helpers but is not reachable in production: Schedule.tsx handleExcelExport/handleExcelImport (no control references them), the Settings user-status filter branch, and the contract variable resolver (generateParticipantVariables/resolveAllVariables), which only tests call.",
+      "blocker": "Whether these are planned features (wire them), dead code (delete) or inert scaffolding with an owner and a deadline is a product decision that code and tests cannot settle (decision package D-06).",
+      "evidence": "docs/engineering/product-decision-packages.md D-06; apps/web/src/modules/events/pages/Schedule.tsx, settings/pages/Users.tsx, contracts/utils/contract-variables.ts; the wiring exemptions in docs/naming/audit/compat-wiring-exemptions.json name this decision.",
+      "requiredAction": "Owner chooses per item: (A) delete the dead handlers/filter/resolver and their tests, (B) wire them as real features with owner and date (import must follow the preview/approval rules, XLSX only), or (C) keep inert with owner and deadline. The exemptions are removed when decided.",
+      "owner": "explicit owner decision required",
+      "disposition": "GENUINE_BUSINESS_DECISION",
+      "status": "OPEN",
+      "independentWorkCompleted": "Every reachable call site is proven by wiring mutation; the unreachable ones carry exemptions that name the exact unreferenced functions (reasons verified against the code)."
     }
   ]
 }

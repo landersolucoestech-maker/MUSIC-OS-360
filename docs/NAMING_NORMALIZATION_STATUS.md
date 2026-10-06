@@ -42,7 +42,7 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | NC-034 | Phonograms `participacao` DTO shape (`@IsArray() participacao?: unknown[]`) | done | DONE | no |
 | NC-035 | Clients `cidade`/`estado` → `city`/`state` | done | DONE | no |
 | NC-036 | Leads `cidade`/`estado`/`pais` → `city`/`state`/`country` | done | DONE | no |
-| NC-037 | Leads dual-storage: `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/`probabilidade_fechamento`/`proximo_follow_up` (physical columns) vs `dados_internos_crm.{origemLead,responsavel,prioridade,temperatura,valorEstimado,probabilidadeFechamento,proximoFollowUp}` (jsonb) | done | DONE | no |
+| NC-037 | Leads dual-storage: `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`estimated_value`/`probabilidade_fechamento`/`proximo_follow_up` (physical columns) vs `crm_internal_data.{origemLead,responsavel,prioridade,temperatura,valorEstimado,probabilidadeFechamento,proximoFollowUp}` (jsonb) | done | DONE | no |
 | NC-038 | `shares.type` vs `party_role` | done | RESOLVED | no |
 | NC-039 | `shares.role` | proposed | NEEDS_PRODUCT_DECISION | no |
 | NC-040 | `leads.observacoesInternas` | proposed | NEEDS_PRODUCT_DECISION | no |
@@ -104,5 +104,5 @@ Per-concept status derived from the canonical naming map plus open `.claude/ops/
 | CZ-048 | Transaction category/subcategory slug vocabulary (platform-owned options) | done | DONE | no |
 | NC-049 | Lead interaction timestamp | done | DONE | no |
 
-Concepts: 97. Renames: 0. Exceptions: 4347. Blockers: 37.
+Concepts: 97. Renames: 0. Exceptions: 4347. Blockers: 38.
 By status/disposition: approved/BLOCKED_PRODUCT_DECISION 6, done/DONE 85, done/RESOLVED 2, migrating/MIGRATION_REQUIRED 1, proposed/NEEDS_PRODUCT_DECISION 3.

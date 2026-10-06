@@ -47,11 +47,6 @@
    "reason": "Unreachable in production: the call sits inside resolveAllVariables, which no production file references; only contract-variable-vocabulary.test.ts calls it. The module is imported in production only for contractRoleLabel (ContractWizard.tsx), which is unrelated to this call; utils/index.ts re-exports the module but the barrel has no importer. Unreferenced exports of this file: generateParticipantVariables, resolveAllVariables, SYSTEM_VARIABLES, CATEGORY_LABELS, PARTICIPANT_ROLE_OPTIONS. Owner decision pending: wire the contract variable resolution or remove those exports (D-06)."
   },
   {
-   "file": "apps/web/src/modules/contracts/utils/contract-variables.ts",
-   "text": "canonicalEntityType(entityType)",
-   "reason": "Unreachable in production: the call sits inside generateParticipantVariables, which no production file references (its only non-test caller is resolveAllVariables, itself unreferenced); only contract-variable-vocabulary.test.ts calls it. The module is imported in production only for contractRoleLabel (ContractWizard.tsx), which is unrelated to this call; utils/index.ts re-exports the module but the barrel has no importer. Unreferenced exports of this file: generateParticipantVariables, resolveAllVariables, SYSTEM_VARIABLES, CATEGORY_LABELS, PARTICIPANT_ROLE_OPTIONS. Owner decision pending: wire the contract variable resolution or remove those exports (D-06)."
-  },
-  {
    "file": "apps/web/src/modules/artist/components/ArtistFormModal.tsx",
    "text": "emptyArtistFormValues()",
    "reason": "Equivalent mutant: this is only the initial react-hook-form defaultValues; the open effect calls hydrateForm(null) (create) or hydrateForm(fresh artist) (edit), which reset() the whole form before any field is shown or submitted, and reset(emptyArtistFormValues()) on close is a separate call site that is proven by its own test."

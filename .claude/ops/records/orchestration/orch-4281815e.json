@@ -4,7 +4,7 @@
   "workflow": "naming-normalization",
   "intent": null,
   "status": "ACTIVE",
-  "stopBlocks": 3,
+  "stopBlocks": 1,
   "lastProgressAt": "2026-10-05T17:57:13.636Z",
   "tasks": [
     {
