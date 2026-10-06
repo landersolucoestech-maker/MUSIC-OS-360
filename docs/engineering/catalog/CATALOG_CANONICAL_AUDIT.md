@@ -154,3 +154,66 @@ These were found while implementing and replace the wording of the table in sect
 - Per-provider connection probes beyond Abramus (F-04, remainder): each needs a real authenticated call that cannot be exercised here.
 - Notification idempotency for the other handlers that create notifications directly.
 - Everything marked SCHEMA, OWNER or APPROVAL in section 2: Person and Company, artist visibility, ReleaseTrack, submission and snapshot model, asset roles and unique current master and cover, main contracts and contract versioning, central tasks, audit reason and origin, import through the domain layer, statements pipeline and the external identifier model.
+
+## 8. Technical closure of the catalog block: review-driven fixes, proofs and residuals
+
+### 8.1 Independent adversarial reviews
+
+Seven read-only adversarial reviews were run on successive states of the block. Reviews 1 to 5 returned FAIL; every finding that was reachable through code the block changed was fixed and the block was reviewed again. Review 6 (the whole range up to `7c7faaa4`) returned PASS with no critical, high or medium finding and five low findings; one of them (a missing body length) was a real regression and was fixed in `ed107fab`, and review 7 (that delta only) returned PASS. A review verdict is evidence only for the state it reviewed; the final code state is `ed107fab` and the commits after it change documentation and mission state only.
+
+### 8.2 Findings and what happened to each
+
+| Finding | Severity | Fix | Commit |
+|---|---|---|---|
+| The Abramus endpoint is tenant-supplied and probed (outbound request oracle) | high | https only, no credentials, standard port, no private or metadata address, checked as a literal and after resolution, re-checked whenever a stored endpoint is used | `b63f79dd` |
+| A validated host could answer with a redirect to an unchecked address | high | Abramus calls never follow redirects and fail on a 3xx answer | `04630ec3` |
+| DNS rebinding: the name was resolved once for the check and again by fetch | medium | the request goes through an https request whose lookup refuses private answers at connect time and returns the connected address | `2237b14f` |
+| One shared circuit breaker let one tenant cut Abramus off for all tenants | medium | one breaker per endpoint host, bounded, least recently used eviction | `3d932cfa`, `1bbe9daf` |
+| Unresolvable tenant host answered 500; a public IPv6 literal was resolved as a name | medium | both follow the 400 path; literals are judged by the address classifier, names by the resolver, with a lookup timeout | `1bbe9daf`, `737b3950` |
+| Frozen release: placeholder track with instrumental, explicit or alternate-version set counted as unchanged; several placeholders accepted | medium | the flags must be at their form defaults (the real default `no` stays accepted); at most one placeholder | `04630ec3`, `3d932cfa` |
+| Frozen release: delivered assets and delivery date could still change through the merged assets and schedule objects | medium | master audio, cover, lyrics, credits and the distributor delivery date are frozen; blank, unchanged and trimmed-equal values and the production and marketing keys stay editable | `737b3950` |
+| That freeze rejected an untouched edit when the cover lived only in the cover column | medium | the stored value falls back to the column, as the form does | `032068b1` |
+| Percentage with a comma passed validation and failed at the database | medium | only dot decimals are valid, a comma is a 400 | `ce0ffa64` |
+| Whitespace-only ISWC was stored as spaces | low | stored as null, the single representation of absent | `8ba2166a`, `032068b1` |
+| IPv6 and IPv4 address classes missing from the tenant-URL guard (local-use NAT64, IPv4-compatible, SIIT, Teredo, documentation, site-local, uncompressed forms, trailing dot hosts) | low | the classifier parses every textual form and treats an unparseable address as private | `8ba2166a`, `3d932cfa`, `737b3950` |
+| Pinned request had only an idle timeout, accepted any status code and sent its body chunked | low | total deadline, status range check, size cap, Content-Length from the body byte length | `3d932cfa`, `ed107fab` |
+| A failing restore or a store that cannot record the failure masked the validation failure | low | the caller still gets the validation failure; the state records that the restore failed | `1bbe9daf`, `737b3950` |
+| An empty signer list on a signed contract stored without signers counted as a change; dates compared as empty objects | low | an empty list or object is the same absence as null; dates compare by instant | `032068b1` |
+
+### 8.3 Proofs and gates (measured on `ed107fab`)
+
+| Check | Command | Result |
+|---|---|---|
+| Mutation proof | `node scripts/naming/compat-prove-sandbox.mjs` (artist and contracts pairs re-proven against the current files) | proof file written, 275 pairs, boundaries without behavioral proof: 0 |
+| Wiring proof | `node scripts/naming/compat-wiring-proof.mjs --prove --shards 3` | 516 sites, 506 killed, 10 survived (unchanged from the committed baseline, documented exemptions), unproven call sites: 0 |
+| Naming aggregate | `pnpm naming:check` | exit 0, 212 gate tests, 0 failed, boundary 0, wiring 0, historical records 0 misclassified, destructive dossier 0 problems |
+| API suite | `npx jest` in `apps/api` | 563 suites passed (1 skipped), 9,516 tests passed, 17 skipped, 0 failed |
+| Web suite | `pnpm test:run` in `apps/web` | 389 files, 3,207 tests, 0 failed |
+| Typecheck | `pnpm typecheck` | exit 0 |
+| Lint | `pnpm lint` | exit 0, 0 errors, 2,066 warnings |
+| Build | `pnpm build` after removing the stale ignored build info file | exit 0, `apps/api/dist/main.js` emitted |
+
+Every fix above was mutation checked by hand: the mutant fails its covering spec. The closed-specialties rejection message is a plain string literal covered by a spec that fails when the message changes; its Portuguese sentence is exempted in the canonical map with the same reason as the other user-facing validation messages. The connect-time lookup, the redirect refusal, the per-host breaker and the body length are covered by specs that make no network call; they do not prove behavior against a real provider.
+
+### 8.4 Residuals that remain
+
+| Id | Severity | Description | Why it stays |
+|---|---|---|---|
+| RES-1 | medium, out of block | The spreadsheet import writes artists, works and phonograms by raw insert and bypasses the closed specialties list, the ISWC check and the percentage checks | pre-existing and outside this block: it needs the import to go through the domain layer (F-33, owner item) |
+| RES-2 | low | Saving credentials is not atomic: overlapping configure calls can restore credentials that were never verified or overwrite a verified connection, and a crash between the write and the restore leaves them stored; a first failed configuration leaves the tenant-chosen credentials in error status; the failure count is not restored; a restore failure is stored in the state but not logged | a lock or transaction cannot be proven without PostgreSQL |
+| RES-3 | low | Two different events of one type on one aggregate in the same millisecond collapse into one notification | the id is deterministic by design; widening it needs an event sequence number (schema) |
+| RES-4 | low | A frozen release with no stored tracklist accepts one placeholder that carries only an id and a language | it carries no content and nothing was delivered; recorded decision |
+| RES-5 | low | Other metadata keys (territory, pricing, time zone, copyright years, secondary genre, own UPC, various artists), the production and marketing keys of assets and schedule, and removal stay editable on a frozen release; filling a frozen key for the first time is rejected (pinned by a test) | which fields are distribution data is a product decision; the frozen keys are the ones the distributor holds |
+| RES-6 | low | Line endings are not normalised in the frozen text keys, so a value stored with CRLF through the API or import and re-posted by the browser with LF is a false conflict | needs non-form data; recorded |
+| RES-7 | low | The signature lock and the release freeze read the status before the write and the expected update time is optional, so a patch racing a transition can win; a signed contract stored with a null file URL and re-posted as an empty string, or with legacy signer field shapes, is a false conflict | needs a guarded update that includes the status; not provable without a database |
+| RES-8 | low | The verified-upload event is emitted after the commit with no outbox, and a transient storage error while inspecting the object leaves the upload confirmed and unlinked until the client confirms again | needs a durable outbox and retry (schema, worker) |
+| RES-9 | low | The presigned upload URL stays valid after verification, so an object can be overwritten after it turned ready | pre-existing storage design, outside this block |
+| RES-10 | low | The pinned request ignores an abort signal and header instances, strips no caller transfer-encoding header, supports string bodies only and reuses keep-alive sockets without a new lookup | no caller needs them; a reused socket points at an address that was validated |
+| RES-11 | low | A transient resolver failure on a stored endpoint is reported with the same 400 code as a rejected address; address classes such as ORCHID and operator-specific translation prefixes are not listed | acceptable classification; the connect-time lookup is the real guard |
+| RES-12 | low | A tenant admin trying more than 100 distinct hosts evicts the breaker of the shared Abramus host and resets its open state | bounded memory was chosen; harmless reset |
+| RES-13 | low | The percentage cap sums producers, performers and session musicians of a phonogram into one 100% | product question |
+| RES-14 | low | The project form shows two identical in-progress options while a project is in the internal review state | deliberate, it preserves the state on save; dropping the state is an owner decision |
+| RES-15 | low | An asset-uploaded notification reads as sent before the upload is verified | wording in another module |
+| RES-16 | low, pre-block | The distributor field of the freeze (added in `a52b7a74`) rejects an untouched edit of a distributed release stored with no distributor, because the form defaults it | not part of this block; recorded for the owner |
+
+The earlier residuals F2 (DNS rebinding), the local-use NAT64 prefix, the whitespace ISWC and the placeholder flags are no longer open: they are fixed and listed in 8.2. The distributed-release placeholder language is RES-4.
