@@ -22,7 +22,11 @@ export function toProductStatus(stored: string | null | undefined): ProjectProdu
   return s === INTERNAL_REVIEW_STATUS ? "in_progress" : (s as ProjectProductStatus);
 }
 
-/** Dashboard buckets from the per-status counts of GET /projects/stats: every project falls in exactly one product bucket. */
+/**
+ * Dashboard buckets from the per-status counts of GET /projects/stats. A project in the internal review state counts
+ * as active. Cancelled projects and statuses outside the product list belong to no bucket (the dashboard has none for
+ * them), so the buckets can add up to less than the total.
+ */
 export function tallyProjectStatuses(byGroup: Readonly<Record<string, number>>): { active: number; completed: number; drafts: number } {
   const tally = { active: 0, completed: 0, drafts: 0 };
   for (const [status, count] of Object.entries(byGroup)) {

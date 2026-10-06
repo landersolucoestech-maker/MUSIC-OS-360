@@ -89,6 +89,19 @@ describe('IntegrationBaseService.saveCredentials: a saved credential is not a te
     expect(String(rows[0].metadata['last_failure_reason'])).toContain('401');
   });
 
+  it('when the restore itself fails the caller still gets the validation failure and the state says it is not connected', async () => {
+    const { svc, rows } = build([{
+      id: 'i1', tenant_id: 't1', provider: 'abramus', status: IntegrationStatus.CONNECTED,
+      credentials_encrypted: 'old-credentials', metadata: { verified: true },
+    }]);
+    jest.spyOn(svc as unknown as { restoreCredentials: () => Promise<void> }, 'restoreCredentials').mockRejectedValue(new Error('db down'));
+    await expect(svc.saveCredentials('t1', 'abramus', { token: 'mistyped' }, jest.fn().mockRejectedValue(new Error('401'))))
+      .rejects.toMatchObject({ response: { code: 'INTEGRATION_CONNECTION_TEST_FAILED' } });
+    expect(rows[0].status).toBe(IntegrationStatus.ERROR);
+    expect(rows[0].metadata['verified']).toBe(false);
+    expect(rows[0].metadata['restore_failed']).toBe(true);
+  });
+
   it('a failed first configuration has nothing to restore: it is stored in error', async () => {
     const { svc, rows } = build();
     await expect(svc.saveCredentials('t1', 'abramus', { token: 'x' }, jest.fn().mockRejectedValue(new Error('down')))).rejects.toBeDefined();
@@ -239,5 +252,34 @@ describe('AbramusService.configure: connected only after a real login', () => {
     for (let i = 0; i < 5; i += 1) await expect(call('down.example.test')).rejects.toThrow('public address');
     await expect(call('down.example.test')).rejects.toThrow('temporariamente indisponível');
     await expect(call('other.example.test')).rejects.toThrow('public address'); // reached the guard: its breaker is closed
+  });
+
+  it('an unresolvable host is a 400 that stores nothing, not a 500 with the resolver message', async () => {
+    const { svc, rows, resolveHost, fetchImpl } = buildAbramus(jest.fn());
+    resolveHost.mockRejectedValue(Object.assign(new Error('getaddrinfo ENOTFOUND typo.example.test'), { code: 'ENOTFOUND' }));
+    const error = await svc.configure('t1', 'user', 'secret', 'https://typo.example.test').then(() => null, (e: { response: { code: string; message: string } }) => e);
+    expect(error?.response.code).toBe('INTEGRATION_URL_NOT_ALLOWED');
+    expect(error?.response.message).not.toContain('getaddrinfo');
+    expect(rows).toHaveLength(0);
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('a public IPv6 literal is accepted without a name lookup', async () => {
+    const { svc, fetchImpl, resolveHost } = buildAbramus(jest.fn().mockResolvedValue({ ok: true, json: async () => ({ token: 'tok' }) }));
+    await svc.configure('t1', 'user', 'secret', 'https://[2606:4700:4700::1111]/');
+    expect((fetchImpl.mock.calls[0] as [string])[0]).toBe('https://[2606:4700:4700::1111]/api/v1/auth/login');
+    expect(resolveHost).not.toHaveBeenCalled();
+  });
+
+  it('keeps the breaker of a host in use and evicts the least recently used one', () => {
+    const { svc } = buildAbramus(jest.fn());
+    const breakerFor = (host: string) => (svc as unknown as { breakerFor: (u: string) => unknown }).breakerFor(`https://${host}/x`);
+    const first = breakerFor('h0.example.test');
+    const second = breakerFor('h1.example.test');
+    for (let i = 2; i < 100; i += 1) breakerFor(`h${i}.example.test`);
+    expect(breakerFor('h0.example.test')).toBe(first); // touched: now the most recently used, h1 is the oldest
+    breakerFor('h100.example.test'); // the map is full: evicts h1
+    expect(breakerFor('h0.example.test')).toBe(first);
+    expect(breakerFor('h1.example.test')).not.toBe(second); // h1 lost its breaker and got a new one
   });
 });

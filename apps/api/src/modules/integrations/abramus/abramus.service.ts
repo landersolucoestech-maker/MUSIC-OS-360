@@ -1,5 +1,6 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { promises as dns } from 'node:dns';
+import { isIP } from 'node:net';
 import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../../../database/database.module';
 import { EncryptionService }    from '../../../core/security/encryption.service';
@@ -74,7 +75,12 @@ export class AbramusService extends IntegrationBaseService {
   private breakerFor(url: string): CircuitBreaker {
     const host = new URL(url).host;
     const existing = this.hostBreakers.get(host);
-    if (existing) return existing;
+    if (existing) {
+      // Least recently used: a host in use is never the one evicted.
+      this.hostBreakers.delete(host);
+      this.hostBreakers.set(host, existing);
+      return existing;
+    }
     if (this.hostBreakers.size >= MAX_HOST_BREAKERS) {
       const oldest = this.hostBreakers.keys().next().value as string;
       this.hostBreakers.delete(oldest);
@@ -87,7 +93,16 @@ export class AbramusService extends IntegrationBaseService {
   private async validatedBaseUrl(raw: string): Promise<string> {
     try {
       const url = assertPublicHttpsUrl(raw, 'baseUrl');
-      await assertResolvesToPublicAddresses(new URL(url).hostname, (n) => this.resolveHost(n));
+      const host = new URL(url).hostname.replace(/^\[|\]$/g, '');
+      // An address literal was already judged by assertPublicHttpsUrl; only a name needs resolving.
+      if (!isIP(host)) {
+        try {
+          await assertResolvesToPublicAddresses(host, (n) => this.resolveHost(n));
+        } catch (error) {
+          if (error instanceof UnsafeInputError) throw error;
+          throw new UnsafeInputError('host could not be resolved');
+        }
+      }
       return url;
     } catch (error) {
       if (error instanceof UnsafeInputError) {

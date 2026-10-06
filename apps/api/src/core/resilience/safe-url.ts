@@ -245,8 +245,13 @@ export function createPublicOnlyLookup(resolve: HostResolver) {
       if (addresses.length === 0 || addresses.some(isPrivateAddress)) {
         throw new UnsafeInputError('host must resolve to a public address');
       }
-      if (wantsAll) done(null, addresses.map((address) => ({ address, family: familyOf(address) })));
-      else done(null, addresses[0], familyOf(addresses[0]));
-    }).catch((error: Error) => done(error));
+      return addresses;
+    }).then(
+      (addresses) => {
+        if (wantsAll) done(null, addresses.map((address) => ({ address, family: familyOf(address) })));
+        else done(null, addresses[0], familyOf(addresses[0]));
+      },
+      (error: Error) => done(error), // a throwing callback can never be called a second time
+    );
   };
 }

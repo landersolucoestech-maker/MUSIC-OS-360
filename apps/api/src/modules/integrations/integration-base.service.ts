@@ -78,11 +78,17 @@ export class IntegrationBaseService {
       const reason = redactForStorage(error instanceof Error ? error.message : String(error));
       // A mistyped re-configuration must not destroy a working connection: the previous credentials and status
       // come back, and only the failure is recorded.
+      let restoreFailed = false;
       if (previous) {
-        await this.restoreCredentials(tenantId, provider, previous.credentials_encrypted, previous.status);
+        try {
+          await this.restoreCredentials(tenantId, provider, previous.credentials_encrypted, previous.status);
+        } catch {
+          restoreFailed = true; // the caller still gets the validation failure; the state records that the restore did not happen
+        }
       }
-      await this.recordConnectionState(tenantId, provider, previous ? previous.status : IntegrationStatus.ERROR, {
-        verified: previous ? previous.verified : false,
+      await this.recordConnectionState(tenantId, provider, previous && !restoreFailed ? previous.status : IntegrationStatus.ERROR, {
+        verified: previous && !restoreFailed ? previous.verified : false,
+        ...(restoreFailed ? { restore_failed: true } : {}),
         last_failure_at: new Date().toISOString(),
         last_failure_reason: reason,
       });
