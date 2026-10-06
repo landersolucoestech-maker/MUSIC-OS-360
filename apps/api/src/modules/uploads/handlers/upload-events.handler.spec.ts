@@ -169,3 +169,35 @@ describe('UploadEventsHandler: the stored object decides, not the declared type'
     expect(markedReady(uploadRepo)).toBe(false);
   });
 });
+
+describe('UploadEventsHandler: asset.verified is emitted only for a verified upload', () => {
+  const R2_KEY = 'tenants/t1/audio/up1/song.mp3';
+  const payload = { uploadId: 'up1', tenantId: 't1', entityType: 'artist', entityId: 'a1', fileName: 'song.mp3', mimeType: 'audio/mpeg', uploadedBy: 'u1', uploadedAt: '2026-10-06T12:00:00.000Z' };
+
+  function build(head: Buffer) {
+    const uploadRepo = {
+      findOne: jest.fn().mockResolvedValue({ size_bytes: 1024, mime_type: 'audio/mpeg', r2_key: R2_KEY }),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
+    };
+    const dbContext = { runInTenantContext: jest.fn((_c: unknown, w: (m: unknown) => unknown) => w(undefined)) };
+    const storage = { inspectObject: jest.fn().mockResolvedValue({ size: 1024, head }), delete: jest.fn().mockResolvedValue(undefined) };
+    const events = { emitTyped: jest.fn() };
+    const handler = new UploadEventsHandler({ getRepository: () => uploadRepo } as any, dbContext as any, storage as any, events as any);
+    return { handler, events };
+  }
+
+  it('emits asset.verified with the original payload after the upload is ready', async () => {
+    const { handler, events } = build(Buffer.from('ID3\u0000\u0000\u0000\u0000'));
+    await handler.onAssetUploaded({ payload, correlationId: null } as any);
+    expect(events.emitTyped).toHaveBeenCalledTimes(1);
+    expect(events.emitTyped).toHaveBeenCalledWith('asset.verified', expect.objectContaining({
+      tenantId: 't1', aggregateType: 'upload', aggregateId: 'up1', payload,
+    }));
+  });
+
+  it('does not emit it for a rejected upload', async () => {
+    const { handler, events } = build(Buffer.from('<html></html>'));
+    await handler.onAssetUploaded({ payload, correlationId: null } as any);
+    expect(events.emitTyped).not.toHaveBeenCalled();
+  });
+});

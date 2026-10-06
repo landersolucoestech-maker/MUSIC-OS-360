@@ -31,6 +31,7 @@ import type { AssetUploadedPayload } from '../../core/events/domain-events.types
 import { SkillRunService } from '../../core/skills/skill-run.service';
 import { AssetClassificationService } from './asset-classification.service';
 import { canonicalAssetType } from '../../common/compat/asset-type';
+import { UploadStatus } from '@music-os-360/types';
 
 const PROJECT_ENTITY_ALIASES = new Set(['project', 'projects']);
 const TASK_ENTITY_ALIASES = new Set(['task', 'tasks', 'marketing_task', 'marketing_tasks', 'audiovisual_task']);
@@ -87,6 +88,16 @@ export class AssetLinkingService {
   async processUpload(payload: AssetUploadedPayload): Promise<AssetLinkResult | null> {
     if (!this.assets) {
       this.logger.warn('AssetLinkingService: DATA_SOURCE unavailable — linking skipped.');
+      return null;
+    }
+
+    // Defense in depth: only an upload that passed verification (status ready) becomes an asset. A rejected,
+    // pending or deleted upload is never linked, whatever event reached this method.
+    const current = await this.uploads!.findOne({ where: { id: payload.uploadId, tenant_id: payload.tenantId } });
+    if (!current || current.status !== UploadStatus.READY) {
+      this.logger.warn(
+        `AssetLinkingService: upload ${payload.uploadId} is ${current?.status ?? 'missing'}, not ready — not linked.`,
+      );
       return null;
     }
 
@@ -159,7 +170,7 @@ export class AssetLinkingService {
         if (entityId && PROJECT_ENTITY_ALIASES.has(entity)) {
           await this.linkAssetToProject(payload.tenantId, asset.id, entityId, {
             role: 'reference',
-            sourceEvent: DOMAIN_EVENTS.ASSET_UPLOADED,
+            sourceEvent: DOMAIN_EVENTS.ASSET_VERIFIED,
             actorId: payload.uploadedBy,
           });
           linkedProjectId = entityId;
@@ -167,7 +178,7 @@ export class AssetLinkingService {
         } else if (entityId && TASK_ENTITY_ALIASES.has(entity)) {
           await this.linkAssetToTask(payload.tenantId, asset.id, entityId, {
             role: 'reference',
-            sourceEvent: DOMAIN_EVENTS.ASSET_UPLOADED,
+            sourceEvent: DOMAIN_EVENTS.ASSET_VERIFIED,
             actorId: payload.uploadedBy,
           });
           linkedTaskId = entityId;

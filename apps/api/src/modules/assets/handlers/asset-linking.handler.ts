@@ -1,7 +1,7 @@
 /**
  * modules/assets/handlers/asset-linking.handler.ts
  *
- * Connects the REAL existing asset.uploaded event to the Asset Linking Skill.
+ * Connects the asset.verified event (an upload that passed verification) to the Asset Linking Skill.
  * Internal infrastructure — no exposure to the user.
  */
 
@@ -21,7 +21,8 @@ export class AssetLinkingHandler {
     @Optional() private readonly dbContext?: DatabaseContextService,
   ) {}
 
-  @OnEvent(DOMAIN_EVENTS.ASSET_UPLOADED, { async: true })
+  /** Linking waits for the verification of the upload: a rejected file must never become an asset. */
+  @OnEvent(DOMAIN_EVENTS.ASSET_VERIFIED, { async: true })
   async onAssetUploaded(event: DomainEvent<AssetUploadedPayload>): Promise<void> {
     const tenantId = event?.tenantId ?? event?.payload?.tenantId;
     // Fail-closed: an async handler without a tenant must not touch tenant data.

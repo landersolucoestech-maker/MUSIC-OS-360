@@ -9,7 +9,7 @@ import { DATA_SOURCE } from '../../../database/database.module';
 import { DatabaseContextService } from '../../../database/database-context.service';
 import { UploadEntity } from '../../../database/entities';
 import { UploadStatus } from '@music-os-360/types';
-import { DOMAIN_EVENTS } from '../../../core/events/events.service';
+import { DOMAIN_EVENTS, EventsService } from '../../../core/events/events.service';
 import type { DomainEvent } from '../../../core/events/events.service';
 import type { AssetUploadedPayload } from '../../../core/events/domain-events.types';
 import { StorageService, ALLOWED_UPLOAD_MIME_TYPES } from '../../../storage/storage.service';
@@ -39,6 +39,7 @@ export class UploadEventsHandler {
     @Inject(DATA_SOURCE) @Optional() dataSource: DataSource | null,
     @Optional() private readonly dbContext?: DatabaseContextService,
     @Optional() private readonly storage?: StorageService,
+    @Optional() private readonly events?: EventsService,
   ) {
     if (dataSource) this.uploadRepo = dataSource.getRepository(UploadEntity);
   }
@@ -82,7 +83,7 @@ export class UploadEventsHandler {
         ? this.dbContext.runInTenantContext({ tenantId, orgId: null, role: null }, work)
         : work(undefined);
 
-    await runInContext(async (manager) => {
+    const verified = await runInContext(async (manager): Promise<boolean> => {
       const repository = manager ? manager.getRepository(UploadEntity) : this.uploadRepo;
       if (!repository) {
         throw new Error(
@@ -104,7 +105,7 @@ export class UploadEventsHandler {
         this.logger.warn(
           `${reason}: upload=${uploadId} tenant=${tenantId} event=${mimeType} stored=${record.mime_type}`,
         );
-        return;
+        return false;
       }
 
       if (!ALLOWED_UPLOAD_MIME_TYPES.has(mimeType)) {
@@ -112,7 +113,7 @@ export class UploadEventsHandler {
         await this.markRejected(repository, uploadId, tenantId, reason);
         await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
-        return;
+        return false;
       }
 
       const maxBytes = getMaxSize(mimeType);
@@ -122,14 +123,14 @@ export class UploadEventsHandler {
         await this.markRejected(repository, uploadId, tenantId, reason);
         await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
-        return;
+        return false;
       }
       if (sizeBytes > maxBytes) {
         const reason = `Tamanho ${sizeBytes} excede o limite ${maxBytes} para ${mimeType}`;
         await this.markRejected(repository, uploadId, tenantId, reason);
         await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
-        return;
+        return false;
       }
 
       // The declared type and size come from the client. What is really stored decides.
@@ -146,21 +147,21 @@ export class UploadEventsHandler {
         const reason = 'Arquivo não encontrado no armazenamento';
         await this.markRejected(repository, uploadId, tenantId, reason);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
-        return;
+        return false;
       }
       if (inspected.size !== sizeBytes) {
         const reason = `Tamanho real ${inspected.size} diverge do declarado ${sizeBytes}`;
         await this.markRejected(repository, uploadId, tenantId, reason);
         await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
-        return;
+        return false;
       }
       if (!contentMatchesDeclaredType(mimeType, inspected.head)) {
         const reason = `Conteúdo do arquivo não corresponde ao tipo declarado (${mimeType})`;
         await this.markRejected(repository, uploadId, tenantId, reason);
         await this.discardObject(record.r2_key, uploadId, tenantId);
         this.logger.warn(`${reason}: upload=${uploadId} tenant=${tenantId}`);
-        return;
+        return false;
       }
 
       const result = await repository.update(
@@ -175,6 +176,18 @@ export class UploadEventsHandler {
       this.logger.log(
         `Upload validado: upload=${uploadId} tenant=${tenantId} file=${fileName} status=${UploadStatus.READY}`,
       );
+      return true;
     });
+
+    // Only a verified upload may become an asset: downstream linking waits for this event.
+    if (verified) {
+      this.events?.emitTyped(DOMAIN_EVENTS.ASSET_VERIFIED, {
+        tenantId,
+        userId: event.payload.uploadedBy,
+        aggregateType: 'upload',
+        aggregateId: uploadId,
+        payload: event.payload,
+      });
+    }
   }
 }

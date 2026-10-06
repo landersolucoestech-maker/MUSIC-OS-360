@@ -40,3 +40,13 @@ describe('AssetLinkingHandler — P2-9', () => {
     expect(assetLinking.processUpload).not.toHaveBeenCalled();
   });
 });
+
+describe('AssetLinkingHandler: wired to the verification, not to the raw upload', () => {
+  it('listens to asset.verified and not to asset.uploaded', () => {
+    const { EVENT_LISTENER_METADATA } = require('@nestjs/event-emitter/dist/constants');
+    const listeners = Reflect.getMetadata(EVENT_LISTENER_METADATA, AssetLinkingHandler.prototype.onAssetUploaded) as Array<{ event: string }>;
+    const events = listeners.map((l) => l.event);
+    expect(events).toContain('asset.verified');
+    expect(events).not.toContain('asset.uploaded');
+  });
+});

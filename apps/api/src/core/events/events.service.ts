@@ -150,6 +150,7 @@ export interface EventPayloadMap {
   'client.created':        ClientCreatedPayload;
   'conversation.created':  ConversationCreatedPayload;
   'asset.uploaded':        AssetUploadedPayload;
+  'asset.verified':        AssetUploadedPayload;
   'marketing.asset_available_for_content': AssetAvailableForContentPayload;
   'skill.started':         SkillStartedPayload;
   'skill.completed':       SkillCompletedPayload;
@@ -249,6 +250,8 @@ export const DOMAIN_EVENTS = {
 
   // Assets
   ASSET_UPLOADED:        'asset.uploaded',
+  /** The uploaded object was verified (real size and signature) and the upload is ready: the earliest moment it may become an asset. */
+  ASSET_VERIFIED:        'asset.verified',
   ASSET_AVAILABLE_FOR_CONTENT: 'marketing.asset_available_for_content',
   ASSET_LINKED_TO_PROJECT: 'asset.linked_to_project',
   ASSET_LINKED_TO_TASK:    'asset.linked_to_task',

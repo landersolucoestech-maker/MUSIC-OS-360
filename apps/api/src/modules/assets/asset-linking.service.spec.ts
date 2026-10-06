@@ -82,6 +82,7 @@ describe('AssetLinkingService.processUpload', () => {
     category: 'audio',
     entity: 'project',
     entity_id: 'proj-1',
+    status: 'ready',
   };
 
   it('creates the central asset + version and links it to the project, emitting asset.linked_to_project', async () => {
@@ -171,5 +172,43 @@ describe('canonicalAssetResponse (dual-read of legacy asset types)', () => {
     expect(canonicalAssetResponse({ asset_type: 'wav', metadata: null } as never)).toMatchObject({ asset_type: 'wav', metadata: null });
     expect(canonicalAssetResponse({ asset_type: 'contract', metadata: { classification: { assetType: 'contract' } } } as never).metadata)
       .toEqual({ classification: { assetType: 'contract' } });
+  });
+});
+
+describe('AssetLinkingService.processUpload: only a verified upload becomes an asset', () => {
+  const upload = (status: string) => ({
+    id: 'u1', tenant_id: 't1', original_name: 'x.png', mime_type: 'image/png', r2_key: 'tenant/t1/u1.png',
+    size_bytes: 10, category: 'images', entity: 'project', entity_id: 'proj-1', status,
+  });
+  const payload = {
+    uploadId: 'u1', tenantId: 't1', entityType: 'project', entityId: 'proj-1', fileName: 'x.png',
+    mimeType: 'image/png', uploadedBy: 'user-1', uploadedAt: '2026-10-06T12:00:00.000Z',
+  } as AssetUploadedPayload;
+
+  it.each(['confirmed', 'error', 'deleted', 'pending'])('does not create an asset or a link for an upload in status %s', async (status) => {
+    const { ds, repos } = makeDs(upload(status));
+    const ev = events();
+    const runs = skillRuns();
+    const svc = new AssetLinkingService(ds as never, ev as never, runs as never, classification() as never);
+
+    expect(await svc.processUpload(payload)).toBeNull();
+    expect(repos.get(AssetEntity)!.save).not.toHaveBeenCalled();
+    expect(repos.get(AssetVersionEntity)!.save).not.toHaveBeenCalled();
+    expect(repos.get(ProjectAssetEntity)!.save).not.toHaveBeenCalled();
+    expect(ev.emitTyped).not.toHaveBeenCalled();
+  });
+
+  it('does not create an asset for an upload that does not exist', async () => {
+    const { ds, repos } = makeDs(null);
+    const svc = new AssetLinkingService(ds as never, events() as never, skillRuns() as never, classification() as never);
+    expect(await svc.processUpload(payload)).toBeNull();
+    expect(repos.get(AssetEntity)!.save).not.toHaveBeenCalled();
+  });
+
+  it('links a ready upload', async () => {
+    const { ds, repos } = makeDs(upload('ready'));
+    const svc = new AssetLinkingService(ds as never, events() as never, skillRuns() as never, classification() as never);
+    expect(await svc.processUpload(payload)).toMatchObject({ assetId: 'asset-1', linkedProjectId: 'proj-1' });
+    expect(repos.get(AssetEntity)!.save).toHaveBeenCalled();
   });
 });
