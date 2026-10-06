@@ -29,11 +29,11 @@ export function loadPack(root = ROOT_DEFAULT) {
     if (item.type === "skill" && existsSync(skillPath(root, item.name))) skills.push(parseSkillFile(skillPath(root, item.name)));
   }
   const capDefs = readJson(join(root, ".claude", "registry", "capabilities.json"), { capabilities: [] }).capabilities;
-  return { manifest, agents, skills, capDefs };
+  return { manifest, agents, skills, capDefs, supplementalDefinitions: manifest.supplementalDefinitions || { agents: [], skills: [] } };
 }
 
 export function buildRegistry(root = ROOT_DEFAULT) {
-  const { manifest, agents, skills, capDefs } = loadPack(root);
+  const { manifest, agents, skills, capDefs, supplementalDefinitions } = loadPack(root);
   const consumers = new Map();
   for (const a of agents) for (const s of a.skills) consumers.set(s, [...(consumers.get(s) || []), a.name]);
 
@@ -59,7 +59,12 @@ export function buildRegistry(root = ROOT_DEFAULT) {
       skills: skills.length,
       capabilities: capabilities.length,
       workflows: workflows.length,
+      supplementalAgents: supplementalDefinitions.agents.length,
+      supplementalSkills: supplementalDefinitions.skills.length,
+      totalAgents: agents.length + supplementalDefinitions.agents.length,
+      totalSkills: skills.length + supplementalDefinitions.skills.length,
     },
+    supplementalDefinitions,
     agents: agents.map((a) => ({
       name: a.name, kind: a.kind, domain: a.domain, batch: a.batch, owner: a.owner,
       path: `.claude/agents/${a.name}.md`, tools: a.tools, writes: a.writes, capabilities: a.capabilities,
