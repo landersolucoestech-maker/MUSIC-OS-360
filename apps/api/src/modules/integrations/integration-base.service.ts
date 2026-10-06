@@ -15,7 +15,8 @@ import { IntegrationStatus } from '@music-os-360/types';
  */
 export function withoutCredentialValues(text: string, creds: Record<string, string>): string {
   let out = text;
-  for (const value of Object.values(creds)) {
+  // Longest first, so a value that contains another is removed whole.
+  for (const value of Object.values(creds).sort((a, b) => String(b).length - String(a).length)) {
     if (typeof value === 'string' && value.trim().length >= 4) out = out.split(value).join('[REDACTED]').split(value.trim()).join('[REDACTED]');
   }
   return out.slice(0, 500);

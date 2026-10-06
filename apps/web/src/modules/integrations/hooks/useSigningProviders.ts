@@ -70,8 +70,11 @@ export function useSigningProviders() {
       label:       "Autentique",
       description: autentiqueStatus?.connected
         ? "Conectado"
-        : "Não conectado",
-      connected:   autentiqueStatus?.connected ?? false,
+        : autentiqueStatus?.configured
+          ? "Salvo — será validado no primeiro envio"
+          : "Não conectado",
+      // Selectable once saved: the first document sent is what proves the token.
+      connected:   autentiqueStatus?.configured ?? autentiqueStatus?.connected ?? false,
       logo:        "A",
     },
     {
@@ -91,6 +94,7 @@ export function useSigningProviders() {
     queryKey: [
       "integrations", "signing-providers",
       autentiqueStatus?.connected ?? false,
+      autentiqueStatus?.configured ?? false,
       docusignConnected,
     ],
     queryFn: async (): Promise<SigningProviderOption[]> => providers,

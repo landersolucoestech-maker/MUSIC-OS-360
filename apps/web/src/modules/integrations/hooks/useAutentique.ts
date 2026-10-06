@@ -14,7 +14,10 @@ import { toUserMessage } from "@/shared/lib/errors";
  * (AutentiqueConfigDialog already treats those fields as optional).
  */
 export interface AutentiqueStatus {
+  /** The token was proven by a real call. */
   connected: boolean;
+  /** Saved and usable: connected, or waiting for the first document sent (which proves it). */
+  configured?: boolean;
   status?: string;
   has_token?: boolean;
   last_sync_at?: string | null;
@@ -22,7 +25,7 @@ export interface AutentiqueStatus {
 }
 
 interface IntegrationsStatusResponse {
-  autentique?: { configured: boolean };
+  autentique?: { configured: boolean; connected?: boolean };
 }
 
 export function useAutentiqueStatus() {
@@ -30,7 +33,9 @@ export function useAutentiqueStatus() {
     queryKey: ["autentique", "status"] as const,
     queryFn: async () => {
       const res = await api.get<IntegrationsStatusResponse>("/integrations/status");
-      return { connected: res.autentique?.configured ?? false };
+      const configured = res.autentique?.configured ?? false;
+      // Older API responses carry only `configured`, which then meant connected.
+      return { connected: res.autentique?.connected ?? configured, configured };
     },
     staleTime: 30_000,
   });
