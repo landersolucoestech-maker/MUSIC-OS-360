@@ -147,7 +147,8 @@ export class ReleaseChecklistAutomation {
       artistName: release.artist_name?.trim() || 'Artista não identificado',
       releaseType: mapReleaseType(release.type),
       hasCover: release.cover_url != null,
-      hasIsrc: flag('hasIsrc'),
+      // releases.metadata is stored JSON: rows written before the canonical rename keep the legacy `hasISRC` key (read-only compat).
+      hasIsrc: flag('hasIsrc') || flag('hasISRC'),
       hasUpc: release.upc != null,
       hasContracts: flag('hasContracts'),
       hasSplits: flag('hasSplits'),

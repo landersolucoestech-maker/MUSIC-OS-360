@@ -157,6 +157,24 @@ describe('ReleaseChecklistAutomation (release.created → release-checklist)', (
     expect(meta.aiChecklist.parsed.readinessScore).toBe(42);
   });
 
+  it.each([
+    ['canonical hasIsrc', { hasIsrc: true }, true],
+    ['legacy stored hasISRC', { hasISRC: true }, true],
+    ['neither key', {}, false],
+    ['a non-true legacy value', { hasISRC: 'true' }, false],
+  ])('ISRC flag from releases.metadata: %s -> issued=%s', async (_label, metadata, issued) => {
+    const { ds } = makeDs([{ ...RELEASE_ROW, metadata }]);
+    const ai = makeAi(VALID_CHECKLIST_JSON);
+    const handler = new ReleaseChecklistAutomation(ds as never, makeSkillRun() as never, ai as never, passThroughTenantContext(ds) as never);
+
+    await handler.onReleaseCreated(makeEvent() as never);
+
+    const aiCalls = ai.complete.mock.calls as unknown as Array<[{ prompt: string }]>;
+    const prompt = aiCalls[0][0].prompt;
+    expect(prompt).toContain(issued ? 'ISRC emitido: sim.' : 'ISRC emitido: não.');
+    expect(prompt).not.toContain(issued ? 'ISRC emitido: não.' : 'ISRC emitido: sim.');
+  });
+
   it('Idempotency (metadata): does not reprocess if an aiChecklist with the same key already exists', async () => {
     const rowWithChecklist = {
       ...RELEASE_ROW,
