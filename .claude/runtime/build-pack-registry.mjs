@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Builds .claude/registry/pack-registry.json from the pack's markdown definitions (the single source of
-// truth): every agent and skill with its classification, the capabilities each agent declares, the skills
-// each agent consumes (-> `consumers` of a skill, `executors` of a capability), the workflows and the routing.
+// Builds .claude/registry/pack-registry.json from pack-manifest.json plus the governed markdown definitions.
+// Contract-governed items carry routing metadata; supplemental definitions are explicitly inventoried so no
+// installed agent or skill remains invisible to governance. The registry is derived and never edited by hand.
 // The registry is derived: never edit it by hand; validate-pack-contracts.mjs fails when it drifts.
 //
 //   node .claude/runtime/build-pack-registry.mjs            write the registry
@@ -52,7 +52,7 @@ export function buildRegistry(root = ROOT_DEFAULT) {
     : [];
 
   return {
-    generatedFrom: ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
+    generatedFrom: ".claude/registry/pack-manifest.json + governed agent/skill definitions + .claude/registry/capabilities.json + .claude/workflows/*.json",
     counts: {
       packItems: manifest.items.length,
       agents: agents.length,
