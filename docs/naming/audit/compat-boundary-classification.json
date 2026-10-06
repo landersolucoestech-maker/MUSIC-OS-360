@@ -2,18 +2,17 @@
  "rows": 4547,
  "byClass": {
   "EXEMPT_WITH_JUSTIFICATION": 640,
-  "BEHAVIORALLY_PROVEN": 1376,
+  "BEHAVIORALLY_PROVEN": 1379,
   "BINDING_ONLY": 2525,
-  "COMPILER_PROVEN": 3,
-  "UNPROVEN": 3
+  "COMPILER_PROVEN": 3
  },
  "REQUIRED_BEHAVIORAL_ROWS": 1379,
- "COMPATIBILITY_WITHOUT_REQUIRED_PROOF": 3,
- "BEHAVIORALLY_PROVEN": 1376,
+ "COMPATIBILITY_WITHOUT_REQUIRED_PROOF": 0,
+ "BEHAVIORALLY_PROVEN": 1379,
  "COMPILER_PROVEN": 3,
  "BINDING_ONLY": 2525,
  "EXEMPT_WITH_JUSTIFICATION": 640,
- "UNPROVEN": 3,
+ "UNPROVEN": 0,
  "BINDING_ONLY_FIXTURE_NAMES_WITHOUT_PRODUCTION_OCCURRENCE": 142,
  "BINDING_ONLY_FIXTURE_NAMES_WITH_UNCOVERED_PRODUCTION_OCCURRENCE": 0,
  "fixtureExercises": {
@@ -33,9 +32,5 @@
   "NAMING_TOOLING": 8,
   "HISTORICAL_DOCUMENT_OR_DATA": 164
  },
- "withoutProofRows": [
-  "database-schema :: transferencia (UNPROVEN: database-schema boundary without a fresh schema proof (the check script changed after the proof))",
-  "database-schema :: events.data (UNPROVEN: database-schema boundary without a fresh schema proof (the check script changed after the proof))",
-  "database-schema :: tipo_nota (UNPROVEN: database-schema boundary without a fresh schema proof (the check script changed after the proof))"
- ]
+ "withoutProofRows": []
 }

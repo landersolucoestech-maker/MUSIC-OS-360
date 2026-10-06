@@ -1,11 +1,11 @@
 {
  "schemaVersion": 1,
  "checkScript": "apps/api/scripts/verify-schema-compat-boundaries.ts",
- "checkScriptSha256": "a4e172cd9a83a310c0e41921512f3abc71d64e52bbc109cb619c60193dd086a1",
- "generatedAt": "2026-10-06T00:29:20.189Z",
+ "checkScriptSha256": "5c473801217a3ccec4999d0c07bc10e648ed746db4ba2a9e9d96deef2ea40475",
+ "generatedAt": "2026-10-06T21:05:16.937Z",
  "baseline": {
   "status": 0,
-  "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 6/6 checks passed"
+  "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 7/7 checks passed"
  },
  "mutants": [
   {
@@ -14,7 +14,15 @@
    "sqlSha256": "878d7cd70d0596383b0e2460f112cfa4b198f568e351571fdef76df7c2a9a4ea",
    "status": 1,
    "killed": true,
-   "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 5/6 checks passed"
+   "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 6/7 checks passed"
+  },
+  {
+   "id": "invoices-fiscal-kind-column",
+   "ledgerItem": "invoices.tipo_nota",
+   "sqlSha256": "ef4c6464847edb6daec28555196dad1a3ceb36f8b59b8207fde0d0f53de70590",
+   "status": 1,
+   "killed": true,
+   "tail": "PASS  updating starts_at alone moves the legacy data column | PASS  updating the legacy data column alone moves starts_at | schema compat boundaries: 6/7 checks passed"
   },
   {
    "id": "events-data-sync-trigger",
@@ -22,7 +30,7 @@
    "sqlSha256": "fcda1238cdf40331c335a0c6652ec1eee9939ab575b4d9e65a05b367192a7e26",
    "status": 1,
    "killed": true,
-   "tail": "FAIL  updating starts_at alone moves the legacy data column (unexpected behavior) | FAIL  updating the legacy data column alone moves starts_at (unexpected behavior) | schema compat boundaries: 3/6 checks passed"
+   "tail": "FAIL  updating starts_at alone moves the legacy data column (unexpected behavior) | FAIL  updating the legacy data column alone moves starts_at (unexpected behavior) | schema compat boundaries: 4/7 checks passed"
   }
  ]
 }
