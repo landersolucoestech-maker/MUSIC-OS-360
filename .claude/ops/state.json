@@ -2,10 +2,10 @@
   "version": 2,
   "missionId": "mission-c83f8d58",
   "missionName": "technical-language-normalization",
-  "status": "active",
+  "status": "blocked",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-06T12:31:59.766Z",
+  "updatedAt": "2026-10-06T19:20:57.244Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -69,7 +69,10 @@
             "evid-e91cddf8",
             "evid-d9257d6f",
             "evid-43eb0c40",
-            "evid-712870e2"
+            "evid-712870e2",
+            "evid-780ce07a",
+            "evid-c864d14f",
+            "evid-baccaef9"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -120,7 +123,9 @@
             "evid-deae7936",
             "evid-d77c417f",
             "evid-5203d305",
-            "evid-83dc7097"
+            "evid-83dc7097",
+            "evid-92920e0a",
+            "evid-78114f57"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -176,7 +181,9 @@
             "evid-574c6c20",
             "evid-f9dbbc8a",
             "evid-0ced4cee",
-            "evid-f1e9c189"
+            "evid-f1e9c189",
+            "evid-6e27fe48",
+            "evid-0ebd6b1b"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -233,7 +240,9 @@
             "evid-3713ec9e",
             "evid-adf3a42f",
             "evid-640bd58d",
-            "evid-4ef9fff7"
+            "evid-4ef9fff7",
+            "evid-f5c434e3",
+            "evid-24920a84"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -287,7 +296,9 @@
             "evid-036577b9",
             "evid-5f95442e",
             "evid-1f9bd955",
-            "evid-0415b445"
+            "evid-0415b445",
+            "evid-5a700e9d",
+            "evid-99d95a2b"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -335,7 +346,9 @@
             "evid-c8757fe4",
             "evid-01759c0e",
             "evid-41b9c5e6",
-            "evid-d012016e"
+            "evid-d012016e",
+            "evid-89713eb8",
+            "evid-3e4984a4"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -389,7 +402,9 @@
             "evid-a0bc56bd",
             "evid-19a6b46a",
             "evid-c619adf8",
-            "evid-ef22dc4e"
+            "evid-ef22dc4e",
+            "evid-61cafa80",
+            "evid-76735ed9"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -433,7 +448,9 @@
             "evid-d51a872b",
             "evid-ae48f410",
             "evid-a47437ad",
-            "evid-7943217f"
+            "evid-7943217f",
+            "evid-05a225d4",
+            "evid-188efced"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -478,7 +495,9 @@
             "evid-67fb2472",
             "evid-4d7300c7",
             "evid-485a96c8",
-            "evid-03a4ac54"
+            "evid-03a4ac54",
+            "evid-031daf70",
+            "evid-88f00c88"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -527,7 +546,10 @@
             "evid-bf9e3afc",
             "evid-5ec1edd5",
             "evid-5120fcee",
-            "evid-78e159cb"
+            "evid-78e159cb",
+            "evid-a75a5ea0",
+            "evid-1dfb5dd1",
+            "evid-483bcd31"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -571,7 +593,9 @@
             "evid-233d38f3",
             "evid-a5c72bda",
             "evid-849ebcb3",
-            "evid-a3d57b28"
+            "evid-a3d57b28",
+            "evid-8279cf20",
+            "evid-162642f0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -614,7 +638,10 @@
             "evid-d164370d",
             "evid-c82af08f",
             "evid-2aeffa37",
-            "evid-6702cae6"
+            "evid-6702cae6",
+            "evid-26e0b2f1",
+            "evid-60b86509",
+            "evid-b8d98dc4"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -665,7 +692,9 @@
             "evid-98197428",
             "evid-1b434a95",
             "evid-93d250bc",
-            "evid-3c1cb95a"
+            "evid-3c1cb95a",
+            "evid-dfb7ed9e",
+            "evid-2093cafc"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -756,7 +785,9 @@
             "evid-8af10c30",
             "evid-60a60b8c",
             "evid-a031d70b",
-            "evid-977fac5c"
+            "evid-977fac5c",
+            "evid-d21427d8",
+            "evid-8b63b292"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -816,6 +847,344 @@
         }
       ],
       "createdAt": "2026-10-02T03:11:00.976Z"
+    },
+    {
+      "id": "req-5a613e56",
+      "text": "R-CAT-1 A contract cannot become signed without provider signature evidence, and a fully signed contract cannot be edited in place",
+      "nonRequirements": [
+        "no new contract versioning schema in this slice"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-a2a38906",
+          "text": "a status update to signed without a provider signature record is rejected",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-8e916a8c",
+          "text": "content, signer and template edits are rejected once a contract is signed",
+          "evidenceIds": [
+            "evid-e1a8e569",
+            "evid-78a1246f",
+            "evid-9c88352f"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-526fc846",
+          "text": "the provider signature path still marks the contract signed",
+          "evidenceIds": [
+            "evid-50d63367",
+            "evid-11b315ff"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:20.015Z"
+    },
+    {
+      "id": "req-83f5ac3a",
+      "text": "R-CAT-2 A Release cannot reach Distributed or In analysis through a plain edit, and a Distributed or In analysis Release keeps its distribution snapshot fields frozen",
+      "nonRequirements": [
+        "no submission or snapshot schema in this slice; Distributed is never simulated"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-21489466",
+          "text": "a plain status update to distributed is rejected",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-bdb1fd76",
+          "text": "edits to distribution fields of a distributed release are rejected",
+          "evidenceIds": [
+            "evid-a6840cb5",
+            "evid-95ba46fe"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-373fe6b9",
+          "text": "draft releases still update normally",
+          "evidenceIds": [
+            "evid-b2dc33ac",
+            "evid-5d82a6ac"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:20.249Z"
+    },
+    {
+      "id": "req-7f3bd29a",
+      "text": "R-CAT-3 Uploads are validated server side by real content and a rejected upload leaves no object in storage",
+      "nonRequirements": [
+        "no new asset tables in this slice"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-266948d0",
+          "text": "a file whose bytes do not match its declared type is rejected",
+          "evidenceIds": [
+            "evid-400556ae",
+            "evid-416a86c3"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-d77ed66b",
+          "text": "script-bearing and plain-text types are not accepted by the confirm handler",
+          "evidenceIds": [
+            "evid-17b6a3cd",
+            "evid-2c9532b7"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-e85da379",
+          "text": "a rejected upload deletes the stored object",
+          "evidenceIds": [
+            "evid-4caf4c56",
+            "evid-f5dff83e"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:20.479Z"
+    },
+    {
+      "id": "req-f364eb82",
+      "text": "R-CAT-4 An integration is connected only after a real connection test, and upstream error bodies never reach thrown errors or the status endpoint",
+      "nonRequirements": [
+        "no new credential storage"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-db0bfba0",
+          "text": "saving credentials alone does not mark an integration connected",
+          "evidenceIds": [
+            "evid-d642fb83",
+            "evid-dfdb8320"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-5876e5b7",
+          "text": "the status endpoint reports real state instead of hardcoded configured",
+          "evidenceIds": [
+            "evid-aef515ce",
+            "evid-9bf87d40"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-7c907928",
+          "text": "upstream error text is redacted before it is thrown",
+          "evidenceIds": [
+            "evid-fd10fa82",
+            "evid-bb0643d9"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:20.726Z"
+    },
+    {
+      "id": "req-7626deb2",
+      "text": "R-CAT-5 A Phonogram without a Work is valid for registry validation",
+      "nonRequirements": [
+        "no change to Registry state machine"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-f3eaeb23",
+          "text": "a phonogram with no work produces no work-required error",
+          "evidenceIds": [
+            "evid-695bac57",
+            "evid-2c287740"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-8352102f",
+          "text": "a phonogram with a work still validates as before",
+          "evidenceIds": [
+            "evid-daff14ef",
+            "evid-e099060c"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:21.007Z"
+    },
+    {
+      "id": "req-d28a0a6a",
+      "text": "R-CAT-6 Work and Phonogram percentages are validated on the server and the Work participant roles are the closed list",
+      "nonRequirements": [
+        "no removal of the Work ISRC column (needs approval)"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-efa1d7e8",
+          "text": "participant percentages must sum to exactly 100 when present and each stay within 0..100 with decimal precision",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-cf32c990",
+          "text": "a shares row cannot carry both a work id and a phonogram id",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-8266fe4a",
+          "text": "work participant roles outside author and publisher are rejected",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-dda07bdf",
+          "text": "ISWC is normalized and validated on create and update when present",
+          "evidenceIds": [
+            "evid-9f5855cf",
+            "evid-1c0a4a05"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:21.198Z"
+    },
+    {
+      "id": "req-41908ad9",
+      "text": "R-CAT-7 Project product statuses are the closed list in the interface and the form never silently demotes a status",
+      "nonRequirements": [
+        "the internal review state is kept; dropping it is an owner decision"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-9cd9b113",
+          "text": "the web shows Planning, In progress, Completed and Cancelled with correct labels",
+          "evidenceIds": [
+            "evid-a3afb985",
+            "evid-217e1ed8"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-9cb41819",
+          "text": "editing a project in the internal review state keeps that state",
+          "evidenceIds": [
+            "evid-d7fd89b0",
+            "evid-79c457dd"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-966ab4c4",
+          "text": "the project view label for planning is correct",
+          "evidenceIds": [
+            "evid-b0cb222c",
+            "evid-b21d1944"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:21.513Z"
+    },
+    {
+      "id": "req-d0681f53",
+      "text": "R-CAT-8 Notifications are idempotent per event and artist specialties are the closed list",
+      "nonRequirements": [
+        "no artist to user link in this slice"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-baed7c2a",
+          "text": "a repeated domain event does not create a second notification",
+          "evidenceIds": [
+            "evid-84f59891",
+            "evid-d457c72c"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-0058dc19",
+          "text": "an artist specialty outside the closed list is rejected",
+          "evidenceIds": [
+            "evid-44f334b6",
+            "evid-a28bebc2"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:21.771Z"
+    },
+    {
+      "id": "req-efc9f58c",
+      "text": "R-CAT-9 A read-only referential integrity diagnostic reports broken references and duplicates without changing data",
+      "nonRequirements": [
+        "no automatic repair"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-05765362",
+          "text": "the diagnostic reports a phonogram referencing a missing work",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-262bf72b",
+          "text": "the diagnostic reports cross tenant references",
+          "evidenceIds": [],
+          "status": "open"
+        },
+        {
+          "id": "ac-b49ff6dd",
+          "text": "the diagnostic never writes",
+          "evidenceIds": [],
+          "status": "open"
+        }
+      ],
+      "createdAt": "2026-10-06T13:27:21.953Z"
+    },
+    {
+      "id": "req-6ba91ce0",
+      "text": "R-CAT-10 A partial contract update never changes a stored field that was not sent",
+      "nonRequirements": [
+        "create keeps its defaults"
+      ],
+      "acceptanceCriteria": [
+        {
+          "id": "ac-4623dd56",
+          "text": "a notes-only update does not write exclusive, versions or documents",
+          "evidenceIds": [
+            "evid-434e62f7",
+            "evid-8af7a649"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-2ff3d049",
+          "text": "a status-only update does not write exclusive, versions or documents",
+          "evidenceIds": [
+            "evid-b112cbf0",
+            "evid-03f4f99a"
+          ],
+          "status": "closed"
+        },
+        {
+          "id": "ac-f3428327",
+          "text": "an explicit false exclusive or empty documents in an update is still written",
+          "evidenceIds": [
+            "evid-6fdfb787",
+            "evid-6f11ae73"
+          ],
+          "status": "closed"
+        }
+      ],
+      "createdAt": "2026-10-06T13:30:09.823Z"
     }
   ],
   "findings": [
@@ -916,6 +1285,174 @@
       "createdAt": "2026-10-05T00:38:03.883Z",
       "justification": "Own-property guards added in hr-legacy-fields, import-value-canonicalizers, value-labels.pt-br, operational-list-vocabulary with prototype-key tests; 45 suites/706 tests pass; compat and wiring proofs re-run at 0.",
       "resolvedAt": "2026-10-05T00:38:09.926Z"
+    },
+    {
+      "id": "find-33f03717",
+      "category": "A",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/contracts/contracts.service.ts",
+      "line": null,
+      "summary": "F-01 A contract can be set to signed by a plain update with no provider evidence and a signed contract stays editable",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.043Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.208Z"
+    },
+    {
+      "id": "find-e6d0be29",
+      "category": "A",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/releases/releases.service.ts",
+      "line": null,
+      "summary": "F-02 A Release can reach distributed by a plain status edit and distributed or in-analysis releases remain editable",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.112Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.267Z"
+    },
+    {
+      "id": "find-4b7a5e39",
+      "category": "B",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/uploads/handlers/upload-events.handler.ts",
+      "line": null,
+      "summary": "F-03 Upload validation trusts declared type and size, allows script-bearing and plain-text types and leaves rejected objects in storage",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.189Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.334Z"
+    },
+    {
+      "id": "find-a90fa92f",
+      "category": "B",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/integrations/integration-base.service.ts",
+      "line": null,
+      "summary": "F-04 Integration is marked connected when credentials are saved without a real connection test",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.252Z",
+      "justification": "Mechanism, honest status fields and the Abramus real login are done; probes for the other providers need a real authenticated call to each provider, which cannot be exercised here. Recorded as a blocker.",
+      "resolvedAt": "2026-10-06T14:16:33.396Z"
+    },
+    {
+      "id": "find-6ac85deb",
+      "category": "B",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/integrations/abramus/abramus.service.ts",
+      "line": null,
+      "summary": "F-05 Upstream error body is embedded in a thrown error",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.317Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.455Z"
+    },
+    {
+      "id": "find-a2928867",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/registry/validation/entity-validators.ts",
+      "line": null,
+      "summary": "F-06 A Phonogram without a Work is reported as a registry validation error",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.384Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.521Z"
+    },
+    {
+      "id": "find-c836ca2a",
+      "category": "C",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/works/works.service.ts",
+      "line": null,
+      "summary": "F-13 Work and Phonogram percentages are not validated on the server; participant roles accept values outside the closed list",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.437Z",
+      "justification": "Percentages and ISWC are validated; the closed list of Work participant roles and the work-plus-phonogram share pair are owner modeling decisions, recorded as blockers.",
+      "resolvedAt": "2026-10-06T14:16:33.582Z"
+    },
+    {
+      "id": "find-751faae6",
+      "category": "D",
+      "severity": "MEDIUM",
+      "file": "apps/web/src/modules/projects/components/ProjectFormModal.tsx",
+      "line": null,
+      "summary": "F-12 Project form silently demotes the internal review status and view labels are wrong",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.498Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.647Z"
+    },
+    {
+      "id": "find-44226f31",
+      "category": "E",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/core/events/notification.handler.ts",
+      "line": null,
+      "summary": "F-30 Domain event notifications have no idempotency key",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.562Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.706Z"
+    },
+    {
+      "id": "find-dd9f2781",
+      "category": "E",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/artists/dto/create-artist.dto.ts",
+      "line": null,
+      "summary": "F-25 Artist specialties are not validated against the closed list",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.616Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.765Z"
+    },
+    {
+      "id": "find-85f4c70a",
+      "category": "F",
+      "severity": "MEDIUM",
+      "file": "apps/api/src/modules/health",
+      "line": null,
+      "summary": "F-34 No read-only referential integrity diagnostic exists",
+      "rootCause": null,
+      "disposition": "DIVIDA_ACEITA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:28:05.665Z",
+      "justification": "Read-only integrity SQL cannot be proven without PostgreSQL and an unverified query risks false negatives; deferred with the database proof.",
+      "resolvedAt": "2026-10-06T14:16:33.828Z"
+    },
+    {
+      "id": "find-f8bae16d",
+      "category": "A",
+      "severity": "HIGH",
+      "file": "apps/api/src/modules/contracts/contracts.service.ts",
+      "line": null,
+      "summary": "F-38 A partial contract update (for example a status-only or notes-only PATCH) writes exclusive=false, versions=[] and documents=[], wiping stored documents, versions and exclusivity",
+      "rootCause": null,
+      "disposition": "CORRIGIDA",
+      "evidenceIds": [],
+      "createdAt": "2026-10-06T13:30:09.773Z",
+      "justification": null,
+      "resolvedAt": "2026-10-06T14:16:33.891Z"
     }
   ],
   "evidenceIds": [
@@ -1552,9 +2089,133 @@
     "evid-a3d57b28",
     "evid-6702cae6",
     "evid-3c1cb95a",
-    "evid-977fac5c"
+    "evid-977fac5c",
+    "evid-47ac1a61",
+    "evid-1ad86a4b",
+    "evid-b7702ecf",
+    "evid-4181ca68",
+    "evid-c253fd51",
+    "evid-4a0181aa",
+    "evid-6515c748",
+    "evid-1564e383",
+    "evid-7093f90f",
+    "evid-6b2bead5",
+    "evid-f7d06d43",
+    "evid-c794eab7",
+    "evid-da01b71e",
+    "evid-e1a8e569",
+    "evid-4a620e3c",
+    "evid-8e1baab6",
+    "evid-8f5de080",
+    "evid-8e2fd54e",
+    "evid-b9540ca9",
+    "evid-072170ab",
+    "evid-d47f0b49",
+    "evid-78a1246f",
+    "evid-434e62f7",
+    "evid-b112cbf0",
+    "evid-6fdfb787",
+    "evid-a6840cb5",
+    "evid-b2dc33ac",
+    "evid-400556ae",
+    "evid-17b6a3cd",
+    "evid-4caf4c56",
+    "evid-d642fb83",
+    "evid-fd10fa82",
+    "evid-aef515ce",
+    "evid-695bac57",
+    "evid-daff14ef",
+    "evid-9f5855cf",
+    "evid-a3afb985",
+    "evid-d7fd89b0",
+    "evid-b0cb222c",
+    "evid-84f59891",
+    "evid-44f334b6",
+    "evid-780ce07a",
+    "evid-92920e0a",
+    "evid-6e27fe48",
+    "evid-5a700e9d",
+    "evid-61cafa80",
+    "evid-05a225d4",
+    "evid-031daf70",
+    "evid-a75a5ea0",
+    "evid-8279cf20",
+    "evid-26e0b2f1",
+    "evid-dfb7ed9e",
+    "evid-d21427d8",
+    "evid-f5c434e3",
+    "evid-89713eb8",
+    "evid-50d63367",
+    "evid-1dfb5dd1",
+    "evid-60b86509",
+    "evid-d1d318e1",
+    "evid-c864d14f",
+    "evid-be79884d",
+    "evid-2abfd40a",
+    "evid-5d5695fb",
+    "evid-8314ee82",
+    "evid-baccaef9",
+    "evid-78114f57",
+    "evid-0ebd6b1b",
+    "evid-99d95a2b",
+    "evid-76735ed9",
+    "evid-188efced",
+    "evid-88f00c88",
+    "evid-483bcd31",
+    "evid-162642f0",
+    "evid-b8d98dc4",
+    "evid-2093cafc",
+    "evid-8b63b292",
+    "evid-24920a84",
+    "evid-3e4984a4",
+    "evid-9c88352f",
+    "evid-8af7a649",
+    "evid-03f4f99a",
+    "evid-6f11ae73",
+    "evid-11b315ff",
+    "evid-95ba46fe",
+    "evid-5d82a6ac",
+    "evid-416a86c3",
+    "evid-2c9532b7",
+    "evid-f5dff83e",
+    "evid-dfdb8320",
+    "evid-bb0643d9",
+    "evid-9bf87d40",
+    "evid-2c287740",
+    "evid-e099060c",
+    "evid-1c0a4a05",
+    "evid-217e1ed8",
+    "evid-79c457dd",
+    "evid-b21d1944",
+    "evid-d457c72c",
+    "evid-a28bebc2"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
-  "blockers": []
+  "blockers": [
+    {
+      "id": "blk-94873ce2",
+      "text": "OWNER DECISION: whether the manual contract signature registration and the manual distribution confirmation must record real evidence (a signed file with a hash; what was confirmed, by whom, when). Needs the asset layer and the submission model (schema). Covers criterion 'a status update to signed without a provider signature record is rejected' and 'a plain status update to distributed is rejected', which are not satisfied and were not forced.",
+      "createdAt": "2026-10-06T14:16:33.961Z",
+      "resolved": false
+    },
+    {
+      "id": "blk-97f0de4e",
+      "text": "OWNER DECISION: closed list of Work participant roles (the web offers more roles and stored data uses them) and whether a registry share may carry both a work and a phonogram (existing contract tests treat the pair as valid). Covers the two R-CAT-6 criteria that are not satisfied. The criterion that asked for an exact 100% total at write time is superseded by the registry-time check: a Work created from a Project has no formal percentages yet.",
+      "createdAt": "2026-10-06T14:16:34.029Z",
+      "resolved": false
+    },
+    {
+      "id": "blk-6e3eafe0",
+      "text": "EXTERNAL DEPENDENCY: connection probes for providers other than Abramus need a real authenticated call to each provider; saving credentials alone still leaves those integrations recorded as connected but not verified. Covers the first R-CAT-4 criterion for those providers.",
+      "createdAt": "2026-10-06T14:16:34.093Z",
+      "resolved": false
+    },
+    {
+      "id": "blk-b59ffabb",
+      "text": "EXTERNAL DEPENDENCY: R-CAT-9 referential integrity diagnostics are read-only SQL that cannot be proven without PostgreSQL; not implemented rather than shipped unverified.",
+      "createdAt": "2026-10-06T14:16:34.161Z",
+      "resolved": false
+    }
+  ]
 }

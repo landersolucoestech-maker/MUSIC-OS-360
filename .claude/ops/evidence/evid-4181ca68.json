@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node .claude/runtime/ops.mjs status",
+  "command": "node .claude/runtime/ops.mjs status",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\n  \"missionId\": \"mission-c83f8d58\",\n  \"missionName\": \"technical-language-normalization\",\n  \"status\": \"active\",\n  \"executionMode\": \"DEFAULT\",\n  \"impact\": {\n    \"operatorDeclared\": \"L5\",\n    \"runtimeDetected\": \"L1\",\n    \"effective\": \"L5\"\n  },\n  \"requirements\": 15,\n  \"openCriteria\": 26,\n  \"findings\": 7,\n  \"openFindings\": 0,\n  \"criticalOrHighOpenFindings\": 0,\n  \"openBlockers\": 0,\n  \"evidence\": 637,\n  \"readyForCompletionGate\": false\n}",
+  "stderrTail": "",
+  "workspaceFingerprint": "7071768469deed38cbb8f9b8d8a9a7ab40279200904ca6fc1cad23e984e21397",
+  "fingerprintStatus": "BOUND",
+  "head": "2dd3ccafe5bb746f10d6f9a056f41cda869e2b28",
+  "durationMs": 54,
+  "id": "evid-4181ca68",
+  "createdAt": "2026-10-06T13:27:28.731Z"
+}

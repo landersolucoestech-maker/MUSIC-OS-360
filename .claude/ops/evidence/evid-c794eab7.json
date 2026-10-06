@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Adversarial review 6 of range 3d2793da^..7c7faaa4 (SSRF guard and Abramus path, uploads, contracts lock, releases freeze, percentages, ISWC, specialties, notifications, project status): no critical, high or medium finding in the block; 5 low findings reported, one (missing Content-Length) fixed in ed107fab, the rest recorded as residuals in CATALOG_CANONICAL_AUDIT.md section 8.4. Reviews 1 to 5 returned FAIL and their in-block findings were fixed.",
+  "workspaceFingerprint": "65c581c64aa79a2dbea8fdc29485b92dcefffd6d5e9f7ced05c9dc38e68b146c",
+  "fingerprintStatus": "BOUND",
+  "head": "10a3aff7e13f35be3965ba9582e3679b914e3f9c",
+  "id": "evid-c794eab7",
+  "createdAt": "2026-10-06T18:29:24.731Z"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-xlsx-only.mjs",
+  "command": "node scripts/verify-xlsx-only.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "[xlsx-only] incompatible residues found:\n- docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md:91 — legacy delimited format",
+  "workspaceFingerprint": "483e4dc14b5ae1fd8af867c2079add33e834bcea008b881746d1149c107296db",
+  "fingerprintStatus": "BOUND",
+  "head": "66bd5c15972931eacc94d5321e6559808156f10c",
+  "durationMs": 530,
+  "id": "evid-26e0b2f1",
+  "createdAt": "2026-10-06T18:57:47.149Z"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/api exec jest src/modules/integrations/autentique/autentique.service.spec.ts",
+  "command": "pnpm --dir apps/api exec jest src/modules/integrations/autentique/autentique.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[32m[Nest] 13627  - \u001b[39m10/06/2026, 7:02:13 PM \u001b[32m    LOG\u001b[39m \u001b[38;5;3m[AutentiqueService] \u001b[39m\u001b[32m[autentique/webhook] Contract contract-a signed via docId=doc-a\u001b[39m\n\u001b[33m[Nest] 13627  - \u001b[39m10/06/2026, 7:02:13 PM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[AutentiqueService] \u001b[39m\u001b[33m[autentique/webhook] Duplicate event ignored: externalId=doc-z:document.signed\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "483e4dc14b5ae1fd8af867c2079add33e834bcea008b881746d1149c107296db",
+  "fingerprintStatus": "BOUND",
+  "head": "66bd5c15972931eacc94d5321e6559808156f10c",
+  "durationMs": 6832,
+  "id": "evid-50d63367",
+  "createdAt": "2026-10-06T19:02:14.103Z"
+}

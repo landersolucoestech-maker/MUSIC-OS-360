@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "grep -q Cross-layer.impact.of.the.fixes docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md",
+  "command": "grep -q Cross-layer.impact.of.the.fixes docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "f1cd83b4c8e82f477b32c4fedeaa7aceb640f42f21ed51969621ce12c943258b",
+  "fingerprintStatus": "BOUND",
+  "head": "25aac677d8dd2720080b18f7f4b6b0304c049e60",
+  "durationMs": 4,
+  "id": "evid-7093f90f",
+  "createdAt": "2026-10-06T14:16:42.141Z"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "grep -q F-37 docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md",
+  "command": "grep -q F-37 docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "7071768469deed38cbb8f9b8d8a9a7ab40279200904ca6fc1cad23e984e21397",
+  "fingerprintStatus": "BOUND",
+  "head": "2dd3ccafe5bb746f10d6f9a056f41cda869e2b28",
+  "durationMs": 2,
+  "id": "evid-b7702ecf",
+  "createdAt": "2026-10-06T13:26:41.440Z"
+}

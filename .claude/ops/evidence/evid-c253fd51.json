@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node .claude/runtime/impact.mjs",
+  "command": "node .claude/runtime/impact.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\n  \"status\": \"OK\",\n  \"operatorDeclared\": null,\n  \"runtimeDetected\": \"L1\",\n  \"effective\": \"L1\",\n  \"touchedFileCount\": 13,\n  \"reasons\": [],\n  \"stateUpdated\": true\n}",
+  "stderrTail": "",
+  "workspaceFingerprint": "7071768469deed38cbb8f9b8d8a9a7ab40279200904ca6fc1cad23e984e21397",
+  "fingerprintStatus": "BOUND",
+  "head": "2dd3ccafe5bb746f10d6f9a056f41cda869e2b28",
+  "durationMs": 116,
+  "id": "evid-c253fd51",
+  "createdAt": "2026-10-06T13:27:34.478Z"
+}

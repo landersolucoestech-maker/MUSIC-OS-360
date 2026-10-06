@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node -e \"const t=require('fs').readFileSync('docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md','utf8');const c=['A. Project','B. Work','C. Release','D. Assets','E. Contracts','F. Identity','G. External','H. Tasks'].filter(x=>!t.includes(x));const f=(t.match(/\\\\| F-\\\\d\\\\d \\\\|/g)||[]).length;if(c.length||f<37){console.error('missing',c,f);process.exit(1)}console.log('clusters 8/8, findings',f)\"",
+  "command": "node -e \"const t=require('fs').readFileSync('docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md','utf8');const c=['A. Project','B. Work','C. Release','D. Assets','E. Contracts','F. Identity','G. External','H. Tasks'].filter(x=>!t.includes(x));const f=(t.match(/\\\\| F-\\\\d\\\\d \\\\|/g)||[]).length;if(c.length||f<37){console.error('missing',c,f);process.exit(1)}console.log('clusters 8/8, findings',f)\"",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "",
+  "stderrTail": "[eval]:1\n\"const\n^^^^^^\nUnterminated string constant\n\nSyntaxError: Invalid or unexpected token\n    at makeContextifyScript (node:internal/vm:185:14)\n    at compileScript (node:internal/process/execution:383:10)\n    at evalTypeScript (node:internal/process/execution:256:22)\n    at node:internal/main/eval_string:74:3\n\nNode.js v22.22.0",
+  "workspaceFingerprint": "7071768469deed38cbb8f9b8d8a9a7ab40279200904ca6fc1cad23e984e21397",
+  "fingerprintStatus": "BOUND",
+  "head": "2dd3ccafe5bb746f10d6f9a056f41cda869e2b28",
+  "durationMs": 73,
+  "id": "evid-47ac1a61",
+  "createdAt": "2026-10-06T13:26:20.764Z"
+}

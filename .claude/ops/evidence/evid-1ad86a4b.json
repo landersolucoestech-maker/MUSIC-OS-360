@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "sh -c 'test $(grep -c \"^| F-\" docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md) -ge 37 && test $(grep -cE \"^[|] [A-H][.] \" docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md) -eq 8'",
+  "command": "sh -c 'test $(grep -c \"^| F-\" docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md) -ge 37 && test $(grep -cE \"^[|] [A-H][.] \" docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md) -eq 8'",
+  "status": "FAIL",
+  "exitCode": 2,
+  "stdoutTail": "",
+  "stderrTail": "$(grep: 1: Syntax error: Unterminated quoted string",
+  "workspaceFingerprint": "7071768469deed38cbb8f9b8d8a9a7ab40279200904ca6fc1cad23e984e21397",
+  "fingerprintStatus": "BOUND",
+  "head": "2dd3ccafe5bb746f10d6f9a056f41cda869e2b28",
+  "durationMs": 3,
+  "id": "evid-1ad86a4b",
+  "createdAt": "2026-10-06T13:26:30.542Z"
+}

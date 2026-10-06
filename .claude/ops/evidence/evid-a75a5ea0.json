@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/verify-critical-workflows.mjs",
+  "command": "node scripts/verify-critical-workflows.mjs",
+  "status": "FAIL",
+  "exitCode": 1,
+  "stdoutTail": "✓ verify:critical-workflows — 4 workflows present, not empty in the current working tree.",
+  "stderrTail": "⚠️  ci.yml: present (js-yaml unavailable — syntax parse skipped)\n⚠️  security.yml: present (js-yaml unavailable — syntax parse skipped)\n⚠️  staging.yml: present (js-yaml unavailable — syntax parse skipped)\n⚠️  backup.yml: present (js-yaml unavailable — syntax parse skipped)\n[xlsx-only] incompatible residues found:\n- docs/engineering/catalog/CATALOG_CANONICAL_AUDIT.md:91 — legacy delimited format",
+  "workspaceFingerprint": "483e4dc14b5ae1fd8af867c2079add33e834bcea008b881746d1149c107296db",
+  "fingerprintStatus": "BOUND",
+  "head": "66bd5c15972931eacc94d5321e6559808156f10c",
+  "durationMs": 486,
+  "id": "evid-a75a5ea0",
+  "createdAt": "2026-10-06T18:57:41.489Z"
+}

@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "adversarial-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Adversarial delta review 7 of ed107fab (pinned request Content-Length): no critical, high or medium finding; 4 low informational notes (transfer-encoding header not stripped, header instances, non-string bodies, GET with body), none reachable by current callers; recorded as residual RES-10.",
+  "workspaceFingerprint": "65c581c64aa79a2dbea8fdc29485b92dcefffd6d5e9f7ced05c9dc38e68b146c",
+  "fingerprintStatus": "BOUND",
+  "head": "10a3aff7e13f35be3965ba9582e3679b914e3f9c",
+  "id": "evid-da01b71e",
+  "createdAt": "2026-10-06T18:29:24.842Z"
+}

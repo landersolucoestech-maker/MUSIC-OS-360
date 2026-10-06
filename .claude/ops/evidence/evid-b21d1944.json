@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/web exec vitest run src/modules/projects",
+  "command": "pnpm --dir apps/web exec vitest run src/modules/projects",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/modules/projects/utils/track-vocabulary.test.ts (3 tests) 10ms\n ✓ src/modules/projects/hooks/useProjects.test.tsx (2 tests) 26ms\n ✓ src/modules/projects/components/ProjectFormModal.artist-budget.test.tsx (4 tests) 2080ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > create sends artist_id and numeric budget 1100ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > create without artist/budget sends null (not an empty string) 430ms\n ✓ src/modules/projects/lib/project-status.test.ts (14 tests) 4ms\n ✓ src/modules/projects/components/ProjectFormModal.legacy-wiring.test.tsx (7 tests) 3147ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"sim\" is resubmitted as yes 869ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"Sim\" is resubmitted as yes 428ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"nao\" is resubmitted as no 316ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"não\" is resubmitted as no 310ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > negative: canonical values, free text and absent values are not rewritten into something else 678ms\n ✓ src/modules/projects/pages/Projects.metadata-guard.test.ts (2 tests) 2ms\n ✓ src/modules/projects/components/ProjectViewModal.legacy-wiring.test.tsx (6 tests) 583ms\n   ✓ ProjectViewModal track language label > stored language \"portugues\" renders Português 307ms\n ✓ src/modules/projects/components/ProjectFormModal.metadata-guard.test.ts (3 tests) 2ms\n ✓ src/modules/projects/components/ProjectFormModal.status-aliases.guard.test.ts (7 tests) 3ms\n ✓ src/modules/projects/components/ProjectFormModal.audio-upload.guard.test.ts (3 tests) 2ms\n ✓ src/modules/projects/components/ProjectViewModal.status-aliases.guard.test.ts (4 tests) 3ms\n ✓ src/modules/projects/schemas/project-schema.test.ts (3 tests) 5ms\n\n Test Files  12 passed (12)\n      Tests  58 passed (58)\n   Start at  19:20:35\n   Duration  7.00s (transform 698ms, setup 2.25s, collect 2.16s, tests 5.87s, environment 6.29s, prepare 822ms)",
+  "stderrTail": "",
+  "workspaceFingerprint": "62919f3db395f3c2718de2ccf05188cce4efbb73a123d802177e6db9d90284a6",
+  "fingerprintStatus": "BOUND",
+  "head": "9cdc1d8784480b43e47b0829b9abde9a4a88a7b3",
+  "durationMs": 7896,
+  "id": "evid-b21d1944",
+  "createdAt": "2026-10-06T19:20:42.412Z"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --filter @music-os-360/web exec vitest run --config vitest.config.mjs src/modules/projects",
+  "command": "pnpm --filter @music-os-360/web exec vitest run --config vitest.config.mjs src/modules/projects",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "RUN  v2.1.9 /home/user/MUSIC-OS-360/apps/web\n\n ✓ src/modules/projects/utils/track-vocabulary.test.ts (3 tests) 8ms\n ✓ src/modules/projects/hooks/useProjects.test.tsx (2 tests) 25ms\n ✓ src/modules/projects/lib/project-status.test.ts (14 tests) 7ms\n ✓ src/modules/projects/components/ProjectFormModal.artist-budget.test.tsx (4 tests) 2128ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > create sends artist_id and numeric budget 1032ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > create without artist/budget sends null (not an empty string) 504ms\n   ✓ ProjectFormModal — main artist and budget (GAP-0001) > edit loads and resends the persisted values 328ms\n ✓ src/modules/projects/pages/Projects.metadata-guard.test.ts (2 tests) 3ms\n ✓ src/modules/projects/components/ProjectFormModal.legacy-wiring.test.tsx (7 tests) 3231ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"sim\" is resubmitted as yes 804ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"Sim\" is resubmitted as yes 495ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > legacy instrumental \"nao\" is resubmitted as no 362ms\n   ✓ ProjectFormModal loads legacy track tokens as canonical values > negative: canonical values, free text and absent values are not rewritten into something else 726ms\n ✓ src/modules/projects/components/ProjectViewModal.legacy-wiring.test.tsx (6 tests) 559ms\n   ✓ ProjectViewModal track language label > stored language \"portugues\" renders Português 313ms\n ✓ src/modules/projects/components/ProjectFormModal.status-aliases.guard.test.ts (7 tests) 4ms\n ✓ src/modules/projects/components/ProjectFormModal.metadata-guard.test.ts (3 tests) 3ms\n ✓ src/modules/projects/components/ProjectFormModal.audio-upload.guard.test.ts (3 tests) 3ms\n ✓ src/modules/projects/components/ProjectViewModal.status-aliases.guard.test.ts (4 tests) 4ms\n ✓ src/modules/projects/schemas/project-schema.test.ts (3 tests) 9ms\n\n Test Files  12 passed (12)\n      Tests  58 passed (58)\n   Start at  14:17:17\n   Duration  7.14s (transform 750ms, setup 2.18s, collect 2.17s, tests 5.98s, environment 6.18s, prepare 814ms)",
+  "stderrTail": "",
+  "workspaceFingerprint": "f1cd83b4c8e82f477b32c4fedeaa7aceb640f42f21ed51969621ce12c943258b",
+  "fingerprintStatus": "BOUND",
+  "head": "25aac677d8dd2720080b18f7f4b6b0304c049e60",
+  "durationMs": 8266,
+  "id": "evid-f7d06d43",
+  "createdAt": "2026-10-06T14:17:24.467Z"
+}
