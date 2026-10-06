@@ -125,7 +125,9 @@ describe('AbramusService.configure: connected only after a real login', () => {
     const enc = { encrypt: jest.fn(() => 'enc'), decrypt: jest.fn() };
     const svc = new AbramusService(ds as never, enc as never);
     (svc as unknown as { fetch: jest.Mock }).fetch = fetchImpl;
-    return { svc, rows, fetchImpl };
+    const resolveHost = jest.fn().mockResolvedValue(['93.184.216.34']);
+    (svc as unknown as { resolveHost: jest.Mock }).resolveHost = resolveHost;
+    return { svc, rows, fetchImpl, resolveHost };
   }
 
   it('logs in with the submitted credentials and then marks the integration connected and verified', async () => {
@@ -164,5 +166,40 @@ describe('AbramusService.configure: connected only after a real login', () => {
     expect(error?.message).toMatch(/Abramus API error 500/);
     expect(error?.message).toContain('boom');
     expect(error?.message).not.toContain('sk-live-123456789');
+  });
+
+  it.each([
+    'http://abramus.example.test',
+    'https://127.0.0.1',
+    'https://169.254.169.254/latest',
+    'https://[::1]',
+    'https://10.0.0.5',
+    'https://user:pw@abramus.example.test',
+    'https://abramus.example.test:8443',
+    'https://localhost',
+    'https://db.internal',
+    'not a url',
+  ])('rejects the endpoint %s before storing or calling anything', async (url) => {
+    const { svc, rows, fetchImpl } = buildAbramus(jest.fn());
+    await expect(svc.configure('t1', 'user', 'secret', url))
+      .rejects.toMatchObject({ response: { code: 'INTEGRATION_URL_NOT_ALLOWED' } });
+    expect(rows).toHaveLength(0);
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('rejects a public-looking name that resolves to a private address', async () => {
+    const { svc, rows, fetchImpl, resolveHost } = buildAbramus(jest.fn());
+    resolveHost.mockResolvedValue(['93.184.216.34', '10.1.2.3']);
+    await expect(svc.configure('t1', 'user', 'secret', 'https://abramus.example.test'))
+      .rejects.toMatchObject({ response: { code: 'INTEGRATION_URL_NOT_ALLOWED' } });
+    expect(rows).toHaveLength(0);
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it('refuses to call a stored endpoint that is no longer public', async () => {
+    const { svc, fetchImpl } = buildAbramus(jest.fn());
+    jest.spyOn(svc, 'loadCredentials').mockResolvedValue({ username: 'u', password: 'p', base_url: 'https://169.254.169.254' } as never);
+    await expect(svc.searchWork('t1', 'x')).rejects.toMatchObject({ response: { code: 'INTEGRATION_URL_NOT_ALLOWED' } });
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

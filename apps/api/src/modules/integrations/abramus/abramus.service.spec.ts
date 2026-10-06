@@ -10,6 +10,7 @@ describe('AbramusService.registerWork (adapter boundary)', () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'tok' }) })
       .mockResolvedValueOnce({ ok: true, json: async () => ({ id: 'w1' }) });
     (service as unknown as { fetch: jest.Mock }).fetch = fetchMock;
+    (service as unknown as { resolveHost: jest.Mock }).resolveHost = jest.fn().mockResolvedValue(['93.184.216.34']);
     return { service, fetchMock };
   };
 
@@ -49,6 +50,7 @@ describe('AbramusService.getStatements (adapter boundary)', () => {
       .mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'tok' }) })
       .mockResolvedValueOnce({ ok: true, json: async () => ([]) });
     (service as unknown as { fetch: jest.Mock }).fetch = fetchMock;
+    (service as unknown as { resolveHost: jest.Mock }).resolveHost = jest.fn().mockResolvedValue(['93.184.216.34']);
     return { service, fetchMock };
   };
 

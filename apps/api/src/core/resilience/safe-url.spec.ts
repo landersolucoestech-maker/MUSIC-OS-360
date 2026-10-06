@@ -5,6 +5,9 @@ import {
   assertSafeTypes,
   assertSafeQueryValue,
   assertAllowedHost,
+  assertPublicHttpsUrl,
+  assertResolvesToPublicAddresses,
+  isPrivateAddress,
   UnsafeInputError,
   DisallowedHostError,
 } from './safe-url';
@@ -83,6 +86,38 @@ describe('safe-url SSRF guards (CWE-918)', () => {
     });
     it('blocks @ host-spoofing', () => {
       expect(() => assertAllowedHost('https://api.deezer.com@internal/x', ALLOWED)).toThrow(DisallowedHostError);
+    });
+  });
+
+  describe('tenant-configured public https endpoints', () => {
+    it.each(['10.0.0.1', '127.0.0.1', '169.254.169.254', '172.16.0.1', '172.31.255.255', '192.168.1.1', '100.64.0.1', '0.0.0.0', '224.0.0.1',
+      '::1', '::', 'fe80::1', 'fd00::1', '::ffff:10.0.0.1', '::ffff:7f00:1', '[::1]'])('%s is private', (ip) => {
+      expect(isPrivateAddress(ip)).toBe(true);
+    });
+    it.each(['8.8.8.8', '93.184.216.34', '172.32.0.1', '172.15.0.1', '2606:4700::1111', '::ffff:8.8.8.8'])('%s is public', (ip) => {
+      expect(isPrivateAddress(ip)).toBe(false);
+    });
+    it('normalizes a valid URL and drops the trailing slash', () => {
+      expect(assertPublicHttpsUrl(' https://Api.Example.com/base/ ', 'baseUrl')).toBe('https://api.example.com/base');
+      expect(assertPublicHttpsUrl('https://api.example.com:443', 'baseUrl')).toBe('https://api.example.com');
+    });
+    it.each([
+      'http://api.example.com', 'ftp://api.example.com', 'https://user@api.example.com', 'https://api.example.com:8080',
+      'https://localhost', 'https://a.localhost', 'https://printer.local', 'https://svc.internal', 'https://intranet',
+      'https://127.0.0.1', 'https://[::1]', 'https://169.254.169.254', '', 'garbage',
+    ])('rejects %s', (url) => {
+      expect(() => assertPublicHttpsUrl(url, 'baseUrl')).toThrow(UnsafeInputError);
+    });
+    it('rejects a non-string and an oversized value', () => {
+      expect(() => assertPublicHttpsUrl(undefined, 'baseUrl')).toThrow(UnsafeInputError);
+      expect(() => assertPublicHttpsUrl(`https://a.com/${'x'.repeat(3000)}`, 'baseUrl')).toThrow(UnsafeInputError);
+    });
+    it('accepts a host resolving only to public addresses', async () => {
+      await expect(assertResolvesToPublicAddresses('a.example.com', async () => ['8.8.8.8'])).resolves.toBeUndefined();
+    });
+    it('rejects a host with any private or no address', async () => {
+      await expect(assertResolvesToPublicAddresses('a.example.com', async () => ['8.8.8.8', '10.0.0.1'])).rejects.toThrow(UnsafeInputError);
+      await expect(assertResolvesToPublicAddresses('a.example.com', async () => [])).rejects.toThrow(UnsafeInputError);
     });
   });
 });
