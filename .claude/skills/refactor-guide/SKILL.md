@@ -6,7 +6,7 @@ description: Guides a behavior-preserving refactor safely — characterization t
 # Refactor Guide
 
 1. If the code being refactored has no test covering its current behavior, write a characterization
-   test FIRST (`qa-engineer`/`test-generator`) that pins down what it does today — even if that
+   test FIRST (`test-engineer`/`test-generator`) that pins down what it does today — even if that
    behavior looks wrong, capture it before touching anything so any change is visible.
 2. Refactor in the smallest steps that each keep the characterization test green — never a big-bang
    rewrite where "it works" can only be checked at the very end.
