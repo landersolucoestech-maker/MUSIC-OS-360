@@ -50,30 +50,47 @@ async function persisted(body: Record<string, unknown>): Promise<Record<string, 
 const ALIAS_KEYS = ['holderName', 'holderDoc', 'workId', 'trackId', 'role'];
 
 describe('CreateShareDto canonical + deprecated registry inputs (real ValidationPipe)', () => {
-  it('accepts the canonical body and persists the canonical columns', async () => {
+  it('accepts the canonical Work split body and persists the canonical columns', async () => {
     const row = await persisted({
-      holder_name: 'Maria', holder_document: '123', work_id: W1, phonogram_id: 'ph-1', party_role: 'author', percentage: 40,
+      holder_name: 'Maria', holder_document: '123', work_id: W1, party_role: 'author', percentage: 40,
     });
     expect(row).toMatchObject({
-      tenant_id: 'tenant-1', holder_name: 'Maria', holder_document: '123', work_id: W1, phonogram_id: 'ph-1', party_role: 'author', percentage: 40,
+      tenant_id: 'tenant-1', holder_name: 'Maria', holder_document: '123', work_id: W1, party_role: 'author', percentage: 40,
     });
+    expect(row['phonogram_id']).toBeUndefined();
   });
 
-  it('still accepts the deprecated body, mapped to the same columns with no alias key persisted', async () => {
-    const row = await persisted({
-      holderName: 'Maria', holderDoc: '123', workId: W1, trackId: 'ph-1', role: 'author', percentage: 40,
-    });
-    expect(row).toMatchObject({ holder_name: 'Maria', holder_document: '123', work_id: W1, phonogram_id: 'ph-1', party_role: 'author' });
+  it('accepts the canonical Phonogram split body and persists the canonical columns', async () => {
+    const row = await persisted({ holder_name: 'Maria', holder_document: '123', phonogram_id: 'ph-1', party_role: 'producer', percentage: 40 });
+    expect(row).toMatchObject({ tenant_id: 'tenant-1', phonogram_id: 'ph-1', party_role: 'producer', percentage: 40 });
+    expect(row['work_id']).toBeUndefined();
+  });
+
+  it('still accepts the deprecated Work body, mapped to the same columns with no alias key persisted', async () => {
+    const row = await persisted({ holderName: 'Maria', holderDoc: '123', workId: W1, role: 'author', percentage: 40 });
+    expect(row).toMatchObject({ holder_name: 'Maria', holder_document: '123', work_id: W1, party_role: 'author' });
     for (const k of ALIAS_KEYS) expect(row).not.toHaveProperty(k);
   });
 
-  it('canonical wins when both names carry different values', async () => {
+  it('still accepts the deprecated Phonogram body (trackId), mapped to phonogram_id', async () => {
+    const row = await persisted({ holderName: 'Maria', holderDoc: '123', trackId: 'ph-1', role: 'producer', percentage: 40 });
+    expect(row).toMatchObject({ holder_name: 'Maria', phonogram_id: 'ph-1', party_role: 'producer' });
+    for (const k of ALIAS_KEYS) expect(row).not.toHaveProperty(k);
+  });
+
+  it('canonical wins when both names carry different values (Work)', async () => {
     const row = await persisted({
       holder_name: 'Canon', holderName: 'Old', holder_document: 'C', holderDoc: 'O',
-      work_id: W1, workId: W2, phonogram_id: 'ph-c', trackId: 'ph-o', party_role: 'composer', role: 'author',
+      work_id: W1, workId: W2, party_role: 'composer', role: 'author',
     });
-    expect(row).toMatchObject({ holder_name: 'Canon', holder_document: 'C', work_id: W1, phonogram_id: 'ph-c', party_role: 'composer' });
+    expect(row).toMatchObject({ holder_name: 'Canon', holder_document: 'C', work_id: W1, party_role: 'composer' });
     for (const k of ALIAS_KEYS) expect(row).not.toHaveProperty(k);
+  });
+
+  it('canonical wins when both names carry different values (Phonogram)', async () => {
+    const row = await persisted({ holder_name: 'Canon', phonogram_id: 'ph-c', trackId: 'ph-o', party_role: 'producer', role: 'author' });
+    expect(row).toMatchObject({ holder_name: 'Canon', phonogram_id: 'ph-c', party_role: 'producer' });
+    expect(row).not.toHaveProperty('trackId');
   });
 
   it('rejects an unknown field (forbidNonWhitelisted) on create and update', async () => {

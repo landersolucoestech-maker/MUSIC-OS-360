@@ -1,4 +1,4 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
 import { ShareEntity } from '../../database/entities';
@@ -187,6 +187,25 @@ export class SharesService {
     }
   }
 
+  /**
+   * Work splits, Phonogram splits and Release shares are independent structures that each total 100% in their own
+   * context and never inherit from one another. A share therefore belongs to a work OR a phonogram: a row carrying
+   * both would be counted in the split of each structure. A row stored with both before this rule stays editable;
+   * only a write that introduces the pair is rejected.
+   */
+  private assertSingleStructure(
+    effective: { work_id: string | null; phonogram_id: string | null },
+    introducesPair: boolean,
+  ): void {
+    if (effective.work_id && effective.phonogram_id && introducesPair) {
+      throw new BadRequestException({
+        code: 'SHARE_STRUCTURE_AMBIGUOUS',
+        message: 'Uma participação pertence a uma única estrutura: Obra ou Fonograma. Cadastre participações separadas para cada uma.',
+        fields: ['work_id', 'phonogram_id'],
+      });
+    }
+  }
+
   async create(tenantId: string, dto: CreateShareDto): Promise<ShareEntity> {
     // holder_name/percentage (ownership fields — used in the ABRAMUS/ECAD
     // submission) only receive a value when the caller sends holderName/
@@ -197,6 +216,7 @@ export class SharesService {
     await this.assertOwnedForeignKeys(tenantId, cols);
     const workId      = (cols['work_id'] as string | undefined) ?? null;
     const phonogramId = (cols['phonogram_id'] as string | undefined) ?? null;
+    this.assertSingleStructure({ work_id: workId, phonogram_id: phonogramId }, true);
     return this.ds!.transaction(async (manager) => {
       await this.lockSplitScope(manager, tenantId, workId, phonogramId);
       await this.assertSplitBudget(tenantId, cols, undefined, manager);
@@ -222,6 +242,11 @@ export class SharesService {
 
       const workId      = (cols['work_id']      !== undefined ? cols['work_id']      : current.work_id)      as string | null;
       const phonogramId = (cols['phonogram_id'] !== undefined ? cols['phonogram_id'] : current.phonogram_id) as string | null;
+      this.assertSingleStructure(
+        { work_id: workId, phonogram_id: phonogramId },
+        (cols['work_id'] !== undefined && cols['work_id'] !== current.work_id)
+          || (cols['phonogram_id'] !== undefined && cols['phonogram_id'] !== current.phonogram_id),
+      );
       await this.lockSplitScope(manager, tenantId, workId, phonogramId);
       // Merge with the current row so an update that omits work_id/phonogram_id/
       // share_type (unchanged) still validates against the right scope.
