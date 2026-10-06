@@ -424,27 +424,30 @@ export class AutentiqueService {
 
   async configure(tenantId: string, apiToken: string): Promise<void> {
     this.assertRepos();
+    // Autentique has no authenticated read call in this integration: the token is proven by the first document sent
+    // (recordSuccess then marks the integration connected and verified). Until then it is saved, not connected.
     const credentials_encrypted = this.encryption.encrypt(JSON.stringify({ api_token: apiToken }));
     const existing = await this.integRepo!
       .createQueryBuilder('i')
       .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider: 'autentique' })
       .getOne();
+    const attemptedAt = new Date().toISOString();
 
     if (existing) {
       await this.integRepo!.update({ id: existing.id } as any, {
         credentials_encrypted,
-        status:        IntegrationStatus.CONNECTED,
+        status:        IntegrationStatus.CONNECTING,
         failure_count: 0,
-        metadata: { ...existing.metadata, provider: 'autentique', configured_at: new Date().toISOString(), verified: false, last_attempt_at: new Date().toISOString() },
+        metadata: { ...existing.metadata, provider: 'autentique', configured_at: attemptedAt, verified: false, last_attempt_at: attemptedAt },
         updated_at:    new Date(),
       } as any);
     } else {
       const entity = this.integRepo!.create({
         tenant_id:             tenantId,
         provider:              'autentique',
-        status:                IntegrationStatus.CONNECTED,
+        status:                IntegrationStatus.CONNECTING,
         credentials_encrypted,
-        metadata: { provider: 'autentique', configured_at: new Date().toISOString(), verified: false, last_attempt_at: new Date().toISOString() },
+        metadata: { provider: 'autentique', configured_at: attemptedAt, verified: false, last_attempt_at: attemptedAt },
       });
       await this.integRepo!.save(entity);
     }

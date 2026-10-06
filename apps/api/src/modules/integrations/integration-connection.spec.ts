@@ -38,15 +38,31 @@ function build(initial: Row[] = []) {
 }
 
 describe('IntegrationBaseService.saveCredentials: a saved credential is not a tested connection', () => {
-  it('without a probe it is stored but recorded as not verified, with the attempt time', async () => {
+  it('awaiting the first real use it is stored as connecting and not verified, with the attempt time', async () => {
     const { svc, rows } = build();
-    await svc.saveCredentials('t1', 'tiktok', { token: 'x' });
-    expect(rows[0].status).toBe(IntegrationStatus.CONNECTED);
+    await svc.saveCredentialsAwaitingFirstUse('t1', 'google_ads', { token: 'x' });
+    expect(rows[0].status).toBe(IntegrationStatus.CONNECTING);
     expect(rows[0].metadata['verified']).toBe(false);
     expect(typeof rows[0].metadata['last_attempt_at']).toBe('string');
     expect(rows[0].metadata['last_success_at']).toBeUndefined();
-    const status = await svc.getStatus('t1', 'tiktok');
-    expect(status).toMatchObject({ verified: false, last_success_at: null, last_error: null });
+    expect(await svc.getStatus('t1', 'google_ads')).toMatchObject({ connected: false, status: 'connecting', verified: false, last_success_at: null, last_error: null });
+  });
+
+  it('markConnected after a real call makes it connected and verified', async () => {
+    const { svc, rows } = build();
+    await svc.saveCredentialsAwaitingFirstUse('t1', 'google_ads', { token: 'x' });
+    await svc.markConnected('t1', 'google_ads');
+    expect(rows[0].status).toBe(IntegrationStatus.CONNECTED);
+    expect(rows[0].metadata).toMatchObject({ verified: true });
+    expect(typeof rows[0].metadata['last_success_at']).toBe('string');
+    expect(await svc.getStatus('t1', 'google_ads')).toMatchObject({ connected: true, verified: true });
+  });
+
+  it('saving credentials alone never reports connected: the status is connecting while the probe runs', async () => {
+    const { svc, rows } = build();
+    let seenWhileProbing: string | undefined;
+    await svc.saveCredentials('t1', 'abramus', { token: 'x' }, async () => { seenWhileProbing = rows[0].status; });
+    expect(seenWhileProbing).toBe(IntegrationStatus.CONNECTING);
   });
 
   it('with a probe that succeeds it is connected, verified and has a last success', async () => {

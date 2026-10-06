@@ -37,7 +37,14 @@ export class AppleMusicService extends IntegrationBaseService {
   isConfigured(): boolean { return true; }
 
   async configure(tenantId: string, teamId: string, keyId: string, privateKey: string): Promise<void> {
-    await this.saveCredentials(tenantId, PROVIDER, { team_id: teamId, key_id: keyId, private_key: privateKey });
+    const creds: AppleCreds = { team_id: teamId, key_id: keyId, private_key: privateKey };
+    // Connected only after Apple accepts a developer token signed with these credentials.
+    await this.saveCredentials(tenantId, PROVIDER, { ...creds }, async () => {
+      const token = this.buildDeveloperToken(creds);
+      const url = assertAllowedHost(`${APPLE_API}/catalog/br/search?${new URLSearchParams({ term: 'a', types: 'artists', limit: '1' })}`, APPLE_HOSTS);
+      const res = await this.fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error(`Apple Music rejected the developer token (status ${res.status})`);
+    });
   }
 
   async getProviderStatus(tenantId: string) { return this.getStatus(tenantId, PROVIDER); }

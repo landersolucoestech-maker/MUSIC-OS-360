@@ -41,16 +41,17 @@ export class IntegrationBaseService {
   // ── Credentials ─────────────────────────────────────────────────────────────
 
   /**
-   * Stores the credentials. With a `verify` probe (a real authenticated call to the provider) the integration
-   * is connected only when the probe succeeds; on failure it is left in error with the redacted reason and the
-   * caller gets a failure. Without a probe the integration keeps the previous "saved" behaviour but is recorded
-   * as not verified, so the status never claims a test that did not happen.
+   * Stores the credentials and tests the connection with `verify` (a real authenticated call to the provider): the
+   * integration is connected only when the probe succeeds; on failure it is left in error with the redacted reason (or
+   * the previous working connection is restored) and the caller gets a failure. A saved credential is never a
+   * connection. A provider whose only real call needs a later step (an OAuth consent, the first document sent) uses
+   * saveCredentialsAwaitingFirstUse instead, so the status says it is not connected yet.
    */
   async saveCredentials(
     tenantId: string,
     provider: string,
     creds: Record<string, string>,
-    verify?: () => Promise<void>,
+    verify: () => Promise<void>,
   ): Promise<void> {
     const credentials_encrypted = this.enc.encrypt(JSON.stringify(creds));
     const existing = await this.integRepo!
@@ -62,7 +63,7 @@ export class IntegrationBaseService {
     const previous = existing
       ? { credentials_encrypted: existing.credentials_encrypted, status: existing.status, verified: (existing.metadata ?? {})['verified'] === true }
       : null;
-    const status = verify ? IntegrationStatus.CONNECTING : IntegrationStatus.CONNECTED;
+    const status = IntegrationStatus.CONNECTING;
     const metadata = { ...(existing?.metadata ?? {}), last_attempt_at: new Date().toISOString(), verified: false };
     if (existing) {
       await this.integRepo!.update({ id: existing.id } as any, { credentials_encrypted, status, failure_count: 0, metadata, updated_at: new Date() } as any);
@@ -70,8 +71,6 @@ export class IntegrationBaseService {
       const entity = this.integRepo!.create({ tenant_id: tenantId, provider, status, credentials_encrypted, metadata });
       await this.integRepo!.save(entity);
     }
-    if (!verify) return;
-
     try {
       await verify();
     } catch (error) {
@@ -102,6 +101,35 @@ export class IntegrationBaseService {
         message: `Não foi possível validar a conexão com ${provider}: ${reason}`,
       });
     }
+    await this.recordConnectionState(tenantId, provider, IntegrationStatus.CONNECTED, {
+      verified: true,
+      last_success_at: new Date().toISOString(),
+      last_failure_at: null,
+      last_failure_reason: null,
+    });
+  }
+
+  /**
+   * Stores credentials of a provider that cannot be tested at configuration time (its first real call needs an OAuth
+   * consent or an actual operation). The integration is CONNECTING and not verified until markConnected runs after a
+   * real call of that provider succeeded.
+   */
+  async saveCredentialsAwaitingFirstUse(tenantId: string, provider: string, creds: Record<string, string>): Promise<void> {
+    const credentials_encrypted = this.enc.encrypt(JSON.stringify(creds));
+    const existing = await this.integRepo!
+      .createQueryBuilder('i')
+      .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider })
+      .getOne();
+    const metadata = { ...(existing?.metadata ?? {}), provider, last_attempt_at: new Date().toISOString(), verified: false };
+    if (existing) {
+      await this.integRepo!.update({ id: existing.id } as any, { credentials_encrypted, status: IntegrationStatus.CONNECTING, failure_count: 0, metadata, updated_at: new Date() } as any);
+    } else {
+      await this.integRepo!.save(this.integRepo!.create({ tenant_id: tenantId, provider, status: IntegrationStatus.CONNECTING, credentials_encrypted, metadata }));
+    }
+  }
+
+  /** Marks the integration connected and verified, after a real call of the provider succeeded. */
+  async markConnected(tenantId: string, provider: string): Promise<void> {
     await this.recordConnectionState(tenantId, provider, IntegrationStatus.CONNECTED, {
       verified: true,
       last_success_at: new Date().toISOString(),

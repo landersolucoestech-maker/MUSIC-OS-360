@@ -76,6 +76,7 @@ describe('AppleMusicService', () => {
   });
 
   it('configure(): persists team_id/key_id/private_key encrypted — never in plain text', async () => {
+    fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
 
     const raw = [...integRepo._rows.values()][0];
@@ -84,19 +85,23 @@ describe('AppleMusicService', () => {
   });
 
   it('getProviderStatus(): exposes only the closed set of non-secret status fields and never the private key', async () => {
+    fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
     const status = await service.getProviderStatus(TENANT_A);
     expect(Object.keys(status).sort()).toEqual(
       ['connected', 'last_attempt_at', 'last_error', 'last_success_at', 'last_sync_at', 'status', 'verified'],
     );
-    // Credentials were saved but no authenticated call proved them: the status says so.
-    expect(status).toMatchObject({ connected: true, last_sync_at: null, verified: false, last_success_at: null, last_error: null });
+    // Apple accepted the developer token in the test call made by configure(): the status says so.
+    expect(status).toMatchObject({ connected: true, last_sync_at: null, verified: true, last_error: null });
+    expect(typeof status.last_success_at).toBe('string');
     expect(JSON.stringify(status)).not.toContain('PRIVATE KEY');
     expect(JSON.stringify(status)).not.toContain('KEY456');
   });
 
   it('with credentials configured: signs a valid ES256 developer token and calls the Apple API with Bearer', async () => {
+    fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
+    fetchMock.mockClear();
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ data: [{ attributes: { name: 'Artist X', genreNames: ['Pop'], url: 'https://x' } }] }),
@@ -120,10 +125,34 @@ describe('AppleMusicService', () => {
   });
 
   it('propagates the Apple API HTTP error status without masking it as success', async () => {
+    fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
     fetchMock.mockResolvedValueOnce({ ok: false, status: 401 });
 
     const result = await service.getArtistFromCatalog(TENANT_A, 'artist-id-123');
     expect(result).toEqual({ error: 'PROVIDER_UNAUTHORIZED' });
+  });
+
+  describe('configure(): connected only after Apple accepts the developer token', () => {
+    it('sends the signed token to a real catalog call and records the integration as connected and verified', async () => {
+      fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({}) });
+      await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(url).toContain('api.music.apple.com/v1/catalog/br/search');
+      expect((init.headers as Record<string, string>)['Authorization']).toMatch(/^Bearer [\w-]+\.[\w-]+\.[\w-]+$/);
+      expect(await service.getProviderStatus(TENANT_A)).toMatchObject({ connected: true, verified: true });
+    });
+
+    it('a rejected token fails the configuration and the integration is not connected', async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 401 });
+      await expect(service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY))
+        .rejects.toMatchObject({ response: { code: 'INTEGRATION_CONNECTION_TEST_FAILED' } });
+      expect(await service.getProviderStatus(TENANT_A)).toMatchObject({ connected: false, status: 'error', verified: false });
+    });
+
+    it('an unusable private key fails before any call leaves the process', async () => {
+      await expect(service.configure(TENANT_A, 'TEAM123', 'KEY456', 'not-a-key')).rejects.toMatchObject({ response: { code: 'INTEGRATION_CONNECTION_TEST_FAILED' } });
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
   });
 });

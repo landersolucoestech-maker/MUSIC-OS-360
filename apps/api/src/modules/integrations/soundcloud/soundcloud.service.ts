@@ -26,7 +26,12 @@ export class SoundCloudService extends IntegrationBaseService {
   private get clientId(): string { return this.config.get<string>('SOUNDCLOUD_CLIENT_ID') ?? ''; }
 
   async configure(tenantId: string, clientId: string, clientSecret: string): Promise<void> {
-    await this.saveCredentials(tenantId, this.PROVIDER, { client_id: clientId, client_secret: clientSecret });
+    // Connected only after SoundCloud resolves a public profile with this client id.
+    await this.saveCredentials(tenantId, this.PROVIDER, { client_id: clientId, client_secret: clientSecret }, async () => {
+      const qs = new URLSearchParams({ url: 'https://soundcloud.com/soundcloud', client_id: clientId }).toString();
+      const res = await this.fetch(assertAllowedHost(`${SC_API}/resolve?${qs}`, SC_HOSTS));
+      if (!res.ok) throw new Error(`SoundCloud rejected the client id (status ${res.status})`);
+    });
   }
 
   async getProviderStatus(tenantId: string) { return this.getStatus(tenantId, this.PROVIDER); }

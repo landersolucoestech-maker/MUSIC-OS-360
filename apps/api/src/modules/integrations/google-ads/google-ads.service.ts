@@ -32,7 +32,8 @@ export class GoogleAdsService extends IntegrationBaseService {
   }
 
   async configure(tenantId: string, developerToken: string, customerId: string): Promise<void> {
-    await this.saveCredentials(tenantId, PROVIDER, { developer_token: developerToken, customer_id: customerId });
+    // The first real call needs the OAuth consent: not connected until the callback stores the tokens.
+    await this.saveCredentialsAwaitingFirstUse(tenantId, PROVIDER, { developer_token: developerToken, customer_id: customerId });
   }
 
   async getProviderStatus(tenantId: string) {
@@ -70,6 +71,7 @@ export class GoogleAdsService extends IntegrationBaseService {
     if (data.error) throw new Error(data.error_description ?? data.error);
 
     await this.saveOAuthTokens({ tenantId, userId, provider: PROVIDER, accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in, scopes: SCOPES });
+    await this.markConnected(tenantId, PROVIDER);
     this.logger.log(`Google Ads OAuth: ${userId}@${tenantId} connected`);
   }
 

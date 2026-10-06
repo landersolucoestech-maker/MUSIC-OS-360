@@ -110,7 +110,9 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
       throw new BadRequestException('Informe o token de acesso e o ID da conta do WhatsApp Business.');
     }
 
-    await this.assertTokenOwnsPhoneNumber(pid, token);
+    // The authenticated Graph call is the connection test; its result is what saveCredentials records.
+    const ownership = this.assertTokenOwnsPhoneNumber(pid, token);
+    await ownership;
 
     const bindings = await this.listPhoneNumberBindings();
     const other = bindings.find((b) => b.phoneNumberId === pid && b.tenantId !== tenantId);
@@ -119,7 +121,7 @@ export class WhatsAppCloudProvider extends IntegrationBaseService {
       throw new ConflictException('Este número do WhatsApp já está vinculado a outra conta');
     }
 
-    await this.saveCredentials(tenantId, PROVIDER, { phoneNumberId: pid, accessToken: token, wabaId: waba });
+    await this.saveCredentials(tenantId, PROVIDER, { phoneNumberId: pid, accessToken: token, wabaId: waba }, () => ownership);
   }
 
   /** GET /{phone_number_id} with the tenant's token: a 200 proves access to the number. */

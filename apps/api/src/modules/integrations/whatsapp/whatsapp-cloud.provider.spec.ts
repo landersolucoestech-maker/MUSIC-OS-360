@@ -85,6 +85,18 @@ describe('WhatsAppCloudProvider', () => {
 
   // ── configuration ──────────────────────────────────────────────────────────
 
+  it('configure(): the Graph ownership call is the connection test, so the integration is connected and verified only after it succeeded', async () => {
+    await configureOk(TENANT_A, '1234567890', 'secret-token-xyz', 'waba-456');
+    expect(await provider.getProviderStatus(TENANT_A)).toMatchObject({ connected: true, verified: true, last_error: null });
+  });
+
+  it('configure(): a token the Graph API rejects stores nothing and nothing is connected', async () => {
+    fetchMock.mockResolvedValueOnce({ ok: false, status: 400, json: async () => ({}) });
+    await expect(provider.configure(TENANT_A, '1234567890', 'bad-token', 'waba-456')).rejects.toBeDefined();
+    expect([...integRepo._rows.values()]).toHaveLength(0);
+    expect(await provider.getProviderStatus(TENANT_A)).toMatchObject({ connected: false, verified: false });
+  });
+
   it('provider not configured: rejects the send without calling Meta', async () => {
     await expect(provider.sendTextMessage(TENANT_A, '5511999999999', 'oi')).rejects.toMatchObject({
       code: 'WHATSAPP_NOT_CONFIGURED',
