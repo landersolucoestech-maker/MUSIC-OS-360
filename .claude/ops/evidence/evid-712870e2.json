@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node scripts/naming/technical-naming-census.mjs --check",
+  "command": "node scripts/naming/technical-naming-census.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "technical-naming census: 4802 files, debt {\"doc\":8695}",
+  "stderrTail": "",
+  "workspaceFingerprint": "49e7fbe940db0fdb56e7ef26370369cdbe366ad80c6ec3e8f038b3cf30141f0e",
+  "fingerprintStatus": "BOUND",
+  "head": "4cf271ef96a7a16bed58160f35561f7c3178a45d",
+  "durationMs": 9825,
+  "id": "evid-712870e2",
+  "createdAt": "2026-10-06T12:26:27.347Z"
+}

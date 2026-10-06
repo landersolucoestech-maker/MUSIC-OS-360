@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-06T06:16:09.829Z",
+  "updatedAt": "2026-10-06T12:26:47.243Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -68,7 +68,8 @@
             "evid-15689fb9",
             "evid-e91cddf8",
             "evid-d9257d6f",
-            "evid-43eb0c40"
+            "evid-43eb0c40",
+            "evid-712870e2"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -118,7 +119,8 @@
             "evid-ffc9ec08",
             "evid-deae7936",
             "evid-d77c417f",
-            "evid-5203d305"
+            "evid-5203d305",
+            "evid-83dc7097"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -173,7 +175,8 @@
             "evid-4b499615",
             "evid-574c6c20",
             "evid-f9dbbc8a",
-            "evid-0ced4cee"
+            "evid-0ced4cee",
+            "evid-f1e9c189"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1524,7 +1527,10 @@
     "evid-849ebcb3",
     "evid-2aeffa37",
     "evid-93d250bc",
-    "evid-a031d70b"
+    "evid-a031d70b",
+    "evid-712870e2",
+    "evid-83dc7097",
+    "evid-f1e9c189"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
