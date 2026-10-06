@@ -5,7 +5,7 @@
   "status": "blocked",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-06T19:20:57.244Z",
+  "updatedAt": "2026-10-06T19:23:40.707Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -79,13 +79,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-d232f321",
@@ -132,13 +133,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-01T18:08:23.056Z"
@@ -190,13 +192,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-9457b4c3",
@@ -249,13 +252,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-01T18:08:23.116Z"
@@ -305,13 +309,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-ad6235b3",
@@ -355,13 +360,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-01T18:08:23.170Z"
@@ -411,13 +417,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-5905b8d0",
@@ -457,13 +464,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-523dfee6",
@@ -504,13 +512,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-585c1f53",
@@ -556,13 +565,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-72f6da63",
@@ -602,13 +612,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-2249de9e",
@@ -648,13 +659,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-01T18:08:23.230Z"
@@ -701,13 +713,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, tooling and naming docs; ops-state-only commits (.claude/ops) do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-01T18:09:48.036Z"
@@ -794,13 +807,14 @@
             "apps",
             "packages",
             "scripts",
-            "supabase",
             "docs",
             ".github",
             "package.json",
-            "pnpm-lock.yaml"
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
           ],
-          "relevantPathsReason": "Evidence is about product code, migrations and naming docs; .claude-only commits do not change what these commands verify"
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-577b07af",
@@ -869,7 +883,19 @@
             "evid-78a1246f",
             "evid-9c88352f"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-526fc846",
@@ -878,7 +904,19 @@
             "evid-50d63367",
             "evid-11b315ff"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:20.015Z"
@@ -903,7 +941,19 @@
             "evid-a6840cb5",
             "evid-95ba46fe"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-373fe6b9",
@@ -912,7 +962,19 @@
             "evid-b2dc33ac",
             "evid-5d82a6ac"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:20.249Z"
@@ -931,7 +993,19 @@
             "evid-400556ae",
             "evid-416a86c3"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-d77ed66b",
@@ -940,7 +1014,19 @@
             "evid-17b6a3cd",
             "evid-2c9532b7"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-e85da379",
@@ -949,7 +1035,19 @@
             "evid-4caf4c56",
             "evid-f5dff83e"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:20.479Z"
@@ -968,7 +1066,19 @@
             "evid-d642fb83",
             "evid-dfdb8320"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-5876e5b7",
@@ -977,7 +1087,19 @@
             "evid-aef515ce",
             "evid-9bf87d40"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-7c907928",
@@ -986,7 +1108,19 @@
             "evid-fd10fa82",
             "evid-bb0643d9"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:20.726Z"
@@ -1005,7 +1139,19 @@
             "evid-695bac57",
             "evid-2c287740"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-8352102f",
@@ -1014,7 +1160,19 @@
             "evid-daff14ef",
             "evid-e099060c"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:21.007Z"
@@ -1051,7 +1209,19 @@
             "evid-9f5855cf",
             "evid-1c0a4a05"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:21.198Z"
@@ -1070,7 +1240,19 @@
             "evid-a3afb985",
             "evid-217e1ed8"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-9cb41819",
@@ -1079,7 +1261,19 @@
             "evid-d7fd89b0",
             "evid-79c457dd"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-966ab4c4",
@@ -1088,7 +1282,19 @@
             "evid-b0cb222c",
             "evid-b21d1944"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:21.513Z"
@@ -1107,7 +1313,19 @@
             "evid-84f59891",
             "evid-d457c72c"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-0058dc19",
@@ -1116,7 +1334,19 @@
             "evid-44f334b6",
             "evid-a28bebc2"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:27:21.771Z"
@@ -1163,7 +1393,19 @@
             "evid-434e62f7",
             "evid-8af7a649"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-2ff3d049",
@@ -1172,7 +1414,19 @@
             "evid-b112cbf0",
             "evid-03f4f99a"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         },
         {
           "id": "ac-f3428327",
@@ -1181,7 +1435,19 @@
             "evid-6fdfb787",
             "evid-6f11ae73"
           ],
-          "status": "closed"
+          "status": "closed",
+          "relevantPaths": [
+            "apps",
+            "packages",
+            "scripts",
+            "docs",
+            ".github",
+            "package.json",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "turbo.json"
+          ],
+          "relevantPathsReason": "Evidence depends on product code, shared packages, tooling scripts, docs scanned by the naming and spreadsheet guards, CI workflows and the workspace manifests; mission state under .claude/ops is not an input of any of these checks."
         }
       ],
       "createdAt": "2026-10-06T13:30:09.823Z"
