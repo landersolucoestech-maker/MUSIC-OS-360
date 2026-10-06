@@ -165,6 +165,9 @@ export class AutentiqueService {
             synced_at:   new Date().toISOString(),
             provider:    'autentique',
             retry_count: 0,
+            verified:        true,
+            last_attempt_at: new Date().toISOString(),
+            last_success_at: new Date().toISOString(),
           },
         } as any);
       }
@@ -432,7 +435,7 @@ export class AutentiqueService {
         credentials_encrypted,
         status:        IntegrationStatus.CONNECTED,
         failure_count: 0,
-        metadata: { ...existing.metadata, provider: 'autentique', configured_at: new Date().toISOString() },
+        metadata: { ...existing.metadata, provider: 'autentique', configured_at: new Date().toISOString(), verified: false, last_attempt_at: new Date().toISOString() },
         updated_at:    new Date(),
       } as any);
     } else {
@@ -441,7 +444,7 @@ export class AutentiqueService {
         provider:              'autentique',
         status:                IntegrationStatus.CONNECTED,
         credentials_encrypted,
-        metadata: { provider: 'autentique', configured_at: new Date().toISOString() },
+        metadata: { provider: 'autentique', configured_at: new Date().toISOString(), verified: false, last_attempt_at: new Date().toISOString() },
       });
       await this.integRepo!.save(entity);
     }

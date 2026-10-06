@@ -463,10 +463,17 @@ export class IntegrationsController {
   @Get('status')
   @RequireRole('viewer')
   @ApiOperation({ summary: 'Status of every integration' })
-  getStatus() {
+  async getStatus(@Request() req: any) {
+    // Autentique and Abramus are tenant credentials, so "configured" is the tenant's own stored state,
+    // never a constant. The other providers report the platform-level configuration.
+    const tenantId = req.tenant?.id ?? req.tenantId;
+    const [autentique, abramus] = await Promise.all([
+      this.integrationBase.getStatus(tenantId, 'autentique'),
+      this.integrationBase.getStatus(tenantId, 'abramus'),
+    ]);
     return {
       acrcloud:    { configured: this.acrCloud.isConfigured() },
-      autentique:  { configured: true },
+      autentique:  { configured: autentique.connected, ...autentique },
       spotify:     { configured: this.spotify.isConfigured() },
       youtube:     { configured: this.youtube.isConfigured() },
       deezer:      { configured: this.deezer.isConfigured() },
@@ -475,7 +482,7 @@ export class IntegrationsController {
       instagram:   { configured: this.instagram.isConfigured() },
       tiktok:      { configured: this.tiktok.isConfigured() },
       google_ads:  { configured: this.googleAds.isConfigured() },
-      abramus:     { configured: true },
+      abramus:     { configured: abramus.connected, ...abramus },
     };
   }
 

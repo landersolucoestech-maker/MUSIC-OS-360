@@ -11,6 +11,7 @@ interface AbramusCreds {
   password: string;
   base_url: string;
 }
+import { redactDiagnosticText } from '../../../core/filters/redact-diagnostic';
 
 @Injectable()
 export class AbramusService extends IntegrationBaseService {
@@ -22,7 +23,11 @@ export class AbramusService extends IntegrationBaseService {
   }
 
   async configure(tenantId: string, username: string, password: string, baseUrl: string): Promise<void> {
-    await this.saveCredentials(tenantId, PROVIDER, { username, password, base_url: baseUrl });
+    // Connected only after a real login succeeds: saving credentials is not a connection.
+    await this.saveCredentials(tenantId, PROVIDER, { username, password, base_url: baseUrl }, async () => {
+      const token = await this.getAuthToken({ username, password, base_url: baseUrl } as AbramusCreds);
+      if (!token) throw new Error('Abramus auth returned no token');
+    });
   }
 
   async getProviderStatus(tenantId: string) {
@@ -56,7 +61,7 @@ export class AbramusService extends IntegrationBaseService {
         ...(init.headers as object ?? {}),
       },
     });
-    if (!res.ok) throw new Error(`Abramus API error ${res.status}: ${await res.text()}`);
+    if (!res.ok) throw new Error(`Abramus API error ${res.status}: ${redactDiagnosticText(await res.text())}`);
     return res.json() as Promise<T>;
   }
 

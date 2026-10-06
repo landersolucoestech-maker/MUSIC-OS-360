@@ -83,11 +83,16 @@ describe('AppleMusicService', () => {
     expect(raw.credentials_encrypted).not.toContain('TEAM123');
   });
 
-  it('getProviderStatus(): never exposes the private key — only {connected, last_sync_at}', async () => {
+  it('getProviderStatus(): exposes only the closed set of non-secret status fields and never the private key', async () => {
     await service.configure(TENANT_A, 'TEAM123', 'KEY456', TEST_PRIVATE_KEY);
     const status = await service.getProviderStatus(TENANT_A);
-    expect(status).toEqual({ connected: true, last_sync_at: null });
+    expect(Object.keys(status).sort()).toEqual(
+      ['connected', 'last_attempt_at', 'last_error', 'last_success_at', 'last_sync_at', 'status', 'verified'],
+    );
+    // Credentials were saved but no authenticated call proved them: the status says so.
+    expect(status).toMatchObject({ connected: true, last_sync_at: null, verified: false, last_success_at: null, last_error: null });
     expect(JSON.stringify(status)).not.toContain('PRIVATE KEY');
+    expect(JSON.stringify(status)).not.toContain('KEY456');
   });
 
   it('with credentials configured: signs a valid ES256 developer token and calls the Apple API with Bearer', async () => {

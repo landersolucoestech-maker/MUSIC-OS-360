@@ -1,4 +1,5 @@
-import { Injectable, Inject, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject, Logger, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { redactForStorage } from '../../core/filters/redact-diagnostic';
 import * as crypto from 'crypto';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -39,19 +40,71 @@ export class IntegrationBaseService {
 
   // ── Credentials ─────────────────────────────────────────────────────────────
 
-  async saveCredentials(tenantId: string, provider: string, creds: Record<string, string>): Promise<void> {
+  /**
+   * Stores the credentials. With a `verify` probe (a real authenticated call to the provider) the integration
+   * is connected only when the probe succeeds; on failure it is left in error with the redacted reason and the
+   * caller gets a failure. Without a probe the integration keeps the previous "saved" behaviour but is recorded
+   * as not verified, so the status never claims a test that did not happen.
+   */
+  async saveCredentials(
+    tenantId: string,
+    provider: string,
+    creds: Record<string, string>,
+    verify?: () => Promise<void>,
+  ): Promise<void> {
     const credentials_encrypted = this.enc.encrypt(JSON.stringify(creds));
     const existing = await this.integRepo!
       .createQueryBuilder('i')
       .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider })
       .getOne();
 
+    const status = verify ? IntegrationStatus.CONNECTING : IntegrationStatus.CONNECTED;
+    const metadata = { ...(existing?.metadata ?? {}), last_attempt_at: new Date().toISOString(), verified: false };
     if (existing) {
-      await this.integRepo!.update({ id: existing.id } as any, { credentials_encrypted, status: IntegrationStatus.CONNECTED, failure_count: 0, updated_at: new Date() } as any);
+      await this.integRepo!.update({ id: existing.id } as any, { credentials_encrypted, status, failure_count: 0, metadata, updated_at: new Date() } as any);
     } else {
-      const entity = this.integRepo!.create({ tenant_id: tenantId, provider, status: IntegrationStatus.CONNECTED, credentials_encrypted });
+      const entity = this.integRepo!.create({ tenant_id: tenantId, provider, status, credentials_encrypted, metadata });
       await this.integRepo!.save(entity);
     }
+    if (!verify) return;
+
+    try {
+      await verify();
+    } catch (error) {
+      const reason = redactForStorage(error instanceof Error ? error.message : String(error));
+      await this.recordConnectionState(tenantId, provider, IntegrationStatus.ERROR, {
+        verified: false,
+        last_failure_at: new Date().toISOString(),
+        last_failure_reason: reason,
+      });
+      throw new BadRequestException({
+        code: 'INTEGRATION_CONNECTION_TEST_FAILED',
+        message: `Não foi possível validar a conexão com ${provider}: ${reason}`,
+      });
+    }
+    await this.recordConnectionState(tenantId, provider, IntegrationStatus.CONNECTED, {
+      verified: true,
+      last_success_at: new Date().toISOString(),
+      last_failure_at: null,
+      last_failure_reason: null,
+    });
+  }
+
+  private async recordConnectionState(
+    tenantId: string,
+    provider: string,
+    status: IntegrationStatus,
+    metadataPatch: Record<string, unknown>,
+  ): Promise<void> {
+    const row = await this.integRepo!
+      .createQueryBuilder('i')
+      .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider })
+      .getOne();
+    if (!row) return;
+    await this.integRepo!.update(
+      { id: row.id } as any,
+      { status, metadata: { ...(row.metadata ?? {}), ...metadataPatch }, updated_at: new Date() } as any,
+    );
   }
 
   async loadCredentials<T = Record<string, string>>(tenantId: string, provider: string): Promise<T | null> {
@@ -63,12 +116,30 @@ export class IntegrationBaseService {
     try { return JSON.parse(this.enc.decrypt(row.credentials_encrypted)) as T; } catch { return null; }
   }
 
-  async getStatus(tenantId: string, provider: string): Promise<{ connected: boolean; last_sync_at: Date | null }> {
+  async getStatus(tenantId: string, provider: string): Promise<{
+    connected: boolean;
+    status: string;
+    verified: boolean;
+    last_sync_at: Date | null;
+    last_attempt_at: string | null;
+    last_success_at: string | null;
+    last_error: string | null;
+  }> {
     const row = await this.integRepo!
       .createQueryBuilder('i')
       .where('i.tenant_id = :tenantId AND i.provider = :provider', { tenantId, provider })
       .getOne();
-    return { connected: row?.status === 'connected', last_sync_at: row?.last_sync_at ?? null };
+    const meta = (row?.metadata ?? {}) as Record<string, unknown>;
+    const text = (key: string): string | null => (typeof meta[key] === 'string' ? (meta[key] as string) : null);
+    return {
+      connected: row?.status === 'connected',
+      status: row?.status ?? IntegrationStatus.DISCONNECTED,
+      verified: meta['verified'] === true,
+      last_sync_at: row?.last_sync_at ?? null,
+      last_attempt_at: text('last_attempt_at'),
+      last_success_at: text('last_success_at'),
+      last_error: text('last_failure_reason'),
+    };
   }
 
   async disconnect(tenantId: string, provider: string): Promise<void> {
