@@ -10,7 +10,7 @@
  * only the metadata-only fields (ARTIST_METADATA_ONLY_FIELDS). Responses are
  * canonical (English keys and values).
  */
-import { ARTIST_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
+import { ARTIST_TEAM_CONTACT_CATEGORIES, LEGACY_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
 import { applyDeprecatedFieldAliases, type DeprecatedFieldAliases } from '../../common/compat/deprecated-field-aliases.util';
 
 /** Pre-CZ-042 request key -> canonical key (column name, encrypted wire key or metadata key). */
@@ -136,18 +136,7 @@ const mapValue = (map: Readonly<Record<string, string>>, value: unknown): unknow
 /** Canonical categories of artists.team_contacts[].category (free-text column; the tuple is the vocabulary the UI offers). */
 export const ARTIST_TEAM_CONTACT_CATEGORY_VALUES = ARTIST_TEAM_CONTACT_CATEGORIES;
 
-/**
- * Legacy team-contact category -> canonical (keys lower-case). Reuses the
- * relationship_type vocabulary (empresario/gravadora/editora/juridico/
- * financeiro/contador/assessoria) plus the two category-only spellings.
- */
-export const LEGACY_TEAM_CONTACT_CATEGORIES: Readonly<Record<string, string>> = {
-  ...LEGACY_ARTIST_VALUES.relationship_type,
-  editora_musical: 'publisher',
-  gestor: 'agent',
-};
-
-/** Canonical team-contact category: legacy values mapped, unknown values preserved (the column is free text). */
+/** Canonical team-contact category (legacy map: LEGACY_TEAM_CONTACT_CATEGORIES in @music-os-360/types, shared with the web): legacy values mapped, unknown values preserved (the column is free text). */
 export const canonicalArtistTeamContactCategory = (value: unknown): unknown => mapValue(LEGACY_TEAM_CONTACT_CATEGORIES, value);
 
 /** Applies canonicalArtistTeamContactCategory to every item of a team_contacts list. */

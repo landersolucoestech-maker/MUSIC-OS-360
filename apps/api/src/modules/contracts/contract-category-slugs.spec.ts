@@ -2,6 +2,7 @@ import {
   CANONICAL_CONTRACT_CATEGORY_SLUGS,
   LEGACY_CONTRACT_CATEGORY_SLUGS,
   canonicalContractCategorySlug,
+  READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS,
   contractCategorySlugVariants,
 } from './contract-category-slugs';
 
@@ -76,6 +77,31 @@ describe('legacy -> canonical contract category table', () => {
     for (const [legacy] of LEGACY_TO_CANONICAL) {
       expect(canonicalContractCategorySlug(legacy.toUpperCase())).toBe(legacy.toUpperCase());
       expect(canonicalContractCategorySlug(` ${legacy}`)).toBe(` ${legacy}`);
+    }
+  });
+});
+
+describe('read-only web spellings (exclusivo)', () => {
+  it('the read-only map is exactly exclusivo -> exclusivity and does not overlap the platform legacy map', () => {
+    expect(READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS).toEqual({ exclusivo: 'exclusivity' });
+    expect(Object.keys(LEGACY_CONTRACT_CATEGORY_SLUGS)).not.toContain('exclusivo');
+  });
+
+  it('a canonical or legacy query expands to every stored spelling, in both directions', () => {
+    const all = ['exclusivity', 'exclusividade', 'exclusivo'];
+    expect(contractCategorySlugVariants('exclusivity')).toEqual(all);
+    expect(contractCategorySlugVariants('exclusividade')).toEqual(all);
+    expect(contractCategorySlugVariants('exclusivo')).toEqual(all);
+  });
+
+  it('writes are unchanged: exclusivo is not rewritten by canonicalContractCategorySlug', () => {
+    expect(canonicalContractCategorySlug('exclusivo')).toBe('exclusivo');
+    expect(canonicalContractCategorySlug('exclusividade')).toBe('exclusivity');
+  });
+
+  it('web-only spellings without a canonical slug, near-misses and tenant slugs are not mapped', () => {
+    for (const s of ['nao_exclusivo', 'non_exclusive', 'representacao', 'representation', 'servicos', 'services', 'parceria', 'Exclusivo', ' exclusivo', 'exclusivos', 'exclusiva', 'exclusive', 'toString', '__proto__']) {
+      expect(contractCategorySlugVariants(s)).toEqual([s]);
     }
   });
 });

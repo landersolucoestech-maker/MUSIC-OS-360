@@ -8,6 +8,14 @@ export function invoiceFileUrl(invoice: { file_url?: unknown; url_pdf?: unknown 
   return typeof url === "string" && url.length > 0 ? url : null;
 }
 
+/** Fiscal document kind of an invoice: fiscal_document_type canonical, tipo_nota only as compatibility with an old API. */
+export function invoiceFiscalDocumentType(
+  invoice: { fiscal_document_type?: unknown; tipo_nota?: unknown } | null | undefined,
+): string | null {
+  const kind = invoice?.fiscal_document_type ?? invoice?.tipo_nota;
+  return typeof kind === "string" && kind.length > 0 ? kind : null;
+}
+
 const INFLOW_MARKER = "[TIPO_OPERACAO:ENTRADA]";
 
 export function parseOperationType(notes: string | null | undefined): {

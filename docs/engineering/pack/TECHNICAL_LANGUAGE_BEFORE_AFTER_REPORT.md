@@ -90,24 +90,24 @@ Source: `docs/naming/canonical-naming-map.json` `concepts[]` (97 concepts in tot
 | NC-003 | Client reference (FK) | `cliente_id` | `client_id`; app `clientId`; API `clientId` | Cliente | DONE |
 | NC-004 | Project reference (FK) | `projeto_id` | `project_id`; app `projectId`; API `projectId` | Projeto | DONE |
 | NC-005 | Campaign reference (FK) | `campanha_id` | `campaign_id`; app `campaignId`; API `campaignId` | Campanha | DONE |
-| NC-006 | Release reference (FK) | `lancamento_id` | `release_id`; app `releaseId`; API `releaseId` | Lançamento | DONE |
+| NC-006 | Release reference (FK) | `lancamento_id` | `release_id`; app `releaseId`; API `releaseId` | `Lançamento` | DONE |
 | NC-007 | Phonogram reference (FK) | `fonograma_id` | `phonogram_id`; app `phonogramId`; API `phonogram_id` (`trackId` deprecated alias) | Fonograma | DONE |
-| NC-008 | Title | `titulo` | `title` (10+ tables); app `title`; API `title` | Título | DONE |
+| NC-008 | Title | `titulo` | `title` (10+ tables); app `title`; API `title` | `Título` | DONE |
 | NC-009 | Type/category classifier (generic) | `tipo` | `type` (18+ tables); app `type`; API `type` | Tipo | DONE |
-| NC-010 | Start/end dates | `data_inicio`, `data_fim` (the map also lists `startsAt`, `expiresAt` as aliases of the contracts family) | `start_date`/`end_date` (contracts, HR leave, audiovisual, goals); `starts_at` (events, campaigns, marketing projects); app `startDate`/`endDate`; `startsAt`; API same names on the wire | Data de início / término | DONE |
+| NC-010 | Start/end dates | `data_inicio`, `data_fim` (the map also lists `startsAt`, `expiresAt` as aliases of the contracts family) | `start_date`/`end_date` (contracts, HR leave, audiovisual, goals); `starts_at` (events, campaigns, marketing projects); app `startDate`/`endDate`; `startsAt`; API same names on the wire | `Data de início / término` | DONE |
 | NC-011 | Attachments/documents field | `documentos` | `documents` (artists, contracts, shares, employees); app `documents`; API `documents` | Documentos | DONE |
-| NC-012 | Notes/observations | `observacoes` | `notes` (12+ tables); app `notes`; API `notes` | Observações | DONE |
-| NC-013 | Description | `descricao` | `description` (8+ tables); app `description`; API `description` | Descrição | DONE |
-| NC-014 | Duration (text form) | `duracao` | `duration_text` (works, phonograms); app `durationText`; API `duration_text` | Duração | DONE |
-| NC-015 | Genre/music genre | `genero`, `genero_musical` | `music_genre` (artists, phonograms, projects, project_tracks, releases, works); app `musicGenre`; API `music_genre` | Gênero Musical | DONE |
+| NC-012 | Notes/observations | `observacoes` | `notes` (12+ tables); app `notes`; API `notes` | `Observações` | DONE |
+| NC-013 | Description | `descricao` | `description` (8+ tables); app `description`; API `description` | `Descrição` | DONE |
+| NC-014 | Duration (text form) | `duracao` | `duration_text` (works, phonograms); app `durationText`; API `duration_text` | `Duração` | DONE |
+| NC-015 | Genre/music genre | `genero`, `genero_musical` | `music_genre` (artists, phonograms, projects, project_tracks, releases, works); app `musicGenre`; API `music_genre` | `Gênero Musical` | DONE |
 | NC-016 | Name | `nome` | `name` (employees, inventory_items, financial_rules, work_participants, project_tracks, project_track_participants); app `name`; API `name` | Nome | DONE |
 | NC-017 | Name — clients / leads | - | `name` (clients, leads); app `name`; API `name` | Nome | DONE |
 | NC-018 | Category | `categoria` | `category` (inventory_items, financial_rules); app `category`; API `category` | Categoria | DONE |
 | NC-019 | Category — transactions | - | `category`, `subcategory` (transactions); app `category`, `subcategory`; API `category`, `subcategory` | Categoria | DONE |
 | NC-020 | Active flag | `ativo` | `active` (contract_templates, financial_rules); app `active`; API `active` | Ativo | DONE |
 | NC-021 | Sort order | `ordem` | `sort_order` (work_participants, project_tracks, project_track_participants, contract_service_types, knowledge_categories); app `sortOrder`; API `sortOrder` | Ordem | DONE |
-| NC-022 | Leads client/service type | `tipo_cliente`, `tipo_servico`, `tipoCliente`, `tipoServico` | `client_type`/`service_type` (leads only); app `clientType`/`serviceType`; API `clientType`/`serviceType` | Tipo de cliente / Tipo de serviço | DONE |
-| NC-023 | Share party role / percentage / holder identity | `papel`, `percentual`, `titular_nome`, `titular_doc`, `direcao`, `nome_musica`, `detentor`, `destinatario` | `party_role`, `percentage`, `holder_name`, `holder_document`, `direction`, `music_title`, `holder`, `recipient`; app matching camelCase; API matching snake_case | Papel, Percentual, Titular, Documento, Direção, Título, Participante, Destinatário | DONE |
+| NC-022 | Leads client/service type | `tipo_cliente`, `tipo_servico`, `tipoCliente`, `tipoServico` | `client_type`/`service_type` (leads only); app `clientType`/`serviceType`; API `clientType`/`serviceType` | `Tipo de cliente / Tipo de serviço` | DONE |
+| NC-023 | Share party role / percentage / holder identity | `papel`, `percentual`, `titular_nome`, `titular_doc`, `direcao`, `nome_musica`, `detentor`, `destinatario` | `party_role`, `percentage`, `holder_name`, `holder_document`, `direction`, `music_title`, `holder`, `recipient`; app matching camelCase; API matching snake_case | `Papel, Percentual, Titular, Documento, Direção, Título, Participante, Destinatário` | DONE |
 | NC-024 | Invoice due date (internal nota fiscal) | `vencimento`, `data_vencimento` | `due_at` (invoices); app n/a; API `due_at` (`vencimento` deprecated input alias) | Vencimento | DONE |
 | NC-025 | Invoice due date (Stripe SaaS billing) | - | `due_date` (invoices, `type='stripe_subscription'` rows only); app n/a; API n/a (webhook-populated) | — | DONE |
 | NC-026 | Invoice payer tax ID (CPF or CNPJ) | - | `tomador_cnpj` (invoices); app `tomador_cnpj`; API `tomador_cnpj` | CNPJ / CPF | DONE |
@@ -121,11 +121,11 @@ Source: `docs/naming/canonical-naming-map.json` `concepts[]` (97 concepts in tot
 | NC-034 | Phonograms `participacao` DTO shape (`@IsArray() participacao?: unknown[]`) | `participacao` | `participation` (jsonb) | — | DONE |
 | NC-035 | Clients `cidade`/`estado` → `city`/`state` | `cidade`/`estado` | `city`, `state` (clients); app `city`/`state`; API `city`/`state` | — | DONE |
 | NC-036 | Leads `cidade`/`estado`/`pais` → `city`/`state`/`country` | `cidade`/`estado`/`pais` | `city`, `state`, `country` (leads); app `city`/`state`/`country`; API `city`/`state`/`country` | — | DONE |
-| NC-037 | Leads dual-storage: `origem_lead`/`responsavel`/`prioridade`/`temperatura`/`esti | `origem_lead`, `responsavel`, `prioridade`, `temperatura`, `probabilidade_fechamento`, `proximo_follow_up` | physical columns dropped; CRM data in a jsonb column (see section 25, finding F-01 on its name); app jsonb key vocabulary in `lead-vocabulary.ts`; API per map | — | DONE |
+| NC-037 | Leads dual-storage (seven physical columns versus a jsonb copy) | `origem_lead`, `responsavel`, `prioridade`, `temperatura`, `probabilidade_fechamento`, `proximo_follow_up` | physical columns dropped; CRM data in the `crm_internal_data` jsonb column (the ledger concept now uses that name; finding F-01 closed); app jsonb key vocabulary in `lead-vocabulary.ts`; API per map | `—` | DONE |
 | NC-038 | `shares.type` vs `party_role` | `type` (shares) | `party_role`; app `party_role`; API `party_role` | — | RESOLVED |
-| NC-043 | `works.external_source` | `works.origem_externa` | works.external_source; app external_source; API external_source | Origem externa | BLOCKED_PRODUCT_DECISION |
-| NC-046 | `phonograms.external_source` | `phonograms.origem_externa` | phonograms.external_source; app external_source; API external_source | Origem externa | BLOCKED_PRODUCT_DECISION |
-| NC-049 | Lead interaction timestamp | `lead_interactions.data` | `lead_interactions.occurred_at`; app `occurred_at` (entity), `occurredAt` (web); API `occurred_at` | Data da interação | DONE |
+| NC-043 | `works.external_source` | `works.origem_externa` | works.external_source; app external_source; API external_source | `Origem externa` | BLOCKED_PRODUCT_DECISION |
+| NC-046 | `phonograms.external_source` | `phonograms.origem_externa` | phonograms.external_source; app external_source; API external_source | `Origem externa` | BLOCKED_PRODUCT_DECISION |
+| NC-049 | Lead interaction timestamp | `lead_interactions.data` | `lead_interactions.occurred_at`; app `occurred_at` (entity), `occurredAt` (web); API `occurred_at` | `Data da interação` | DONE |
 
 ## 5. Quantitative table by layer, baseline versus final
 

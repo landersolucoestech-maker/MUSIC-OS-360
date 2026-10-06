@@ -671,6 +671,7 @@ export const FIELD_LABELS_PT_BR = {
   paymentTerms: 'Condição de pagamento',
   invoiceDueAt: 'Data de vencimento',
   invoiceFileUrl: 'PDF da nota',
+  fiscalDocumentType: 'Tipo de nota',
   serviceCode: 'Código do serviço',
   campaignId: 'Campanha',
 

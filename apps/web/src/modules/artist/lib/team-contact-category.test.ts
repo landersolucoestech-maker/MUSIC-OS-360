@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ARTIST_TEAM_CONTACT_CATEGORIES, ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR } from "@music-os-360/types";
+import { ARTIST_TEAM_CONTACT_CATEGORIES, ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR, LEGACY_TEAM_CONTACT_CATEGORIES } from "@music-os-360/types";
 import { teamContactCategoryLabel } from "./team-contact-category";
 
 describe("teamContactCategoryLabel", () => {
@@ -12,6 +12,11 @@ describe("teamContactCategoryLabel", () => {
     ["empresario", "agent"], ["gestor", "agent"], ["editora_musical", "publisher"], ["editora", "publisher"], ["gravadora", "record_label"],
   ] as const)("legacy %s -> label of %s", (legacy, canonical) => {
     expect(teamContactCategoryLabel(legacy)).toBe(ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR[canonical]);
+  });
+  it("every key of the shared legacy map resolves to the label of its canonical category (web consumes the shared map)", () => {
+    for (const [legacy, canonical] of Object.entries(LEGACY_TEAM_CONTACT_CATEGORIES)) {
+      expect(teamContactCategoryLabel(legacy)).toBe(ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR[canonical]);
+    }
   });
   it("is case/space tolerant and unknown/empty/prototype keys fall back to Outro", () => {
     expect(teamContactCategoryLabel(" Legal ")).toBe("Jurídico");

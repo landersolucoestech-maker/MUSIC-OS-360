@@ -63,6 +63,8 @@ function makeService() {
   const manager = { getRepository: jest.fn(() => repo), query: jest.fn().mockResolvedValue([]) };
   const ds = {
     getRepository: jest.fn(() => repo),
+    // backs assertSameTenantFk (cross-tenant FK ownership): a row = "found, same tenant"
+    query: jest.fn(async () => [{ exists: 1 }]),
     transaction: jest.fn(async (cb: (m: unknown) => unknown) => cb(manager)),
   };
   return { service: new SharesService(ds as never), repo };

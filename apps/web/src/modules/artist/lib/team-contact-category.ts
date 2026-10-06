@@ -1,25 +1,13 @@
 /**
  * PT-BR label of an artist team contact category (artists.team_contacts[].category).
  * Canonical slugs come from @music-os-360/types; legacy Portuguese slugs not yet
- * backfilled are mapped with the same table as the API
- * (apps/api/src/modules/artists/artist-legacy-fields.ts LEGACY_TEAM_CONTACT_CATEGORIES).
+ * backfilled are mapped with the shared LEGACY_TEAM_CONTACT_CATEGORIES (also used by the API).
  */
 import {
   ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR,
+  LEGACY_TEAM_CONTACT_CATEGORIES,
   type ArtistTeamContactCategory,
 } from "@music-os-360/types";
-
-const LEGACY_TEAM_CONTACT_CATEGORIES: Readonly<Record<string, ArtistTeamContactCategory>> = {
-  empresario: "agent",
-  gravadora: "record_label",
-  editora: "publisher",
-  juridico: "legal",
-  financeiro: "finance",
-  contador: "accountant",
-  assessoria: "press_office",
-  editora_musical: "publisher",
-  gestor: "agent",
-};
 
 export const UNKNOWN_TEAM_CONTACT_CATEGORY_LABEL = "Outro";
 

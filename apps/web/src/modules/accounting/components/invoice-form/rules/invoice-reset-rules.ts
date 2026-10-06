@@ -11,7 +11,7 @@ interface ConditionalReset {
 type ResetEntry = SimpleReset | ConditionalReset;
 
 export const INVOICE_RESET_MAP: Partial<Record<keyof InvoiceFormData, ResetEntry[]>> = {
-  tipo_nota: [
+  fiscal_document_type: [
     {
       field: "codigo_servico_municipal",
       value: "12.07",

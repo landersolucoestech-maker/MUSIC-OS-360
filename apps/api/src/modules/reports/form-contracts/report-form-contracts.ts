@@ -574,7 +574,7 @@ const INVOICES_CONTRACT: ReportFormContract = {
   tableName: 'invoices',
   identityColumn: 'invoice_number',
   fields: [
-    col('invoice_number'), col('serie'), col('tipo_nota'), col('issued_at'), col('status'),
+    col('invoice_number'), col('serie'), col('fiscalDocumentType', 'tipo_nota'), col('issued_at'), col('status'),
     col('natureza_operacao'), col('cfop'), col('codigo_servico_municipal'), col('codigo_municipio'),
     col('client_id'), col('tomador_cnpj'), col('tomador_legal_name'),
     col('tomador_inscricao_estadual'), col('tomador_inscricao_municipal'), col('tomador_email'),
@@ -588,14 +588,19 @@ const INVOICES_CONTRACT: ReportFormContract = {
   excludedFormFields: {},
   // `due_at` (NFS-e due date) is exported under its own key so its PT-BR
   // header stays "Data de vencimento" (the generic dueAt label is "Prazo").
+  // `fiscal_document_type` (canonical API name of the fiscal note kind) is exported under `fiscalDocumentType`
+  // (physical column `tipo_nota`, kept: owner decision R1) with the unchanged header "Tipo de nota".
   formFieldAliases: {
     due_at: 'invoiceDueAt',
     file_url: 'invoiceFileUrl',
+    fiscal_document_type: 'fiscalDocumentType',
   },
   // `url_pdf` (pre-file_url export/import id, one deploy window) -> canonical contract key.
   // `invoiceFileUrl` (not `file_url`) keeps the header "PDF da nota"; the generic fileUrl label is "Arquivo".
   deprecatedColumnAliases: {
     url_pdf: 'invoiceFileUrl',
+    // pre-rename logical column id of the fiscal note kind (old export/import files and `columns=`/`sort=`).
+    tipo_nota: 'fiscalDocumentType',
   },
   repeatingGroup: {
       key: 'items',

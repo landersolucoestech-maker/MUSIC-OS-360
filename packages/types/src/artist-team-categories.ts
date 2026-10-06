@@ -20,3 +20,21 @@ export const ARTIST_TEAM_CONTACT_CATEGORY_LABELS_PT_BR: Readonly<Record<ArtistTe
   record_label: "Gravadora",
   roadie: "Roadie",
 };
+
+/**
+ * Legacy (pre-canonical, Portuguese) team-contact category -> canonical category. Single definition shared by the
+ * API (artist-legacy-fields.ts) and the web (team-contact-category.ts). Keys are lower-case.
+ *
+ * Quirk kept on purpose: a stored `gestor` maps to `agent`, whose PT-BR label is "Empresário".
+ */
+export const LEGACY_TEAM_CONTACT_CATEGORIES: Readonly<Record<string, ArtistTeamContactCategory>> = {
+  empresario: "agent",
+  gravadora: "record_label",
+  editora: "publisher",
+  juridico: "legal",
+  financeiro: "finance",
+  contador: "accountant",
+  assessoria: "press_office",
+  editora_musical: "publisher",
+  gestor: "agent",
+};

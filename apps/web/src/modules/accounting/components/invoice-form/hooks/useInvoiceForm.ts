@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useInvoices } from "@/modules/accounting/hooks/useInvoices";
 import { getExpectedUpdatedAt, handleConcurrencyConflict } from "@/shared/hooks/useConcurrencyConflict";
 import { useCompanySettings } from "@/modules/settings/hooks/useCompanySettings";
-import { invoiceFileUrl, serializeOperationType } from "@/modules/accounting/types/invoice-type";
+import { invoiceFileUrl, invoiceFiscalDocumentType, serializeOperationType } from "@/modules/accounting/types/invoice-type";
 import { readInvoiceOperationType } from "@/modules/accounting/types/invoice-operation-type";
 import { invoiceSchema } from "@/modules/accounting/schemas/invoice-schema";
 import { validateInvoiceForm, type InvoiceValidationErrors } from "@/modules/accounting/components/invoice-form/validation/invoice-form-validation";
@@ -99,6 +99,7 @@ export function useInvoiceForm({
         ...INITIAL_FORM_DATA,
         ...invoice,
         notes: cleanNotes,
+        fiscal_document_type: invoiceFiscalDocumentType(invoice) ?? INITIAL_FORM_DATA.fiscal_document_type,
         payment_method: invoice.payment_method ? canonicalInvoicePaymentMethod(invoice.payment_method) : invoice.payment_method,
         tomador_legal_name: recipientLegalName,
         // file_url canonical; url_pdf is the pre-rename name still returned for one window.
@@ -255,7 +256,7 @@ export function useInvoiceForm({
     const data = {
       invoice_number: formData.invoice_number.trim(),
       serie: formData.serie?.trim() || null,
-      tipo_nota: formData.tipo_nota,
+      fiscal_document_type: formData.fiscal_document_type,
       client_id: formData.client_id || null,
       sale_id: null,
       issued_at: formData.issued_at ? format(formData.issued_at, "yyyy-MM-dd") : null,

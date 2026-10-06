@@ -4,7 +4,7 @@ import {
   invoiceOperationTypeLabel,
   readInvoiceOperationType,
 } from "@/modules/accounting/types/invoice-operation-type";
-import { invoiceFileUrl, serializeOperationType } from "@/modules/accounting/types/invoice-type";
+import { invoiceFileUrl, invoiceFiscalDocumentType, serializeOperationType } from "@/modules/accounting/types/invoice-type";
 
 describe("invoice operation type helper (marker in notes until the column exists)", () => {
   it("exposes the canonical values and PT-BR labels", () => {
@@ -32,5 +32,15 @@ describe("invoiceFileUrl (file_url ?? url_pdf)", () => {
     expect(invoiceFileUrl({ file_url: null, url_pdf: "b" })).toBe("b");
     expect(invoiceFileUrl({})).toBeNull();
     expect(invoiceFileUrl(null)).toBeNull();
+  });
+});
+
+describe("invoiceFiscalDocumentType (fiscal_document_type ?? tipo_nota)", () => {
+  it("prefers the canonical name and falls back to the deprecated tipo_nota of an old API", () => {
+    expect(invoiceFiscalDocumentType({ fiscal_document_type: "nfe", tipo_nota: "nfse" })).toBe("nfe");
+    expect(invoiceFiscalDocumentType({ fiscal_document_type: null, tipo_nota: "nfce" })).toBe("nfce");
+    expect(invoiceFiscalDocumentType({ tipo_nota: "nfse" })).toBe("nfse");
+    expect(invoiceFiscalDocumentType({})).toBeNull();
+    expect(invoiceFiscalDocumentType(null)).toBeNull();
   });
 });

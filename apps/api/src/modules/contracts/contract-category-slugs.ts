@@ -17,7 +17,7 @@
  *
  * Removal condition for LEGACY_CONTRACT_CATEGORY_SLUGS: no `contracts.type` /
  * `contract_templates.service_type` row and no browser category registry still
- * holds a legacy slug (census query in contracts-ct1.md) for one release window.
+ * holds a legacy slug (census query: docs/runbooks/staging-to-production.md#residue-census-of-the-contract-vocabulary-backfills-read-only) for one release window.
  */
 export const CANONICAL_CONTRACT_CATEGORY_SLUGS = [
   'recording',
@@ -50,6 +50,18 @@ export const LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, CanonicalCo
   outro: 'other',
 };
 
+/**
+ * Spellings the browser registry/filters still read (apps/web .../contract-type-filters.ts) that the platform never
+ * wrote and the backfill migration 20260930000036 does not rewrite, so they are NOT in LEGACY_CONTRACT_CATEGORY_SLUGS
+ * (that map must stay equal to the backfill). READ compatibility only: they widen list filters
+ * (`type=exclusivity` also matches `exclusivo`, and `type=exclusivo` resolves to the canonical set) but are never
+ * rewritten on write. The other web-only spellings (nao_exclusivo, representacao, servicos) have no canonical slug
+ * and are deliberately not mapped here.
+ */
+export const READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS: Readonly<Record<string, CanonicalContractCategorySlug>> = {
+  exclusivo: 'exclusivity',
+};
+
 /** Canonical slug for a platform-owned legacy slug; every other slug is returned untouched. */
 export function canonicalContractCategorySlug(slug: string): string {
   return Object.prototype.hasOwnProperty.call(LEGACY_CONTRACT_CATEGORY_SLUGS, slug)
@@ -63,9 +75,14 @@ export function canonicalContractCategorySlug(slug: string): string {
  * Used by exact-match list filters so old and new rows both match.
  */
 export function contractCategorySlugVariants(slug: string): string[] {
-  const canonical = canonicalContractCategorySlug(slug);
-  const legacy = Object.entries(LEGACY_CONTRACT_CATEGORY_SLUGS)
-    .filter(([, c]) => c === canonical)
-    .map(([l]) => l);
-  return legacy.length === 0 ? [slug] : [canonical, ...legacy];
+  const own = (map: object, key: string) => Object.prototype.hasOwnProperty.call(map, key);
+  const canonical = own(READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS, slug)
+    ? READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS[slug]
+    : canonicalContractCategorySlug(slug);
+  const aliases = [LEGACY_CONTRACT_CATEGORY_SLUGS, READ_ONLY_LEGACY_CONTRACT_CATEGORY_SLUGS].flatMap((map) =>
+    Object.entries(map)
+      .filter(([, c]) => c === canonical)
+      .map(([l]) => l),
+  );
+  return aliases.length === 0 ? [slug] : [canonical, ...aliases];
 }

@@ -205,7 +205,7 @@ describe('artist list: deprecated `vinculo` query alias behaves exactly like `re
   });
 });
 
-import { LEGACY_TEAM_CONTACT_CATEGORIES } from './artist-legacy-fields';
+import { LEGACY_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
 
 describe('deprecated team-contact category-only spellings (CZ-042)', () => {
   it.each([

@@ -173,6 +173,20 @@ export class SharesService {
     await manager.query('SELECT pg_advisory_xact_lock(hashtext($1))', [key]);
   }
 
+  /** Cross-tenant FK ownership for the share's parent references (fail closed, same helper as siblings). */
+  private async assertOwnedForeignKeys(tenantId: string, cols: Record<string, unknown>): Promise<void> {
+    const fks: Array<[string, string, string]> = [
+      ['work_id', 'works', 'Obra'],
+      ['phonogram_id', 'phonograms', 'Fonograma'],
+      ['artist_id', 'artists', 'Artista'],
+      ['release_id', 'releases', 'Lançamento'],
+    ];
+    for (const [column, table, label] of fks) {
+      if (cols[column] === undefined) continue;
+      await assertSameTenantFk(this.ds!, table, cols[column] as string | null, tenantId, label);
+    }
+  }
+
   async create(tenantId: string, dto: CreateShareDto): Promise<ShareEntity> {
     // holder_name/percentage (ownership fields — used in the ABRAMUS/ECAD
     // submission) only receive a value when the caller sends holderName/
@@ -180,8 +194,7 @@ export class SharesService {
     // external_artist_name/payer/recipient (financial share fields — a
     // distinct concept, see Phase 5 / C6) nor filled with an artificial default.
     const cols = this.toColumns(dto);
-    await assertSameTenantFk(this.ds!, 'works',      cols['work_id']      as string | undefined, tenantId, 'Obra');
-    await assertSameTenantFk(this.ds!, 'phonograms', cols['phonogram_id'] as string | undefined, tenantId, 'Fonograma');
+    await this.assertOwnedForeignKeys(tenantId, cols);
     const workId      = (cols['work_id'] as string | undefined) ?? null;
     const phonogramId = (cols['phonogram_id'] as string | undefined) ?? null;
     return this.ds!.transaction(async (manager) => {
@@ -195,6 +208,10 @@ export class SharesService {
 
   async update(tenantId: string, id: string, dto: UpdateShareDto): Promise<ShareEntity> {
     const cols = this.toColumns(dto);
+    // Only FK fields present in the patch are validated (omitted = unchanged;
+    // explicit null = clearing, nothing to own). Runs on the canonical columns,
+    // i.e. after the legacy alias mapping, so aliases cannot bypass it.
+    await this.assertOwnedForeignKeys(tenantId, cols);
     await this.ds!.transaction(async (manager) => {
       const repo = manager.getRepository(ShareEntity);
       const current = await repo

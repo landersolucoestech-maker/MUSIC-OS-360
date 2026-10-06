@@ -1,12 +1,19 @@
-import { ARTIST_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
+import { ARTIST_TEAM_CONTACT_CATEGORIES, LEGACY_TEAM_CONTACT_CATEGORIES } from '@music-os-360/types';
 import {
-  ARTIST_TEAM_CONTACT_CATEGORY_VALUES, LEGACY_TEAM_CONTACT_CATEGORIES, canonicalArtistTeamContactCategory,
+  ARTIST_TEAM_CONTACT_CATEGORY_VALUES, canonicalArtistTeamContactCategory,
   canonicalArtistNestedColumn, canonicalizeArtistInput,
 } from './artist-legacy-fields';
 
 describe('artist team contact category', () => {
   it('exports the shared tuple', () => {
     expect(ARTIST_TEAM_CONTACT_CATEGORY_VALUES).toBe(ARTIST_TEAM_CONTACT_CATEGORIES);
+  });
+  it('shared legacy map equals the literal table (single definition used by API and web)', () => {
+    expect(LEGACY_TEAM_CONTACT_CATEGORIES).toEqual({
+      empresario: 'agent', gravadora: 'record_label', editora: 'publisher', juridico: 'legal',
+      financeiro: 'finance', contador: 'accountant', assessoria: 'press_office', editora_musical: 'publisher',
+      gestor: 'agent', // quirk kept: labelled "Empresario" in the UI
+    });
   });
   it('maps every legacy value to a canonical category', () => {
     expect(LEGACY_TEAM_CONTACT_CATEGORIES).toMatchObject({

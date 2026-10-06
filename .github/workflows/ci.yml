@@ -343,10 +343,14 @@ jobs:
         env:
           DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
         run: pnpm --filter @music-os-360/api verify:cz045-musicchat-migration
-      - name: verify:musicchat-routing-keys — backfill/restore/idempotency of migration 20261005100001
+      - name: Real-PostgreSQL specs of legacy names embedded in SQL text (TEMP tables, rolled back)
         env:
-          DATABASE_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
-        run: pnpm --filter @music-os-360/api verify:musicchat-routing-keys
+          PG_INTEGRATION_URL: postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:5432/musicos360_mig
+        run: >-
+          pnpm --filter @music-os-360/api exec jest --config jest.config.ts
+          src/modules/reports/computed-fields/release-tracks.field.legacy-key.spec.ts
+          src/database/migrate-application.preflight-transaction-types.spec.ts
+          src/database/migration-drafts/rename-legacy-hr-permissions.draft.spec.ts
       - name: test:e2e (RLS real via Postgres — blocking)
         run: pnpm --filter @music-os-360/api test:e2e
 

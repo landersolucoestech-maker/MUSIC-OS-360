@@ -35,7 +35,7 @@ export class InvoiceItemDto {
 export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(100) invoice_number?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @MaxLength(20) serie?: string;
-  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) tipo_nota?: string;
+  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES, description: 'Fiscal document kind (nfse | nfe | nfce). Persisted in the column invoices.tipo_nota.' }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) fiscal_document_type?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() client_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() sale_id?: string;
 
@@ -85,6 +85,7 @@ export class CreateInvoiceDto {
   @ApiPropertyOptional() @IsOptional() @IsObject() metadata?: Record<string, unknown>;
 
   // ── Deprecated aliases (CZ-036 deploy-skew window; see INVOICE_DEPRECATED_FIELDS) ──
+  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES, deprecated: true, description: 'Use "fiscal_document_type".' }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) tipo_nota?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "invoice_number".' }) @IsOptional() @IsString() @MaxLength(100) numero?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "sale_id".' }) @IsOptional() @IsUUID() venda_id?: string;
   @ApiPropertyOptional({ deprecated: true, description: 'Use "issued_at".' }) @IsOptional() @IsString() data_emissao?: string;
@@ -106,12 +107,13 @@ export class UpdateInvoiceDto extends PartialType(CreateInvoiceDto) {
 
 export class QueryInvoiceDto extends PaginationDto {
   @ApiPropertyOptional() @IsOptional() @IsString() status?: string;
-  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) tipo_nota?: string;
+  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) fiscal_document_type?: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() client_id?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() search?: string;
 
   // Legacy aliases kept only for old clients; the service must
   // prioritize the canonical fields above.
+  @ApiPropertyOptional({ enum: FISCAL_DOCUMENT_TYPES, deprecated: true, description: 'Use "fiscal_document_type".' }) @IsOptional() @IsIn(FISCAL_DOCUMENT_TYPES) tipo_nota?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() type?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() artistId?: string;
 }

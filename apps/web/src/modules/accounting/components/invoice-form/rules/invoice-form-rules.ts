@@ -13,7 +13,7 @@ export interface InvoiceLineItem {
 export interface InvoiceFormData {
   invoice_number: string;
   serie: string;
-  tipo_nota: string;
+  fiscal_document_type: string;
   client_id: string;
   natureza_operacao: string;
   codigo_servico_municipal: string;
@@ -62,7 +62,7 @@ export const INITIAL_ITEM: InvoiceLineItem = {
 export const INITIAL_FORM_DATA: InvoiceFormData = {
   invoice_number: "",
   serie: "001",
-  tipo_nota: "nfse",
+  fiscal_document_type: "nfse",
   client_id: "",
   natureza_operacao: "Prestação de Serviços Artísticos",
   codigo_servico_municipal: "12.07",

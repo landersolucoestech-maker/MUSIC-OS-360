@@ -20,6 +20,8 @@ export const INVOICE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   forma_pagamento: 'payment_method',
   condicao_pagamento: 'payment_terms',
   itens: 'items',
+  // fiscal document kind (nfse|nfe|nfce): canonical API name; the persisted column stays `tipo_nota` (owner decision R1).
+  tipo_nota: 'fiscal_document_type',
   // Expand window: legacy_amount is still a NOT NULL column derived from service_amount
   // by InvoicesService; url_pdf is mirrored from file_url on write.
   legacy_amount: 'service_amount',
@@ -33,6 +35,11 @@ export const INVOICE_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
  * before this fix may hold the note type in `type`: they are only ever tested with `!= 'stripe_subscription'`.
  */
 export const FISCAL_INVOICE_ROW_TYPE = 'fiscal';
+
+/** Query-string aliases of GET /invoices (same mechanism as the body; canonical wins). */
+export const INVOICE_QUERY_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
+  tipo_nota: 'fiscal_document_type',
+};
 
 export const INVOICE_ITEM_DEPRECATED_FIELDS: DeprecatedFieldAliases = {
   codigo_servico: 'service_code',

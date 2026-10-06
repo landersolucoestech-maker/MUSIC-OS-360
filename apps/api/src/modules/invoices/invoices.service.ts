@@ -13,6 +13,7 @@ import { applyDeprecatedFieldAliases } from '../../common/compat/deprecated-fiel
 import {
   INVOICE_DEPRECATED_FIELDS,
   INVOICE_ITEM_DEPRECATED_FIELDS,
+  INVOICE_QUERY_DEPRECATED_FIELDS,
   INVOICE_PAYMENT_METHODS,
   canonicalInvoicePaymentMethod,
   FISCAL_INVOICE_ROW_TYPE,
@@ -55,6 +56,9 @@ export class InvoicesService {
     mapped['file_url'] = raw['file_url'] ?? raw['url_pdf'] ?? null;
     mapped['url_pdf'] = raw['file_url'] ?? raw['url_pdf'] ?? null;
     mapped['tomador_legal_name'] = raw['tomador_legal_name'] ?? raw['tomador_name'] ?? null;
+    // Canonical fiscal document kind; `tipo_nota` stays in the response as a DEPRECATED mirror of the
+    // persisted column for one deploy window (a web build released before this rename still reads it).
+    mapped['fiscal_document_type'] = raw['tipo_nota'] ?? null;
     return mapped;
   }
 
@@ -81,6 +85,10 @@ export class InvoicesService {
         applyDeprecatedFieldAliases(item, INVOICE_ITEM_DEPRECATED_FIELDS),
       );
     }
+
+    // The API name is `fiscal_document_type`; the persisted column is still `tipo_nota` (no rename: owner decision R1).
+    delete payload['fiscal_document_type'];
+    if (input['fiscal_document_type'] !== undefined) payload['tipo_nota'] = input['fiscal_document_type'];
 
     if (input['payment_method'] !== undefined) payload['payment_method'] = this.canonicalPaymentMethod(input['payment_method']);
 
@@ -113,7 +121,12 @@ export class InvoicesService {
 
     if (query.status) qb.andWhere('i.status = :status', { status: query.status });
 
-    const fiscalDocumentType = query.tipo_nota ?? query.type;
+    const { fiscal_document_type: canonicalFiscalDocumentType } = applyDeprecatedFieldAliases(
+      query as unknown as Record<string, unknown>,
+      INVOICE_QUERY_DEPRECATED_FIELDS,
+    ) as { fiscal_document_type?: string };
+    // `type` is an older alias; rows written before the row-kind fix may hold the note kind in `type`.
+    const fiscalDocumentType = canonicalFiscalDocumentType ?? query.type;
     if (fiscalDocumentType) {
       qb.andWhere('(i.tipo_nota = :fiscalDocumentType OR i.type = :fiscalDocumentType)', { fiscalDocumentType });
     }
@@ -193,7 +206,7 @@ export class InvoicesService {
           action: 'created',
           description: invoiceCreatedCopy(saved.invoice_number, (mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
           metadata: {
-            type: mapped['tipo_nota'] ?? mapped['type'],
+            type: mapped['fiscal_document_type'] ?? mapped['type'],
             amount: String((mapped['service_amount'] ?? mapped['legacy_amount']) ?? 0),
             invoiceNumber: saved.invoice_number,
           },

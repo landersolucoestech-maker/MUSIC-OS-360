@@ -102,6 +102,9 @@ export interface Invoice {
   user_id?: string;
   invoice_number?: string | null;
   serie?: string | null;
+  /** Fiscal document kind (nfse | nfe | nfce); canonical name. */
+  fiscal_document_type?: InvoiceType | string | null;
+  /** DEPRECATED pre-rename name of fiscal_document_type, still mirrored by the API for one deploy window; read only through invoiceFiscalDocumentType. */
   tipo_nota?: InvoiceType | string | null;
   status?: InvoiceStatusValue | string | null;
   tomador_name?: string | null;

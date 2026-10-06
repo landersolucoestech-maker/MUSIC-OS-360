@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/button";
 import { FileText, Calendar, Building2, MapPin, Mail, ExternalLink, Pencil, Receipt, CreditCard, Calculator, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { formatCurrency, formatDate, getCurrencyToneClass } from "@/shared/lib/format-utils";
 import { formatCpfCnpj } from "@/shared/lib/br-validators";
-import { invoiceFileUrl } from "@/modules/accounting/types/invoice-type";
+import { invoiceFileUrl, invoiceFiscalDocumentType } from "@/modules/accounting/types/invoice-type";
 import { invoiceOperationTypeLabel, readInvoiceOperationType } from "@/modules/accounting/types/invoice-operation-type";
 import { invoicePaymentMethodLabel } from "@/modules/accounting/constants/invoice-payment-methods";
 import { openStoredFile } from "@/shared/lib/stored-file";
@@ -89,7 +89,7 @@ export function InvoiceViewModal({ open, onOpenChange, invoice, onEdit }: Invoic
               {isInflow ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
               {invoiceOperationTypeLabel(operationType)}
             </Badge>
-            <Badge variant="outline">{invoiceTypeLabels[invoice.tipo_nota] || invoice.tipo_nota || "NFS-e"}</Badge>
+            <Badge variant="outline">{invoiceTypeLabels[invoiceFiscalDocumentType(invoice) ?? ""] || invoiceFiscalDocumentType(invoice) || "NFS-e"}</Badge>
             {getStatusBadge(invoice.status)}
           </DialogDescription>
         </DialogHeader>

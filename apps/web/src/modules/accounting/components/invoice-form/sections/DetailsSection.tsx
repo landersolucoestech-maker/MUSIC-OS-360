@@ -141,8 +141,8 @@ export function DetailsSection({
           <div className="space-y-2">
             <Label>Tipo de Nota</Label>
             <Select
-              value={formData.tipo_nota}
-              onValueChange={(v) => updateField("tipo_nota", v)}
+              value={formData.fiscal_document_type}
+              onValueChange={(v) => updateField("fiscal_document_type", v)}
               disabled={disabled}
             >
               <SelectTrigger>
