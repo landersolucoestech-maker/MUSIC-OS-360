@@ -165,6 +165,44 @@ describe('ImportCommitService — ISRC normalization/validation (find-fb2cfb1b)'
   });
 });
 
+describe('ImportCommitService — catalog invariants of the module services (RES-1)', () => {
+  const def = (tableName: string, columns: string[]): ReportEntityDefinition => ({
+    entityName: 'X', tableName, category: EntityCategory.REPORTABLE,
+    identityColumn: columns[0], displayColumn: columns[0], dateColumn: 'created_at',
+    exportableColumns: columns, importableColumns: columns,
+    filterableColumns: [], sortableColumns: [], searchableColumns: [], sensitiveColumns: [],
+    requiredImportColumns: [], supportsExport: true, supportsImport: true,
+  });
+  const validation = (entity: string, data: Record<string, unknown>): ImportValidationResult => ({
+    entity, supportsImport: true, mapping: {}, unknownColumns: [], ignoredColumns: [],
+    totalRows: 1, validRows: 1, invalidRows: 0,
+    rows: [{ index: 0, data, valid: true, errors: [], warnings: [] }],
+    errors: [], warnings: [],
+  });
+
+  it.each([
+    ['works', ['title', 'iswc'], { title: 'Obra', iswc: 'nope' }, /ISWC inválido/],
+    ['artists', ['stage_name', 'specialties'], { stage_name: 'A', specialties: 'Guitarrista' }, /especialidade inválida/],
+    ['shares', ['holder_name', 'percentage', 'work_id', 'phonogram_id'], { holder_name: 'A', percentage: 10, work_id: 'w', phonogram_id: 'p' }, /única estrutura/],
+    ['shares', ['holder_name', 'percentage'], { holder_name: 'A', percentage: 150 }, /percentual inválido/],
+  ])('%s: a row that breaks the rule rolls the whole import back and nothing is inserted', async (table, columns, data, message) => {
+    const { svc, qr } = makeSvc({ def: def(table, columns), validation: validation(table, data) });
+    const result = await svc.commit(table, file, 'tenant-1', 'user-1');
+    expect(qr.rollbackTransaction).toHaveBeenCalled();
+    expect(result.importedRows).toBe(0);
+    expect(result.errors.some((e) => message.test(e))).toBe(true);
+    expect(qr.query.mock.calls.some((call: any[]) => String(call[0]).startsWith('INSERT'))).toBe(false);
+  });
+
+  it('works: a formatted ISWC is stored in its canonical form', async () => {
+    const { svc, qr } = makeSvc({ def: def('works', ['title', 'iswc']), validation: validation('works', { title: 'Obra', iswc: 't-123.456.789-0' }) });
+    const result = await svc.commit('works', file, 'tenant-1', 'user-1');
+    expect(result.importedRows).toBe(1);
+    const insert = qr.query.mock.calls.find((call: any[]) => String(call[0]).startsWith('INSERT'));
+    expect(insert?.[1]).toContain('T1234567890');
+  });
+});
+
 describe('ImportCommitService — repeating group on the same sheet', () => {
   const PROJECTS_DEF: ReportEntityDefinition = {
     entityName: 'ProjectEntity', tableName: 'projects', category: EntityCategory.REPORTABLE,

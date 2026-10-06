@@ -44,7 +44,7 @@ const asJsonb = (value: unknown): unknown =>
  * ("DJ | Compositor/Autor"); a JSON list (older export) is also accepted. Each
  * item: raw canonical value first, then PT-BR label, then legacy PT value.
  */
-function importArtistSpecialties(value: unknown): unknown {
+export function importArtistSpecialties(value: unknown): unknown {
   const items = typeof value === 'string'
     ? value.split('|').map((part) => part.trim()).filter(Boolean)
     : value;

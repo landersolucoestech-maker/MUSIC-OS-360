@@ -31,6 +31,8 @@ import { UNCATEGORIZED_PLACEHOLDER, toRuleTransactionType } from '../../transact
 import { canonicalTransactionSlug, isUncategorizedCategory } from '../../transactions/transaction-category-slugs';
 import { canonicalTransactionType } from '../../transactions/transaction-legacy-fields';
 import { artistUrlFieldViolations } from '../../artists/artist-input-sanitizer';
+import { catalogImportViolations } from './import-catalog-rules';
+import { normalizeIswc } from '../../registry/validators/registry-validators';
 
 export interface ImportCommitResult {
   entity: string;
@@ -171,6 +173,7 @@ export class ImportCommitService {
         if (issue && issue.code !== 'PHONOGRAM_ISRC_INVALID') errors.push(`Linha ${row.index + 2}: ${issue.message}`);
       }
       for (const row of validation.rows) this.assertValidArtistUrls(def, row, errors);
+      for (const row of validation.rows) this.assertCatalogRules(def, contract, row, errors);
 
       if (errors.length > 0) {
         await qr.rollbackTransaction();
@@ -311,6 +314,21 @@ export class ImportCommitService {
     }
   }
 
+  /** Applies the catalog invariants the module services enforce (closed lists, ISWC, one structure per share, 0..100). */
+  private assertCatalogRules(
+    def: ReportEntityDefinition,
+    contract: ReportFormContract | null,
+    row: RowValidation,
+    errors: string[],
+  ): void {
+    const physical: Record<string, unknown> = {};
+    for (const [key, raw] of Object.entries(row.data)) {
+      const value = normalizeImportedValue(raw);
+      if (value !== null) physical[contract?.fields.find((field) => field.key === key)?.physical ?? key] = value;
+    }
+    for (const message of catalogImportViolations(def.tableName, physical)) errors.push(`Linha ${row.index + 2}: ${message}`);
+  }
+
   private readonly jsonbColumnsByTable = new Map<string, Set<string>>();
 
   private async jsonbColumnsOf(qr: QueryRunner, table: string): Promise<Set<string>> {
@@ -367,6 +385,11 @@ export class ImportCommitService {
       if (physicalColumn === 'isrc' && typeof rawValue === 'string' && rawValue.trim() !== '') {
         cols.push(physicalColumn);
         values.push(normalizeIsrc(rawValue));
+        continue;
+      }
+      if (def.tableName === 'works' && physicalColumn === 'iswc' && typeof rawValue === 'string' && rawValue.trim() !== '') {
+        cols.push(physicalColumn);
+        values.push(normalizeIswc(rawValue));
         continue;
       }
       cols.push(physicalColumn);
