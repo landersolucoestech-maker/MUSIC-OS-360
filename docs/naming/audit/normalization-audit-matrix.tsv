@@ -2507,7 +2507,6 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	adiado		1	1	LEGITIM
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	adiantamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	adiantamento_artista		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	administracao_editorial		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	administrador		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	administrativo		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	advogado		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	agencia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -26900,7 +26899,6 @@ BACKEND_API	value	apps/api/src/modules/works/work-legacy-fields.ts	string	tipo_o
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works-field-contract.spec.ts	string	cod_amar	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works-field-contract.spec.ts	string	cod_assim	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works-field-contract.spec.ts	string	codigo_entidade	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works.legacy-wiring.spec.ts	string	administrador	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works.legacy-wiring.spec.ts	string	autoral	0	2	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works.legacy-wiring.spec.ts	string	compositor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/api/src/modules/works/works.legacy-wiring.spec.ts	string	criada_por_ia	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
