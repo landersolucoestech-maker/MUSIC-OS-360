@@ -131,6 +131,29 @@ export function cmdCriterionSetPaths({ flags, cwd }) {
   return { status: "OK", criterion: crit };
 }
 
+// Corrects the text of a criterion that is semantically wrong against a decision already taken (never to obtain a
+// PASS). The correction is auditable: the previous text, the reason and the evidence that no longer proves the new
+// text are kept in `amendments`; the criterion reopens and must be closed again by fresh evidence of the new text.
+export function cmdCriterionAmend({ flags, cwd }) {
+  const state = requireState(cwd);
+  if (!flags.criterion || !flags.text || !flags.reason) {
+    throw new Error('USAGE: criterion amend --criterion <id> --text "<corrected text>" --reason "<why the old text was wrong>"');
+  }
+  if (String(flags.reason).replace(/\s/g, "").length < 20) throw new Error("--reason must explain the correction (at least 20 non-space characters)");
+  const crit = state.requirements.flatMap((r) => r.acceptanceCriteria).find((c) => c.id === flags.criterion);
+  if (!crit) throw new Error(`UNKNOWN_CRITERION: ${flags.criterion}`);
+  if (crit.text === flags.text) throw new Error("NOTHING_TO_AMEND: the corrected text equals the current text");
+  crit.amendments = [
+    ...(crit.amendments ?? []),
+    { at: new Date().toISOString(), previousText: crit.text, newText: flags.text, reason: flags.reason, supersededEvidenceIds: [...(crit.evidenceIds ?? [])] },
+  ];
+  crit.text = flags.text;
+  crit.evidenceIds = [];
+  crit.status = "open";
+  saveState(state, cwd);
+  return { status: "OK", criterion: crit };
+}
+
 function linkEvidenceToCriterion(state, criterionId, evidence) {
   if (!criterionId) return;
   const crit = state.requirements.flatMap((r) => r.acceptanceCriteria).find((c) => c.id === criterionId);
@@ -489,6 +512,7 @@ const COMMANDS = {
   "requirement add": cmdRequirementAdd,
   "criterion add": cmdCriterionAdd,
   "criterion set-paths": cmdCriterionSetPaths,
+  "criterion amend": cmdCriterionAmend,
   "evidence run": cmdEvidenceRun,
   "evidence review": cmdEvidenceReview,
   "finding add": cmdFindingAdd,
