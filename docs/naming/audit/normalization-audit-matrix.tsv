@@ -2663,7 +2663,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	choro		1	1	LEGITIMA
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cidade		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	classeFuncao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	classificacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cleanCEP		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cleanCep		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cliente		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	cliente_id		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	clientes		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2958,7 +2958,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	feliz		1	1	LEGITIMA
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	feminino		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ferramenta		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	festa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	fetchAddressByCEP		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	fetchAddressByCep		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	financeiro		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	financeiro_contabil		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	fisicos		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -2975,7 +2975,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	forVinculo		1	1	LEG
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	formaPagamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	forma_pagamento		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	formacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	formatCEP		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	formatCep		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	foto		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	fotoUrl		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	foto_url		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3086,7 +3086,7 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ir		1	1	LEGITIMATE_
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	ir_amount		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	irrf		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	irônico		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	isValidCEP		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	isValidCep		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	isVersionAlternativa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	isrcAno		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	isrcDesignacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -3147,8 +3147,8 @@ DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	mandarim		1	1	LEGIT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	marca		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	marca_empresa		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	marketing_influencia		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	maskCEP		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	maskCPFCNPJ		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	maskCep		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	masterizacao		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	masterizador		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	dataFile	docs/naming/canonical-naming-map.json	materiais		1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -4344,7 +4344,6 @@ DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	cl
 DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	data_lancamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	forma_pagamento		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	lancamento_id		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
-DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	natureza_operacao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 DOCUMENTATION	docCode	docs/engineering/pack/CANONICAL_TECHNICAL_VOCABULARY.md	tipo_nota		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/NORMALIZATION_REPORT.md	receitas-internas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/NORMALIZATION_REPORT.md	repasse-contrato		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -4379,6 +4378,7 @@ DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPO
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	tomador_nome		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	valorTotal		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_LANGUAGE_BEFORE_AFTER_REPORT.md	valor_total		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
+DOCUMENTATION	docCode	docs/engineering/pack/TECHNICAL_NORMALIZATION_DEFERRED_DATABASE_PROOF.md	tipo_nota		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/product-decision-packages.md	observacoesInternas		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/rbac-retirement-plan.md	ar_gestao		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
 DOCUMENTATION	docCode	docs/engineering/rbac-retirement-plan.md	financeiro_contabil		0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	UX_TEXT
@@ -13483,24 +13483,34 @@ FRONTEND	identifier	apps/web/src/shared/integrations/contracts/rights.contract.t
 FRONTEND	identifier	apps/web/src/shared/integrations/contracts/signing.contract.ts	property	contrato_id	3	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/shared/lib/audit/types.ts	property	obrigatorio	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/shared/lib/audit/types.ts	property	recomendado	1	0	NORMALIZED	
-FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	formatCEP	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	formatCEP	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	formatCep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	formatCpfCnpj	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCEP	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCNPJ	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCPF	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCEP	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCNPJ	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCPF	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCnpj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCpf	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	function	isValidCpfCnpj	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	variable	cnpj	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/shared/lib/br-validators.ts	variable	cpf	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/shared/lib/exportAll.test.ts	property	nome	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/shared/lib/feature-flags.ts	property	moduleRh	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/shared/lib/legacy-title.ts	property-read	titulo	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
-FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	interface	ViaCEPResponse	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	EXTERNAL_CONTRACT
-FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	cleanCEP	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	fetchAddressByCEP	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	EXTERNAL_CONTRACT
-FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCEP	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCNPJ	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
-FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCPF	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	interface	ViaCEPResponse	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	interface	ViaCepResponse	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	EXTERNAL_CONTRACT
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	cleanCEP	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	cleanCep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	fetchAddressByCEP	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	fetchAddressByCep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	EXTERNAL_CONTRACT
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCEP	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCNPJ	1	0	NORMALIZED	
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCPF	1	0	NORMALIZED	
 FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCPFCNPJ	1	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCep	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCnpj	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
+FRONTEND	identifier	apps/web/src/shared/lib/masks.ts	variable	maskCpf	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 TESTS_FIXTURES_MOCKS	identifier	apps/web/src/shared/lib/signup-metadata.test.ts	property-read	accepted_lgpd	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/shared/lib/signup-metadata.ts	property-read	acceptLgpd	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
 FRONTEND	identifier	apps/web/src/shared/lib/signup-metadata.ts	property-read	accepted_lgpd	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	PRODUCT_TERM_WITHOUT_SAFE_TRANSLATION
@@ -29730,7 +29740,7 @@ FRONTEND	value	apps/web/src/modules/hr/hooks/useEmployees.ts	capitalized-string	
 FRONTEND	value	apps/web/src/modules/hr/hooks/useEmployees.ts	capitalized-string	Operações	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 FRONTEND	value	apps/web/src/modules/hr/hooks/useEmployees.ts	capitalized-string	Produção Musical	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
 FRONTEND	value	apps/web/src/modules/hr/hooks/useEmployees.ts	caps-string	RH	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	LEGACY_DATABASE_COMPATIBILITY
-TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/hr/hooks/useHRPaginated.department-filter.test.tsx	string	setor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
+TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/hr/hooks/useHrPaginated.department-filter.test.tsx	string	setor	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 TESTS_FIXTURES_MOCKS	value	apps/web/src/modules/hr/pages/HR.employees-loading.test.tsx	capitalized-string	Financeiro	0	1	LEGITIMATE_COMPATIBILITY_BOUNDARY	TEMPORARY_MIGRATION_COMPATIBILITY
 FRONTEND	value	apps/web/src/modules/integrations/components/AbramusConfigDialog.tsx	string	abramus-summary-fonogramas	1	0	NORMALIZED	
 FRONTEND	value	apps/web/src/modules/integrations/components/AbramusConfigDialog.tsx	string	abramus-summary-obras	1	0	NORMALIZED	

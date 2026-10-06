@@ -3,6 +3,7 @@
  * scripts/naming/normalization-audit.mjs: comparative audit of the technical-language normalization.
  *
  *   node scripts/naming/normalization-audit.mjs --baseline <sha> [--out docs/naming/audit]
+ *   node scripts/naming/normalization-audit.mjs --baseline <sha> --check   # regenerate in a temp dir and fail if the committed documents are stale
  *
  * Runs the CURRENT census detectors over two states of the repository and compares them:
  *   - BASELINE: the tree of <sha> (`git archive`, extracted to a temp directory with the current detector scripts
@@ -124,7 +125,9 @@ function changedFiles(sha) {
 function main() {
   const sha = arg("--baseline");
   if (!sha) throw new Error("usage: normalization-audit.mjs --baseline <sha> [--out <dir>]");
-  const outDir = path.resolve(ROOT, arg("--out") ?? "docs/naming/audit");
+  const committedDir = path.resolve(ROOT, arg("--out") ?? "docs/naming/audit");
+  const check = process.argv.includes("--check");
+  const outDir = check ? fs.mkdtempSync(path.join(os.tmpdir(), "naming-audit-check-")) : committedDir;
   const fullSha = execFileSync("git", ["rev-parse", sha], { cwd: ROOT, encoding: "utf8" }).trim();
   const head = census();
   const base = baselineCensus(fullSha);
@@ -155,6 +158,13 @@ function main() {
   fs.writeFileSync(path.join(outDir, "normalization-audit-summary.md"), lines.join("\n"));
   fs.writeFileSync(path.join(outDir, "normalization-audit-summary.json"), JSON.stringify({ baseline: fullSha, files: { baseline: base.files, head: head.filesScanned }, changedFiles: changed.total, layers: summary }, null, 1) + "\n");
   console.log(lines.slice(6).join("\n"));
+  if (check) {
+    const names = ["normalization-audit-matrix.tsv", "normalization-audit-summary.md", "normalization-audit-summary.json"];
+    const stale = names.filter((n) => !fs.existsSync(path.join(committedDir, n)) || fs.readFileSync(path.join(committedDir, n), "utf8") !== fs.readFileSync(path.join(outDir, n), "utf8"));
+    fs.rmSync(outDir, { recursive: true, force: true });
+    if (stale.length) { console.error(`normalization-audit --check FAILED: stale committed document(s): ${stale.join(", ")}; run \`pnpm naming:audit\` and commit the result`); process.exit(1); }
+    console.log("normalization-audit --check: committed documents match the current tree");
+  }
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

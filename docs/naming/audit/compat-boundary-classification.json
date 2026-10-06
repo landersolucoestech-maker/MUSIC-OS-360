@@ -8,29 +8,22 @@
   "UNPROVEN": 3
  },
  "REQUIRED_BEHAVIORAL_ROWS": 1379,
- "COMPATIBILITY_WITHOUT_REQUIRED_PROOF": 8,
+ "COMPATIBILITY_WITHOUT_REQUIRED_PROOF": 3,
  "BEHAVIORALLY_PROVEN": 1376,
  "COMPILER_PROVEN": 3,
  "BINDING_ONLY": 2525,
  "EXEMPT_WITH_JUSTIFICATION": 640,
  "UNPROVEN": 3,
  "BINDING_ONLY_FIXTURE_NAMES_WITHOUT_PRODUCTION_OCCURRENCE": 142,
- "BINDING_ONLY_FIXTURE_NAMES_WITH_UNCOVERED_PRODUCTION_OCCURRENCE": 5,
+ "BINDING_ONLY_FIXTURE_NAMES_WITH_UNCOVERED_PRODUCTION_OCCURRENCE": 0,
  "fixtureExercises": {
   "null": 2118,
   "RUNTIME_ROW_EXISTS": 1943,
   "COVERED_BY_FILE_ROW": 173,
-  "ADJUDICATED_HARMLESS": 166,
-  "NO_PRODUCTION_OCCURRENCE": 142,
-  "UNCOVERED_PRODUCTION_OCCURRENCE": 5
+  "ADJUDICATED_HARMLESS": 171,
+  "NO_PRODUCTION_OCCURRENCE": 142
  },
- "uncoveredProductionRows": [
-  "apps/api/src/modules/artists/artist-distributor-id.spec.ts :: distribuidoras -> apps/web/src/modules/artist/components/TeamContactsCrm.tsx[UNADJUDICATED]",
-  "apps/web/src/modules/projects/components/ProjectViewModal.status-aliases.guard.test.ts :: conclu -> apps/web/src/modules/monitoring/rights/components/RightsKpiCards.tsx[UNADJUDICATED]",
-  "apps/web/src/app/routes/legacy-redirects.test.tsx :: obra -> apps/web/src/modules/monitoring/components/EcadViewModal.tsx[UNADJUDICATED]",
-  "apps/web/src/modules/artist/pages/Artists.legacy-wiring.test.tsx :: Distribuidoras -> apps/web/src/modules/artist/components/TeamContactsCrm.tsx[UNADJUDICATED]",
-  "apps/web/src/modules/contracts/hooks/useContractServiceTypes.legacy-wiring.test.tsx :: antes -> apps/web/src/shared/components/AiGenerateButton.tsx[UNADJUDICATED]"
- ],
+ "uncoveredProductionRows": [],
  "exemptByKind": {
   "LEGAL_DOMAIN_TERM": 185,
   "MIGRATION_HISTORY_GUARD": 21,

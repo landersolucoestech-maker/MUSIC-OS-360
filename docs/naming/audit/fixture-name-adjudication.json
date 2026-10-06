@@ -4383,6 +4383,36 @@
    "file": "packages/ai-skills/src/financial-classification/prompt.ts",
    "class": "UI_TEXT",
    "reason": "natural-language Portuguese instruction text of the financial classification prompt sent to the model (AI heuristic text stays Portuguese); not a technical name"
+  },
+  {
+   "name": "distribuidoras",
+   "file": "apps/web/src/modules/artist/components/TeamContactsCrm.tsx",
+   "class": "COMMENT_OR_DOC",
+   "reason": "The only whole-word lowercase occurrence is line 10, inside the file-header comment that describes the relation data in prose; the live code field and state are the English `distributors` (link.distributors, DISTRIBUTORS_OPTIONS, showDistributors) and no key, prop or route named distribuidoras exists in the file."
+  },
+  {
+   "name": "Distribuidoras",
+   "file": "apps/web/src/modules/artist/components/TeamContactsCrm.tsx",
+   "class": "UI_TEXT",
+   "reason": "Only occurrence is the visible Label text above the distributors checkbox grid (the code beside it uses the English `distributors` / DISTRIBUTORS_OPTIONS), so it is user-facing Portuguese that stays in the user language."
+  },
+  {
+   "name": "conclu",
+   "file": "apps/web/src/modules/monitoring/rights/components/RightsKpiCards.tsx",
+   "class": "UI_TEXT",
+   "reason": "The whole-word tokenizer cuts the accented word 'concluído' at the non-ASCII character; the only lowercase hit is the KPI card subvalue string 'ECAD concluído', which is visible Portuguese text (the identifier beside it is the English `completed`)."
+  },
+  {
+   "name": "obra",
+   "file": "apps/web/src/modules/monitoring/components/EcadViewModal.tsx",
+   "class": "UI_TEXT",
+   "reason": "Only lowercase occurrence is inside the user-visible fallback message 'Nenhuma obra vinculada a este relatório.'; the data field read next to it is the English `report.work_id`."
+  },
+  {
+   "name": "antes",
+   "file": "apps/web/src/shared/components/AiGenerateButton.tsx",
+   "class": "UI_TEXT",
+   "reason": "Only occurrence is the user-facing toast.warning message 'Preencha os campos antes de gerar com IA.', where 'antes' is the ordinary Portuguese adverb 'before' and not an identifier, key or persisted value."
   }
  ]
 }
