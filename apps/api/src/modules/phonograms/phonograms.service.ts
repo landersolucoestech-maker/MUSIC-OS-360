@@ -16,6 +16,7 @@ import {
   type ResolvedPhonogramWriteFields,
 } from './phonogram-legacy-alias.util';
 import { canonicalizePhonogramInput } from './phonogram-legacy-fields';
+import { assertPercentagesValid } from '../../common/percentage-validation';
 
 @Injectable()
 export class PhonogramsService {
@@ -166,8 +167,27 @@ export class PhonogramsService {
     return out;
   }
 
+  /**
+   * `participation` holds the Phonogram percentages (producers, performers, session musicians). They are an
+   * independent structure from the Work percentages and the Release shares. Every informed value must be a
+   * number from 0 to 100 and the running total cannot exceed 100%; the exact total is checked at registry
+   * validation, once every participant is entered.
+   */
+  private assertParticipationPercentages(participation: unknown): void {
+    if (participation == null || typeof participation !== 'object') return;
+    const record = participation as Record<string, unknown>;
+    const values: unknown[] = [];
+    for (const category of ['phonographic_producers', 'performers', 'session_musicians']) {
+      const list = record[category];
+      if (!Array.isArray(list)) continue;
+      for (const participant of list) values.push((participant as Record<string, unknown> | null)?.percentage);
+    }
+    assertPercentagesValid(values, { maxDecimals: 4, scope: 'participações do fonograma' });
+  }
+
   async create(tenantId: string, userId: string, dto: CreatePhonogramDto): Promise<PhonogramEntity> {
     const input = canonicalizePhonogramInput(dto as unknown as Record<string, unknown>);
+    this.assertParticipationPercentages(input['participation']);
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
 
     if (resolved.title === undefined) {
@@ -209,6 +229,7 @@ export class PhonogramsService {
   async update(tenantId: string, userId: string, id: string, dto: UpdatePhonogramDto): Promise<PhonogramEntity> {
     const current = await this.findById(tenantId, id);
     const input = canonicalizePhonogramInput(dto as unknown as Record<string, unknown>, { update: true });
+    this.assertParticipationPercentages(input['participation']);
     const { normalized: resolved, legacyAliasesUsed } = resolvePhonogramAliases(input);
     // update: an absent title is valid (partial PATCH); if sent,
     // resolvePhonogramAliases() itself already guaranteed valid content/conflict.

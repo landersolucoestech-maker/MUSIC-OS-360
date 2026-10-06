@@ -331,3 +331,88 @@ describe('WorksService', () => {
   });
 
 });
+
+describe('WorksService: ISWC and participant percentages are validated on every write', () => {
+  let service: WorksService;
+  let mockDs: ReturnType<typeof buildMockDs>;
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    mockDs = buildMockDs();
+    const module = await Test.createTestingModule({
+      providers: [
+        WorksService,
+        { provide: DATA_SOURCE, useValue: mockDs },
+        { provide: EventsService, useValue: { emitTyped: jest.fn() } },
+      ],
+    }).compile();
+    service = module.get<WorksService>(WorksService);
+  });
+
+  const created = () => (mockDs._repo.create as jest.Mock).mock.calls[0][0] as Record<string, unknown>;
+
+  describe('ISWC', () => {
+    it.each([
+      ['T-345.246.800-1', 'T3452468001'],
+      ['t3452468001', 'T3452468001'],
+      ['T 345 246 800 1', 'T3452468001'],
+    ])('stores %s in its canonical form %s', async (input, canonical) => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', iswc: input } as any);
+      expect(created()['iswc']).toBe(canonical);
+    });
+
+    it.each(['ABC', 'T-123', 'T-345.246.800', '3452468001', 'T-345.246.800-1X'])('rejects the malformed ISWC %s and saves nothing', async (iswc) => {
+      await expect(service.create(TENANT, 'u1', { title: 'Nova', type: 'original', iswc } as any))
+        .rejects.toMatchObject({ response: { code: 'WORK_ISWC_INVALID', field: 'iswc' } });
+      expect(mockDs._repo.save).not.toHaveBeenCalled();
+    });
+
+    it('never invents an ISWC: it is optional and absent stays absent', async () => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original' } as any);
+      expect(created()).not.toHaveProperty('iswc');
+    });
+
+    it('validates the ISWC on update too', async () => {
+      await expect(service.update(TENANT, 'u1', WORK_ID, { iswc: 'not-an-iswc' } as any))
+        .rejects.toMatchObject({ response: { code: 'WORK_ISWC_INVALID' } });
+      expect(mockDs._repo.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('participant percentages', () => {
+    const participants = (...percentages: Array<string | number | null>) =>
+      percentages.map((percentage, i) => ({ name: `Author ${i + 1}`, role: 'composer_author', percentage }));
+
+    it('saves participants whose percentages are valid and total 100', async () => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', participants: participants('50', '50') } as any);
+      expect(mockDs._participantsRepo.save).toHaveBeenCalled();
+    });
+
+    it('saves a draft whose percentages are not complete yet (below 100 or blank)', async () => {
+      await service.create(TENANT, 'u1', { title: 'Nova', type: 'original', participants: participants('30', null, '') } as any);
+      expect(mockDs._participantsRepo.save).toHaveBeenCalled();
+    });
+
+    it('rejects a total above 100% before anything is written', async () => {
+      await expect(service.create(TENANT, 'u1', { title: 'Nova', type: 'original', participants: participants('60', '60') } as any))
+        .rejects.toMatchObject({ response: { code: 'PERCENTAGE_TOTAL_EXCEEDS_100' } });
+      expect(mockDs.transaction).not.toHaveBeenCalled();
+      expect(mockDs._repo.save).not.toHaveBeenCalled();
+    });
+
+    it.each([['abc'], ['-1'], ['101'], ['10.1234']])('rejects the percentage %s', async (value) => {
+      await expect(service.create(TENANT, 'u1', { title: 'Nova', type: 'original', participants: participants('10', value) } as any))
+        .rejects.toMatchObject({ response: { code: 'PERCENTAGE_INVALID' } });
+      expect(mockDs.transaction).not.toHaveBeenCalled();
+    });
+
+    it('validates on update before the optimistic update runs, and leaves stored participants alone when none are sent', async () => {
+      await expect(service.update(TENANT, 'u1', WORK_ID, { participants: participants('70', '70') } as any))
+        .rejects.toMatchObject({ response: { code: 'PERCENTAGE_TOTAL_EXCEEDS_100' } });
+      expect(mockDs._repo.update).not.toHaveBeenCalled();
+
+      await service.update(TENANT, 'u1', WORK_ID, { title: 'Renamed' } as any);
+      expect(mockDs._participantsRepo.delete).not.toHaveBeenCalled();
+    });
+  });
+});

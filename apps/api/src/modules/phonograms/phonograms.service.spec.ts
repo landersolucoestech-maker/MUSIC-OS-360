@@ -489,3 +489,69 @@ describe('PhonogramsService — State B (pre-C2, current behavior documented)', 
     await expect(service.findById(TENANT, 'does-not-exist')).rejects.toThrow(NotFoundException);
   });
 });
+
+describe('PhonogramsService: participation percentages are validated on every write', () => {
+  let service: PhonogramsService;
+  let mockDs: ReturnType<typeof buildMockDs>;
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    mockDs = buildMockDs();
+    const module = await Test.createTestingModule({
+      providers: [
+        PhonogramsService,
+        { provide: DATA_SOURCE, useValue: mockDs },
+        { provide: EventsService, useValue: { emitTyped: jest.fn() } },
+      ],
+    }).compile();
+    service = module.get<PhonogramsService>(PhonogramsService);
+  });
+
+  const participation = (categories: Record<string, Array<string | null>>) =>
+    Object.fromEntries(Object.entries(categories).map(([key, values]) => [
+      key,
+      values.map((percentage, i) => ({ name: `Person ${key} ${i}`, percentage })),
+    ]));
+
+  it('saves participation whose percentages are valid and total 100 across the categories', async () => {
+    await service.create(TENANT, 'u1', {
+      title: 'Take 1',
+      participation: participation({ phonographic_producers: ['41.7'], performers: ['41.7'], session_musicians: ['16.6'] }),
+    } as any);
+    expect(mockDs._repo.save).toHaveBeenCalled();
+  });
+
+  it('saves an incomplete draft (below 100 or blank values)', async () => {
+    await service.create(TENANT, 'u1', {
+      title: 'Take 1',
+      participation: participation({ performers: ['20', ''], session_musicians: [null] }),
+    } as any);
+    expect(mockDs._repo.save).toHaveBeenCalled();
+  });
+
+  it('rejects a total above 100% across the categories and saves nothing', async () => {
+    await expect(service.create(TENANT, 'u1', {
+      title: 'Take 1',
+      participation: participation({ phonographic_producers: ['60'], performers: ['50'] }),
+    } as any)).rejects.toMatchObject({ response: { code: 'PERCENTAGE_TOTAL_EXCEEDS_100' } });
+    expect(mockDs._repo.save).not.toHaveBeenCalled();
+  });
+
+  it.each([['abc'], ['-5'], ['100.5'], ['10.123456']])('rejects the percentage %s', async (value) => {
+    await expect(service.create(TENANT, 'u1', {
+      title: 'Take 1',
+      participation: participation({ performers: ['10', value] }),
+    } as any)).rejects.toMatchObject({ response: { code: 'PERCENTAGE_INVALID' } });
+    expect(mockDs._repo.save).not.toHaveBeenCalled();
+  });
+
+  it('validates on update, and an update without participation does not touch it', async () => {
+    await expect(service.update(TENANT, 'u1', PHONO_ID, {
+      participation: participation({ performers: ['70', '70'] }),
+    } as any)).rejects.toMatchObject({ response: { code: 'PERCENTAGE_TOTAL_EXCEEDS_100' } });
+    expect(mockDs._repo.update).not.toHaveBeenCalled();
+
+    await service.update(TENANT, 'u1', PHONO_ID, { title: 'Renamed' } as any);
+    expect(mockDs._repo.update).toHaveBeenCalled();
+  });
+});

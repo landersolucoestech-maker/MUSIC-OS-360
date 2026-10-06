@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { assertPercentagesValid } from '../../common/percentage-validation';
 import { randomUUID } from 'crypto';
 import { DataSource, Repository } from 'typeorm';
 import { DATA_SOURCE } from '../../database/database.module';
@@ -7,7 +8,7 @@ import { EventsService, DOMAIN_EVENTS } from '../../core/events/events.service';
 import { groupCount, GroupStatsResult } from '../../common/stats/group-count.util';
 import { casUpdate } from '../../common/persistence/optimistic-update.util';
 import { assertSameTenantFk } from '../../common/persistence/assert-same-tenant-fk.util';
-import { normalizeIsrc, isValidIsrc } from '../registry/validators/registry-validators';
+import { normalizeIsrc, normalizeIswc, isValidIswc, isValidIsrc } from '../registry/validators/registry-validators';
 import { deriveWorkRegistryFields, type WorkRegistrySourceFields } from './work-registry-fields.util';
 import { canonicalWorkParticipantRole, canonicalizeWorkInput, canonicalizeWorkQuery } from './work-legacy-fields';
 import type { CreateWorkDto }  from './dto/create-work.dto';
@@ -182,6 +183,32 @@ export class WorksService {
     rest.isrc = canonicalIsrc;
   }
 
+  /**
+   * The ISWC belongs to the Work. Same convention as the ISRC above: validated and stored in its canonical
+   * form on every write path, never invented, optional at creation.
+   */
+  private normalizeIswcField(rest: { iswc?: string }): void {
+    if (typeof rest.iswc !== 'string' || rest.iswc.trim() === '') return;
+    const canonicalIswc = normalizeIswc(rest.iswc);
+    if (!isValidIswc(canonicalIswc)) {
+      throw new BadRequestException({
+        code: 'WORK_ISWC_INVALID',
+        message: 'ISWC inválido. Formato esperado: T-DDD.DDD.DDD-C (T mais 10 dígitos, separadores opcionais).',
+        field: 'iswc',
+      });
+    }
+    rest.iswc = canonicalIswc;
+  }
+
+  /** Work percentages are decimal(6,3): at most 3 decimals, each 0..100, never above 100% in total. */
+  private assertParticipantPercentages(participants: unknown[] | null | undefined): void {
+    if (!Array.isArray(participants)) return;
+    assertPercentagesValid(
+      participants.map((p) => (p as Record<string, unknown> | null)?.percentage),
+      { maxDecimals: 3, scope: 'participantes da obra' },
+    );
+  }
+
   async create(tenantId: string, userId: string, input: CreateWorkDto): Promise<WorkWithParticipants> {
     const dto = canonicalizeWorkInput(input);
     // works.type is NOT NULL. find-tipo-obra-type-collision: the real form
@@ -196,6 +223,8 @@ export class WorksService {
     // silently reference another tenant's artist.
     await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     this.normalizeIsrcField(rest);
+    this.normalizeIswcField(rest);
+    this.assertParticipantPercentages(participants);
     // duration_seconds and ai_tools/ai_prompts are derived from the fields the
     // form captures (duration_text, ai_harmony/ai_melody/ai_lyrics) so the
     // ABRAMUS/ECAD payload (society-payload-builder buildWorkPayload) gets them.
@@ -240,6 +269,8 @@ export class WorksService {
     // omitted means "unchanged", already validated at its own create time.
     if (rest.artist_id !== undefined) await assertSameTenantFk(this.ds!, 'artists', rest.artist_id, tenantId, 'Artista');
     this.normalizeIsrcField(rest);
+    this.normalizeIswcField(rest);
+    this.assertParticipantPercentages(participants);
     // Merge the patch over the CURRENT row before deriving: a partial update
     // that only touches e.g. `ai_melody` must still derive ai_tools/ai_prompts
     // from the unchanged sibling fields, not from `undefined`.
