@@ -57,6 +57,10 @@ export function routeTask({ task = "", intent: explicitIntent = null, root = ROO
   const signals = approvalSignals(task, routing);
   const agentsByName = new Map(registry.agents.map((a) => [a.name, a]));
   const capById = new Map(registry.capabilities.map((c) => [c.id, c]));
+  const knownSkills = new Set([
+    ...(registry.skills || []).map((s) => s.name),
+    ...((registry.supplementalDefinitions || {}).skills || []).map((s) => s.name),
+  ]);
   const routes = [];
   const unavailable = [];
 
@@ -68,6 +72,11 @@ export function routeTask({ task = "", intent: explicitIntent = null, root = ROO
     const ordered = [...preferred, ...executors.filter((a) => !preferred.includes(a))];
     const primary = ordered[0];
     const skills = primary.skills.filter((s) => cap.skills.includes(s));
+    const missingSkills = skills.filter((s) => !knownSkills.has(s));
+    if (missingSkills.length) {
+      unavailable.push({ capability: capId, reason: `executor ${primary.name} references undeclared skills: ${missingSkills.join(", ")}` });
+      continue;
+    }
     const approvalClass = signals[0] || (cap.approval !== "none" ? cap.approval : (primary.approval !== "none" ? primary.approval : undefined));
     const decision = {
       taskId: `route-${capId}`,

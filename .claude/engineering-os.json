@@ -121,6 +121,6 @@
       "docs/NAMING_NORMALIZATION_REPORT.md",
       ".claude/scheduled_tasks.lock"
     ],
-    "notes": "project-manifest.json and NAMING_NORMALIZATION_CANONICAL_MAP.md are placeholders the installer creates empty and repo-intelligence populates per target project. scheduled_tasks.lock is a runtime-managed lock file (created/removed by .claude/runtime/lib/lock.mjs while a scheduled task holds it) and is intentionally absent from a clean distribution and from git (see .gitignore) — its presence means a task is currently running, not a shipped artifact. .claude/agents and .claude/skills are the single canonical source with no generated derivative elsewhere: there is no .agents/, .skills/, root AGENTS.md, or compat facade layer."
+    "notes": "The physical .claude/agents and .claude/skills trees are the complete installed definition set. pack-manifest.json is authoritative for contract-governed routed items and must explicitly inventory every remaining physical definition under supplementalDefinitions; invisible definitions are forbidden. pack-registry.json is derived from that manifest and exposes both governed counts and supplemental counts. project-manifest.json is populated by repository-orchestrator/repository discovery for the installed target."
   }
 }

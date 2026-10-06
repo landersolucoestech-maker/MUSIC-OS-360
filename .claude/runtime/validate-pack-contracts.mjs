@@ -27,14 +27,26 @@ function norm(t) { return String(t || "").replace(/\s+/g, " ").trim().toLowerCas
 export function validatePack(root = ROOT_DEFAULT, throughBatch = 24) {
   const problems = [];
   const warn = [];
-  const { manifest, agents, skills, capDefs } = loadPack(root);
+  const { manifest, agents, skills, capDefs, supplementalDefinitions } = loadPack(root);
   const contractsDir = join(root, ".claude", "contracts");
 
   const manifestAgents = new Map(manifest.items.filter((i) => i.type === "agent").map((i) => [i.name, i]));
   const manifestSkills = new Map(manifest.items.filter((i) => i.type === "skill").map((i) => [i.name, i]));
   const agentNames = new Set(agents.map((a) => a.name));
   const skillNames = new Set(skills.map((s) => s.name));
+  const supplementalAgents = new Set((supplementalDefinitions.agents || []).map((x) => x.name));
+  const supplementalSkills = new Set((supplementalDefinitions.skills || []).map((x) => x.name));
   const coreSkills = new Set(existsSync(join(root, ".claude", "skills")) ? readdirSync(join(root, ".claude", "skills")) : []);
+
+  for (const x of supplementalDefinitions.agents || []) {
+    if (!existsSync(join(root, x.file))) problems.push(`supplemental agent "${x.name}" missing at ${x.file}`);
+    if (manifestAgents.has(x.name)) problems.push(`supplemental agent "${x.name}" is also a governed manifest item`);
+  }
+  for (const x of supplementalDefinitions.skills || []) {
+    if (!existsSync(join(root, x.file))) problems.push(`supplemental skill "${x.name}" missing at ${x.file}`);
+    if (manifestSkills.has(x.name)) problems.push(`supplemental skill "${x.name}" is also a governed manifest item`);
+    if (x.status === "ALIAS" && (!x.canonical || (!manifestSkills.has(x.canonical) && !supplementalSkills.has(x.canonical)))) problems.push(`supplemental skill alias "${x.name}" has unknown canonical target "${x.canonical || ""}"`);
+  }
 
   // manifest shape
   const mres = validate(join(contractsDir, "pack-manifest.schema.json"), manifest);
@@ -56,9 +68,20 @@ export function validatePack(root = ROOT_DEFAULT, throughBatch = 24) {
     if (sections.has("Identity") && /batch\s*:/i.test(sections.get("Identity"))) problems.push(`agent "${name}" has a pack Identity but is not in pack-manifest.json (unregistered definition)`);
   }
 
-  const skillKnown = (s) => coreSkills.has(s) || skillNames.has(s) || (manifestSkills.has(s) && manifestSkills.get(s).batch > throughBatch);
+  const skillKnown = (s) => supplementalSkills.has(s) || coreSkills.has(s) || skillNames.has(s) || (manifestSkills.has(s) && manifestSkills.get(s).batch > throughBatch);
   const capabilityIds = new Set(capDefs.map((c) => c.id));
   const ctx = { skillKnown, capabilityIds };
+
+  // B2. no physical definition may be invisible to the manifest
+  for (const f of existsSync(join(root, ".claude", "agents")) ? readdirSync(join(root, ".claude", "agents")) : []) {
+    if (!f.endsWith(".md")) continue;
+    const name = f.slice(0, -3);
+    if (!manifestAgents.has(name) && !supplementalAgents.has(name)) problems.push(`agent "${name}" exists on disk but is neither governed nor declared supplemental`);
+  }
+  for (const name of existsSync(join(root, ".claude", "skills")) ? readdirSync(join(root, ".claude", "skills")) : []) {
+    if (!existsSync(join(root, ".claude", "skills", name, "SKILL.md"))) continue;
+    if (!manifestSkills.has(name) && !supplementalSkills.has(name)) problems.push(`skill "${name}" exists on disk but is neither governed nor declared supplemental`);
+  }
 
   // C. per-file contracts
   for (const a of agents) {
@@ -139,8 +162,10 @@ export function validatePack(root = ROOT_DEFAULT, throughBatch = 24) {
       if (!res.valid) problems.push(...res.errors.map((e) => `workflow ${w.name}: ${e}`));
       const approved = new Set();
       for (const ph of w.phases || []) {
-        for (const ag of ph.requiredAgents || []) if (!agentNames.has(ag) && !existsSync(join(root, ".claude", "agents", `${ag}.md`))) problems.push(`workflow ${w.name}/${ph.id}: unknown agent "${ag}"`);
-        for (const sk of ph.requiredSkills || []) if (!skillKnown(sk) && !existsSync(join(root, ".claude", "skills", sk))) problems.push(`workflow ${w.name}/${ph.id}: unknown skill "${sk}"`);
+        for (const ag of ph.requiredAgents || []) {
+          if (!agentNames.has(ag) && !supplementalAgents.has(ag)) problems.push(`workflow ${w.name}/${ph.id}: agent "${ag}" is neither governed nor declared supplemental`);
+        }
+        for (const sk of ph.requiredSkills || []) if (!skillKnown(sk)) problems.push(`workflow ${w.name}/${ph.id}: skill "${sk}" is neither governed nor declared supplemental`);
         if (ph.approvalRequired) approved.add(ph.id);
         const guarded = ph.approvalRequired || (ph.dependsOn || []).some((d) => approved.has(d));
         for (const sk of ph.requiredSkills || []) {
@@ -176,7 +201,7 @@ export function validatePack(root = ROOT_DEFAULT, throughBatch = 24) {
   return {
     status: problems.length === 0 ? "PASS" : "FAIL",
     throughBatch,
-    counts: { manifestItems: manifest.items.length, agentsPresent: agents.length, skillsPresent: skills.length, capabilities: capDefs.length },
+    counts: { manifestItems: manifest.items.length, agentsPresent: agents.length, skillsPresent: skills.length, supplementalAgents: supplementalDefinitions.agents.length, supplementalSkills: supplementalDefinitions.skills.length, capabilities: capDefs.length },
     problems,
     warnings: warn,
   };

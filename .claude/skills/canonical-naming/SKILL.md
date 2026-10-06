@@ -20,7 +20,7 @@ Implements `.claude/rules/naming-canonical.md`. Schema:
    exist) per the schema: concept, database, application, api, eventOrQueue, displayPtBr (or the
    project's real user-facing language), legacyAliases, status.
 4. If two agents propose conflicting canonical names for the same concept, this is a conflict per
-   `.claude/rules/agent-orchestration.md` — `mission-orchestrator` decides, and the map is updated
+   `.claude/rules/agent-orchestration.md` — `music-os-360-orchestrator` decides, and the map is updated
    once, not twice.
 5. Hand the map entry to `cross-layer-impact` to drive the actual rename across producers and
    consumers. Do not rename code directly from this skill.

@@ -19,7 +19,7 @@ The chain: `database -> persistence -> backend service -> API/contract -> fronte
 4. Check for a business-rule duplicate at a layer you weren't planning to touch (e.g. the same
    validation re-implemented in the frontend) — if found, that layer is now in scope too, or the
    duplication itself becomes a tracked finding if fixing it isn't warranted right now.
-5. Produce the final bounded file list and hand it to `mission-orchestrator`/`implementation-engineer` as one
+5. Produce the final bounded file list and hand it to `music-os-360-orchestrator`/`implementation-engineer` as one
    batch. If the list is large enough to need multiple writers, split by disjoint path ownership
    per `.claude/rules/agent-orchestration.md`, never by layer alone (a half-updated contract is
    worse than a slower serial batch).

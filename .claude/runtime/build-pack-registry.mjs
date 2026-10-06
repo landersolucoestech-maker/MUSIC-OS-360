@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Builds .claude/registry/pack-registry.json from the pack's markdown definitions (the single source of
-// truth): every agent and skill with its classification, the capabilities each agent declares, the skills
-// each agent consumes (-> `consumers` of a skill, `executors` of a capability), the workflows and the routing.
+// Builds .claude/registry/pack-registry.json from pack-manifest.json plus the governed markdown definitions.
+// Contract-governed items carry routing metadata; supplemental definitions are explicitly inventoried so no
+// installed agent or skill remains invisible to governance. The registry is derived and never edited by hand.
 // The registry is derived: never edit it by hand; validate-pack-contracts.mjs fails when it drifts.
 //
 //   node .claude/runtime/build-pack-registry.mjs            write the registry
@@ -29,11 +29,11 @@ export function loadPack(root = ROOT_DEFAULT) {
     if (item.type === "skill" && existsSync(skillPath(root, item.name))) skills.push(parseSkillFile(skillPath(root, item.name)));
   }
   const capDefs = readJson(join(root, ".claude", "registry", "capabilities.json"), { capabilities: [] }).capabilities;
-  return { manifest, agents, skills, capDefs };
+  return { manifest, agents, skills, capDefs, supplementalDefinitions: manifest.supplementalDefinitions || { agents: [], skills: [] } };
 }
 
 export function buildRegistry(root = ROOT_DEFAULT) {
-  const { manifest, agents, skills, capDefs } = loadPack(root);
+  const { manifest, agents, skills, capDefs, supplementalDefinitions } = loadPack(root);
   const consumers = new Map();
   for (const a of agents) for (const s of a.skills) consumers.set(s, [...(consumers.get(s) || []), a.name]);
 
@@ -52,14 +52,19 @@ export function buildRegistry(root = ROOT_DEFAULT) {
     : [];
 
   return {
-    generatedFrom: ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
+    generatedFrom: ".claude/registry/pack-manifest.json + governed agent/skill definitions + .claude/registry/capabilities.json + .claude/workflows/*.json",
     counts: {
       packItems: manifest.items.length,
       agents: agents.length,
       skills: skills.length,
       capabilities: capabilities.length,
       workflows: workflows.length,
+      supplementalAgents: supplementalDefinitions.agents.length,
+      supplementalSkills: supplementalDefinitions.skills.length,
+      totalAgents: agents.length + supplementalDefinitions.agents.length,
+      totalSkills: skills.length + supplementalDefinitions.skills.length,
     },
+    supplementalDefinitions,
     agents: agents.map((a) => ({
       name: a.name, kind: a.kind, domain: a.domain, batch: a.batch, owner: a.owner,
       path: `.claude/agents/${a.name}.md`, tools: a.tools, writes: a.writes, capabilities: a.capabilities,

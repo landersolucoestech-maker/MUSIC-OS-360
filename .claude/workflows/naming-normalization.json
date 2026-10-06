@@ -148,7 +148,7 @@
     {
       "id": "compatibility",
       "requiredAgents": [
-        "qa-engineer",
+        "test-engineer",
         "contract-test-engineer"
       ],
       "requiredSkills": [

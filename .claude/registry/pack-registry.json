@@ -1,11 +1,453 @@
 {
- "generatedFrom": ".claude/agents/*.md, .claude/skills/*/SKILL.md, .claude/registry/capabilities.json, .claude/workflows/*.json",
+ "generatedFrom": ".claude/registry/pack-manifest.json + governed agent/skill definitions + .claude/registry/capabilities.json + .claude/workflows/*.json",
  "counts": {
   "packItems": 695,
   "agents": 374,
   "skills": 321,
   "capabilities": 351,
-  "workflows": 25
+  "workflows": 25,
+  "supplementalAgents": 34,
+  "supplementalSkills": 52,
+  "totalAgents": 408,
+  "totalSkills": 373
+ },
+ "supplementalDefinitions": {
+  "agents": [
+   {
+    "name": "accessibility-reviewer",
+    "file": ".claude/agents/accessibility-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "adversarial-reviewer",
+    "file": ".claude/agents/adversarial-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "ai-llm-systems-reviewer",
+    "file": ".claude/agents/ai-llm-systems-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "architecture-reviewer",
+    "file": ".claude/agents/architecture-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "backend-reviewer",
+    "file": ".claude/agents/backend-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "compliance-reviewer",
+    "file": ".claude/agents/compliance-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "contract-reviewer",
+    "file": ".claude/agents/contract-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "cost-efficiency-reviewer",
+    "file": ".claude/agents/cost-efficiency-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "database-reviewer",
+    "file": ".claude/agents/database-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "dependency-reviewer",
+    "file": ".claude/agents/dependency-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "distributed-systems-reviewer",
+    "file": ".claude/agents/distributed-systems-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "documentation-reviewer",
+    "file": ".claude/agents/documentation-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "frontend-reviewer",
+    "file": ".claude/agents/frontend-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "git-auditor",
+    "file": ".claude/agents/git-auditor.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "implementation-engineer",
+    "file": ".claude/agents/implementation-engineer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "incident-investigator",
+    "file": ".claude/agents/incident-investigator.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "integration-reviewer",
+    "file": ".claude/agents/integration-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "mission-orchestrator",
+    "file": ".claude/agents/mission-orchestrator.md",
+    "status": "COMPATIBILITY"
+   },
+   {
+    "name": "performance-reviewer",
+    "file": ".claude/agents/performance-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "production-validator",
+    "file": ".claude/agents/production-validator.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "qa-engineer",
+    "file": ".claude/agents/qa-engineer.md",
+    "status": "COMPATIBILITY"
+   },
+   {
+    "name": "recovery-engineer",
+    "file": ".claude/agents/recovery-engineer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "regression-reviewer",
+    "file": ".claude/agents/regression-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "reliability-observability-reviewer",
+    "file": ".claude/agents/reliability-observability-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "repo-intelligence",
+    "file": ".claude/agents/repo-intelligence.md",
+    "status": "COMPATIBILITY"
+   },
+   {
+    "name": "repo-investigator",
+    "file": ".claude/agents/repo-investigator.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "requirements-analyst",
+    "file": ".claude/agents/requirements-analyst.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "requirements-reviewer",
+    "file": ".claude/agents/requirements-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "root-cause-investigator",
+    "file": ".claude/agents/root-cause-investigator.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "security-reviewer",
+    "file": ".claude/agents/security-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "supply-chain-reviewer",
+    "file": ".claude/agents/supply-chain-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "technology-selection-reviewer",
+    "file": ".claude/agents/technology-selection-reviewer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "test-strategy-engineer",
+    "file": ".claude/agents/test-strategy-engineer.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "ui-ux-reviewer",
+    "file": ".claude/agents/ui-ux-reviewer.md",
+    "status": "ACTIVE"
+   }
+  ],
+  "skills": [
+   {
+    "name": "api-design",
+    "file": ".claude/skills/api-design/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "bootstrap",
+    "file": ".claude/skills/bootstrap/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "canonical-naming",
+    "file": ".claude/skills/canonical-naming/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "change-cluster-consolidator",
+    "file": ".claude/skills/change-cluster-consolidator/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "checkpoint",
+    "file": ".claude/skills/checkpoint/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "code-review",
+    "file": ".claude/skills/code-review/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "continuous-improvement",
+    "file": ".claude/skills/continuous-improvement/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "contract-tracing",
+    "file": ".claude/skills/contract-tracing/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "contracts-side-effect-auditor",
+    "file": ".claude/skills/contracts-side-effect-auditor/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "cross-layer-impact",
+    "file": ".claude/skills/cross-layer-impact/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "database-schema-drift",
+    "file": ".claude/skills/database-schema-drift/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "debug-assistant",
+    "file": ".claude/skills/debug-assistant/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "doc-writer",
+    "file": ".claude/skills/doc-writer/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "evidence",
+    "file": ".claude/skills/evidence/SKILL.md",
+    "status": "ALIAS",
+    "canonical": "evidence-collection"
+   },
+   {
+    "name": "evidence-collection",
+    "file": ".claude/skills/evidence-collection/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "execute",
+    "file": ".claude/skills/execute/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "external-boundary-mapping",
+    "file": ".claude/skills/external-boundary-mapping/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "feature-planner",
+    "file": ".claude/skills/feature-planner/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "frontend-design",
+    "file": ".claude/skills/frontend-design/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "gate",
+    "file": ".claude/skills/gate/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "git-checkpoint",
+    "file": ".claude/skills/git-checkpoint/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "impact",
+    "file": ".claude/skills/impact/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "improve",
+    "file": ".claude/skills/improve/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "incident",
+    "file": ".claude/skills/incident/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "intake",
+    "file": ".claude/skills/intake/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "mission-recovery",
+    "file": ".claude/skills/mission-recovery/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "pr-writer",
+    "file": ".claude/skills/pr-writer/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "prime",
+    "file": ".claude/skills/prime/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "quorum",
+    "file": ".claude/skills/quorum/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "recall",
+    "file": ".claude/skills/recall/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "recover",
+    "file": ".claude/skills/recover/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "refactor-guide",
+    "file": ".claude/skills/refactor-guide/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "regression-gates",
+    "file": ".claude/skills/regression-gates/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "release",
+    "file": ".claude/skills/release/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "release-checkpoint",
+    "file": ".claude/skills/release-checkpoint/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "remember",
+    "file": ".claude/skills/remember/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "residue-search",
+    "file": ".claude/skills/residue-search/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "resume",
+    "file": ".claude/skills/resume/SKILL.md",
+    "status": "ALIAS",
+    "canonical": "mission-recovery"
+   },
+   {
+    "name": "review",
+    "file": ".claude/skills/review/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "royalties-integrity-auditor",
+    "file": ".claude/skills/royalties-integrity-auditor/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "safe-db-rename",
+    "file": ".claude/skills/safe-db-rename/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "schema-normalization",
+    "file": ".claude/skills/schema-normalization/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "security-audit",
+    "file": ".claude/skills/security-audit/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "security-tenancy-auditor",
+    "file": ".claude/skills/security-tenancy-auditor/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "soundcharts-id-integrity",
+    "file": ".claude/skills/soundcharts-id-integrity/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "stripe-webhook-auditor",
+    "file": ".claude/skills/stripe-webhook-auditor/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "systemic-audit",
+    "file": ".claude/skills/systemic-audit/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "test-generator",
+    "file": ".claude/skills/test-generator/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "threat-model",
+    "file": ".claude/skills/threat-model/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "trace",
+    "file": ".claude/skills/trace/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "ui-humanization",
+    "file": ".claude/skills/ui-humanization/SKILL.md",
+    "status": "ACTIVE"
+   },
+   {
+    "name": "why",
+    "file": ".claude/skills/why/SKILL.md",
+    "status": "ACTIVE"
+   }
+  ]
  },
  "agents": [
   {

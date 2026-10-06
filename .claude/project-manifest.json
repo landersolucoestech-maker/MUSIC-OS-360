@@ -1,8 +1,16 @@
 {
-  "discoveredAt": null,
-  "packageManager": null,
-  "workspaces": [],
-  "openUnknowns": [
-    "not yet discovered — run repo-intelligence"
-  ]
+  "discoveredAt": "2026-10-06",
+  "packageManager": "pnpm@10.11.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "stack": {
+    "monorepo": "Turborepo",
+    "api": "NestJS + TypeORM + BullMQ",
+    "web": "React 18 + Vite + TanStack Query",
+    "persistence": "PostgreSQL/Supabase"
+  },
+  "branchPolicy": "dev only",
+  "openUnknowns": []
 }
