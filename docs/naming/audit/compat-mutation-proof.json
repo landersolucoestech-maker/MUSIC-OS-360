@@ -6471,31 +6471,32 @@
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
    "test": "apps/api/src/modules/integrations/dto/integrations.dto.legacy.spec.ts",
-   "fileSha256": "8f3d7849b8cb2bef02422954cba5d3c5d496ed08ccf94bb3eedf66be991842e6",
+   "fileSha256": "eca6416b785fd1c32d121549f553b0bfc75814ae7d731292e07c38715d6b1628",
    "testSha256": "a4b70687e83c51bed8ea9488583ec1ac0a91d4a951e7985c144600e08948ed10",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 197,
+     "line": 201,
      "label": "duracao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 244,
+     "line": 248,
      "label": "duracao",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 198,
+     "line": 202,
      "label": "editora",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 251,
+     "line": 255,
      "label": "editora",
      "outcome": "KILLED"
     }
@@ -6523,31 +6524,26 @@
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
    "test": "apps/api/src/modules/integrations/dto/integrations.dto.spec.ts",
-   "fileSha256": "8f3d7849b8cb2bef02422954cba5d3c5d496ed08ccf94bb3eedf66be991842e6",
+   "fileSha256": "eca6416b785fd1c32d121549f553b0bfc75814ae7d731292e07c38715d6b1628",
    "testSha256": "f4b40d39aa93912e28fd325fef62ef71204a1b5fb5528dd5ddcfe6fcdb8bc76f",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 195,
+     "line": 199,
      "label": "coautores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 227,
+     "line": 231,
      "label": "coautores",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 194,
-     "label": "compositor",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 216,
+     "line": 198,
      "label": "compositor",
      "outcome": "KILLED"
     },
@@ -6559,31 +6555,37 @@
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 196,
+     "line": 224,
+     "label": "compositor",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 200,
      "label": "genero",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 237,
+     "line": 241,
      "label": "genero",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 193,
-     "label": "titulo",
-     "outcome": "KILLED"
-    },
-    {
-     "operator": "LEGACY_LITERAL",
-     "line": 208,
+     "line": 197,
      "label": "titulo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
      "line": 212,
+     "label": "titulo",
+     "outcome": "KILLED"
+    },
+    {
+     "operator": "LEGACY_LITERAL",
+     "line": 216,
      "label": "titulo",
      "outcome": "KILLED"
     }
@@ -6613,13 +6615,14 @@
   {
    "file": "apps/api/src/modules/integrations/dto/integrations.dto.ts",
    "test": "apps/api/src/modules/integrations/integrations-dto-wiring.spec.ts",
-   "fileSha256": "8f3d7849b8cb2bef02422954cba5d3c5d496ed08ccf94bb3eedf66be991842e6",
+   "fileSha256": "eca6416b785fd1c32d121549f553b0bfc75814ae7d731292e07c38715d6b1628",
    "testSha256": "88b4670125bbf60a2d5e180dfd0bf93ba6051dc4d74d17b0a9ce0dd60a5123d7",
    "verdict": "PROVEN",
+   "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 203,
+     "line": 207,
      "label": "periodo",
      "outcome": "KILLED"
     }
