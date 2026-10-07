@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node .claude/runtime/gate-engine.mjs security",
+  "command": "node .claude/runtime/gate-engine.mjs security",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\n  \"status\": \"PASS\",\n  \"reasons\": [],\n  \"warnings\": [],\n  \"workspaceFingerprint\": \"69b196ef8a74ab08b19accdcdd6ffbbfc14a28f8b45a49146cbfdc5264f73804\",\n  \"missionId\": \"mission-c83f8d58\"\n}",
+  "stderrTail": "",
+  "workspaceFingerprint": "69b196ef8a74ab08b19accdcdd6ffbbfc14a28f8b45a49146cbfdc5264f73804",
+  "fingerprintStatus": "BOUND",
+  "head": "5479b4b8c52f6a97d4d8fe5e68b5aea1798b12a7",
+  "durationMs": 36933,
+  "id": "evid-844ac582",
+  "createdAt": "2026-10-07T01:01:07.991Z"
+}

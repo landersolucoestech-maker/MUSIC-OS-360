@@ -2,7 +2,7 @@
   "workflow": "brownfield-change",
   "planId": "orch-f26ec4c7",
   "matchId": "work-47a3fb89",
-  "status": "ACTIVE",
+  "status": "COMPLETED",
   "adoptedFrom": [],
   "steps": [
     {

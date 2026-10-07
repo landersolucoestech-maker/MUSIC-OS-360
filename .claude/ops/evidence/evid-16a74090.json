@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "node .claude/runtime/completion-gate.mjs",
+  "command": "node .claude/runtime/completion-gate.mjs",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "{\n  \"status\": \"PASS\",\n  \"reasons\": [],\n  \"warnings\": [\n    \"orchestration orch-4281815e was ABANDONED while bound to a workflow with 11 non-completed task(s) (reason: The verification mission delivered its outputs in commits (census, residue audit, reclassification, mutation proofs, schema boundary proof 3/3 on a real PostgreSQL, db:check clean); it was bound to naming-normalization whose mandatory destructive-approval phase contradicts its own order (no destructive approval); its PostgreSQL block no longer exists)\",\n    \"orchestration orch-54733048 was ABANDONED while bound to a workflow with 2 non-completed task(s) (reason: Superseded duplicate tracker of the naming normalization: its destructive-approval phase waits on a human grant for dropping legacy columns, which this work never executes (dossier READY=NO, no drop ran); a drop is requested again with its exact payload by a fresh plan when the owner schedules it)\",\n    \"orchestration orch-dff75522 was ABANDONED while bound to a workflow with 3 non-completed task(s) (reason: Superseded duplicate tracker of the naming normalization: approve-drop-40 and destructive-approval wait on a human grant for destructive drops that were never executed (dossier READY=NO); the destructive dossier stays checked and a drop needs a fresh exact-payload approval when the owner schedules it)\",\n    \"orchestration orch-e848167d was ABANDONED while bound to a workflow with 12 non-completed task(s) (reason: Superseded by orch-54733048: r14-mutation reached the 3-attempt loop breaker (FAIL x2 independent reviews, findings fixed in commits up to 9dafda6); completed work adopted by the new plan on the owner's decision to abandon and recreate. Pending approvals appr-c80c4e2f and appr-6570cc2f remain ungranted.)\"\n  ],\n  \"workspaceFingerprint\": \"69b196ef8a74ab08b19accdcdd6ffbbfc14a28f8b45a49146cbfdc5264f73804\",\n  \"missionId\": \"mission-c83f8d58\"\n}",
+  "stderrTail": "",
+  "workspaceFingerprint": "69b196ef8a74ab08b19accdcdd6ffbbfc14a28f8b45a49146cbfdc5264f73804",
+  "fingerprintStatus": "BOUND",
+  "head": "5479b4b8c52f6a97d4d8fe5e68b5aea1798b12a7",
+  "durationMs": 35974,
+  "id": "evid-16a74090",
+  "createdAt": "2026-10-07T01:02:26.066Z"
+}

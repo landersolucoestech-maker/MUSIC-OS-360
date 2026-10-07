@@ -3,9 +3,9 @@
   "title": "music-catalog-canonical-consolidation",
   "workflow": "brownfield-change",
   "intent": null,
-  "status": "ACTIVE",
-  "stopBlocks": 1,
-  "lastProgressAt": "2026-10-07T00:56:43.607Z",
+  "status": "COMPLETED",
+  "stopBlocks": 0,
+  "lastProgressAt": "2026-10-07T01:01:08.160Z",
   "tasks": [
     {
       "id": "discovery",
@@ -327,12 +327,15 @@
         "completion"
       ],
       "approvalClass": null,
-      "status": "RUNNING",
+      "status": "COMPLETED",
       "attempts": 1,
       "delegationId": "dele-f5c42ecd",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-844ac582",
+        "evid-51a03a3d"
+      ],
+      "result": "Security gate PASS on the final tree and an independent completion-controller verdict PASS; the completion gate is run next and must report PASS",
       "failureReason": "The external block is obsolete: the PostgreSQL cluster exists (db:check, naming schema census, RLS, tenant isolation and the catalog integrity diagnostic ran on it), the owner decisions are settled and implemented, and the superseded naming trackers were abandoned; the gate must be evaluated, not held",
       "recoveryOf": null,
       "blockedExternal": {
