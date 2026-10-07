@@ -89,7 +89,7 @@ export class IntegrationBaseService {
     try {
       await verify();
     } catch (error) {
-      const reason = withoutCredentialValues(redactForStorage(error instanceof Error ? error.message : String(error)), creds);
+      const reason = redactForStorage(withoutCredentialValues(error instanceof Error ? error.message : String(error), creds));
       // A mistyped re-configuration must not destroy a working connection: the previous credentials and status
       // come back, and only the failure is recorded.
       let restoreFailed = false;

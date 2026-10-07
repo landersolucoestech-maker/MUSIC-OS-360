@@ -131,7 +131,8 @@ export class AutentiqueService {
   private storableFailureReason(reason: string, credentialsEncrypted: string | null): string {
     let creds: Record<string, string> = {};
     try { if (credentialsEncrypted) creds = JSON.parse(this.encryption.decrypt(credentialsEncrypted)) as Record<string, string>; } catch { /* unreadable credentials: nothing to remove */ }
-    return withoutCredentialValues(redactForStorage(reason), creds);
+    // credential values first, the length cap last: a token straddling the cap cannot leave a prefix behind
+    return redactForStorage(withoutCredentialValues(reason, creds));
   }
 
   /** Increment failure_count + record last_failure_at in integration metadata. */
