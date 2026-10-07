@@ -25,6 +25,7 @@ import { EncryptionService } from '../../../core/security/encryption.service';
 import { EventsService, DOMAIN_EVENTS } from '../../../core/events/events.service';
 import { ActivityLogsService } from '../../activity-logs/activity-logs.service';
 import { redactForStorage } from '../../../core/filters/redact-diagnostic';
+import { withoutCredentialValues } from '../integration-base.service';
 import { providerCallFailed } from '../provider-failure';
 import { WebhookService } from '../webhooks/webhook.service';
 import { IntegrationStatus } from '@music-os-360/types';
@@ -123,6 +124,16 @@ export class AutentiqueService {
     }
   }
 
+  /**
+   * The stored reason is readable through the status endpoint, and an HTTP client error can name the pasted token in
+   * full (an invalid header value): the token is removed from it whatever the wording.
+   */
+  private storableFailureReason(reason: string, credentialsEncrypted: string | null): string {
+    let creds: Record<string, string> = {};
+    try { if (credentialsEncrypted) creds = JSON.parse(this.encryption.decrypt(credentialsEncrypted)) as Record<string, string>; } catch { /* unreadable credentials: nothing to remove */ }
+    return withoutCredentialValues(redactForStorage(reason), creds);
+  }
+
   /** Increment failure_count + record last_failure_at in integration metadata. */
   private async recordFailure(tenantId: string, reason: string): Promise<void> {
     if (!this.integRepo) return;
@@ -140,7 +151,7 @@ export class AutentiqueService {
             ...row.metadata,
             retry_count:     retryCount,
             last_failure_at: new Date().toISOString(),
-            last_failure_reason: reason.substring(0, 500),
+            last_failure_reason: this.storableFailureReason(reason, row.credentials_encrypted),
           },
         } as any);
       }

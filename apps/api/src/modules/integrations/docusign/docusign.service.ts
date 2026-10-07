@@ -157,7 +157,7 @@ export class DocuSignService {
   private async recordFailure(tenantId: string, reason: string): Promise<void> {
     await this.upsertIntegrationMetadata(tenantId, {
       last_failure_at: new Date().toISOString(),
-      last_failure_reason: reason.substring(0, 500),
+      last_failure_reason: redactForStorage(reason).substring(0, 500),
     });
   }
 

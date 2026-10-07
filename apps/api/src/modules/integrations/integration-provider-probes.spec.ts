@@ -172,3 +172,26 @@ describe('Autentique waiting for the first document stays usable in the signing 
     expect(status.autentique).toMatchObject({ configured, connected, verified: connected });
   });
 });
+
+describe('Autentique: a pasted token never reaches the stored failure reason or the status', () => {
+  it('a send failure whose error names the token in full is stored redacted', async () => {
+    const token = 'sEcr\nTOKEN-valueXYZ';
+    const store = makeStore();
+    const crypto = { encrypt: (v: string) => v, decrypt: (v: string) => v };
+    const svc = new AutentiqueService(store.ds as never, crypto as never, config as never, undefined as never, undefined as never, undefined as never);
+    await svc.configure('t1', token);
+    await (svc as unknown as { recordFailure(t: string, r: string): Promise<void> }).recordFailure('t1', `Headers.append: "Bearer ${token}" is an invalid header value`);
+    const stored = JSON.stringify(store.rows[0].metadata);
+    expect(stored).not.toContain('TOKEN-valueXYZ');
+    expect(stored).toContain('[REDACTED]');
+  });
+});
+
+describe('withoutCredentialValues: forms of a value', () => {
+  const { withoutCredentialValues } = jest.requireActual('./integration-base.service');
+  it('removes the URL-encoded and JSON-escaped forms and a value that contains another whole', () => {
+    expect(withoutCredentialValues('GET /x?client_id=a%20b%26c%3Dd', { client_id: 'a b&c=d' })).not.toContain('a%20b');
+    expect(withoutCredentialValues('{"k":"line1\\nline2-secret"}', { key: 'line1\nline2-secret' })).not.toContain('line2-secret');
+    expect(withoutCredentialValues('abcdXYZ123', { short: 'abcd', long: 'abcdXYZ123' })).toBe('[REDACTED]');
+  });
+});

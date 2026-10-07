@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsNotEmpty, IsBase64, IsUUID, IsIn, IsArray, IsEmail, IsObject, Matches, ValidateIf } from 'class-validator';
+import { Transform } from 'class-transformer';
 import type { DeprecatedFieldAliases } from '../../../common/compat/deprecated-field-aliases.util';
 import { INTEGRATION_PROVIDER_IDS, GENERIC_OAUTH_PROVIDER_IDS } from '@music-os-360/types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -40,7 +41,10 @@ export class OAuthExchangeDto {
 
 export class ConfigureAutentiqueDto {
   @ApiProperty({ description: 'Autentique API token' })
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString() @IsNotEmpty()
+  // The token goes into an Authorization header: a space, a line break or a non-ASCII character can only be a paste error.
+  @Matches(/^[\x21-\x7E]+$/, { message: 'apiToken must be the token only, without spaces or special characters' })
   apiToken!: string;
 }
 

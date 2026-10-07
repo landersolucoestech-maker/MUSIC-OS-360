@@ -17,7 +17,9 @@ export function withoutCredentialValues(text: string, creds: Record<string, stri
   let out = text;
   // Longest first, so a value that contains another is removed whole.
   for (const value of Object.values(creds).sort((a, b) => String(b).length - String(a).length)) {
-    if (typeof value === 'string' && value.trim().length >= 4) out = out.split(value).join('[REDACTED]').split(value.trim()).join('[REDACTED]');
+    if (typeof value === 'string' && value.trim().length >= 4) out = [value, value.trim(), encodeURIComponent(value.trim()), JSON.stringify(value.trim()).slice(1, -1)]
+      .filter((form) => form.length >= 4)
+      .reduce((text, form) => text.split(form).join('[REDACTED]'), out);
   }
   return out.slice(0, 500);
 }
