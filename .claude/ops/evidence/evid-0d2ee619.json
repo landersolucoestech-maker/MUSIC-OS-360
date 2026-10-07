@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/api exec jest src/modules/registry/validation/entity-validators.spec.ts",
+  "command": "pnpm --dir apps/api exec jest src/modules/registry/validation/entity-validators.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "452d75723fb8549942a063f95ab7bd96b74e8231a7f1645e4e59a8966ae0857e",
+  "fingerprintStatus": "BOUND",
+  "head": "0d07e203a5403a0f73f85e497a07ec1747462b97",
+  "durationMs": 6295,
+  "id": "evid-0d2ee619",
+  "createdAt": "2026-10-07T00:32:37.288Z"
+}

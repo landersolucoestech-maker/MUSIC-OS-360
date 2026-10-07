@@ -270,3 +270,5 @@
 {"name":"gate-run","at":"2026-10-07T00:12:11.712Z","gate":"security","status":"BLOCKED","durationMs":34939,"reasonCount":39}
 {"name":"gate-run","at":"2026-10-07T00:12:55.091Z","gate":"security","status":"BLOCKED","durationMs":35101,"reasonCount":39}
 {"name":"gate-run","at":"2026-10-07T00:25:17.720Z","gate":"completion","status":"BLOCKED","durationMs":33465,"reasonCount":36}
+{"name":"gate-run","at":"2026-10-07T00:25:58.258Z","gate":"security","status":"BLOCKED","durationMs":36279,"reasonCount":35}
+{"name":"gate-run","at":"2026-10-07T00:34:31.316Z","gate":"security","status":"BLOCKED","durationMs":35913,"reasonCount":1}

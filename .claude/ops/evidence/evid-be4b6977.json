@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/api exec jest src/modules/contracts/contracts.service.spec.ts",
+  "command": "pnpm --dir apps/api exec jest src/modules/contracts/contracts.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=valor operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=titulo operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=value operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=valor operation=create tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=fileUrl operation=update tenantId=tenant-1 contractId=contract-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=arquivo_url operation=update tenantId=tenant-1 contractId=contract-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=list tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=list tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=artistId operation=list tenantId=tenant-1\u001b[39m\n\u001b[33m[Nest] 18296  - \u001b[39m10/07/2026, 12:31:19 AM \u001b[33m   WARN\u001b[39m \u001b[38;5;3m[ContractsService] \u001b[39m\u001b[33mContract legacy alias used: alias=tipo operation=list tenantId=tenant-1\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "452d75723fb8549942a063f95ab7bd96b74e8231a7f1645e4e59a8966ae0857e",
+  "fingerprintStatus": "BOUND",
+  "head": "0d07e203a5403a0f73f85e497a07ec1747462b97",
+  "durationMs": 7023,
+  "id": "evid-be4b6977",
+  "createdAt": "2026-10-07T00:31:19.993Z"
+}
