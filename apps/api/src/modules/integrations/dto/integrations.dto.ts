@@ -44,7 +44,7 @@ export class ConfigureAutentiqueDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString() @IsNotEmpty()
   // The token goes into an Authorization header: a space, a line break or a non-ASCII character can only be a paste error.
-  @Matches(/^[\x21-\x7E]+$/, { message: 'apiToken must be the token only, without spaces or special characters' })
+  @Matches(/^[\x21-\x7E]+$/, { message: 'O token deve conter apenas o próprio token, sem espaços ou caracteres especiais.' })
   apiToken!: string;
 }
 
