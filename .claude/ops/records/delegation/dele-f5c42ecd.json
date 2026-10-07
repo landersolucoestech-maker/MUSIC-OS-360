@@ -1,0 +1,9 @@
+{
+  "agent": "completion-controller",
+  "objective": "Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.",
+  "requirementIds": [],
+  "filesInScope": [],
+  "status": "OPEN",
+  "id": "dele-f5c42ecd",
+  "createdAt": "2026-10-07T00:56:43.603Z"
+}

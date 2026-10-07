@@ -5,7 +5,7 @@
   "intent": null,
   "status": "ACTIVE",
   "stopBlocks": 1,
-  "lastProgressAt": "2026-10-07T00:54:02.858Z",
+  "lastProgressAt": "2026-10-07T00:56:43.607Z",
   "tasks": [
     {
       "id": "discovery",
@@ -327,9 +327,9 @@
         "completion"
       ],
       "approvalClass": null,
-      "status": "PENDING",
+      "status": "RUNNING",
       "attempts": 1,
-      "delegationId": null,
+      "delegationId": "dele-f5c42ecd",
       "approvalId": null,
       "evidenceRefs": [],
       "result": null,
@@ -362,12 +362,14 @@
       ],
       "gates": [],
       "approvalClass": null,
-      "status": "RUNNING",
+      "status": "COMPLETED",
       "attempts": 0,
       "delegationId": "dele-99530323",
       "approvalId": null,
-      "evidenceRefs": [],
-      "result": null,
+      "evidenceRefs": [
+        "evid-e540f23c"
+      ],
+      "result": "root-cause-investigator verified every original claim obsolete (PostgreSQL up, blockers resolved, trackers abandoned); security gate PASS",
       "failureReason": null,
       "recoveryOf": "completion-gate",
       "blockedExternal": null

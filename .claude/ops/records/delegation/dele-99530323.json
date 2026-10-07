@@ -3,7 +3,7 @@
   "objective": "Find the root cause of the failure of task completion-gate (\"Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.\"): The external block is obsolete: the PostgreSQL cluster exists (db:check, naming schema census, RLS, tenant isolation and the catalog integrity diagnostic ran on it), the owner decisions are settled and implemented, and the superseded naming trackers were abandoned; the gate must be evaluated, not held. Do not retry the same approach.",
   "requirementIds": [],
   "filesInScope": [],
-  "status": "OPEN",
+  "status": "CLOSED",
   "id": "dele-99530323",
   "createdAt": "2026-10-07T00:54:02.855Z"
 }

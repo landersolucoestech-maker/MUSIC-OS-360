@@ -96,5 +96,12 @@
     "scope": "skills",
     "createdAt": "2026-10-05T17:52:00.811Z",
     "appliedAt": null
+  },
+  {
+    "id": "imp-99abfff8",
+    "text": "BLOCKED_EXTERNAL is a free-text point-in-time claim: nothing re-probes its missingDependency, so a block outlived its cause (PostgreSQL available, blockers resolved, trackers abandoned). Candidate: require a structured dependency list (probe command, blocker ids, approval ids) and re-evaluate it at next/check, reopening a stale block, with a test.",
+    "scope": "runtime",
+    "createdAt": "2026-10-07T00:56:02.225Z",
+    "appliedAt": null
   }
 ]

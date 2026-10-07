@@ -1,0 +1,8 @@
+{
+  "topic": "root cause of the stale completion-gate external block",
+  "decision": "The block is closed through the official fail and recovery path; BLOCKED_EXTERNAL needs a machine-checkable exit condition",
+  "decidedBy": "root-cause-investigator",
+  "rationale": "Proximate: the block text was a snapshot never re-evaluated. Systemic: free-text claim with no probe. Detection gap: gate output shows only current reasons. Prevention gap: no revalidation at next/check.",
+  "id": "deci-ee8ef12a",
+  "createdAt": "2026-10-07T00:56:43.478Z"
+}
