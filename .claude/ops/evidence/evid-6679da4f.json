@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/api exec jest src/modules/releases/releases.service.spec.ts",
+  "command": "pnpm --dir apps/api exec jest src/modules/releases/releases.service.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "e741e2b15bdf8616e4318d2095f2d87a4984c4ac672032fc5685b98f73a5442d",
+  "fingerprintStatus": "BOUND",
+  "head": "b605757106057afb28a0f45c9ff0986549a2cd26",
+  "durationMs": 6904,
+  "id": "evid-6679da4f",
+  "createdAt": "2026-10-07T00:18:53.427Z"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "env DB_SSL=false DATABASE_URL=postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:54330/musicos360 node scripts/naming/schema-naming-census.mjs --check",
+  "command": "env DB_SSL=false DATABASE_URL=postgresql://musicos360:ci_only_ephemeral_password_ba3f0d@localhost:54330/musicos360 node scripts/naming/schema-naming-census.mjs --check",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "schema naming census: 5211 catalog objects, 0 Portuguese names (39 excepted)",
+  "stderrTail": "",
+  "workspaceFingerprint": "e741e2b15bdf8616e4318d2095f2d87a4984c4ac672032fc5685b98f73a5442d",
+  "fingerprintStatus": "BOUND",
+  "head": "b605757106057afb28a0f45c9ff0986549a2cd26",
+  "durationMs": 228,
+  "id": "evid-c7ae6c61",
+  "createdAt": "2026-10-07T00:18:05.702Z"
+}

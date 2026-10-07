@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --filter @music-os-360/api exec jest src/modules/shares src/modules/registry/validation src/modules/works",
+  "command": "pnpm --filter @music-os-360/api exec jest src/modules/shares src/modules/registry/validation src/modules/works",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "e741e2b15bdf8616e4318d2095f2d87a4984c4ac672032fc5685b98f73a5442d",
+  "fingerprintStatus": "BOUND",
+  "head": "b605757106057afb28a0f45c9ff0986549a2cd26",
+  "durationMs": 12102,
+  "id": "evid-7ff68de3",
+  "createdAt": "2026-10-07T00:20:10.926Z"
+}

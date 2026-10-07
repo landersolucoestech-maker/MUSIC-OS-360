@@ -5,7 +5,7 @@
   "status": "active",
   "executionMode": "DEFAULT",
   "createdAt": "2026-10-01T18:08:22.987Z",
-  "updatedAt": "2026-10-06T23:12:22.111Z",
+  "updatedAt": "2026-10-07T00:21:30.843Z",
   "impact": {
     "operatorDeclared": "L5",
     "runtimeDetected": "L1",
@@ -73,7 +73,8 @@
             "evid-780ce07a",
             "evid-c864d14f",
             "evid-baccaef9",
-            "evid-8dc8d38a"
+            "evid-8dc8d38a",
+            "evid-5954b53f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -128,7 +129,8 @@
             "evid-83dc7097",
             "evid-92920e0a",
             "evid-78114f57",
-            "evid-e62aba36"
+            "evid-e62aba36",
+            "evid-70dc4121"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -188,7 +190,8 @@
             "evid-f1e9c189",
             "evid-6e27fe48",
             "evid-0ebd6b1b",
-            "evid-5361b988"
+            "evid-5361b988",
+            "evid-a38b5be7"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -249,7 +252,8 @@
             "evid-4ef9fff7",
             "evid-f5c434e3",
             "evid-24920a84",
-            "evid-0f40db6b"
+            "evid-0f40db6b",
+            "evid-da994025"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -307,7 +311,8 @@
             "evid-0415b445",
             "evid-5a700e9d",
             "evid-99d95a2b",
-            "evid-374ea71c"
+            "evid-374ea71c",
+            "evid-457df837"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -359,7 +364,8 @@
             "evid-d012016e",
             "evid-89713eb8",
             "evid-3e4984a4",
-            "evid-b33cf1ff"
+            "evid-b33cf1ff",
+            "evid-d5e5a529"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -417,7 +423,8 @@
             "evid-ef22dc4e",
             "evid-61cafa80",
             "evid-76735ed9",
-            "evid-282ca252"
+            "evid-282ca252",
+            "evid-3327d781"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -465,7 +472,8 @@
             "evid-7943217f",
             "evid-05a225d4",
             "evid-188efced",
-            "evid-030170fe"
+            "evid-030170fe",
+            "evid-7345ddc6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -514,7 +522,8 @@
             "evid-03a4ac54",
             "evid-031daf70",
             "evid-88f00c88",
-            "evid-998a60a2"
+            "evid-998a60a2",
+            "evid-ab4434d7"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -568,7 +577,8 @@
             "evid-a75a5ea0",
             "evid-1dfb5dd1",
             "evid-483bcd31",
-            "evid-0a7ecaaf"
+            "evid-0a7ecaaf",
+            "evid-8d5ce7b5"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -616,7 +626,8 @@
             "evid-a3d57b28",
             "evid-8279cf20",
             "evid-162642f0",
-            "evid-877ebaa7"
+            "evid-877ebaa7",
+            "evid-631378c6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -664,7 +675,8 @@
             "evid-26e0b2f1",
             "evid-60b86509",
             "evid-b8d98dc4",
-            "evid-68f1e184"
+            "evid-68f1e184",
+            "evid-6e81463e"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -719,7 +731,8 @@
             "evid-3c1cb95a",
             "evid-dfb7ed9e",
             "evid-2093cafc",
-            "evid-00c6557b"
+            "evid-00c6557b",
+            "evid-0dcd91d3"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -770,7 +783,8 @@
             "evid-dfc83882",
             "evid-ede952e2",
             "evid-528bb8d2",
-            "evid-9c8254b4"
+            "evid-9c8254b4",
+            "evid-c7ae6c61"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -810,7 +824,8 @@
             "evid-977fac5c",
             "evid-d21427d8",
             "evid-8b63b292",
-            "evid-624ca9fd"
+            "evid-624ca9fd",
+            "evid-1e9d8735"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -903,7 +918,8 @@
             "evid-e1a8e569",
             "evid-78a1246f",
             "evid-9c88352f",
-            "evid-84c01160"
+            "evid-84c01160",
+            "evid-8ffb0d13"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -925,7 +941,8 @@
           "evidenceIds": [
             "evid-50d63367",
             "evid-11b315ff",
-            "evid-76762a19"
+            "evid-76762a19",
+            "evid-39b953e0"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -955,7 +972,8 @@
           "id": "ac-21489466",
           "text": "a plain status update to distributed is rejected: Distributed requires a registered confirmation (origin external confirmation or manual operational conclusion, a reference and a date) stamped by the server",
           "evidenceIds": [
-            "evid-df4a9190"
+            "evid-df4a9190",
+            "evid-b2102e0d"
           ],
           "status": "closed",
           "amendments": [
@@ -979,7 +997,8 @@
           "evidenceIds": [
             "evid-a6840cb5",
             "evid-95ba46fe",
-            "evid-3b598a43"
+            "evid-3b598a43",
+            "evid-7b1b6d03"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1001,7 +1020,8 @@
           "evidenceIds": [
             "evid-b2dc33ac",
             "evid-5d82a6ac",
-            "evid-606bd49e"
+            "evid-606bd49e",
+            "evid-6679da4f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1033,7 +1053,8 @@
           "evidenceIds": [
             "evid-400556ae",
             "evid-416a86c3",
-            "evid-19719c67"
+            "evid-19719c67",
+            "evid-fa4e170d"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1055,7 +1076,8 @@
           "evidenceIds": [
             "evid-17b6a3cd",
             "evid-2c9532b7",
-            "evid-801d746d"
+            "evid-801d746d",
+            "evid-f1f3b95b"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1077,7 +1099,8 @@
           "evidenceIds": [
             "evid-4caf4c56",
             "evid-f5dff83e",
-            "evid-378d04bd"
+            "evid-378d04bd",
+            "evid-96a33f6e"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1109,7 +1132,8 @@
           "evidenceIds": [
             "evid-d642fb83",
             "evid-dfdb8320",
-            "evid-fbe0c2a5"
+            "evid-fbe0c2a5",
+            "evid-190005d4"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1131,7 +1155,8 @@
           "evidenceIds": [
             "evid-aef515ce",
             "evid-9bf87d40",
-            "evid-8161267f"
+            "evid-8161267f",
+            "evid-b8e65dfe"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1153,7 +1178,8 @@
           "evidenceIds": [
             "evid-fd10fa82",
             "evid-bb0643d9",
-            "evid-3c0a77c6"
+            "evid-3c0a77c6",
+            "evid-7e09bbfc"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1185,7 +1211,8 @@
           "evidenceIds": [
             "evid-695bac57",
             "evid-2c287740",
-            "evid-c11cd459"
+            "evid-c11cd459",
+            "evid-a936e250"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1207,7 +1234,8 @@
           "evidenceIds": [
             "evid-daff14ef",
             "evid-e099060c",
-            "evid-3b57ac03"
+            "evid-3b57ac03",
+            "evid-3beab593"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1237,7 +1265,8 @@
           "id": "ac-efa1d7e8",
           "text": "participant percentages stay within 0..100 with decimal precision and their running total never exceeds 100 at write; the Work splits and the Phonogram splits must total exactly 100 at the formal registry check",
           "evidenceIds": [
-            "evid-b1c0e7ef"
+            "evid-b1c0e7ef",
+            "evid-7ff68de3"
           ],
           "status": "closed",
           "amendments": [
@@ -1272,7 +1301,8 @@
           "id": "ac-8266fe4a",
           "text": "work participant roles outside author and publisher are rejected",
           "evidenceIds": [
-            "evid-0746e18f"
+            "evid-0746e18f",
+            "evid-0704e341"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1287,7 +1317,8 @@
           "evidenceIds": [
             "evid-9f5855cf",
             "evid-1c0a4a05",
-            "evid-5bc84edc"
+            "evid-5bc84edc",
+            "evid-bd533032"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1319,7 +1350,8 @@
           "evidenceIds": [
             "evid-a3afb985",
             "evid-217e1ed8",
-            "evid-74f19b17"
+            "evid-74f19b17",
+            "evid-cfda9a93"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1341,7 +1373,8 @@
           "evidenceIds": [
             "evid-d7fd89b0",
             "evid-79c457dd",
-            "evid-51d5eb10"
+            "evid-51d5eb10",
+            "evid-1c1a6fa6"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1363,7 +1396,8 @@
           "evidenceIds": [
             "evid-b0cb222c",
             "evid-b21d1944",
-            "evid-4e779166"
+            "evid-4e779166",
+            "evid-19719f98"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1395,7 +1429,8 @@
           "evidenceIds": [
             "evid-84f59891",
             "evid-d457c72c",
-            "evid-8d2cf99f"
+            "evid-8d2cf99f",
+            "evid-214cfb0b"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1417,7 +1452,8 @@
           "evidenceIds": [
             "evid-44f334b6",
             "evid-a28bebc2",
-            "evid-f3044703"
+            "evid-f3044703",
+            "evid-d520e7ba"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1498,7 +1534,8 @@
           "evidenceIds": [
             "evid-434e62f7",
             "evid-8af7a649",
-            "evid-a06424dc"
+            "evid-a06424dc",
+            "evid-9982ff6f"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1520,7 +1557,8 @@
           "evidenceIds": [
             "evid-b112cbf0",
             "evid-03f4f99a",
-            "evid-5f8414a0"
+            "evid-5f8414a0",
+            "evid-711c449c"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -1542,7 +1580,8 @@
           "evidenceIds": [
             "evid-6fdfb787",
             "evid-6f11ae73",
-            "evid-3b496497"
+            "evid-3b496497",
+            "evid-af9cde06"
           ],
           "status": "closed",
           "relevantPaths": [
@@ -2615,7 +2654,46 @@
     "evid-d2b06e7e",
     "evid-65f95f78",
     "evid-9c8254b4",
-    "evid-bf08742f"
+    "evid-bf08742f",
+    "evid-5954b53f",
+    "evid-70dc4121",
+    "evid-a38b5be7",
+    "evid-da994025",
+    "evid-457df837",
+    "evid-d5e5a529",
+    "evid-3327d781",
+    "evid-7345ddc6",
+    "evid-ab4434d7",
+    "evid-8d5ce7b5",
+    "evid-631378c6",
+    "evid-6e81463e",
+    "evid-0dcd91d3",
+    "evid-c7ae6c61",
+    "evid-1e9d8735",
+    "evid-8ffb0d13",
+    "evid-39b953e0",
+    "evid-b2102e0d",
+    "evid-7b1b6d03",
+    "evid-6679da4f",
+    "evid-fa4e170d",
+    "evid-f1f3b95b",
+    "evid-96a33f6e",
+    "evid-190005d4",
+    "evid-b8e65dfe",
+    "evid-7e09bbfc",
+    "evid-a936e250",
+    "evid-3beab593",
+    "evid-7ff68de3",
+    "evid-0704e341",
+    "evid-bd533032",
+    "evid-cfda9a93",
+    "evid-1c1a6fa6",
+    "evid-19719f98",
+    "evid-214cfb0b",
+    "evid-d520e7ba",
+    "evid-9982ff6f",
+    "evid-711c449c",
+    "evid-af9cde06"
   ],
   "checkpointIds": [],
   "touchedFiles": [],
