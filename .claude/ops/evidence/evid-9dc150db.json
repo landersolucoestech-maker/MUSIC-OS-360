@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "security-reviewer",
+  "verdict": "PASS",
+  "status": "PASS",
+  "summary": "Re-review of 08de8780: no medium or higher; lows (truncation order) fixed afterwards, data-at-rest scrub noted as residual",
+  "workspaceFingerprint": "5427d66a4a7cf38006c119f07f13dfdd3bba1cea863b92c838243b77ef1cebab",
+  "fingerprintStatus": "BOUND",
+  "head": "d9cff683c21172462a069162f292de1d720ffbeb",
+  "id": "evid-9dc150db",
+  "createdAt": "2026-10-07T00:53:12.433Z"
+}

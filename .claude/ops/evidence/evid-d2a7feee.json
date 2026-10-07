@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/api exec jest src/modules/integrations/integration-connection.spec.ts",
+  "command": "pnpm --dir apps/api exec jest src/modules/integrations/integration-connection.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "workspaceFingerprint": "5427d66a4a7cf38006c119f07f13dfdd3bba1cea863b92c838243b77ef1cebab",
+  "fingerprintStatus": "BOUND",
+  "head": "d9cff683c21172462a069162f292de1d720ffbeb",
+  "durationMs": 6919,
+  "id": "evid-d2a7feee",
+  "createdAt": "2026-10-07T00:51:03.927Z"
+}

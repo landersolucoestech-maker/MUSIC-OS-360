@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Re-review of 11199667 and 5779b030: MEDIUM Autentique recordFailure stored the pasted token. Fixed in 08de8780 with DTO validation",
+  "workspaceFingerprint": "5427d66a4a7cf38006c119f07f13dfdd3bba1cea863b92c838243b77ef1cebab",
+  "fingerprintStatus": "BOUND",
+  "head": "d9cff683c21172462a069162f292de1d720ffbeb",
+  "id": "evid-d7bf69d3",
+  "createdAt": "2026-10-07T00:53:12.318Z"
+}

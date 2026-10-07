@@ -1,0 +1,14 @@
+{
+  "type": "REVIEW",
+  "independentReviewer": false,
+  "missionId": "mission-c83f8d58",
+  "reviewer": "security-reviewer",
+  "verdict": "FAIL",
+  "status": "FAIL",
+  "summary": "Review of 61267c15..HEAD: MEDIUM probe error echoed a pasted token into the 400 body and stored last_failure_reason; LOW releases.create could plant a confirmation. Fixed in 11199667",
+  "workspaceFingerprint": "5427d66a4a7cf38006c119f07f13dfdd3bba1cea863b92c838243b77ef1cebab",
+  "fingerprintStatus": "BOUND",
+  "head": "d9cff683c21172462a069162f292de1d720ffbeb",
+  "id": "evid-21225953",
+  "createdAt": "2026-10-07T00:53:12.202Z"
+}

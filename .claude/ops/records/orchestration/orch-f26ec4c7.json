@@ -4,8 +4,8 @@
   "workflow": "brownfield-change",
   "intent": null,
   "status": "ACTIVE",
-  "stopBlocks": 0,
-  "lastProgressAt": "2026-10-06T19:27:07.853Z",
+  "stopBlocks": 1,
+  "lastProgressAt": "2026-10-07T00:54:02.858Z",
   "tasks": [
     {
       "id": "discovery",
@@ -316,7 +316,8 @@
         "implementation",
         "adversarial-review",
         "regression",
-        "closure"
+        "closure",
+        "completion-gate-recovery-1"
       ],
       "acceptance": [
         "node .claude/runtime/completion-gate.mjs reports PASS",
@@ -326,13 +327,13 @@
         "completion"
       ],
       "approvalClass": null,
-      "status": "BLOCKED_EXTERNAL",
-      "attempts": 0,
-      "delegationId": "dele-eeca342e",
+      "status": "PENDING",
+      "attempts": 1,
+      "delegationId": null,
       "approvalId": null,
       "evidenceRefs": [],
       "result": null,
-      "failureReason": null,
+      "failureReason": "The external block is obsolete: the PostgreSQL cluster exists (db:check, naming schema census, RLS, tenant isolation and the catalog integrity diagnostic ran on it), the owner decisions are settled and implemented, and the superseded naming trackers were abandoned; the gate must be evaluated, not held",
       "recoveryOf": null,
       "blockedExternal": {
         "capability": "Completion gate PASS for the catalog block of orchestration orch-f26ec4c7",
@@ -344,6 +345,32 @@
         "impact": "The mission cannot be declared complete: the database proof, the owner-decision rules and the integrity diagnostics remain undone",
         "unblockCondition": "Provide a PostgreSQL cluster and run db:migrate, db:check and naming:schema then build the diagnostics; record the owner decisions; grant the destructive approvals through the approval mechanism; then re-run node .claude/runtime/completion-gate.mjs"
       }
+    },
+    {
+      "id": "completion-gate-recovery-1",
+      "title": "recover completion-gate",
+      "objective": "Find the root cause of the failure of task completion-gate (\"Decide completion only from a PASS completion gate, closed criteria and fresh evidence for the current workspace fingerprint.\"): The external block is obsolete: the PostgreSQL cluster exists (db:check, naming schema census, RLS, tenant isolation and the catalog integrity diagnostic ran on it), the owner decisions are settled and implemented, and the superseded naming trackers were abandoned; the gate must be evaluated, not held. Do not retry the same approach.",
+      "agent": "root-cause-investigator",
+      "skills": [
+        "root-cause-analysis"
+      ],
+      "filesInScope": [],
+      "dependsOn": [],
+      "acceptance": [
+        "the proximate and systemic cause are stated with evidence",
+        "a changed approach for the retry is proposed"
+      ],
+      "gates": [],
+      "approvalClass": null,
+      "status": "RUNNING",
+      "attempts": 0,
+      "delegationId": "dele-99530323",
+      "approvalId": null,
+      "evidenceRefs": [],
+      "result": null,
+      "failureReason": null,
+      "recoveryOf": "completion-gate",
+      "blockedExternal": null
     }
   ],
   "missionId": "mission-c83f8d58",

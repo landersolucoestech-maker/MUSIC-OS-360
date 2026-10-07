@@ -1,0 +1,16 @@
+{
+  "type": "COMMAND",
+  "missionId": "mission-c83f8d58",
+  "label": "pnpm --dir apps/api exec jest src/core/events/notification-idempotency.spec.ts",
+  "command": "pnpm --dir apps/api exec jest src/core/events/notification-idempotency.spec.ts",
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "\u001b[95m[Nest] 9931  - \u001b[39m10/07/2026, 12:51:53 AM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[NotificationHandler] \u001b[39m\u001b[95mNotificationHandler: duplicate delivery of \"contract.signed\" ignored (notification=173f044b-3d2a-55c6-97a7-4a8d1b36b55d)\u001b[39m\n\u001b[95m[Nest] 9931  - \u001b[39m10/07/2026, 12:51:53 AM \u001b[95m  DEBUG\u001b[39m \u001b[38;5;3m[NotificationHandler] \u001b[39m\u001b[95mNotificationHandler: concurrent duplicate of \"contract.signed\" ignored (notification=173f044b-3d2a-55c6-97a7-4a8d1b36b55d)\u001b[39m",
+  "stderrTail": "",
+  "workspaceFingerprint": "5427d66a4a7cf38006c119f07f13dfdd3bba1cea863b92c838243b77ef1cebab",
+  "fingerprintStatus": "BOUND",
+  "head": "d9cff683c21172462a069162f292de1d720ffbeb",
+  "durationMs": 6972,
+  "id": "evid-6172fa07",
+  "createdAt": "2026-10-07T00:51:53.973Z"
+}
