@@ -6646,26 +6646,26 @@
   {
    "file": "apps/api/src/modules/integrations/integrations.controller.ts",
    "test": "apps/api/src/modules/integrations/integrations-dto-wiring.spec.ts",
-   "fileSha256": "2cb9eacbdafb2cffa1b3217885423100c7ab10349650118f08ae777622be9760",
+   "fileSha256": "1558c71c4bd470146d6d4eed428e2b748e312ded648a34d4d04bc5022bd6f714",
    "testSha256": "88b4670125bbf60a2d5e180dfd0bf93ba6051dc4d74d17b0a9ce0dd60a5123d7",
    "verdict": "PROVEN",
    "operatorsVersion": 2,
    "mutations": [
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1087,
+     "line": 1089,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1091,
+     "line": 1093,
      "label": "periodo",
      "outcome": "KILLED"
     },
     {
      "operator": "LEGACY_LITERAL",
-     "line": 1095,
+     "line": 1097,
      "label": "periodo",
      "outcome": "KILLED"
     }
